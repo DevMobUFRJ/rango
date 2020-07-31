@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rango/screens/AuthScreen.dart';
+import 'package:rango/screens/AuthScreen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -18,18 +19,18 @@ class HomeScreen extends StatelessWidget {
                   "RANGO",
                   style: TextStyle(color: Colors.white, fontSize: 30.0),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 80),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
                   child: SizedBox(
                     width: double.infinity,
                     child: RaisedButton(
-                      padding: EdgeInsets.symmetric(vertical: 8),
+                      padding: EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      onPressed: () =>
-                          Navigator.of(context).pushNamed(AuthScreen.routeName),
+                      onPressed: () => Navigator.of(context)
+                          .pushNamed(AuthScreen.routeName, arguments: true),
                       child: Text(
                         'Login',
                         style: TextStyle(
@@ -40,17 +41,18 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 50),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
                   child: SizedBox(
                     width: double.infinity,
                     child: RaisedButton(
-                      padding: EdgeInsets.symmetric(vertical: 8),
+                      padding: EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      onPressed: () {},
+                      onPressed: () => Navigator.of(context)
+                          .pushNamed(AuthScreen.routeName, arguments: false),
                       child: Text(
                         'Cadastro',
                         style: TextStyle(
