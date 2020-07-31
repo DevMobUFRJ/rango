@@ -1,0 +1,52 @@
+clients:
+  {clientId}:
+    _fields:
+      email: string
+      name: string
+      phone: string
+      picture: string (URL para firebase storage)
+      favoriteSellers: array
+        items: string (referência para seller, ex /sellers/ngYURDi2WiBNr7QJM2ZT)
+      notifications: map
+        discounts: bool
+        favoriteSellers: bool
+        messages: bool
+        reservations: bool
+sellers:
+  {sellerId}:
+    _fields:
+      name: string
+      contact: map
+        name: string
+        phone: string
+      active: bool
+      location: geopoint
+      logo: string (URL para firebase storage)
+      picture: string (URL para firebase storage)
+      shift: map
+        opening: number (ex 900, 9:00 horas)
+        closing: number (ex 1800, 18:00 horas)
+        monday: bool (true se abre nesse dia da semana)
+        tuesday: bool
+        wednesday: bool
+        thursday: bool
+        friday: bool
+        saturday: bool
+        sunday: bool
+    _collections:
+      meals: todos os pratos já adicionados pelo vendedor
+        {mealId}:
+          _fields:
+            name: string
+            description: string
+            price: number
+            featured: bool (prato em destaque)
+            picture: string (URL para firebase storage)
+      currentMeals: pratos à venda no momento
+        {currentMealId}:
+          _fields: os campos serão um clone de uma meal da collection "meals", para facilitar a query
+            name: string
+            description: string
+            price: number
+            featured: bool (prato em destaque)
+            picture: string (URL para firebase storage)
