@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rango/widgets/AuthForm.dart';
+import 'package:rango/widgets/auth/AuthForm.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -25,6 +25,7 @@ class _AuthScreenState extends State<AuthScreen> {
     AuthResult authResult;
 
     try {
+      setState(() => _isLoading = true);
       if (_isLogin) {
         authResult = await _auth.signInWithEmailAndPassword(
             email: email, password: password);
@@ -40,8 +41,8 @@ class _AuthScreenState extends State<AuthScreen> {
           'email': email,
         });
       }
+      setState(() => _isLoading = false);
       Navigator.of(context).pop();
-      setState(() => _isLoading = true);
     } on PlatformException catch (error) {
       var message = 'Ocorreu um erro';
       if (error.message != null) {

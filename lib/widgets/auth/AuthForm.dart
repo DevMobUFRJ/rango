@@ -22,9 +22,9 @@ class _AuthFormState extends State<AuthForm> {
   String _name = '';
   String _email = '';
   String _password = '';
+  bool _showPassword = false;
 
   void _submit() {
-    print('chamou');
     final isValid = _formKey.currentState.validate();
     FocusScope.of(context).unfocus();
     if (isValid) {
@@ -172,6 +172,7 @@ class _AuthFormState extends State<AuthForm> {
                       ),
                       elevation: 5,
                       child: TextFormField(
+                        textAlign: TextAlign.start,
                         textInputAction: TextInputAction.next,
                         onFieldSubmitted: (_) =>
                             FocusScope.of(context).nextFocus(),
@@ -184,10 +185,18 @@ class _AuthFormState extends State<AuthForm> {
                           }
                           return null;
                         },
-                        obscureText: true,
+                        obscureText: !_showPassword,
                         decoration: InputDecoration(
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.only(left: 15)),
+                          contentPadding: EdgeInsets.all(15),
+                          suffixIcon: IconButton(
+                            icon: Icon(!_showPassword
+                                ? Icons.visibility_off
+                                : Icons.visibility),
+                            onPressed: () =>
+                                setState(() => _showPassword = !_showPassword),
+                          ),
+                          border: InputBorder.none,
+                        ),
                       ),
                     ),
                     if (!widget._isLogin) SizedBox(height: 30),
@@ -235,10 +244,22 @@ class _AuthFormState extends State<AuthForm> {
                         child: RaisedButton(
                           padding: EdgeInsets.symmetric(vertical: 10),
                           onPressed: _submit,
-                          child: Text(
-                            'Continuar',
-                            style: TextStyle(color: Colors.white, fontSize: 20),
-                          ),
+                          child: widget._isLoading
+                              ? SizedBox(
+                                  child: CircularProgressIndicator(
+                                    valueColor:
+                                        new AlwaysStoppedAnimation<Color>(
+                                            Colors.white),
+                                    strokeWidth: 3.0,
+                                  ),
+                                  height: 15,
+                                  width: 15,
+                                )
+                              : Text(
+                                  'Continuar',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 20),
+                                ),
                         ),
                       ),
                     ),
