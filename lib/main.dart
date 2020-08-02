@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:rango/screens/auth/AuthScreen.dart';
-import 'package:rango/screens/HomeScreen.dart';
-import 'package:rango/screens/auth/AuthScreen.dart';
-import 'package:rango/screens/main/PrincipalScreen.dart';
+import 'package:rango/screens/LoginScreen.dart';
+import 'package:rango/screens/main/TabsScreen.dart';
 
 void main() {
   runApp(MyApp());
@@ -36,9 +34,9 @@ class MyApp extends StatelessWidget {
         stream: FirebaseAuth.instance.onAuthStateChanged,
         builder: (ctx, userSnapshot) {
           if (userSnapshot.hasData) {
-            return PrincipalScreen();
+            return TabsScreen();
           }
-          return HomeScreen();
+          return LoginScreen();
         },
       ),
       routes: {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rango/screens/auth/AuthScreen.dart';
 
-class HomeScreen extends StatelessWidget {
+class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

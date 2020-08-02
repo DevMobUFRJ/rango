@@ -1,18 +1,27 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rango/screens/main/tabs/HomeScreen.dart';
+import 'package:rango/screens/main/tabs/ProfileScreen.dart';
+import 'package:rango/screens/main/tabs/SearchScreen.dart';
 
-class PrincipalScreen extends StatefulWidget {
+class TabsScreen extends StatefulWidget {
   @override
-  _PrincipalScreenState createState() => _PrincipalScreenState();
+  _TabsScreenState createState() => _TabsScreenState();
 }
 
-class _PrincipalScreenState extends State<PrincipalScreen> {
+class _TabsScreenState extends State<TabsScreen> {
+  List<Map<String, Object>> _pages;
   int _selectedPageIndex = 0;
 
   @override
   void initState() {
     _getUser();
+    _pages = [
+      {'page': HomeScreen(_name)},
+      {'page': SearchScreen()},
+      {'page': ProfileScreen()},
+    ];
     super.initState();
   }
 
@@ -30,18 +39,19 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
     final userData =
         await Firestore.instance.collection("clients").document(user.uid).get();
     setState(() {
-      _loading = false;
+      _pages = [
+        {'page': HomeScreen(userData.data['name'].toString().split(" ")[0])},
+        {'page': SearchScreen()},
+        {'page': ProfileScreen()},
+      ];
       _name = userData.data['name'].toString().split(" ")[0];
+      _loading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Theme.of(context).backgroundColor,
-      ),
       bottomNavigationBar: BottomNavigationBar(
           onTap: _selectPage,
           currentIndex: _selectedPageIndex,
@@ -59,25 +69,9 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
             BottomNavigationBarItem(
                 icon: Icon(Icons.person, size: 40), title: Text('Account'))
           ]),
-      body: Center(
-        child: Container(
-          color: Theme.of(context).backgroundColor,
-          padding: EdgeInsets.symmetric(horizontal: 18),
-          width: double.infinity,
-          child: _loading
-              ? CircularProgressIndicator()
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text('Olá, $_name!\nBateu a fome?',
-                        textAlign: TextAlign.start,
-                        style: Theme.of(context).textTheme.headline1),
-                    SizedBox(height: 10),
-                    Text('Sugestões do dia'),
-                  ],
-                ),
-        ),
-      ),
+      body: _loading
+          ? Center(child: CircularProgressIndicator())
+          : _pages[_selectedPageIndex]['page'],
     );
   }
 }
