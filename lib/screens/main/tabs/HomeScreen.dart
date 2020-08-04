@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:rango/dadosMarretados.dart';
+import 'package:rango/models/meals.dart';
+import 'package:rango/widgets/home/GridVertical.dart';
+import 'package:rango/widgets/home/ListaHorizontal.dart';
 
 class HomeScreen extends StatefulWidget {
   final _username;
@@ -13,6 +18,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
+    List<Meal> meals = new List<Meal>();
+    sellers.forEach((element) {
+      meals.add(element.currentMeals[0]);
+    });
     final String assetName = 'assets/imgs/curva_principal.svg';
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
@@ -27,165 +36,37 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Container(
-              margin: EdgeInsets.only(top: 40),
-              padding: EdgeInsets.symmetric(horizontal: 18),
-              width: double.infinity,
+              margin: EdgeInsets.only(
+                  top: MediaQuery.of(context).size.height * 0.03),
+              width: MediaQuery.of(context).size.width,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    'Olá, ${widget._username}!\nBateu a fome?',
-                    textAlign: TextAlign.start,
-                    style: Theme.of(context).textTheme.headline1,
-                  ),
-                  SizedBox(height: 50),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          'Sugestões do dia',
-                          style: TextStyle(
-                            color: Theme.of(context).accentColor,
-                            fontSize: 16,
-                          ),
-                        ),
-                        Container(
-                          height: 120,
-                          width: double.infinity,
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            children: <Widget>[
-                              Card(
-                                clipBehavior: Clip.antiAliasWithSaveLayer,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8)),
-                                child: Column(
-                                  children: <Widget>[
-                                    Image.network(
-                                      'https://img.itdg.com.br/tdg/images/recipes/000/174/031/173715/173715_original.jpg?mode=crop&width=710&height=400',
-                                      width: 150,
-                                    ),
-                                    Text("Strogonoff"),
-                                  ],
-                                ),
-                              ),
-                              Card(
-                                clipBehavior: Clip.antiAliasWithSaveLayer,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8)),
-                                child: Column(
-                                  children: <Widget>[
-                                    Image.network(
-                                      'https://img.itdg.com.br/tdg/images/recipes/000/174/031/173715/173715_original.jpg?mode=crop&width=710&height=400',
-                                      width: 150,
-                                    ),
-                                    Text("Teste"),
-                                  ],
-                                ),
-                              ),
-                              Card(
-                                clipBehavior: Clip.antiAliasWithSaveLayer,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8)),
-                                child: Column(
-                                  children: <Widget>[
-                                    Image.network(
-                                      'https://img.itdg.com.br/tdg/images/recipes/000/174/031/173715/173715_original.jpg?mode=crop&width=710&height=400',
-                                      width: 150,
-                                    ),
-                                    Text("Teste2"),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.04),
+                    child: Text(
+                      'Olá, ${widget._username}!\nBateu a fome?',
+                      textAlign: TextAlign.start,
+                      style: Theme.of(context).textTheme.headline1,
                     ),
                   ),
-                  SizedBox(height: 50),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.21,
+                    padding: EdgeInsets.symmetric(horizontal: 2),
+                    child: ListaHorizontal(
+                      title: 'Sugestões do dia',
+                      meals: meals,
+                    ),
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.03),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          'Promoções da semana',
-                          style: TextStyle(
-                            color: Theme.of(context).accentColor,
-                            fontSize: 16,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Container(
-                            height: 220,
-                            child: GridView.count(
-                              childAspectRatio: (150 / 100),
-                              crossAxisCount: 2,
-                              children: <Widget>[
-                                Container(
-                                  child: Card(
-                                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8)),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Image.network(
-                                          'https://img.itdg.com.br/tdg/images/recipes/000/174/031/173715/173715_original.jpg?mode=crop&width=710&height=400',
-                                          width: 150,
-                                        ),
-                                        Text("Strogonoff"),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Card(
-                                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8)),
-                                  child: Column(
-                                    children: <Widget>[
-                                      Image.network(
-                                        'https://img.itdg.com.br/tdg/images/recipes/000/174/031/173715/173715_original.jpg?mode=crop&width=710&height=400',
-                                        width: 150,
-                                      ),
-                                      Text("Strogonoff"),
-                                    ],
-                                  ),
-                                ),
-                                Card(
-                                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8)),
-                                  child: Column(
-                                    children: <Widget>[
-                                      Image.network(
-                                        'https://img.itdg.com.br/tdg/images/recipes/000/174/031/173715/173715_original.jpg?mode=crop&width=710&height=400',
-                                        width: 150,
-                                      ),
-                                      Text("Strogonoff"),
-                                    ],
-                                  ),
-                                ),
-                                Card(
-                                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8)),
-                                  child: Column(
-                                    children: <Widget>[
-                                      Image.network(
-                                        'https://img.itdg.com.br/tdg/images/recipes/000/174/031/173715/173715_original.jpg?mode=crop&width=710&height=400',
-                                        width: 150,
-                                      ),
-                                      Text("Strogonoff"),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ))
-                      ],
+                    padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.04),
+                    child: GridVertical(
+                      title: 'Promoções da semana',
+                      meals: meals,
                     ),
                   ),
                 ],
