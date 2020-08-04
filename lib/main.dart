@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rango/screens/auth/AuthScreen.dart';
 import 'package:rango/screens/LoginScreen.dart';
 import 'package:rango/screens/main/TabsScreen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(MyApp());
@@ -17,11 +18,12 @@ class MyApp extends StatelessWidget {
         backgroundColor: Color(0xFFF5F5F5),
         accentColor: Colors.deepOrange[300],
         primaryColor: Color(0xFF8FDDCE),
-        textTheme: TextTheme(
+        textTheme: GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
+            .copyWith(
           headline1: TextStyle(
             fontSize: 35,
             color: Colors.deepOrange[300],
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.bold,
           ),
         ),
         buttonTheme: ButtonTheme.of(context).copyWith(

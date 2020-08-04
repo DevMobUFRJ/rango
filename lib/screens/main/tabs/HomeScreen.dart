@@ -1,6 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class HomeScreen extends StatefulWidget {
   final _username;
@@ -14,27 +13,41 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
+    final String assetName = 'assets/imgs/curva_principal.svg';
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Theme.of(context).backgroundColor,
-      ),
       body: Center(
-        child: Container(
-          color: Theme.of(context).backgroundColor,
-          padding: EdgeInsets.symmetric(horizontal: 18),
-          width: double.infinity,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text('Olá, ${widget._username}!\nBateu a fome?',
-                  textAlign: TextAlign.start,
-                  style: Theme.of(context).textTheme.headline1),
-              SizedBox(height: 10),
-              Text('Sugestões do dia'),
-            ],
-          ),
+        child: Stack(
+          children: <Widget>[
+            Container(
+              child: SvgPicture.asset(
+                assetName,
+                semanticsLabel: 'curvaHome',
+                width: MediaQuery.of(context).size.width,
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 40),
+              padding: EdgeInsets.symmetric(horizontal: 18),
+              width: double.infinity,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Stack(
+                    children: <Widget>[
+                      Text(
+                        'Olá, ${widget._username}!\nBateu a fome?',
+                        textAlign: TextAlign.start,
+                        style: Theme.of(context).textTheme.headline1,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Text('Sugestões do dia'),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

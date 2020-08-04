@@ -71,7 +71,7 @@ class _AuthScreenState extends State<AuthScreen> {
         elevation: 0,
         backgroundColor: Colors.grey[200],
         title: Text(
-          'Cadastro',
+          isLogin ? 'Login' : 'Cadastro',
           style: TextStyle(
             color: Colors.deepOrange[300],
           ),

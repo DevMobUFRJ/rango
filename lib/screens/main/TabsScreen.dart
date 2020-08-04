@@ -65,7 +65,8 @@ class _TabsScreenState extends State<TabsScreen> {
             BottomNavigationBarItem(
                 icon: Icon(Icons.home, size: 40), title: Text('Home')),
             BottomNavigationBarItem(
-                icon: Icon(Icons.search, size: 40), title: Text('Search')),
+                icon: Icon(Icons.local_dining, size: 40),
+                title: Text('Search')),
             BottomNavigationBarItem(
                 icon: Icon(Icons.person, size: 40), title: Text('Account'))
           ]),
