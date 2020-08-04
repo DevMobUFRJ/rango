@@ -4,6 +4,7 @@ import 'package:rango/screens/auth/AuthScreen.dart';
 import 'package:rango/screens/LoginScreen.dart';
 import 'package:rango/screens/main/TabsScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rango/screens/reserva/DetalhesQuentinhaScreen.dart';
 
 void main() {
   runApp(MyApp());
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         AuthScreen.routeName: (ctx) => AuthScreen(),
+        DetalhesQuentinhaScreen.routeName: (ctx) => DetalhesQuentinhaScreen(),
       },
     );
   }
