@@ -23,6 +23,8 @@ sellers:
       location: geopoint
       logo: string (URL para firebase storage)
       picture: string (URL para firebase storage)
+      tags: array
+        items: string (tag que define o vendedor, ex vegetariano, pagamento crédito etc)
       shift: map
         opening: number (ex 900, 9:00 horas)
         closing: number (ex 1800, 18:00 horas)
@@ -48,5 +50,6 @@ sellers:
             name: string
             description: string
             price: number
+            discount: number (valor de desconto que será dado no prato)
             featured: bool (prato em destaque)
             picture: string (URL para firebase storage)
