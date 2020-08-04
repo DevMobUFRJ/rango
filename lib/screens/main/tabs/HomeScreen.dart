@@ -56,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: MediaQuery.of(context).size.height * 0.21,
                     padding: EdgeInsets.symmetric(horizontal: 2),
                     child: ListaHorizontal(
-                      title: 'Sugestões do dia',
+                      title: 'Peça novamente',
                       meals: meals,
                     ),
                   ),
