@@ -62,8 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.03),
                   Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.04),
+                    padding: EdgeInsets.symmetric(horizontal: 0),
                     child: GridVertical(
                       title: 'Promoções da semana',
                       meals: meals,

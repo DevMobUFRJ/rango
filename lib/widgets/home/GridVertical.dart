@@ -19,16 +19,22 @@ class GridVertical extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            title,
-            style: TextStyle(
-              color: Theme.of(context).accentColor,
-              fontSize: 16,
+          Container(
+            padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.04),
+            child: Text(
+              title,
+              style: TextStyle(
+                color: Theme.of(context).accentColor,
+                fontSize: 16,
+              ),
             ),
           ),
           SizedBox(height: MediaQuery.of(context).size.height * 0.01),
           Container(
             height: MediaQuery.of(context).size.height * 0.43,
+            padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.02),
             width: double.infinity,
             child: StaggeredGridView.countBuilder(
               crossAxisCount: 2,
