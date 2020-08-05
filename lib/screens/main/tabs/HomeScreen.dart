@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/dadosMarretados.dart';
 import 'package:rango/models/meals.dart';
 import 'package:rango/widgets/home/GridVertical.dart';
@@ -10,6 +10,7 @@ class HomeScreen extends StatefulWidget {
   final _username;
 
   HomeScreen(this._username);
+  static const String name = 'homeScreen';
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -24,7 +25,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     final String assetName = 'assets/imgs/curva_principal.svg';
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
       body: Center(
         child: Stack(
           children: <Widget>[
@@ -48,7 +48,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Text(
                       'Olá, ${widget._username}!\nBateu a fome?',
                       textAlign: TextAlign.start,
-                      style: Theme.of(context).textTheme.headline1,
+                      style: GoogleFonts.montserratTextTheme(
+                              Theme.of(context).textTheme)
+                          .headline1,
                     ),
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.05),
@@ -56,14 +58,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: MediaQuery.of(context).size.height * 0.21,
                     padding: EdgeInsets.symmetric(horizontal: 2),
                     child: ListaHorizontal(
-                      title: 'Sugestões do dia',
+                      title: 'Peça novamente',
                       meals: meals,
                     ),
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.03),
                   Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.04),
+                    padding: EdgeInsets.symmetric(horizontal: 0),
                     child: GridVertical(
                       title: 'Promoções da semana',
                       meals: meals,

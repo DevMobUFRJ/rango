@@ -73,7 +73,7 @@ class _AuthScreenState extends State<AuthScreen> {
         title: Text(
           isLogin ? 'Login' : 'Cadastro',
           style: TextStyle(
-            color: Colors.deepOrange[300],
+            color: Theme.of(context).accentColor,
           ),
         ),
         centerTitle: true,

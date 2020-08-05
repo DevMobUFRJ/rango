@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/screens/auth/AuthScreen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -37,10 +38,9 @@ class LoginScreen extends StatelessWidget {
                               .pushNamed(AuthScreen.routeName, arguments: true),
                           child: Text(
                             'Login',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.w400),
+                            style: GoogleFonts.montserratTextTheme(
+                                    Theme.of(context).textTheme)
+                                .button,
                           ),
                         ),
                       ),
@@ -61,10 +61,9 @@ class LoginScreen extends StatelessWidget {
                               arguments: false),
                           child: Text(
                             'Cadastro',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.w400),
+                            style: GoogleFonts.montserratTextTheme(
+                                    Theme.of(context).textTheme)
+                                .button,
                           ),
                         ),
                       ),
