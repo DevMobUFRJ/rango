@@ -58,7 +58,7 @@ class _TabsScreenState extends State<TabsScreen> {
           backgroundColor: Theme.of(context).backgroundColor,
           selectedItemColor: Color(0xFF609B90),
           unselectedItemColor: Theme.of(context).primaryColor,
-          elevation: 0,
+          elevation: 20,
           showSelectedLabels: false,
           showUnselectedLabels: false,
           items: [

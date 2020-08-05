@@ -24,7 +24,15 @@ class MyApp extends StatelessWidget {
           headline1: TextStyle(
             fontSize: 35,
             color: Colors.deepOrange[300],
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
+          ),
+          headline2: TextStyle(
+            fontSize: 20,
+            color: Color(0xFFF9B152),
+          ),
+          button: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
           ),
         ),
         buttonTheme: ButtonTheme.of(context).copyWith(
