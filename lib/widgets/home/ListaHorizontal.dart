@@ -36,9 +36,9 @@ class ListaHorizontal extends StatelessWidget {
             itemCount: meals.length,
             scrollDirection: Axis.horizontal,
             itemBuilder: (ctx, index) => GestureDetector(
-              onTap: () => pushNewScreenWithRouteSettings(context,
-                  settings: RouteSettings(arguments: meals[index]),
-                  screen: DetalhesQuentinhaScreen(),
+              onTap: () => pushNewScreen(context,
+                  screen:
+                      DetalhesQuentinhaScreen(marmita: meals[index], tagM: 1),
                   withNavBar: true,
                   pageTransitionAnimation: PageTransitionAnimation.cupertino),
               child: Card(
@@ -48,12 +48,15 @@ class ListaHorizontal extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8)),
                 child: Column(
                   children: <Widget>[
-                    FadeInImage.assetNetwork(
-                      placeholder: 'assets/imgs/quentinha_placeholder.png',
-                      image: meals[index].picture,
-                      fit: BoxFit.cover,
-                      height: MediaQuery.of(context).size.height * 0.10,
-                      width: MediaQuery.of(context).size.width * 0.38,
+                    Hero(
+                      tag: meals[index].hashCode,
+                      child: FadeInImage.assetNetwork(
+                        placeholder: 'assets/imgs/quentinha_placeholder.png',
+                        image: meals[index].picture,
+                        fit: BoxFit.cover,
+                        height: MediaQuery.of(context).size.height * 0.10,
+                        width: MediaQuery.of(context).size.width * 0.38,
+                      ),
                     ),
                     Container(
                       child: Column(

@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rango/screens/auth/AuthScreen.dart';
 import 'package:rango/screens/LoginScreen.dart';
 import 'package:rango/screens/main/NewTabsScreen.dart';
-import 'package:rango/screens/main/TabsScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/screens/reserva/DetalhesQuentinhaScreen.dart';
 

@@ -3,10 +3,17 @@ import 'package:rango/models/meals.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class DetalhesQuentinhaScreen extends StatelessWidget {
+  final Meal marmita;
+  final int tagM;
+
+  DetalhesQuentinhaScreen({
+    this.marmita,
+    this.tagM,
+  });
+
   static const routeName = '/detalhes-reserva-quentinha';
   @override
   Widget build(BuildContext context) {
-    final Meal marmita = ModalRoute.of(context).settings.arguments;
     String price = 'R\$${marmita.price.toString().replaceAll('.', ',')}';
     if (price.length == 6 && price.contains(',')) price = '${price}0';
     return Scaffold(
@@ -38,10 +45,13 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                       maxHeight: MediaQuery.of(context).size.height * 0.4,
                       maxWidth: MediaQuery.of(context).size.width * 0.8,
                     ),
-                    child: FadeInImage.assetNetwork(
-                      placeholder: 'assets/imgs/quentinha_placeholder.png',
-                      image: marmita.picture,
-                      fit: BoxFit.cover,
+                    child: Hero(
+                      tag: marmita.hashCode * tagM,
+                      child: FadeInImage.assetNetwork(
+                        placeholder: 'assets/imgs/quentinha_placeholder.png',
+                        image: marmita.picture,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
