@@ -11,6 +11,8 @@ final List<Seller> sellers = [
     contact: Contact(name: "Maria", phone: "21994087257"),
     currentMeals: [
       Meal(
+        sellerId: "1",
+        sellerName: "Quentinha Legal",
         name: "Estrogonofe de frango",
         description:
             "Estrogonofe de frango muito gostoso, preparado no dia anterior com ingredientes frescos.",
@@ -21,6 +23,8 @@ final List<Seller> sellers = [
     ],
     meals: [
       Meal(
+        sellerId: "1",
+        sellerName: "Quentinha Legal",
         name: "Estrogonofe de frango",
         description:
             "Estrogonofe de frango muito gostoso, preparado no dia anterior com ingredientes frescos.",
@@ -29,6 +33,8 @@ final List<Seller> sellers = [
             "https://img.itdg.com.br/tdg/images/recipes/000/174/031/173715/173715_original.jpg?mode=crop&width=710&height=400",
       ),
       Meal(
+        sellerId: "1",
+        sellerName: "Quentinha Legal",
         description: "Macarrão com farofa, pra quem gosta.",
         name: "Macarrão",
         price: 11,
@@ -58,6 +64,8 @@ final List<Seller> sellers = [
     contact: Contact(name: "Maria", phone: "21994087257"),
     currentMeals: [
       Meal(
+        sellerId: "2",
+        sellerName: "Quentinha Delivery",
         name: "Lasanha",
         description: "Lasanha bolonhesa com bastante molho e massa",
         price: 20,
@@ -67,6 +75,8 @@ final List<Seller> sellers = [
     ],
     meals: [
       Meal(
+        sellerId: "2",
+        sellerName: "Quentinha Delivery",
         name: "Lasanha",
         description: "Lasanha bolonhesa com bastante molho e massa",
         price: 20,
@@ -74,6 +84,8 @@ final List<Seller> sellers = [
             "https://i.pinimg.com/originals/0b/3a/b4/0b3ab44ad459c68cd503d6e9da48b50e.png",
       ),
       Meal(
+        sellerId: "2",
+        sellerName: "Quentinha Delivery",
         description: "Macarrão com farofa, pra quem gosta.",
         name: "Macarrão",
         price: 11,
@@ -103,6 +115,8 @@ final List<Seller> sellers = [
     contact: Contact(name: "Maria", phone: "21994087257"),
     currentMeals: [
       Meal(
+        sellerId: "2",
+        sellerName: "Top quentinhas",
         description: "Macarrão com farofa, pra quem gosta.",
         name: "Macarrão",
         price: 11,
@@ -111,6 +125,8 @@ final List<Seller> sellers = [
     ],
     meals: [
       Meal(
+        sellerId: "2",
+        sellerName: "Top quentinhas",
         description: "Macarrão com farofa, pra quem gosta.",
         name: "Macarrão",
         price: 11,

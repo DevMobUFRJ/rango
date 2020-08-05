@@ -6,6 +6,8 @@ class Meal {
   final String name;
   final String picture;
   final double price;
+  final String sellerName;
+  final String sellerId;
 
   Meal({
     @required this.description,
@@ -13,5 +15,7 @@ class Meal {
     @required this.name,
     this.picture,
     @required this.price,
+    @required this.sellerId,
+    @required this.sellerName,
   });
 }

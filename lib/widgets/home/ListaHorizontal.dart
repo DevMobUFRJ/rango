@@ -29,7 +29,7 @@ class ListaHorizontal extends StatelessWidget {
           ),
         ),
         Container(
-          height: MediaQuery.of(context).size.height * 0.18,
+          height: MediaQuery.of(context).size.height * 0.16,
           width: double.infinity,
           child: ListView.builder(
             itemCount: meals.length,
