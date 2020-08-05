@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rango/screens/auth/AuthScreen.dart';
 import 'package:rango/screens/LoginScreen.dart';
+import 'package:rango/screens/main/NewTabsScreen.dart';
 import 'package:rango/screens/main/TabsScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/screens/reserva/DetalhesQuentinhaScreen.dart';
@@ -48,7 +49,7 @@ class MyApp extends StatelessWidget {
         stream: FirebaseAuth.instance.onAuthStateChanged,
         builder: (ctx, userSnapshot) {
           if (userSnapshot.hasData) {
-            return TabsScreen();
+            return NewTabsScreen();
           }
           return LoginScreen();
         },

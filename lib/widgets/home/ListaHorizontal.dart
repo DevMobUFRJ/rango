@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rango/models/meals.dart';
 import 'package:flutter/foundation.dart';
 import 'package:rango/screens/reserva/DetalhesQuentinhaScreen.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class ListaHorizontal extends StatelessWidget {
   final String title;
@@ -35,9 +36,11 @@ class ListaHorizontal extends StatelessWidget {
             itemCount: meals.length,
             scrollDirection: Axis.horizontal,
             itemBuilder: (ctx, index) => GestureDetector(
-              onTap: () => Navigator.of(context).pushNamed(
-                  DetalhesQuentinhaScreen.routeName,
-                  arguments: meals[index]),
+              onTap: () => pushNewScreenWithRouteSettings(context,
+                  settings: RouteSettings(arguments: meals[index]),
+                  screen: DetalhesQuentinhaScreen(),
+                  withNavBar: true,
+                  pageTransitionAnimation: PageTransitionAnimation.cupertino),
               child: Card(
                 semanticContainer: true,
                 clipBehavior: Clip.antiAliasWithSaveLayer,
