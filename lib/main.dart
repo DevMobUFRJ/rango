@@ -29,6 +29,9 @@ class MyApp extends StatelessWidget {
         ),
         buttonTheme: ButtonTheme.of(context).copyWith(
           buttonColor: Color.fromRGBO(252, 116, 79, 1),
+          textTheme: ButtonTextTheme.accent,
+          colorScheme:
+              Theme.of(context).colorScheme.copyWith(secondary: Colors.white),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         ),
