@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:rango/screens/builders/HomeScreenBuilder.dart';
 import 'package:rango/screens/main/tabs/HomeScreen.dart';
 import 'package:rango/screens/main/tabs/ProfileScreen.dart';
 import 'package:rango/screens/main/tabs/SearchScreen.dart';
@@ -28,7 +27,6 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
   }
 
   String _name = "";
-  var _loading = true;
 
   void _selectPage(int index) {
     setState(() {
@@ -36,22 +34,19 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
     });
   }
 
-  void _getUser() async {
+  Future<String> _getUser() async {
     final user = await FirebaseAuth.instance.currentUser();
     final userData =
         await Firestore.instance.collection("clients").document(user.uid).get();
     setState(() {
       _pages = [
-        {
-          'page':
-              HomeScreenBuilder(userData.data['name'].toString().split(" ")[0])
-        },
+        {'page': HomeScreen(userData.data['name'].toString().split(" ")[0])},
         {'page': SearchScreen()},
         {'page': ProfileScreen()},
       ];
       _name = userData.data['name'].toString().split(" ")[0];
-      _loading = false;
     });
+    return userData.data['name'].toString().split(" ")[0];
   }
 
   @override
@@ -68,10 +63,8 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
       resizeToAvoidBottomInset: true,
       stateManagement: true,
       hideNavigationBarWhenKeyboardShows: true,
-      //decoration: ,
       popAllScreensOnTapOfSelectedTab: true,
       itemAnimationProperties: ItemAnimationProperties(
-        // Navigation Bar's items animation properties.
         duration: Duration(milliseconds: 200),
         curve: Curves.ease,
       ),
@@ -81,7 +74,7 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
         duration: Duration(milliseconds: 200),
       ),
       screens: <Widget>[
-        HomeScreen('Gabriel'),
+        HomeScreen(_name),
         SearchScreen(),
         ProfileScreen(),
       ],
