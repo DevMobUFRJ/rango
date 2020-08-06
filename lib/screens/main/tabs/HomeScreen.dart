@@ -25,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     final String assetName = 'assets/imgs/curva_principal.svg';
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       body: Center(
         child: Stack(
           children: <Widget>[
