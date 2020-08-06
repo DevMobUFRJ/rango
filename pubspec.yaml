@@ -52,6 +52,7 @@ flutter:
     # To add assets to your application, add an assets section, like this:
     assets:
         - assets/imgs/curva_home.svg
+        - assets/imgs/curva2_home.svg
         - assets/imgs/curva_principal.svg
         - assets/imgs/quentinha_placeholder.png
     #   - images/a_dot_ham.jpeg

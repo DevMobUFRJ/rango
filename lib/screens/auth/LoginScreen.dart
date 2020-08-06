@@ -7,6 +7,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String assetName = 'assets/imgs/curva_home.svg';
+    final String asset2Name = 'assets/imgs/curva2_home.svg';
     return Scaffold(
       backgroundColor: Color.fromRGBO(190, 235, 227, 1),
       body: Center(
@@ -72,11 +73,24 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
             ),
-            Container(
-              child: SvgPicture.asset(
-                assetName,
-                semanticsLabel: 'curvaHome',
-                width: MediaQuery.of(context).size.width,
+            Align(
+              alignment: Alignment.topLeft,
+              child: Container(
+                child: SvgPicture.asset(
+                  assetName,
+                  semanticsLabel: 'curvaHome',
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Container(
+                child: SvgPicture.asset(
+                  asset2Name,
+                  semanticsLabel: 'curva2Home',
+                  width: MediaQuery.of(context).size.width,
+                ),
               ),
             ),
           ],
