@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:rango/widgets/pickers/UserImagePicker.dart';
 
 class AuthForm extends StatefulWidget {
   final void Function({
     String email,
     String name,
+    File image,
     String password,
     BuildContext ctx,
   }) submitForm;
@@ -23,6 +27,10 @@ class _AuthFormState extends State<AuthForm> {
   String _email = '';
   String _password = '';
   bool _showPassword = false;
+  bool _showConfirmPassword = false;
+  File _userImageFile;
+
+  void _pickedImage(File image) => _userImageFile = image;
 
   void _submit() {
     final isValid = _formKey.currentState.validate();
@@ -34,6 +42,7 @@ class _AuthFormState extends State<AuthForm> {
         name: _name.trim(),
         password: _password.trim(),
         ctx: context,
+        image: _userImageFile,
       );
     }
   }
@@ -53,29 +62,7 @@ class _AuthFormState extends State<AuthForm> {
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    if (!widget._isLogin)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(
-                            Icons.add_photo_alternate,
-                            color: Colors.deepOrange[300],
-                            size: 70,
-                          ),
-                          FlatButton(
-                            onPressed: () {},
-                            child: Text(
-                              'Adicionar foto',
-                              style: TextStyle(
-                                decoration: TextDecoration.underline,
-                                color: Colors.green[500],
-                                fontSize: 20,
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
+                    if (!widget._isLogin) UserImagePicker(_pickedImage),
                     if (!widget._isLogin) SizedBox(height: 30),
                     Align(
                       alignment: Alignment.centerLeft,
@@ -221,6 +208,7 @@ class _AuthFormState extends State<AuthForm> {
                         ),
                         elevation: 5,
                         child: TextFormField(
+                          textAlign: TextAlign.start,
                           key: ValueKey('confirmPassword'),
                           validator: (value) {
                             if (value.isEmpty ||
@@ -230,10 +218,18 @@ class _AuthFormState extends State<AuthForm> {
                             }
                             return null;
                           },
-                          obscureText: true,
+                          obscureText: !_showConfirmPassword,
                           decoration: InputDecoration(
+                              suffixIcon: IconButton(
+                                icon: Icon(!_showConfirmPassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility),
+                                onPressed: () => setState(() =>
+                                    _showConfirmPassword =
+                                        !_showConfirmPassword),
+                              ),
                               border: InputBorder.none,
-                              contentPadding: EdgeInsets.only(left: 15)),
+                              contentPadding: EdgeInsets.all(15)),
                         ),
                       ),
                     SizedBox(height: 50),

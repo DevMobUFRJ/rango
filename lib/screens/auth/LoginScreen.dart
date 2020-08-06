@@ -15,20 +15,25 @@ class LoginScreen extends StatelessWidget {
           children: <Widget>[
             Padding(
               padding: EdgeInsets.all(8),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    flex: 1,
+                    child: Text(
                       "RANGO",
                       style: TextStyle(color: Colors.white, fontSize: 30.0),
                     ),
-                    SizedBox(height: 80),
-                    Padding(
+                  ),
+                  Flexible(
+                    fit: FlexFit.loose,
+                    flex: 3,
+                    child: Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 15, vertical: 0),
-                      child: SizedBox(
+                      child: Container(
+                        margin: EdgeInsets.only(bottom: 20),
                         width: double.infinity,
                         child: RaisedButton(
                           padding: EdgeInsets.symmetric(vertical: 12),
@@ -46,11 +51,14 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 50),
-                    Padding(
+                  ),
+                  Flexible(
+                    flex: 3,
+                    child: Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 15, vertical: 0),
-                      child: SizedBox(
+                      child: Container(
+                        margin: EdgeInsets.symmetric(vertical: 20),
                         width: double.infinity,
                         child: RaisedButton(
                           padding: EdgeInsets.symmetric(vertical: 12),
@@ -69,8 +77,8 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
             Align(

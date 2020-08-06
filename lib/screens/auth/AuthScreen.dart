@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:rango/widgets/auth/AuthForm.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,6 +22,7 @@ class _AuthScreenState extends State<AuthScreen> {
   void _submitAuthForm({
     String email,
     String name,
+    File image,
     String password,
     BuildContext ctx,
   }) async {
@@ -33,12 +37,19 @@ class _AuthScreenState extends State<AuthScreen> {
         setState(() => _isLoading = true);
         authResult = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
+        final ref = FirebaseStorage.instance
+            .ref()
+            .child('user_image')
+            .child(authResult.user.uid + '.jpg');
+        await ref.putFile(image).onComplete;
+        final url = await ref.getDownloadURL();
         await Firestore.instance
             .collection('clients')
             .document(authResult.user.uid)
             .setData({
           'name': name,
           'email': email,
+          'picture': url,
         });
       }
       setState(() => _isLoading = false);
