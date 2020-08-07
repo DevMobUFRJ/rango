@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rango/models/client.dart';
 import 'package:rango/screens/SplashScreen.dart';
 import 'package:rango/screens/main/tabs/HomeScreen.dart';
 import 'package:rango/screens/main/tabs/ProfileScreen.dart';
@@ -13,15 +14,13 @@ class NewTabsScreen extends StatefulWidget {
 }
 
 class _NewTabsScreenState extends State<NewTabsScreen> {
-  List<Map<String, Object>> _pages;
-
   @override
   void initState() {
     _getUser();
     super.initState();
   }
 
-  String _name = "";
+  Client client;
   bool _loading = true;
 
   Future<void> _getUser() async {
@@ -29,7 +28,8 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
     final userData =
         await Firestore.instance.collection("clients").document(user.uid).get();
     setState(() {
-      _name = userData.data['name'].toString().split(" ")[0];
+      client = new Client(
+          email: null, name: userData.data['name'].toString().split(" ")[0]);
       _loading = false;
     });
   }
@@ -43,7 +43,7 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
         ? SplashScreen()
         : PersistentTabView(
             controller: _controller,
-            navBarStyle: NavBarStyle.style2,
+            navBarStyle: NavBarStyle.style6,
             confineInSafeArea: true,
             bottomScreenMargin: 0,
             backgroundColor: Theme.of(context).backgroundColor,
@@ -62,9 +62,9 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
               duration: Duration(milliseconds: 200),
             ),
             screens: <Widget>[
-              HomeScreen(_name),
-              SearchScreen(),
-              ProfileScreen(),
+              HomeScreen(client),
+              SearchScreen(client),
+              ProfileScreen(client),
             ],
             items: [
               PersistentBottomNavBarItem(

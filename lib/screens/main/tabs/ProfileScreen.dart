@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:rango/models/client.dart';
 
 class ProfileScreen extends StatefulWidget {
+  final Client usuario;
+
+  ProfileScreen(this.usuario);
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
@@ -20,7 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       backgroundColor: Theme.of(context).backgroundColor,
       body: Center(
-        child: Text('Perfil do usuário'),
+        child: Text(widget.usuario.name),
       ),
     );
   }
