@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/dadosMarretados.dart';
+import 'package:rango/models/client.dart';
 import 'package:rango/models/meals.dart';
 import 'package:rango/widgets/home/GridVertical.dart';
 import 'package:rango/widgets/home/ListaHorizontal.dart';
 
 class HomeScreen extends StatefulWidget {
-  final _username;
+  final Client usuario;
 
-  HomeScreen(this._username);
+  HomeScreen(this.usuario);
   static const String name = 'homeScreen';
 
   @override
@@ -47,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: EdgeInsets.symmetric(
                         horizontal: MediaQuery.of(context).size.width * 0.04),
                     child: Text(
-                      'Olá, ${widget._username}!\nBateu a fome?',
+                      'Olá, ${widget.usuario.name}!\nBateu a fome?',
                       textAlign: TextAlign.start,
                       style: GoogleFonts.montserratTextTheme(
                               Theme.of(context).textTheme)

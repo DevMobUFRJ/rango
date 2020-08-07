@@ -61,14 +61,27 @@ class _UserImagePickerState extends State<UserImagePicker> {
                   borderRadius: BorderRadius.circular(15)),
             ));
     final picker = ImagePicker();
-    final pickedImage = await picker.getImage(
-      source: pickImgFromGallery ? ImageSource.gallery : ImageSource.camera,
-      imageQuality: 50,
-      maxWidth: 150,
-    );
-    final pickedImageFile = File(pickedImage.path);
-    widget._imagePickFn(pickedImageFile);
-    setState(() => _pickedImage = pickedImageFile);
+    if (pickImgFromGallery != null) {
+      try {
+        final pickedImage = await picker.getImage(
+          source: pickImgFromGallery ? ImageSource.gallery : ImageSource.camera,
+          imageQuality: 50,
+          maxWidth: 150,
+        );
+        if (pickedImage != null) {
+          final pickedImageFile = File(pickedImage.path);
+          widget._imagePickFn(pickedImageFile);
+          setState(() => _pickedImage = pickedImageFile);
+        }
+      } catch (error) {
+        Scaffold.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Text('Ocorreu um erro ao escolher a foto, tente novmanete'),
+          ),
+        );
+      }
+    }
   }
 
   @override

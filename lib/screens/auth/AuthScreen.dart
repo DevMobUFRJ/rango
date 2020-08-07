@@ -37,19 +37,22 @@ class _AuthScreenState extends State<AuthScreen> {
         setState(() => _isLoading = true);
         authResult = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
-        final ref = FirebaseStorage.instance
-            .ref()
-            .child('user_image')
-            .child(authResult.user.uid + '.jpg');
-        await ref.putFile(image).onComplete;
-        final url = await ref.getDownloadURL();
+        String url;
+        if (image != null) {
+          final ref = FirebaseStorage.instance
+              .ref()
+              .child('user_image')
+              .child(authResult.user.uid + '.jpg');
+          await ref.putFile(image).onComplete;
+          final url = await ref.getDownloadURL();
+        }
         await Firestore.instance
             .collection('clients')
             .document(authResult.user.uid)
             .setData({
           'name': name,
           'email': email,
-          'picture': url,
+          'picture': url != null ? url : null,
         });
       }
       setState(() => _isLoading = false);
