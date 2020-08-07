@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:rango/widgets/auth/CustomTextFormField.dart';
 import 'package:rango/widgets/auth/ErrorMessageText.dart';
 import 'package:rango/widgets/pickers/UserImagePicker.dart';
 
@@ -23,6 +24,8 @@ class AuthForm extends StatefulWidget {
 
 class _AuthFormState extends State<AuthForm> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _pass = TextEditingController();
+  final TextEditingController _confirmPass = TextEditingController();
 
   String _name = '';
   String _email = '';
@@ -73,205 +76,92 @@ class _AuthFormState extends State<AuthForm> {
                   children: <Widget>[
                     if (!widget._isLogin) UserImagePicker(_pickedImage),
                     if (!widget._isLogin) SizedBox(height: 30),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 10, bottom: 10),
-                        child: Text(
-                          'Email:',
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.deepOrange[300],
-                          ),
-                        ),
-                      ),
+                    CustomTextFormField(
+                      labelText: 'Email',
+                      key: ValueKey('email'),
+                      validator: (value) {
+                        if (value.isEmpty || !value.contains('@')) {
+                          setState(() {
+                            _emailErrorMessage = 'Coloque um email válido';
+                          });
+                        } else {
+                          setState(() {
+                            _emailErrorMessage = null;
+                          });
+                        }
+                        return null;
+                      },
+                      onSaved: (value) => _email = value,
+                      keyboardType: TextInputType.emailAddress,
+                      onFieldSubmitted: (_) =>
+                          FocusScope.of(context).nextFocus(),
+                      textInputAction: TextInputAction.next,
+                      errorText: _emailErrorMessage,
                     ),
-                    Material(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      elevation: 5,
-                      child: TextFormField(
-                        textInputAction: TextInputAction.next,
-                        onFieldSubmitted: (_) =>
-                            FocusScope.of(context).nextFocus(),
-                        key: ValueKey('email'),
+                    if (!widget._isLogin) SizedBox(height: 30),
+                    if (!widget._isLogin)
+                      CustomTextFormField(
+                        labelText: 'Nome',
+                        errorText: _nameErrorMessage,
+                        key: ValueKey('name'),
+                        onSaved: (value) => _name = value,
                         validator: (value) {
-                          if (value.isEmpty || !value.contains('@')) {
+                          if (value.isEmpty) {
                             setState(() {
-                              _emailErrorMessage = 'Coloque um email válido';
+                              _nameErrorMessage = 'Digite seu nome';
                             });
                           } else {
                             setState(() {
-                              _emailErrorMessage = null;
+                              _nameErrorMessage = null;
                             });
                           }
                           return null;
                         },
-                        onSaved: (value) => _email = value,
-                        decoration: InputDecoration(
-                            errorStyle: TextStyle(fontSize: 16),
-                            errorText: null,
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.only(left: 15)),
-                        keyboardType: TextInputType.emailAddress,
+                        onFieldSubmitted: (_) =>
+                            FocusScope.of(context).nextFocus(),
+                        textInputAction: TextInputAction.next,
                       ),
-                    ),
-                    if (_emailErrorMessage != null)
-                      ErrorMessageText(_emailErrorMessage),
-                    if (!widget._isLogin) SizedBox(height: 30),
-                    if (!widget._isLogin)
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10, bottom: 10),
-                          child: Text(
-                            'Nome:',
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.deepOrange[300],
-                            ),
-                          ),
-                        ),
-                      ),
-                    if (!widget._isLogin)
-                      Material(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        elevation: 5,
-                        child: TextFormField(
-                          textInputAction: TextInputAction.next,
-                          onFieldSubmitted: (_) =>
-                              FocusScope.of(context).nextFocus(),
-                          key: ValueKey('name'),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.only(left: 15),
-                            errorStyle: TextStyle(fontSize: 16),
-                          ),
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              setState(() {
-                                _nameErrorMessage = 'Digite seu nome';
-                              });
-                            } else {
-                              setState(() {
-                                _nameErrorMessage = null;
-                              });
-                            }
-                            return null;
-                          },
-                          onSaved: (value) => _name = value,
-                        ),
-                      ),
-                    if (_nameErrorMessage != null && !widget._isLogin)
-                      ErrorMessageText(_nameErrorMessage),
                     SizedBox(height: 30),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 10, bottom: 10),
-                        child: Text(
-                          'Senha:',
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.deepOrange[300],
-                          ),
-                        ),
-                      ),
+                    CustomTextFormField(
+                      labelText: 'Senha:',
+                      key: ValueKey('password'),
+                      controller: _pass,
+                      validator: (value) {
+                        if (value.isEmpty || value.length < 7) {
+                          setState(() => _passwordErrorMessage =
+                              'Senha precisa ter 7 caracteres');
+                        } else {
+                          setState(() => _passwordErrorMessage = null);
+                        }
+                        return null;
+                      },
+                      onSaved: (value) => {setState(() => _password = value)},
+                      errorText: _passwordErrorMessage,
+                      isPassword: true,
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (_) =>
+                          FocusScope.of(context).nextFocus(),
                     ),
-                    Material(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      elevation: 5,
-                      child: TextFormField(
-                        textAlign: TextAlign.start,
-                        textInputAction: TextInputAction.next,
-                        onFieldSubmitted: (_) =>
-                            FocusScope.of(context).nextFocus(),
-                        key: ValueKey('password'),
-                        onSaved: (value) => _password = value,
-                        onChanged: (value) => setState(() => _password = value),
+                    if (!widget._isLogin) SizedBox(height: 30),
+                    if (!widget._isLogin)
+                      CustomTextFormField(
+                        labelText: 'Confirmar Senha',
+                        controller: _confirmPass,
+                        key: ValueKey('confirmPassword'),
                         validator: (value) {
-                          if (value.isEmpty || value.length < 7) {
-                            setState(() => _passwordErrorMessage =
-                                'Senha precisa ter 7 caracteres');
+                          if (value.isEmpty ||
+                              value.length < 7 ||
+                              value != _pass.text) {
+                            setState(() => _confirmPasswordErrorMessage =
+                                'Senhas não conferem');
                           } else {
-                            setState(() => _passwordErrorMessage = null);
+                            setState(() => _confirmPasswordErrorMessage = null);
                           }
                           return null;
                         },
-                        obscureText: !_showPassword,
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.all(15),
-                          suffixIcon: IconButton(
-                            icon: Icon(!_showPassword
-                                ? Icons.visibility_off
-                                : Icons.visibility),
-                            onPressed: () =>
-                                setState(() => _showPassword = !_showPassword),
-                          ),
-                          border: InputBorder.none,
-                        ),
+                        errorText: _confirmPasswordErrorMessage,
+                        isPassword: true,
                       ),
-                    ),
-                    if (_passwordErrorMessage != null)
-                      ErrorMessageText(_passwordErrorMessage),
-                    if (!widget._isLogin) SizedBox(height: 30),
-                    if (!widget._isLogin)
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10, bottom: 10),
-                          child: Text(
-                            'Confirmar Senha:',
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.deepOrange[300],
-                            ),
-                          ),
-                        ),
-                      ),
-                    if (!widget._isLogin)
-                      Material(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        elevation: 5,
-                        child: TextFormField(
-                          textAlign: TextAlign.start,
-                          key: ValueKey('confirmPassword'),
-                          validator: (value) {
-                            if (value.isEmpty ||
-                                value.length < 7 ||
-                                value != _password) {
-                              setState(() => _confirmPasswordErrorMessage =
-                                  'Senhas não conferem');
-                            } else {
-                              setState(
-                                  () => _confirmPasswordErrorMessage = null);
-                            }
-                            return null;
-                          },
-                          obscureText: !_showConfirmPassword,
-                          decoration: InputDecoration(
-                              suffixIcon: IconButton(
-                                icon: Icon(!_showConfirmPassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility),
-                                onPressed: () => setState(() =>
-                                    _showConfirmPassword =
-                                        !_showConfirmPassword),
-                              ),
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.all(15)),
-                        ),
-                      ),
-                    if (_confirmPasswordErrorMessage != null &&
-                        !widget._isLogin)
-                      ErrorMessageText(_confirmPasswordErrorMessage),
                     SizedBox(height: 50),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 60),
