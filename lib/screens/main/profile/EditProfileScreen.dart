@@ -54,7 +54,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             .collection('clients')
             .document(firebaseUser.uid)
             .updateData({
-          'picture': _userImage,
           'phone': _phone,
         });
         setState(() => _loading = false);
