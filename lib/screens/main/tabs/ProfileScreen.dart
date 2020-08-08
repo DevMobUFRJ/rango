@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/dadosMarretados.dart';
 import 'package:rango/models/client.dart';
+import 'package:rango/screens/main/profile/EditProfileScreen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Client usuario;
@@ -79,10 +81,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    Icon(
-                      Icons.edit,
-                      color: yellow,
-                      size: 26,
+                    GestureDetector(
+                      onTap: () => pushNewScreen(
+                        context,
+                        screen: EditProfileScreen(widget.usuario),
+                        withNavBar: true,
+                        pageTransitionAnimation:
+                            PageTransitionAnimation.cupertino,
+                      ),
+                      child: Icon(
+                        Icons.edit,
+                        color: yellow,
+                        size: 26,
+                      ),
                     ),
                     Icon(
                       Icons.settings,
