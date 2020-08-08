@@ -1,11 +1,10 @@
 import 'dart:io';
-
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:rango/widgets/auth/AuthForm.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 
 class AuthScreen extends StatefulWidget {
   static const routeName = '/auth-screen';
@@ -44,7 +43,7 @@ class _AuthScreenState extends State<AuthScreen> {
               .child('user_image')
               .child(authResult.user.uid + '.jpg');
           await ref.putFile(image).onComplete;
-          final url = await ref.getDownloadURL();
+          url = await ref.getDownloadURL();
         }
         await Firestore.instance
             .collection('clients')

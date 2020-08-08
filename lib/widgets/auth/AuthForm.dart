@@ -1,8 +1,6 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:rango/widgets/auth/CustomTextFormField.dart';
-import 'package:rango/widgets/auth/ErrorMessageText.dart';
 import 'package:rango/widgets/pickers/UserImagePicker.dart';
 
 class AuthForm extends StatefulWidget {
@@ -30,8 +28,6 @@ class _AuthFormState extends State<AuthForm> {
   String _name = '';
   String _email = '';
   String _password = '';
-  bool _showPassword = false;
-  bool _showConfirmPassword = false;
   File _userImageFile;
   String _emailErrorMessage;
   String _nameErrorMessage;
@@ -77,7 +73,7 @@ class _AuthFormState extends State<AuthForm> {
                     if (!widget._isLogin) UserImagePicker(_pickedImage),
                     if (!widget._isLogin) SizedBox(height: 30),
                     CustomTextFormField(
-                      labelText: 'Email',
+                      labelText: 'Email:',
                       key: ValueKey('email'),
                       validator: (value) {
                         if (value.isEmpty || !value.contains('@')) {
@@ -129,7 +125,7 @@ class _AuthFormState extends State<AuthForm> {
                       validator: (value) {
                         if (value.isEmpty || value.length < 7) {
                           setState(() => _passwordErrorMessage =
-                              'Senha precisa ter 7 caracteres');
+                              'Senha precisa ter no mínimo 7 caracteres');
                         } else {
                           setState(() => _passwordErrorMessage = null);
                         }
@@ -145,7 +141,7 @@ class _AuthFormState extends State<AuthForm> {
                     if (!widget._isLogin) SizedBox(height: 30),
                     if (!widget._isLogin)
                       CustomTextFormField(
-                        labelText: 'Confirmar Senha',
+                        labelText: 'Confirmar Senha:',
                         controller: _confirmPass,
                         key: ValueKey('confirmPassword'),
                         validator: (value) {
