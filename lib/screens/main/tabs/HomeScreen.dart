@@ -46,7 +46,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: <Widget>[
                   Container(
                     padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.04),
+                        horizontal: MediaQuery.of(context).size.width * 0.04,
+                        vertical: 10),
                     child: Text(
                       'Olá, ${widget.usuario.name.split(" ")[0]}!\nBateu a fome?',
                       textAlign: TextAlign.start,
