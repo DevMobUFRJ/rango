@@ -4,6 +4,7 @@ import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/dadosMarretados.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/screens/main/profile/EditProfileScreen.dart';
+import 'package:rango/screens/main/profile/ProfileSettings.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Client usuario;
@@ -95,10 +96,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         size: 26,
                       ),
                     ),
-                    Icon(
-                      Icons.settings,
-                      color: yellow,
-                      size: 26,
+                    GestureDetector(
+                      onTap: () => pushNewScreen(
+                        context,
+                        screen: ProfileSettings(),
+                        withNavBar: true,
+                        pageTransitionAnimation:
+                            PageTransitionAnimation.cupertino,
+                      ),
+                      child: Icon(
+                        Icons.settings,
+                        color: yellow,
+                        size: 26,
+                      ),
                     ),
                   ],
                 ),
