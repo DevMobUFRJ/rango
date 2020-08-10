@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/client.dart';
@@ -24,6 +25,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String _confirmPasswordErrorMessage;
   TextEditingController _pass = TextEditingController();
   TextEditingController _confirmPass = TextEditingController();
+  TextEditingController _tel;
 
   String _phone;
   String _password;
@@ -38,11 +40,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void initState() {
     setState(() {
       widget.user.phone != null ? _phone = widget.user.phone : null;
+      _tel = new TextEditingController(text: widget.user.phone);
     });
     super.initState();
   }
 
-  Future<void> _submit() async {
+  void _submit(BuildContext context) async {
     final isValid = _formKey.currentState.validate();
     FocusScope.of(context).unfocus();
     if (isValid &&
@@ -52,17 +55,39 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _formKey.currentState.save();
       setState(() => _loading = true);
       try {
-        final firebaseUser = await FirebaseAuth.instance.currentUser();
-        await Firestore.instance
-            .collection('clients')
-            .document(firebaseUser.uid)
-            .updateData({
-          'phone': _phone,
-        });
+        Map<String, String> dataToUpdate = {};
+        if (_phone != null && _phone != widget.user.phone) {
+          dataToUpdate['phone'] = _phone;
+        }
+        if (_userImageFile != null) {
+          final user = await FirebaseAuth.instance.currentUser();
+          final ref = FirebaseStorage.instance
+              .ref()
+              .child('user_image')
+              .child(user.uid + '.jpg');
+          await ref.putFile(_userImageFile).onComplete;
+          final url = await ref.getDownloadURL();
+          dataToUpdate['picture'] = url;
+        }
+        if (dataToUpdate.length > 0) {
+          final firebaseUser = await FirebaseAuth.instance.currentUser();
+          await Firestore.instance
+              .collection('clients')
+              .document(firebaseUser.uid)
+              .updateData({...dataToUpdate});
+        }
         setState(() => _loading = false);
         Navigator.of(context).pop();
         //TODO: trocar senha e tratar erros
-      } catch (error) {}
+      } catch (error) {
+        Scaffold.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error.toString()),
+          ),
+        );
+        setState(() => _loading = false);
+        print(error);
+      }
     }
   }
 
@@ -121,6 +146,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               child: CustomTextFormField(
                                 labelText: 'Telefone:',
                                 key: ValueKey('phone'),
+                                controller: _tel,
                                 validator: (String value) {
                                   if (value.trim() != '' &&
                                       value.trim().length != 11) {
@@ -162,7 +188,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             Expanded(
                               child: CustomTextFormField(
                                 labelText: 'Confimar Senha:',
-                                controller: _pass,
+                                controller: _confirmPass,
                                 isPassword: true,
                                 onFieldSubmitted: (_) =>
                                     FocusScope.of(context).nextFocus(),
@@ -195,7 +221,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                       content: Text(
                                                           'Carregando, aguarde.')))
                                             }
-                                        : _submit,
+                                        : () => _submit(ctx),
                                     child: _loading
                                         ? SizedBox(
                                             child: CircularProgressIndicator(
