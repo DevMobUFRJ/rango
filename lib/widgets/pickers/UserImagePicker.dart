@@ -5,8 +5,14 @@ import 'package:image_picker/image_picker.dart';
 
 class UserImagePicker extends StatefulWidget {
   final Function(File pickedImage) _imagePickFn;
+  final String image;
+  final String editText;
 
-  UserImagePicker(this._imagePickFn);
+  UserImagePicker(
+    this._imagePickFn, {
+    this.image,
+    this.editText,
+  });
 
   @override
   _UserImagePickerState createState() => _UserImagePickerState();
@@ -89,20 +95,39 @@ class _UserImagePickerState extends State<UserImagePicker> {
     return GestureDetector(
       onTap: _pickImage,
       child: Container(
-        child: Stack(
-          alignment: Alignment.center,
-          children: <Widget>[
-            CircleAvatar(
-              radius: 55,
-              backgroundImage:
-                  _pickedImage != null ? FileImage(_pickedImage) : null,
-              backgroundColor: Theme.of(context).accentColor,
+        child: Row(
+          children: [
+            Stack(
+              alignment: Alignment.center,
+              children: <Widget>[
+                CircleAvatar(
+                  radius: 55,
+                  backgroundImage: _pickedImage != null
+                      ? FileImage(_pickedImage)
+                      : widget.image != null
+                          ? NetworkImage(widget.image)
+                          : null,
+                  backgroundColor: Theme.of(context).accentColor,
+                ),
+                if (_pickedImage == null && widget.image == null)
+                  Icon(
+                    Icons.person,
+                    color: Theme.of(context).backgroundColor,
+                    size: 85,
+                  ),
+              ],
             ),
-            if (_pickedImage == null)
-              Icon(
-                Icons.person,
-                color: Theme.of(context).backgroundColor,
-                size: 85,
+            if (widget.editText != null)
+              Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: Text(
+                  widget.editText,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 20,
+                    color: Color(0xFF609B90),
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
               ),
           ],
         ),
