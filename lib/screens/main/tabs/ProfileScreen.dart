@@ -5,6 +5,7 @@ import 'package:rango/dadosMarretados.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/screens/main/profile/EditProfileScreen.dart';
 import 'package:rango/screens/main/profile/ProfileSettings.dart';
+import 'package:rango/screens/seller/SellerProfile.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Client usuario;
@@ -32,10 +33,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: Theme.of(context).backgroundColor,
       ),
       backgroundColor: Theme.of(context).backgroundColor,
-      body: Padding(
+      body: Container(
         padding:
             EdgeInsets.only(top: 20, left: width * 0.1, right: width * 0.1),
+        height: MediaQuery.of(context).size.height - kToolbarHeight - 86,
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Expanded(
@@ -144,42 +147,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             ),
-            Flexible(
+            Expanded(
               flex: 6,
               child: Container(
-                constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.height * 0.5),
+                height: MediaQuery.of(context).size.height * 0.3,
                 child: ListView.separated(
-                    separatorBuilder: (context, index) => SizedBox(height: 5),
-                    itemCount: sellers.length,
-                    itemBuilder: (ctx, index) => Container(
-                          height: 70,
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 20),
-                          decoration: BoxDecoration(
-                              color: Colors.deepOrange[300],
-                              borderRadius: BorderRadius.circular(18)),
-                          child: Row(
-                            children: [
-                              CircleAvatar(
-                                backgroundImage:
-                                    NetworkImage(sellers[index].picture),
-                                radius: 25,
-                              ),
-                              SizedBox(width: 10),
-                              Text(
-                                sellers[index].name,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w300,
-                                  decoration: TextDecoration.underline,
-                                ),
-                              ),
-                            ],
+                  separatorBuilder: (context, index) => SizedBox(height: 5),
+                  itemCount: sellers.length,
+                  itemBuilder: (ctx, index) => GestureDetector(
+                    onTap: () => pushNewScreen(
+                      context,
+                      screen: SellerProfile(sellers[index].name),
+                      withNavBar: true,
+                      pageTransitionAnimation:
+                          PageTransitionAnimation.cupertino,
+                    ),
+                    child: Container(
+                      height: 70,
+                      margin: EdgeInsets.only(bottom: 10),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      decoration: BoxDecoration(
+                          color: Colors.deepOrange[300],
+                          borderRadius: BorderRadius.circular(18)),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundImage:
+                                NetworkImage(sellers[index].picture),
+                            radius: 25,
                           ),
-                        )),
+                          SizedBox(width: 10),
+                          Text(
+                            sellers[index].name,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.montserrat(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w300,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           ],

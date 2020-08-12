@@ -18,82 +18,79 @@ class GridVertical extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.5,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.04),
-            child: Text(
-              title,
-              style: TextStyle(
-                color: Theme.of(context).accentColor,
-                fontSize: 16,
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width * 0.04),
+          child: Text(
+            title,
+            style: TextStyle(
+              color: Theme.of(context).accentColor,
+              fontSize: 16,
             ),
           ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-          Container(
-            height: MediaQuery.of(context).size.height * 0.46,
-            padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.02),
-            width: double.infinity,
-            child: StaggeredGridView.countBuilder(
-              crossAxisCount: 2,
-              itemCount: meals.length,
-              itemBuilder: (ctx, index) => GestureDetector(
-                onTap: () => pushNewScreen(context,
-                    screen: DetalhesQuentinhaScreen(
-                        marmita: meals[index], tagM: tagM),
-                    withNavBar: true,
-                    pageTransitionAnimation: PageTransitionAnimation.cupertino),
-                child: Container(
-                  child: Card(
-                    semanticContainer: true,
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                    child: Column(
-                      children: <Widget>[
-                        Hero(
-                          tag: meals[index].hashCode * tagM,
-                          child: FadeInImage.assetNetwork(
-                            placeholder:
-                                'assets/imgs/quentinha_placeholder.png',
-                            image: meals[index].picture,
-                            fit: BoxFit.fitWidth,
-                          ),
+        ),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+        Container(
+          height: MediaQuery.of(context).size.height * 0.46,
+          padding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width * 0.02),
+          width: double.infinity,
+          child: StaggeredGridView.countBuilder(
+            shrinkWrap: true,
+            crossAxisCount: 2,
+            itemCount: meals.length,
+            itemBuilder: (ctx, index) => GestureDetector(
+              onTap: () => pushNewScreen(context,
+                  screen: DetalhesQuentinhaScreen(
+                      marmita: meals[index], tagM: tagM),
+                  withNavBar: true,
+                  pageTransitionAnimation: PageTransitionAnimation.cupertino),
+              child: Container(
+                child: Card(
+                  semanticContainer: true,
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                  child: Column(
+                    children: <Widget>[
+                      Hero(
+                        tag: meals[index].hashCode * tagM,
+                        child: FadeInImage.assetNetwork(
+                          placeholder: 'assets/imgs/quentinha_placeholder.png',
+                          image: meals[index].picture,
+                          fit: BoxFit.fitWidth,
                         ),
-                        Container(
-                          child: Column(
-                            children: <Widget>[
-                              Text(
-                                meals[index].name,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 14),
-                              ),
-                              Text(
-                                'R\$${meals[index].price}',
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
+                      ),
+                      Container(
+                        child: Column(
+                          children: <Widget>[
+                            Text(
+                              meals[index].name,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 14),
+                            ),
+                            Text(
+                              'R\$${meals[index].price}',
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
             ),
+            staggeredTileBuilder: (index) => StaggeredTile.fit(1),
+            mainAxisSpacing: 10,
+            crossAxisSpacing: 10,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

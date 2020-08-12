@@ -52,7 +52,10 @@ class _ProfileSettingsState extends State<ProfileSettings> {
         ),
         actions: [
           FlatButton(
-            onPressed: () => FirebaseAuth.instance.signOut(),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              FirebaseAuth.instance.signOut();
+            },
             child: Text(
               'Sair',
               style: GoogleFonts.montserrat(

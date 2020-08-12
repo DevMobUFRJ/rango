@@ -29,39 +29,38 @@ class _HomeScreenState extends State<HomeScreen> {
     final String assetName = 'assets/imgs/curva_principal.svg';
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      body: LayoutBuilder(
-        builder: (ctx, constraint) => SingleChildScrollView(
+      body: Container(
+        height: MediaQuery.of(context).size.height - 56,
+        child: SingleChildScrollView(
           child: Stack(
             children: <Widget>[
-              Container(
-                child: SvgPicture.asset(
-                  assetName,
-                  semanticsLabel: 'curvaHome',
-                  width: MediaQuery.of(ctx).size.width,
-                ),
+              SvgPicture.asset(
+                assetName,
+                semanticsLabel: 'curvaHome',
+                width: MediaQuery.of(context).size.width,
               ),
               Container(
-                margin:
-                    EdgeInsets.only(top: MediaQuery.of(ctx).size.height * 0.03),
-                width: MediaQuery.of(ctx).size.width,
+                margin: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.03),
+                width: MediaQuery.of(context).size.width,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Container(
                       padding: EdgeInsets.symmetric(
-                          horizontal: MediaQuery.of(ctx).size.width * 0.04,
+                          horizontal: MediaQuery.of(context).size.width * 0.04,
                           vertical: 10),
                       child: Text(
                         'Olá, ${widget.usuario.name.split(" ")[0]}!\nBateu a fome?',
                         textAlign: TextAlign.start,
                         style: GoogleFonts.montserratTextTheme(
-                                Theme.of(ctx).textTheme)
+                                Theme.of(context).textTheme)
                             .headline1,
                       ),
                     ),
-                    SizedBox(height: MediaQuery.of(ctx).size.height * 0.05),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.05),
                     Container(
-                      height: MediaQuery.of(ctx).size.height * 0.21,
+                      height: MediaQuery.of(context).size.height * 0.21,
                       padding: EdgeInsets.symmetric(horizontal: 2),
                       child: ListaHorizontal(
                         title: 'Peça novamente',
@@ -69,9 +68,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         tagM: new Random().nextDouble(),
                       ),
                     ),
-                    SizedBox(height: MediaQuery.of(ctx).size.height * 0.01),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     Container(
-                      height: MediaQuery.of(ctx).size.height * 0.21,
+                      height: MediaQuery.of(context).size.height * 0.21,
                       padding: EdgeInsets.symmetric(horizontal: 2),
                       child: ListaHorizontal(
                         title: 'Sugestões para você',
@@ -79,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         tagM: new Random().nextDouble(),
                       ),
                     ),
-                    SizedBox(height: MediaQuery.of(ctx).size.height * 0.03),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.03),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 0),
                       child: GridVertical(
