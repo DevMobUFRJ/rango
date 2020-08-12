@@ -104,7 +104,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     GestureDetector(
                       onTap: () => pushNewScreen(
                         context,
-                        screen: ProfileSettings(),
+                        screen: ProfileSettings(widget.usuario),
                         withNavBar: true,
                         pageTransitionAnimation:
                             PageTransitionAnimation.cupertino,

@@ -33,6 +33,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String _confirmPassword;
   File _userImageFile;
   bool _loading = false;
+  final _focusNodeConfirmPass = FocusNode();
 
   void _pickedImage(File image) => _userImageFile = image;
 
@@ -170,8 +171,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 labelText: 'Senha:',
                                 controller: _pass,
                                 isPassword: true,
-                                onFieldSubmitted: (_) =>
-                                    FocusScope.of(context).nextFocus(),
+                                onFieldSubmitted: (_) => FocusScope.of(context)
+                                    .requestFocus(_focusNodeConfirmPass),
                                 onSaved: (value) => _password = value,
                                 textInputAction: TextInputAction.next,
                                 key: ValueKey('password'),
@@ -188,12 +189,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             Expanded(
                               child: CustomTextFormField(
                                 labelText: 'Confimar Senha:',
+                                focusNode: _focusNodeConfirmPass,
                                 controller: _confirmPass,
                                 isPassword: true,
-                                onFieldSubmitted: (_) =>
-                                    FocusScope.of(context).nextFocus(),
                                 onSaved: (value) => _password = value,
-                                textInputAction: TextInputAction.next,
                                 key: ValueKey('confirmPassword'),
                                 validator: (String value) {
                                   if (value != '' && value.length < 7) {

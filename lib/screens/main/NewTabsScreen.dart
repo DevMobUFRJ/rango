@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rango/models/client.dart';
+import 'package:rango/models/user_notification_settings.dart';
 import 'package:rango/screens/SplashScreen.dart';
 import 'package:rango/screens/main/tabs/HomeScreen.dart';
 import 'package:rango/screens/main/tabs/ProfileScreen.dart';
@@ -33,6 +34,12 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
         picture: userData.data['picture'].toString(),
         name: userData.data['name'].toString(),
         phone: userData.data['phone'].toString(),
+        notificationSettings: UserNotificationSettings(
+          discounts: userData.data['notifications']['discounts'],
+          favoriteSellers: userData.data['notifications']['favoriteSellers'],
+          messages: userData.data['notifications']['messages'],
+          reservations: userData.data['notifications']['reservations'],
+        ),
       );
       _loading = false;
     });
