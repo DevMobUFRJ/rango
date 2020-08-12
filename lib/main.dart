@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Rango',
       theme: ThemeData(
+        scaffoldBackgroundColor: Color(0xFFF5F5F5),
         backgroundColor: Color(0xFFF5F5F5),
         accentColor: Colors.deepOrange[300],
         primaryColor: Color(0xFF8FDDCE),
@@ -48,6 +49,8 @@ class MyApp extends StatelessWidget {
       home: StreamBuilder(
         stream: FirebaseAuth.instance.onAuthStateChanged,
         builder: (ctx, userSnapshot) {
+          print(userSnapshot.connectionState.toString());
+          print(userSnapshot.hasData.toString());
           if (userSnapshot.connectionState == ConnectionState.waiting) {
             return SplashScreen();
           }

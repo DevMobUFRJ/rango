@@ -25,7 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: Text(
           "Meu Perfil",
           style: GoogleFonts.montserrat(
-              color: Theme.of(context).accentColor, fontSize: 25),
+              color: Theme.of(context).accentColor, fontSize: 22),
         ),
         elevation: 0,
         centerTitle: true,
@@ -38,28 +38,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Flexible(
-              flex: 3,
-              child: Stack(
-                alignment: Alignment.center,
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(left: 50, bottom: 40),
-                    height: 150,
-                    width: 150,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: yellow,
+            Expanded(
+              flex: 4,
+              child: Container(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(left: 40, bottom: 20),
+                      height: 150,
+                      width: 160,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: yellow,
+                      ),
                     ),
-                  ),
-                  CircleAvatar(
-                    backgroundColor: Theme.of(context).accentColor,
-                    backgroundImage: widget.usuario.picture != null
-                        ? NetworkImage(widget.usuario.picture)
-                        : null,
-                    radius: 80,
-                  ),
-                ],
+                    Container(
+                      margin: EdgeInsets.only(top: 20),
+                      child: CircleAvatar(
+                        backgroundColor: Theme.of(context).accentColor,
+                        backgroundImage: widget.usuario.picture != null
+                            ? NetworkImage(widget.usuario.picture)
+                            : null,
+                        radius: 80,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             Flexible(
@@ -93,7 +98,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Icon(
                         Icons.edit,
                         color: yellow,
-                        size: 26,
+                        size: 28,
                       ),
                     ),
                     GestureDetector(
@@ -107,7 +112,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Icon(
                         Icons.settings,
                         color: yellow,
-                        size: 26,
+                        size: 28,
                       ),
                     ),
                   ],

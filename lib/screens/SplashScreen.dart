@@ -8,11 +8,12 @@ class SplashScreen extends StatelessWidget {
       body: Container(
         color: Theme.of(context).primaryColor,
         child: Center(
-            child: Text(
-          "RANGO",
-          style: GoogleFonts.montserrat(
-              fontSize: 50, color: Theme.of(context).accentColor),
-        )),
+          child: Text(
+            "RANGO",
+            style: GoogleFonts.montserrat(
+                fontSize: 50, color: Theme.of(context).accentColor),
+          ),
+        ),
       ),
     );
   }

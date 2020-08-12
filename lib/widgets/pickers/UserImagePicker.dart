@@ -96,6 +96,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
       onTap: _pickImage,
       child: Container(
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Stack(
               alignment: Alignment.center,
