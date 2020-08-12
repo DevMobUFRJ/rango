@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/meals.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rango/screens/seller/SellerProfile.dart';
 
 class DetalhesQuentinhaScreen extends StatelessWidget {
   final Meal marmita;
@@ -19,9 +21,17 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.greenAccent),
-        title: Text(
-          marmita.sellerName,
-          style: GoogleFonts.montserrat(color: Theme.of(context).accentColor),
+        title: GestureDetector(
+          onTap: () => pushNewScreen(
+            context,
+            screen: SellerProfile(marmita.sellerName),
+            withNavBar: true,
+            pageTransitionAnimation: PageTransitionAnimation.cupertino,
+          ),
+          child: Text(
+            marmita.sellerName,
+            style: GoogleFonts.montserrat(color: Theme.of(context).accentColor),
+          ),
         ),
         centerTitle: true,
         elevation: 0,
