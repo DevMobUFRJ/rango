@@ -13,6 +13,7 @@ class CustomTextFormField extends StatefulWidget {
   final String errorText;
   final bool isPassword;
   final TextEditingController controller;
+  final FocusNode focusNode;
 
   CustomTextFormField({
     @required this.labelText,
@@ -25,6 +26,7 @@ class CustomTextFormField extends StatefulWidget {
     @required this.errorText,
     this.isPassword = false,
     this.controller,
+    this.focusNode,
   });
 
   @override
@@ -57,6 +59,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           ),
           elevation: 5,
           child: TextFormField(
+            focusNode: widget.focusNode != null ? widget.focusNode : null,
             controller: widget.controller,
             textInputAction: widget.textInputAction,
             onFieldSubmitted: widget.onFieldSubmitted,

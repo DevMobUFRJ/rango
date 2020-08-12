@@ -1,0 +1,75 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class AboutScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        iconTheme: IconThemeData(color: Colors.greenAccent),
+        title: Text(
+          'Sobre',
+          style: GoogleFonts.montserrat(
+            color: Theme.of(context).accentColor,
+          ),
+        ),
+      ),
+      body: LayoutBuilder(
+        builder: (ctx, constraint) => SingleChildScrollView(
+          child: Container(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.9,
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    Text(
+                      'Rango é um aplicativo desenvolvido por pessoas que anseiam pelo momento do almoço, e o entendem como uma brecha de prazer e distração em meio a um dia corrido. \nFeito para ajudar o rango universitário a acontecer de forma mais organizada, nesse aplicativo conectamos quem quer comprar a quem quer vender, de modo que a comunicação seja mais clara e concisa. Assim, facilitamos o horário de almoço para todo mundo e ninguém passa fome!',
+                      textAlign: TextAlign.left,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 16,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Protótipo feito por: Fernanda Arnaut, Júlia Lopes e Luísa Forain.',
+                      textAlign: TextAlign.left,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 16,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Aplicativo desenvolvido como TCC por Gabriel Vargas, Guilherme Franco e Rebeca Fonseca.',
+                      textAlign: TextAlign.left,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 16,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Container(
+                      child: Image.asset(
+                        'assets/imgs/logo_devmob.png',
+                        width: 150,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
