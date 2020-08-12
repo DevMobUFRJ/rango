@@ -6,10 +6,12 @@ import 'package:flutter/foundation.dart';
 import 'package:rango/screens/reserva/DetalhesQuentinhaScreen.dart';
 
 class GridVertical extends StatelessWidget {
+  final double tagM;
   final String title;
   final List<Meal> meals;
 
   GridVertical({
+    @required this.tagM,
     @required this.title,
     @required this.meals,
   });
@@ -43,8 +45,8 @@ class GridVertical extends StatelessWidget {
               itemCount: meals.length,
               itemBuilder: (ctx, index) => GestureDetector(
                 onTap: () => pushNewScreen(context,
-                    screen:
-                        DetalhesQuentinhaScreen(marmita: meals[index], tagM: 2),
+                    screen: DetalhesQuentinhaScreen(
+                        marmita: meals[index], tagM: tagM),
                     withNavBar: true,
                     pageTransitionAnimation: PageTransitionAnimation.cupertino),
                 child: Container(
@@ -56,7 +58,7 @@ class GridVertical extends StatelessWidget {
                     child: Column(
                       children: <Widget>[
                         Hero(
-                          tag: meals[index].hashCode * 2,
+                          tag: meals[index].hashCode * tagM,
                           child: FadeInImage.assetNetwork(
                             placeholder:
                                 'assets/imgs/quentinha_placeholder.png',

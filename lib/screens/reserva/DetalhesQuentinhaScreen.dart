@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class DetalhesQuentinhaScreen extends StatelessWidget {
   final Meal marmita;
-  final int tagM;
+  final double tagM;
 
   DetalhesQuentinhaScreen({
     this.marmita,

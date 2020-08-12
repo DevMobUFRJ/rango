@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -27,56 +29,70 @@ class _HomeScreenState extends State<HomeScreen> {
     final String assetName = 'assets/imgs/curva_principal.svg';
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      body: Center(
-        child: Stack(
-          children: <Widget>[
-            Container(
-              child: SvgPicture.asset(
-                assetName,
-                semanticsLabel: 'curvaHome',
-                width: MediaQuery.of(context).size.width,
+      body: LayoutBuilder(
+        builder: (ctx, constraint) => SingleChildScrollView(
+          child: Stack(
+            children: <Widget>[
+              Container(
+                child: SvgPicture.asset(
+                  assetName,
+                  semanticsLabel: 'curvaHome',
+                  width: MediaQuery.of(ctx).size.width,
+                ),
               ),
-            ),
-            Container(
-              margin: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.03),
-              width: MediaQuery.of(context).size.width,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.04,
-                        vertical: 10),
-                    child: Text(
-                      'Olá, ${widget.usuario.name.split(" ")[0]}!\nBateu a fome?',
-                      textAlign: TextAlign.start,
-                      style: GoogleFonts.montserratTextTheme(
-                              Theme.of(context).textTheme)
-                          .headline1,
+              Container(
+                margin:
+                    EdgeInsets.only(top: MediaQuery.of(ctx).size.height * 0.03),
+                width: MediaQuery.of(ctx).size.width,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(ctx).size.width * 0.04,
+                          vertical: 10),
+                      child: Text(
+                        'Olá, ${widget.usuario.name.split(" ")[0]}!\nBateu a fome?',
+                        textAlign: TextAlign.start,
+                        style: GoogleFonts.montserratTextTheme(
+                                Theme.of(ctx).textTheme)
+                            .headline1,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.21,
-                    padding: EdgeInsets.symmetric(horizontal: 2),
-                    child: ListaHorizontal(
-                      title: 'Peça novamente',
-                      meals: meals,
+                    SizedBox(height: MediaQuery.of(ctx).size.height * 0.05),
+                    Container(
+                      height: MediaQuery.of(ctx).size.height * 0.21,
+                      padding: EdgeInsets.symmetric(horizontal: 2),
+                      child: ListaHorizontal(
+                        title: 'Peça novamente',
+                        meals: meals,
+                        tagM: new Random().nextDouble(),
+                      ),
                     ),
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 0),
-                    child: GridVertical(
-                      title: 'Promoções da semana',
-                      meals: meals,
+                    SizedBox(height: MediaQuery.of(ctx).size.height * 0.01),
+                    Container(
+                      height: MediaQuery.of(ctx).size.height * 0.21,
+                      padding: EdgeInsets.symmetric(horizontal: 2),
+                      child: ListaHorizontal(
+                        title: 'Sugestões para você',
+                        meals: meals,
+                        tagM: new Random().nextDouble(),
+                      ),
                     ),
-                  ),
-                ],
+                    SizedBox(height: MediaQuery.of(ctx).size.height * 0.03),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 0),
+                      child: GridVertical(
+                        title: 'Promoções da semana',
+                        meals: meals,
+                        tagM: new Random().nextDouble(),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -6,10 +6,12 @@ import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class ListaHorizontal extends StatelessWidget {
   final String title;
+  final double tagM;
   final List<Meal> meals;
 
   ListaHorizontal({
     @required this.title,
+    @required this.tagM,
     @required this.meals,
   });
 
@@ -37,8 +39,8 @@ class ListaHorizontal extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             itemBuilder: (ctx, index) => GestureDetector(
               onTap: () => pushNewScreen(context,
-                  screen:
-                      DetalhesQuentinhaScreen(marmita: meals[index], tagM: 1),
+                  screen: DetalhesQuentinhaScreen(
+                      marmita: meals[index], tagM: tagM),
                   withNavBar: true,
                   pageTransitionAnimation: PageTransitionAnimation.cupertino),
               child: Card(
@@ -49,7 +51,7 @@ class ListaHorizontal extends StatelessWidget {
                 child: Column(
                   children: <Widget>[
                     Hero(
-                      tag: meals[index].hashCode,
+                      tag: meals[index].hashCode * tagM,
                       child: FadeInImage.assetNetwork(
                         placeholder: 'assets/imgs/quentinha_placeholder.png',
                         image: meals[index].picture,
