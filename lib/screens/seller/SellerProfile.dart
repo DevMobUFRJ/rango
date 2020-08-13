@@ -140,60 +140,6 @@ class _SellerProfileState extends State<SellerProfile> {
                       ),
                     ),
                   ),
-                  // Container(
-                  //   width: MediaQuery.of(context).size.width * 0.3,
-                  //   child: Card(
-                  //     elevation: 0,
-                  //     color: Theme.of(context).accentColor,
-                  //     child: Padding(
-                  //       padding: const EdgeInsets.all(12),
-                  //       child: Row(
-                  //         children: [
-                  //           Icon(
-                  //             Icons.chat,
-                  //             color: Colors.white,
-                  //             size: 30,
-                  //           ),
-                  //           SizedBox(width: 15),
-                  //           Text(
-                  //             'Chat',
-                  //             style: GoogleFonts.montserrat(
-                  //               color: Colors.white,
-                  //               fontSize: 16,
-                  //             ),
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                  // Container(
-                  //   width: MediaQuery.of(context).size.width * 0.3,
-                  //   child: Card(
-                  //     elevation: 0,
-                  //     color: Theme.of(context).accentColor,
-                  //     child: Padding(
-                  //       padding: const EdgeInsets.all(12),
-                  //       child: Row(
-                  //         children: [
-                  //           Icon(
-                  //             Icons.map,
-                  //             color: Colors.white,
-                  //             size: 30,
-                  //           ),
-                  //           SizedBox(width: 15),
-                  //           Text(
-                  //             'Mapa',
-                  //             style: GoogleFonts.montserrat(
-                  //               color: Colors.white,
-                  //               fontSize: 16,
-                  //             ),
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
                 ],
               ),
             ),
