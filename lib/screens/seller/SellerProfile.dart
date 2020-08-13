@@ -105,26 +105,95 @@ class _SellerProfileState extends State<SellerProfile> {
                     tagM: Random().nextDouble(),
                     meals: seller.meals,
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 40),
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.6,
-                    child: RaisedButton(
+                    child: RaisedButton.icon(
+                      icon: Icon(Icons.chat),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
                       onPressed: () => pushNewScreen(
                         context,
-                        screen: ChatScreen(),
+                        screen: ChatScreen(seller),
                         withNavBar: false,
                         pageTransitionAnimation:
                             PageTransitionAnimation.cupertino,
                       ),
-                      child: Text(
-                        'Tire suas dúvidas',
+                      label: Text(
+                        'Chat com o vendedor',
+                        overflow: TextOverflow.clip,
                         style: GoogleFonts.montserrat(fontSize: 16),
                       ),
                     ),
                   ),
+                  SizedBox(height: 10),
+                  Container(
+                    child: RaisedButton.icon(
+                      icon: Icon(Icons.map),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      onPressed: () {},
+                      label: Text(
+                        'Ver localização',
+                        style: GoogleFonts.montserrat(fontSize: 16),
+                      ),
+                    ),
+                  ),
+                  // Container(
+                  //   width: MediaQuery.of(context).size.width * 0.3,
+                  //   child: Card(
+                  //     elevation: 0,
+                  //     color: Theme.of(context).accentColor,
+                  //     child: Padding(
+                  //       padding: const EdgeInsets.all(12),
+                  //       child: Row(
+                  //         children: [
+                  //           Icon(
+                  //             Icons.chat,
+                  //             color: Colors.white,
+                  //             size: 30,
+                  //           ),
+                  //           SizedBox(width: 15),
+                  //           Text(
+                  //             'Chat',
+                  //             style: GoogleFonts.montserrat(
+                  //               color: Colors.white,
+                  //               fontSize: 16,
+                  //             ),
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  // Container(
+                  //   width: MediaQuery.of(context).size.width * 0.3,
+                  //   child: Card(
+                  //     elevation: 0,
+                  //     color: Theme.of(context).accentColor,
+                  //     child: Padding(
+                  //       padding: const EdgeInsets.all(12),
+                  //       child: Row(
+                  //         children: [
+                  //           Icon(
+                  //             Icons.map,
+                  //             color: Colors.white,
+                  //             size: 30,
+                  //           ),
+                  //           SizedBox(width: 15),
+                  //           Text(
+                  //             'Mapa',
+                  //             style: GoogleFonts.montserrat(
+                  //               color: Colors.white,
+                  //               fontSize: 16,
+                  //             ),
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
