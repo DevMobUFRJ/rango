@@ -31,15 +31,22 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
     setState(() {
       client = new Client(
         email: userData.data['email'].toString(),
-        picture: userData.data['picture'].toString(),
+        picture: userData.data['picture'] != null
+            ? userData.data['picture'].toString()
+            : null,
         name: userData.data['name'].toString(),
-        phone: userData.data['phone'].toString(),
-        notificationSettings: UserNotificationSettings(
-          discounts: userData.data['notifications']['discounts'],
-          favoriteSellers: userData.data['notifications']['favoriteSellers'],
-          messages: userData.data['notifications']['messages'],
-          reservations: userData.data['notifications']['reservations'],
-        ),
+        phone: userData.data['phone'] != null
+            ? userData.data['phone'].toString()
+            : null,
+        notificationSettings: userData.data['notificationSettings'] != null
+            ? UserNotificationSettings(
+                discounts: userData.data['notifications']['discounts'],
+                favoriteSellers: userData.data['notifications']
+                    ['favoriteSellers'],
+                messages: userData.data['notifications']['messages'],
+                reservations: userData.data['notifications']['reservations'],
+              )
+            : null,
       );
       _loading = false;
     });

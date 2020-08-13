@@ -26,10 +26,22 @@ class _ProfileSettingsState extends State<ProfileSettings> {
   @override
   void initState() {
     setState(() {
-      _attValue = widget.user.notificationSettings.favoriteSellers;
-      _reservaValue = widget.user.notificationSettings.reservations;
-      _newMessagesValue = widget.user.notificationSettings.messages;
-      _promotionsValue = widget.user.notificationSettings.discounts;
+      _attValue = widget.user.notificationSettings != null &&
+              widget.user.notificationSettings.favoriteSellers != null
+          ? widget.user.notificationSettings.favoriteSellers
+          : false;
+      _reservaValue = widget.user.notificationSettings != null &&
+              widget.user.notificationSettings.reservations != null
+          ? widget.user.notificationSettings.reservations
+          : false;
+      _newMessagesValue = widget.user.notificationSettings != null &&
+              widget.user.notificationSettings.messages != null
+          ? widget.user.notificationSettings.messages
+          : false;
+      _promotionsValue = widget.user.notificationSettings != null &&
+              widget.user.notificationSettings.discounts != null
+          ? widget.user.notificationSettings.discounts
+          : false;
     });
     super.initState();
   }
