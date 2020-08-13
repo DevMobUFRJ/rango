@@ -24,7 +24,8 @@ class AboutScreen extends StatelessWidget {
           child: Container(
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.9,
+                maxHeight:
+                    MediaQuery.of(context).size.height - kToolbarHeight - 86,
               ),
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 16, horizontal: 25),

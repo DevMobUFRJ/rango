@@ -168,7 +168,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       padding:
                           EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                       decoration: BoxDecoration(
-                          color: Colors.deepOrange[300],
+                          color: Theme.of(context).accentColor,
                           borderRadius: BorderRadius.circular(18)),
                       child: Row(
                         children: [
