@@ -17,6 +17,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Rango',
       theme: ThemeData(
+        appBarTheme: AppBarTheme(
+          elevation: 0,
+          color: Colors.transparent,
+          centerTitle: true,
+          iconTheme: IconThemeData(
+            color: Color(0xFF8FDDCE),
+          ),
+        ),
         scaffoldBackgroundColor: Color(0xFFF5F5F5),
         backgroundColor: Color(0xFFF5F5F5),
         accentColor: Color.fromRGBO(252, 116, 79, 1),

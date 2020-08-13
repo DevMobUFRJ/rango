@@ -29,14 +29,10 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.greenAccent),
         title: Text(
           widget.seller.name,
           style: GoogleFonts.montserrat(color: Theme.of(context).accentColor),
         ),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
       ),
       body: Container(
         child: Column(

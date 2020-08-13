@@ -113,10 +113,6 @@ class _ProfileSettingsState extends State<ProfileSettings> {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        iconTheme: IconThemeData(color: Colors.greenAccent),
         title: Text(
           'Configurações',
           style: GoogleFonts.montserrat(

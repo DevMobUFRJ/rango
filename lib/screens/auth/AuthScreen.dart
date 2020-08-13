@@ -80,8 +80,6 @@ class _AuthScreenState extends State<AuthScreen> {
     });
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.greenAccent),
-        elevation: 0,
         backgroundColor: Colors.grey[200],
         title: Text(
           isLogin ? 'Login' : 'Cadastro',
@@ -89,7 +87,6 @@ class _AuthScreenState extends State<AuthScreen> {
             color: Theme.of(context).accentColor,
           ),
         ),
-        centerTitle: true,
       ),
       backgroundColor: Colors.grey[200],
       body: AuthForm(_submitAuthForm, _isLoading, _isLogin),

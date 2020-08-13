@@ -18,7 +18,8 @@ class ChatBubble extends StatelessWidget {
       mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
       children: <Widget>[
         Container(
-          constraints: BoxConstraints(maxWidth: 140),
+          constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.45),
           decoration: BoxDecoration(
             color: isMe ? Theme.of(context).accentColor : yellow,
             borderRadius: BorderRadius.only(

@@ -96,10 +96,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        iconTheme: IconThemeData(color: Colors.greenAccent),
         title: Text(
           'Editar Perfil',
           style: GoogleFonts.montserrat(

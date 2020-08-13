@@ -49,6 +49,12 @@ class _NewMessageState extends State<NewMessage> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.grey,
+                      offset: Offset(0.0, 0.1),
+                      blurRadius: 1)
+                ],
               ),
               child: TextField(
                 keyboardType: TextInputType.multiline,

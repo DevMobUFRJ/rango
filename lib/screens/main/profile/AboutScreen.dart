@@ -4,14 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 class AboutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        iconTheme: IconThemeData(color: Colors.greenAccent),
         title: Text(
           'Sobre',
           style: GoogleFonts.montserrat(
@@ -43,7 +37,7 @@ class AboutScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 10),
                       Text(
-                        'Protótipo feito por: Fernanda Arnaut, Júlia Lopes e Luísa Forain.',
+                        'Protótipo feito por: Fernanda Arnaut, Julia Lopes e Luísa Forain.',
                         textAlign: TextAlign.left,
                         style: GoogleFonts.montserrat(
                           fontSize: 16,

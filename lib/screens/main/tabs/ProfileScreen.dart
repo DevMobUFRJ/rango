@@ -28,9 +28,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           style: GoogleFonts.montserrat(
               color: Theme.of(context).accentColor, fontSize: 22),
         ),
-        elevation: 0,
-        centerTitle: true,
-        backgroundColor: Theme.of(context).backgroundColor,
       ),
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(

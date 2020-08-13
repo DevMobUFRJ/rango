@@ -20,7 +20,6 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
     if (price.length == 6 && price.contains(',')) price = '${price}0';
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.greenAccent),
         title: GestureDetector(
           onTap: () => pushNewScreen(
             context,
@@ -33,9 +32,6 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
             style: GoogleFonts.montserrat(color: Theme.of(context).accentColor),
           ),
         ),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
       ),
       body: Container(
           padding: EdgeInsets.symmetric(

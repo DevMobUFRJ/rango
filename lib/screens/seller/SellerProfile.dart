@@ -37,7 +37,6 @@ class _SellerProfileState extends State<SellerProfile> {
     final yellow = Color(0xFFF9B152);
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.greenAccent),
         title: Text(
           widget.sellerName,
           style: GoogleFonts.montserrat(color: Theme.of(context).accentColor),
@@ -56,9 +55,6 @@ class _SellerProfileState extends State<SellerProfile> {
             ),
           )
         ],
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
       ),
       body: loading
           ? CircularProgressIndicator()
