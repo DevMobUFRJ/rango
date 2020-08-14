@@ -147,8 +147,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 validator: (String value) {
                                   if (value.trim() != '' &&
                                       value.trim().length != 11) {
-                                    print(value);
-                                    print(value.trim().length);
                                     setState(() => _telefoneErrorMessage =
                                         'Telefone precisa ter 11 números');
                                   }

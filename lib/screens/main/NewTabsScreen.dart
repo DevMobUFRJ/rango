@@ -77,7 +77,7 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
             screenTransitionAnimation: ScreenTransitionAnimation(
               animateTabTransition: true,
               curve: Curves.easeIn,
-              duration: Duration(milliseconds: 200),
+              duration: Duration(milliseconds: 180),
             ),
             screens: <Widget>[
               HomeScreen(client),
