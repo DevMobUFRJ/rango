@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
@@ -21,12 +22,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: AutoSizeText(
           "Meu Perfil",
-          style: GoogleFonts.montserrat(
-              color: Theme.of(context).accentColor, fontSize: 22),
+          maxLines: 1,
+          style: GoogleFonts.montserrat(color: Theme.of(context).accentColor),
         ),
       ),
       backgroundColor: Theme.of(context).backgroundColor,
@@ -70,19 +72,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Flexible(
               flex: 1,
               child: Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Text(widget.usuario.name,
-                    style: GoogleFonts.montserrat(
-                      color: Theme.of(context).accentColor,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                    )),
+                margin: EdgeInsets.symmetric(vertical: height * 0.01),
+                child: AutoSizeText(
+                  widget.usuario.name,
+                  style: GoogleFonts.montserrat(
+                    color: Theme.of(context).accentColor,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
             ),
-            Flexible(
+            Expanded(
               flex: 1,
               child: Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
+                margin: EdgeInsets.symmetric(vertical: height * 0.01),
                 width: width * 0.48,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -127,11 +131,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    Text(
+                    AutoSizeText(
                       'Favoritos',
                       style: GoogleFonts.montserrat(
                         color: yellow,
-                        fontSize: 16,
                       ),
                     ),
                     SizedBox(width: 2),
@@ -175,11 +178,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             radius: 25,
                           ),
                           SizedBox(width: 10),
-                          Text(
+                          AutoSizeText(
                             sellers[index].name,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.montserrat(
-                              fontSize: 16,
                               color: Colors.white,
                               fontWeight: FontWeight.w300,
                               decoration: TextDecoration.underline,

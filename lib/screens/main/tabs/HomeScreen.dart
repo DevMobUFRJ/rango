@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -50,8 +51,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: EdgeInsets.symmetric(
                           horizontal: MediaQuery.of(context).size.width * 0.04,
                           vertical: 10),
-                      child: Text(
+                      child: AutoSizeText(
                         'Olá, ${widget.usuario.name.split(" ")[0]}!\nBateu a fome?',
+                        maxLines: 2,
                         textAlign: TextAlign.start,
                         style: GoogleFonts.montserratTextTheme(
                                 Theme.of(context).textTheme)

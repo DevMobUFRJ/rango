@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
@@ -35,10 +36,13 @@ class _SellerProfileState extends State<SellerProfile> {
   @override
   Widget build(BuildContext context) {
     final yellow = Color(0xFFF9B152);
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: AutoSizeText(
           widget.sellerName,
+          maxLines: 1,
           style: GoogleFonts.montserrat(color: Theme.of(context).accentColor),
         ),
         actions: [
@@ -92,7 +96,7 @@ class _SellerProfileState extends State<SellerProfile> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.phone),
-                      Text(seller.contact.phone),
+                      AutoSizeText(seller.contact.phone),
                     ],
                   ),
                   SizedBox(height: 20),
@@ -102,37 +106,42 @@ class _SellerProfileState extends State<SellerProfile> {
                     meals: seller.meals,
                   ),
                   SizedBox(height: 40),
-                  Container(
-                    child: RaisedButton.icon(
-                      icon: Icon(Icons.chat),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      onPressed: () => pushNewScreen(
-                        context,
-                        screen: ChatScreen(seller),
-                        withNavBar: false,
-                        pageTransitionAnimation:
-                            PageTransitionAnimation.cupertino,
-                      ),
-                      label: Text(
+                  RaisedButton.icon(
+                    icon: Icon(Icons.chat),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    onPressed: () => pushNewScreen(
+                      context,
+                      screen: ChatScreen(seller),
+                      withNavBar: false,
+                      pageTransitionAnimation:
+                          PageTransitionAnimation.cupertino,
+                    ),
+                    label: Container(
+                      width: 150,
+                      child: AutoSizeText(
                         'Chat com o vendedor',
-                        overflow: TextOverflow.clip,
-                        style: GoogleFonts.montserrat(fontSize: 16),
+                        maxLines: 1,
+                        style: GoogleFonts.montserrat(),
                       ),
                     ),
                   ),
                   SizedBox(height: 10),
-                  Container(
-                    child: RaisedButton.icon(
-                      icon: Icon(Icons.map),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      onPressed: () {},
-                      label: Text(
+                  RaisedButton.icon(
+                    icon: Icon(Icons.map),
+                    padding: EdgeInsets.symmetric(
+                        vertical: height * 0.005, horizontal: width * 0.03),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    onPressed: () {},
+                    label: Container(
+                      width: 120,
+                      child: AutoSizeText(
                         'Ver localização',
-                        style: GoogleFonts.montserrat(fontSize: 16),
+                        maxLines: 1,
+                        style: GoogleFonts.montserrat(),
                       ),
                     ),
                   ),

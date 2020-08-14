@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/meals.dart';
@@ -70,37 +71,43 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          marmita.name,
-                          style: GoogleFonts.montserratTextTheme(
-                                  Theme.of(context).textTheme)
-                              .headline2
-                              .copyWith(fontWeight: FontWeight.bold),
+                      Flexible(
+                        flex: 1,
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: AutoSizeText(
+                            marmita.name,
+                            style: GoogleFonts.montserratTextTheme(
+                                    Theme.of(context).textTheme)
+                                .headline2
+                                .copyWith(fontWeight: FontWeight.bold),
+                          ),
                         ),
                       ),
-                      SizedBox(height: 3),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          marmita.description,
-                          style: GoogleFonts.montserratTextTheme(
-                                  Theme.of(context).textTheme)
-                              .headline2
-                              .copyWith(fontSize: 18),
+                      Expanded(
+                        flex: 2,
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: AutoSizeText(
+                            marmita.description,
+                            maxLines: 3,
+                            style: GoogleFonts.montserratTextTheme(
+                                    Theme.of(context).textTheme)
+                                .headline2,
+                          ),
                         ),
                       ),
-                      SizedBox(height: 3),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          price,
-                          style: GoogleFonts.montserratTextTheme(
-                                  Theme.of(context).textTheme)
-                              .headline2
-                              .copyWith(
-                                  fontSize: 22, fontWeight: FontWeight.bold),
+                      Flexible(
+                        flex: 1,
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: AutoSizeText(
+                            price,
+                            style: GoogleFonts.montserratTextTheme(
+                                    Theme.of(context).textTheme)
+                                .headline2
+                                .copyWith(fontWeight: FontWeight.bold),
+                          ),
                         ),
                       ),
                     ],
@@ -117,7 +124,8 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Text('Confirmar Reserva',
+                    child: AutoSizeText('Confirmar Reserva',
+                        maxLines: 1,
                         style: GoogleFonts.montserratTextTheme(
                                 Theme.of(context).textTheme)
                             .button),

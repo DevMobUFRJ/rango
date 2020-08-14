@@ -31,13 +31,9 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
     setState(() {
       client = new Client(
         email: userData.data['email'].toString(),
-        picture: userData.data['picture'] != null
-            ? userData.data['picture'].toString()
-            : null,
+        picture: userData?.data['picture']?.toString(),
         name: userData.data['name'].toString(),
-        phone: userData.data['phone'] != null
-            ? userData.data['phone'].toString()
-            : null,
+        phone: userData?.data['phone']?.toString(),
         notificationSettings: userData.data['notificationSettings'] != null
             ? UserNotificationSettings(
                 discounts: userData.data['notifications']['discounts'],
