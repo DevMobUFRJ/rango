@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/dadosMarretados.dart';
@@ -23,6 +24,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, width: 750, height: 1334);
     List<Meal> meals = new List<Meal>();
     sellers.forEach((element) {
       meals.add(element.currentMeals[0]);
@@ -38,19 +40,18 @@ class _HomeScreenState extends State<HomeScreen> {
               SvgPicture.asset(
                 assetName,
                 semanticsLabel: 'curvaHome',
-                width: MediaQuery.of(context).size.width,
+                width: 1.wp,
               ),
               Container(
-                margin: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.03),
-                width: MediaQuery.of(context).size.width,
+                margin: EdgeInsets.only(top: 0.03.hp),
+                width: 1.wp,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Container(
+                      width: 0.6.wp,
                       padding: EdgeInsets.symmetric(
-                          horizontal: MediaQuery.of(context).size.width * 0.04,
-                          vertical: 10),
+                          horizontal: 0.04.wp, vertical: 10),
                       child: AutoSizeText(
                         'Olá, ${widget.usuario.name.split(" ")[0]}!\nBateu a fome?',
                         maxLines: 2,
@@ -60,9 +61,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             .headline1,
                       ),
                     ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+                    SizedBox(height: 0.05.hp),
                     Container(
-                      height: MediaQuery.of(context).size.height * 0.21,
+                      height: 260.h,
                       padding: EdgeInsets.symmetric(horizontal: 2),
                       child: ListaHorizontal(
                         title: 'Peça novamente',
@@ -70,9 +71,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         tagM: new Random().nextDouble(),
                       ),
                     ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                    SizedBox(height: 0.01.hp),
                     Container(
-                      height: MediaQuery.of(context).size.height * 0.21,
+                      height: 260.h,
                       padding: EdgeInsets.symmetric(horizontal: 2),
                       child: ListaHorizontal(
                         title: 'Sugestões para você',

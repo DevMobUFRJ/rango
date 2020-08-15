@@ -1,4 +1,7 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/meals.dart';
 import 'package:flutter/foundation.dart';
 import 'package:rango/screens/reserva/DetalhesQuentinhaScreen.dart';
@@ -17,17 +20,18 @@ class ListaHorizontal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, width: 750, height: 1334);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
           padding: EdgeInsets.symmetric(
               horizontal: MediaQuery.of(context).size.width * 0.04),
-          child: Text(
+          child: AutoSizeText(
             title,
             style: TextStyle(
               color: Theme.of(context).accentColor,
-              fontSize: 16,
+              fontSize: 28.nsp,
             ),
           ),
         ),
@@ -61,16 +65,23 @@ class ListaHorizontal extends StatelessWidget {
                       ),
                     ),
                     Column(
+                      mainAxisSize: MainAxisSize.max,
                       children: <Widget>[
-                        Text(
-                          meals[index].name,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 14),
+                        FittedBox(
+                          fit: BoxFit.cover,
+                          child: AutoSizeText(
+                            meals[index].name,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.montserrat(fontSize: 14.nsp),
+                          ),
                         ),
-                        Text(
-                          'R\$${meals[index].price}',
-                          textAlign: TextAlign.center,
+                        FittedBox(
+                          child: AutoSizeText(
+                            'R\$${meals[index].price}',
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.montserrat(fontSize: 14.nsp),
+                          ),
                         ),
                       ],
                     ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/models/message.dart';
 
 class NewMessage extends StatefulWidget {
@@ -38,6 +39,7 @@ class _NewMessageState extends State<NewMessage> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, width: 750, height: 1334);
     return Container(
       margin: EdgeInsets.only(top: 8),
       padding: EdgeInsets.all(8),
@@ -70,7 +72,7 @@ class _NewMessageState extends State<NewMessage> {
           ),
           IconButton(
             color: Theme.of(context).accentColor,
-            icon: Icon(Icons.send, size: 30),
+            icon: Icon(Icons.send, size: 58.nsp),
             onPressed: _enteredMessage.trim().isEmpty ? null : _sendMessage,
           ),
         ],

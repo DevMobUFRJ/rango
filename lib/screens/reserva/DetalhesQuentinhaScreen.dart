@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/meals.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,6 +19,7 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String price = 'R\$${marmita.price.toString().replaceAll('.', ',')}';
+    ScreenUtil.init(context, width: 750, height: 1334);
     if (price.length == 6 && price.contains(',')) price = '${price}0';
     return Scaffold(
       appBar: AppBar(
@@ -28,15 +30,15 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
             withNavBar: true,
             pageTransitionAnimation: PageTransitionAnimation.cupertino,
           ),
-          child: Text(
+          child: AutoSizeText(
             marmita.sellerName,
-            style: GoogleFonts.montserrat(color: Theme.of(context).accentColor),
+            style: GoogleFonts.montserrat(
+                color: Theme.of(context).accentColor, fontSize: 35.nsp),
           ),
         ),
       ),
       body: Container(
-          padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.1),
+          padding: EdgeInsets.symmetric(horizontal: 0.1.hp),
           child: Column(
             children: <Widget>[
               Expanded(
@@ -49,8 +51,8 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                   ),
                   child: Container(
                     constraints: BoxConstraints(
-                      maxHeight: MediaQuery.of(context).size.height * 0.4,
-                      maxWidth: MediaQuery.of(context).size.width * 0.8,
+                      maxHeight: 0.4.hp,
+                      maxWidth: 0.8.wp,
                     ),
                     child: Hero(
                       tag: marmita.hashCode * tagM,
@@ -73,40 +75,49 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                     children: <Widget>[
                       Flexible(
                         flex: 1,
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: AutoSizeText(
-                            marmita.name,
-                            style: GoogleFonts.montserratTextTheme(
-                                    Theme.of(context).textTheme)
-                                .headline2
-                                .copyWith(fontWeight: FontWeight.bold),
+                        child: Container(
+                          height: 50.h,
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: AutoSizeText(
+                              marmita.name,
+                              style: GoogleFonts.montserratTextTheme(
+                                      Theme.of(context).textTheme)
+                                  .headline2
+                                  .copyWith(fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ),
                       ),
-                      Expanded(
+                      Flexible(
                         flex: 2,
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: AutoSizeText(
-                            marmita.description,
-                            maxLines: 3,
-                            style: GoogleFonts.montserratTextTheme(
-                                    Theme.of(context).textTheme)
-                                .headline2,
+                        child: Container(
+                          height: 80.h,
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: AutoSizeText(
+                              marmita.description,
+                              maxLines: 3,
+                              style: GoogleFonts.montserratTextTheme(
+                                      Theme.of(context).textTheme)
+                                  .headline2,
+                            ),
                           ),
                         ),
                       ),
                       Flexible(
                         flex: 1,
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: AutoSizeText(
-                            price,
-                            style: GoogleFonts.montserratTextTheme(
-                                    Theme.of(context).textTheme)
-                                .headline2
-                                .copyWith(fontWeight: FontWeight.bold),
+                        child: Container(
+                          height: 40.h,
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: AutoSizeText(
+                              price,
+                              style: GoogleFonts.montserratTextTheme(
+                                      Theme.of(context).textTheme)
+                                  .headline2
+                                  .copyWith(fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ),
                       ),
@@ -117,10 +128,11 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
               Flexible(
                 flex: 3,
                 child: Container(
-                  width: double.infinity,
+                  width: 0.45.wp,
                   child: RaisedButton(
                     onPressed: () {},
-                    padding: EdgeInsets.symmetric(vertical: 12),
+                    padding:
+                        EdgeInsets.symmetric(vertical: 12, horizontal: 0.05.wp),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),

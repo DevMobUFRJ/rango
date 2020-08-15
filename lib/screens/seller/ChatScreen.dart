@@ -1,4 +1,6 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/message.dart';
 import 'package:rango/models/seller.dart';
@@ -27,11 +29,16 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, width: 750, height: 1334);
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: AutoSizeText(
           widget.seller.name,
-          style: GoogleFonts.montserrat(color: Theme.of(context).accentColor),
+          maxLines: 1,
+          style: GoogleFonts.montserrat(
+            color: Theme.of(context).accentColor,
+            fontSize: 35.nsp,
+          ),
         ),
       ),
       body: Container(

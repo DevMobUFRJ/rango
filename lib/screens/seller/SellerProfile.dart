@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/dadosMarretados.dart';
@@ -35,15 +36,17 @@ class _SellerProfileState extends State<SellerProfile> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, width: 750, height: 1334);
     final yellow = Color(0xFFF9B152);
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
           widget.sellerName,
           maxLines: 1,
-          style: GoogleFonts.montserrat(color: Theme.of(context).accentColor),
+          style: GoogleFonts.montserrat(
+            color: Theme.of(context).accentColor,
+            fontSize: 35.nsp,
+          ),
         ),
         actions: [
           Padding(
@@ -54,7 +57,7 @@ class _SellerProfileState extends State<SellerProfile> {
               onTap: () => setState(() => isFavorite = !isFavorite),
               child: Icon(
                 isFavorite ? Icons.star : Icons.star_border,
-                size: 28,
+                size: 42.nsp,
               ),
             ),
           )
@@ -70,11 +73,12 @@ class _SellerProfileState extends State<SellerProfile> {
                       alignment: Alignment.center,
                       children: <Widget>[
                         Container(
-                          margin: EdgeInsets.only(left: 40, bottom: 20),
-                          height: 150,
-                          width: 160,
+                          margin: EdgeInsets.only(left: 80.w, bottom: 50.h),
+                          height: 230.h,
+                          width: 260.w,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius:
+                                BorderRadius.circular(ScreenUtil().setSp(30)),
                             color: yellow,
                           ),
                         ),
@@ -85,29 +89,35 @@ class _SellerProfileState extends State<SellerProfile> {
                             backgroundImage: seller.picture != null
                                 ? NetworkImage(seller.picture)
                                 : null,
-                            radius: 80,
+                            radius: 130.w,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 20.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.phone),
-                      AutoSizeText(seller.contact.phone),
+                      Icon(Icons.phone, size: 38.nsp),
+                      Container(
+                        width: 170.w,
+                        child: AutoSizeText(
+                          seller.contact.phone,
+                          maxLines: 1,
+                        ),
+                      ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 20.h),
                   ListaHorizontal(
                     title: 'Quentinhas disponíveis',
                     tagM: Random().nextDouble(),
                     meals: seller.meals,
                   ),
-                  SizedBox(height: 40),
+                  SizedBox(height: 40.h),
                   RaisedButton.icon(
-                    icon: Icon(Icons.chat),
+                    icon: Icon(Icons.chat, size: 38.nsp),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
@@ -119,7 +129,7 @@ class _SellerProfileState extends State<SellerProfile> {
                           PageTransitionAnimation.cupertino,
                     ),
                     label: Container(
-                      width: 150,
+                      width: 270.w,
                       child: AutoSizeText(
                         'Chat com o vendedor',
                         maxLines: 1,
@@ -127,17 +137,17 @@ class _SellerProfileState extends State<SellerProfile> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(height: 10.h),
                   RaisedButton.icon(
-                    icon: Icon(Icons.map),
+                    icon: Icon(Icons.map, size: 38.nsp),
                     padding: EdgeInsets.symmetric(
-                        vertical: height * 0.005, horizontal: width * 0.03),
+                        vertical: 0.005.hp, horizontal: 0.03.wp),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
                     onPressed: () {},
                     label: Container(
-                      width: 120,
+                      width: 190.w,
                       child: AutoSizeText(
                         'Ver localização',
                         maxLines: 1,

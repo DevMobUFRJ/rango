@@ -1,6 +1,8 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/client.dart';
@@ -68,37 +70,40 @@ class _ProfileSettingsState extends State<ProfileSettings> {
               Navigator.of(ctx).pop();
               FirebaseAuth.instance.signOut();
             },
-            child: Text(
+            child: AutoSizeText(
               'Sair',
               style: GoogleFonts.montserrat(
                 decoration: TextDecoration.underline,
                 color: Colors.white,
+                fontSize: 34.nsp,
               ),
             ),
           ),
           FlatButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(
+            child: AutoSizeText(
               'Cancelar',
               style: GoogleFonts.montserrat(
                 decoration: TextDecoration.underline,
                 color: Colors.white,
+                fontSize: 34.nsp,
               ),
             ),
           ),
         ],
-        title: Text(
+        title: AutoSizeText(
           'Já satisfeito?',
           style: GoogleFonts.montserrat(
             color: Colors.white,
             fontWeight: FontWeight.bold,
+            fontSize: 38.ssp,
           ),
         ),
-        content: Text(
+        content: AutoSizeText(
           'Tem certeza que deseja sair da sua conta?',
           style: GoogleFonts.montserrat(
             color: Colors.white,
-            fontSize: 16,
+            fontSize: 24.nsp,
           ),
         ),
       ),
@@ -107,35 +112,35 @@ class _ProfileSettingsState extends State<ProfileSettings> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, width: 750, height: 1334);
     const orange = Color(0xFFFC744F);
     const green = Color(0xFF609B90);
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: AutoSizeText(
           'Configurações',
           style: GoogleFonts.montserrat(
             color: Theme.of(context).accentColor,
+            fontSize: 38.nsp,
           ),
         ),
       ),
       body: Container(
-        padding: EdgeInsets.only(top: height * 0.05),
-        margin: EdgeInsets.symmetric(horizontal: width * 0.08),
+        padding: EdgeInsets.only(top: 0.02.hp),
+        margin: EdgeInsets.symmetric(horizontal: 0.08.wp),
         child: Column(
           children: [
             Container(
-              padding: EdgeInsets.only(right: width * 0.09),
+              padding: EdgeInsets.only(right: 0.09.wp),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  AutoSizeText(
                     'Notificações',
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       color: orange,
-                      fontSize: 22,
+                      fontSize: 38.nsp,
                     ),
                   ),
                   Switch(
@@ -155,60 +160,71 @@ class _ProfileSettingsState extends State<ProfileSettings> {
               ),
             ),
             Container(
-              padding: EdgeInsets.only(left: (width * 0.06)),
+              padding: EdgeInsets.only(left: 0.02.wp),
               child: Column(
                 children: [
-                  CustomCheckBox(
-                    changeValue: (value) => setState(() => _attValue = value),
-                    text: 'Atualização dos vendedores favoritos',
-                    value: _attValue,
-                    isActive: _switchValue,
+                  Container(
+                    height: 0.06.hp,
+                    child: CustomCheckBox(
+                      changeValue: (value) => setState(() => _attValue = value),
+                      text: 'Atualização dos vendedores favoritos',
+                      value: _attValue,
+                      isActive: _switchValue,
+                    ),
                   ),
-                  CustomCheckBox(
-                    changeValue: (value) =>
-                        setState(() => _reservaValue = value),
-                    text: 'Reserva confirmada',
-                    value: _reservaValue,
-                    isActive: _switchValue,
+                  Container(
+                    height: 0.06.hp,
+                    child: CustomCheckBox(
+                      changeValue: (value) =>
+                          setState(() => _reservaValue = value),
+                      text: 'Reserva confirmada',
+                      value: _reservaValue,
+                      isActive: _switchValue,
+                    ),
                   ),
-                  CustomCheckBox(
-                    changeValue: (value) =>
-                        setState(() => _newMessagesValue = value),
-                    text: 'Novas mensagens',
-                    value: _newMessagesValue,
-                    isActive: _switchValue,
+                  Container(
+                    height: 0.06.hp,
+                    child: CustomCheckBox(
+                      changeValue: (value) =>
+                          setState(() => _newMessagesValue = value),
+                      text: 'Novas mensagens',
+                      value: _newMessagesValue,
+                      isActive: _switchValue,
+                    ),
                   ),
-                  CustomCheckBox(
-                    changeValue: (value) =>
-                        setState(() => _promotionsValue = value),
-                    text: 'Promoções',
-                    value: _promotionsValue,
-                    isActive: _switchValue,
+                  Container(
+                    height: 0.06.hp,
+                    child: CustomCheckBox(
+                      changeValue: (value) =>
+                          setState(() => _promotionsValue = value),
+                      text: 'Promoções',
+                      value: _promotionsValue,
+                      isActive: _switchValue,
+                    ),
                   ),
                 ],
               ),
             ),
             Container(
-              width: width * 0.6,
-              padding: EdgeInsets.symmetric(vertical: height * 0.01),
-              margin: EdgeInsets.symmetric(vertical: height * 0.03),
+              margin: EdgeInsets.symmetric(vertical: 0.01.hp),
               child: RaisedButton(
-                padding: EdgeInsets.symmetric(vertical: 10),
+                padding:
+                    EdgeInsets.symmetric(vertical: 0.01.hp, horizontal: 0.1.wp),
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
                 onPressed: () {},
-                child: Text(
+                child: AutoSizeText(
                   'Confirmar',
                   style: GoogleFonts.montserrat(
-                    fontSize: 18,
+                    fontSize: 32.nsp,
                   ),
                 ),
               ),
             ),
             Container(
-              margin: EdgeInsets.symmetric(vertical: height * 0.02),
+              margin: EdgeInsets.symmetric(vertical: 0.02.hp),
               child: GestureDetector(
                 onTap: () => pushNewScreen(
                   context,
@@ -218,10 +234,10 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                 ),
                 child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Text(
+                  child: AutoSizeText(
                     'Sobre',
                     style: GoogleFonts.montserrat(
-                      fontSize: 18,
+                      fontSize: 32.nsp,
                       decoration: TextDecoration.underline,
                       color: green,
                     ),
@@ -230,15 +246,15 @@ class _ProfileSettingsState extends State<ProfileSettings> {
               ),
             ),
             Container(
-              margin: EdgeInsets.symmetric(vertical: height * 0.02),
+              margin: EdgeInsets.symmetric(vertical: 0.02.hp),
               child: GestureDetector(
                 onTap: _logout,
                 child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Text(
+                  child: AutoSizeText(
                     'Sair',
                     style: GoogleFonts.montserrat(
-                      fontSize: 18,
+                      fontSize: 32.nsp,
                       decoration: TextDecoration.underline,
                       color: green,
                     ),

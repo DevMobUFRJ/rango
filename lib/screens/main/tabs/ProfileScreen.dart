@@ -7,6 +7,7 @@ import 'package:rango/models/client.dart';
 import 'package:rango/screens/main/profile/EditProfileScreen.dart';
 import 'package:rango/screens/main/profile/ProfileSettings.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Client usuario;
@@ -21,8 +22,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final yellow = Color(0xFFF9B152);
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
+    ScreenUtil.init(context, width: 750, height: 1334);
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
@@ -33,36 +33,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
-        padding:
-            EdgeInsets.only(top: 20, left: width * 0.1, right: width * 0.1),
+        padding: EdgeInsets.only(left: 0.1.wp, right: 0.1.wp),
         height: MediaQuery.of(context).size.height - kToolbarHeight - 86,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Expanded(
+            Flexible(
               flex: 4,
               child: Container(
                 child: Stack(
                   alignment: Alignment.center,
                   children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(left: 40, bottom: 20),
-                      height: 150,
-                      width: 160,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: yellow,
+                    FittedBox(
+                      fit: BoxFit.cover,
+                      child: Container(
+                        margin: EdgeInsets.only(left: 80.w, bottom: 50.h),
+                        height: 230.h,
+                        width: 260.w,
+                        decoration: BoxDecoration(
+                          borderRadius:
+                              BorderRadius.circular(ScreenUtil().setSp(30)),
+                          color: yellow,
+                        ),
                       ),
                     ),
                     Container(
                       margin: EdgeInsets.only(top: 20),
-                      child: CircleAvatar(
-                        backgroundColor: Theme.of(context).accentColor,
-                        backgroundImage: widget.usuario.picture != null
-                            ? NetworkImage(widget.usuario.picture)
-                            : null,
-                        radius: 80,
+                      child: FittedBox(
+                        fit: BoxFit.cover,
+                        child: CircleAvatar(
+                          backgroundColor: Theme.of(context).accentColor,
+                          backgroundImage: widget.usuario.picture != null
+                              ? NetworkImage(widget.usuario.picture)
+                              : null,
+                          radius: 150.w,
+                        ),
                       ),
                     ),
                   ],
@@ -72,13 +78,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Flexible(
               flex: 1,
               child: Container(
-                margin: EdgeInsets.symmetric(vertical: height * 0.01),
+                margin: EdgeInsets.symmetric(vertical: 0.01.hp),
                 child: AutoSizeText(
                   widget.usuario.name,
                   style: GoogleFonts.montserrat(
                     color: Theme.of(context).accentColor,
-                    fontSize: 20,
                     fontWeight: FontWeight.w500,
+                    fontSize: 35.ssp,
                   ),
                 ),
               ),
@@ -86,8 +92,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Expanded(
               flex: 1,
               child: Container(
-                margin: EdgeInsets.symmetric(vertical: height * 0.01),
-                width: width * 0.48,
+                margin: EdgeInsets.symmetric(vertical: 0.01.hp),
+                width: 0.48.wp,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
@@ -102,7 +108,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Icon(
                         Icons.edit,
                         color: yellow,
-                        size: 28,
+                        size: ScreenUtil().setSp(48),
                       ),
                     ),
                     GestureDetector(
@@ -116,7 +122,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Icon(
                         Icons.settings,
                         color: yellow,
-                        size: 28,
+                        size: ScreenUtil().setSp(48),
                       ),
                     ),
                   ],
@@ -127,32 +133,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
               flex: 1,
               child: Container(
                 padding: EdgeInsets.symmetric(
-                    horizontal: width * 0.03, vertical: 10),
+                    horizontal: 0.03.wp, vertical: 0.01.hp),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
                     AutoSizeText(
                       'Favoritos',
+                      maxLines: 1,
                       style: GoogleFonts.montserrat(
                         color: yellow,
+                        fontSize: 16,
                       ),
                     ),
                     SizedBox(width: 2),
                     Icon(
                       Icons.star,
                       color: yellow,
-                      size: 20,
+                      size: ScreenUtil().setSp(35),
                     )
                   ],
                 ),
               ),
             ),
             Expanded(
-              flex: 6,
+              flex: 7,
               child: Container(
-                height: MediaQuery.of(context).size.height * 0.3,
                 child: ListView.separated(
-                  separatorBuilder: (context, index) => SizedBox(height: 5),
+                  separatorBuilder: (context, index) =>
+                      SizedBox(height: 0.01.hp),
                   itemCount: sellers.length,
                   itemBuilder: (ctx, index) => GestureDetector(
                     onTap: () => pushNewScreen(
@@ -163,21 +172,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           PageTransitionAnimation.cupertino,
                     ),
                     child: Container(
-                      height: 70,
-                      margin: EdgeInsets.only(bottom: 10),
-                      padding:
-                          EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      height: 120.h,
+                      padding: EdgeInsets.symmetric(
+                          vertical: 0.01.hp, horizontal: 0.05.wp),
                       decoration: BoxDecoration(
                           color: Theme.of(context).accentColor,
-                          borderRadius: BorderRadius.circular(18)),
+                          borderRadius:
+                              BorderRadius.circular(ScreenUtil().setSp(22))),
                       child: Row(
                         children: [
                           CircleAvatar(
                             backgroundImage:
                                 NetworkImage(sellers[index].picture),
-                            radius: 25,
+                            radius: ScreenUtil().setSp(50),
                           ),
-                          SizedBox(width: 10),
+                          SizedBox(width: 0.03.wp),
                           AutoSizeText(
                             sellers[index].name,
                             overflow: TextOverflow.ellipsis,

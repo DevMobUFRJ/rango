@@ -1,5 +1,8 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/meals.dart';
 import 'package:flutter/foundation.dart';
@@ -18,25 +21,24 @@ class GridVertical extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, width: 750, height: 1334);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
-          padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.04),
-          child: Text(
+          padding: EdgeInsets.symmetric(horizontal: 0.04.hp),
+          child: AutoSizeText(
             title,
             style: TextStyle(
               color: Theme.of(context).accentColor,
-              fontSize: 16,
+              fontSize: 22.nsp,
             ),
           ),
         ),
-        SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+        SizedBox(height: 0.01.hp),
         Container(
-          height: MediaQuery.of(context).size.height * 0.46,
-          padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.02),
+          height: 0.46.hp,
+          padding: EdgeInsets.symmetric(horizontal: 0.02.hp),
           width: double.infinity,
           child: StaggeredGridView.countBuilder(
             shrinkWrap: true,
@@ -67,15 +69,16 @@ class GridVertical extends StatelessWidget {
                       Container(
                         child: Column(
                           children: <Widget>[
-                            Text(
+                            AutoSizeText(
                               meals[index].name,
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 14),
+                              style: GoogleFonts.montserrat(fontSize: 20.nsp),
                             ),
-                            Text(
+                            AutoSizeText(
                               'R\$${meals[index].price}',
                               textAlign: TextAlign.center,
+                              style: GoogleFonts.montserrat(fontSize: 20.nsp),
                             ),
                           ],
                         ),

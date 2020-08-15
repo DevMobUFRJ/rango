@@ -30,7 +30,7 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
         await Firestore.instance.collection("clients").document(user.uid).get();
     setState(() {
       client = new Client(
-        email: userData.data['email'].toString(),
+        email: userData?.data['email']?.toString(),
         picture: userData?.data['picture']?.toString(),
         name: userData.data['name'].toString(),
         phone: userData?.data['phone']?.toString(),
