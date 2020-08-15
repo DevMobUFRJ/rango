@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/widgets/auth/CustomTextFormField.dart';
@@ -94,12 +96,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, width: 750, height: 1334);
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: AutoSizeText(
           'Editar Perfil',
+          maxLines: 1,
           style: GoogleFonts.montserrat(
             color: Theme.of(context).accentColor,
+            fontSize: 35.nsp,
           ),
         ),
       ),
@@ -107,8 +112,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         builder: (ctx, constraint) => SingleChildScrollView(
           child: Container(
             child: ConstrainedBox(
-              constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height * 0.8),
+              constraints: BoxConstraints(maxHeight: 0.8.hp),
               child: Padding(
                 padding: EdgeInsets.all(16),
                 child: Column(
@@ -130,16 +134,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 10),
-                    Flexible(
-                      flex: 2,
+                    SizedBox(height: 0.02.hp),
+                    Expanded(
+                      flex: 3,
                       child: Form(
                         key: _formKey,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Expanded(
+                            Flexible(
+                              flex: 2,
                               child: CustomTextFormField(
                                 labelText: 'Telefone:',
                                 key: ValueKey('phone'),
@@ -160,27 +165,32 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     FocusScope.of(context).nextFocus(),
                               ),
                             ),
-                            Expanded(
-                              child: CustomTextFormField(
-                                labelText: 'Senha:',
-                                controller: _pass,
-                                isPassword: true,
-                                onFieldSubmitted: (_) => FocusScope.of(context)
-                                    .requestFocus(_focusNodeConfirmPass),
-                                onSaved: (value) => _password = value,
-                                textInputAction: TextInputAction.next,
-                                key: ValueKey('password'),
-                                validator: (String value) {
-                                  if (value != '' && value.length < 7) {
-                                    setState(() => _passwordErrorMessage =
-                                        'Senha precisa ter pelo menos 7 caracteres');
-                                  }
-                                  return null;
-                                },
-                                errorText: _passwordErrorMessage,
+                            Flexible(
+                              flex: 2,
+                              child: Container(
+                                child: CustomTextFormField(
+                                  labelText: 'Senha:',
+                                  controller: _pass,
+                                  isPassword: true,
+                                  onFieldSubmitted: (_) =>
+                                      FocusScope.of(context)
+                                          .requestFocus(_focusNodeConfirmPass),
+                                  onSaved: (value) => _password = value,
+                                  textInputAction: TextInputAction.next,
+                                  key: ValueKey('password'),
+                                  validator: (String value) {
+                                    if (value != '' && value.length < 7) {
+                                      setState(() => _passwordErrorMessage =
+                                          'Senha precisa ter pelo menos 7 caracteres');
+                                    }
+                                    return null;
+                                  },
+                                  errorText: _passwordErrorMessage,
+                                ),
                               ),
                             ),
-                            Expanded(
+                            Flexible(
+                              flex: 2,
                               child: CustomTextFormField(
                                 labelText: 'Confimar Senha:',
                                 focusNode: _focusNodeConfirmPass,
@@ -199,13 +209,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               ),
                             ),
                             Flexible(
+                              flex: 1,
                               child: Padding(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: 60, vertical: 10),
+                                    horizontal: 0.05.wp, vertical: 0.01.hp),
                                 child: SizedBox(
-                                  width: double.infinity,
+                                  width: 0.7.wp,
                                   child: RaisedButton(
-                                    padding: EdgeInsets.symmetric(vertical: 10),
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 0.01.hp),
                                     disabledColor: Colors.grey,
                                     onPressed: _loading
                                         ? () => {
@@ -223,14 +235,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                       Color>(Colors.white),
                                               strokeWidth: 3.0,
                                             ),
-                                            height: 15,
-                                            width: 15,
+                                            height: 30.w,
+                                            width: 30.w,
                                           )
-                                        : Text(
+                                        : AutoSizeText(
                                             'Continuar',
                                             style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20),
+                                              color: Colors.white,
+                                              fontSize: 38.nsp,
+                                            ),
                                           ),
                                   ),
                                 ),

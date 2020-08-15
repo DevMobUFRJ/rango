@@ -19,7 +19,7 @@ class _NewMessageState extends State<NewMessage> {
 
   void _sendMessage() async {
     widget.addNewMessage(Message(
-      text: _controller.text,
+      text: _controller.text.trim(),
       sender: 'client',
     ));
     setState(() => _controller.clear());

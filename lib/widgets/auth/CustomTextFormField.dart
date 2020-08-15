@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/widgets/auth/ErrorMessageText.dart';
 
 class CustomTextFormField extends StatefulWidget {
@@ -38,54 +39,58 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, width: 750, height: 1334);
     return Column(
       children: <Widget>[
         Align(
           alignment: Alignment.centerLeft,
           child: Padding(
-            padding: EdgeInsets.only(left: 10, bottom: 10),
+            padding: EdgeInsets.only(left: 0.05.wp, bottom: 0.01.hp),
             child: Text(
               widget.labelText,
               style: TextStyle(
-                fontSize: 20,
-                color: Colors.deepOrange[300],
+                fontSize: 38.nsp,
+                color: Theme.of(context).accentColor,
               ),
             ),
           ),
         ),
-        Material(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          elevation: 5,
-          child: TextFormField(
-            focusNode: widget.focusNode != null ? widget.focusNode : null,
-            controller: widget.controller,
-            textInputAction: widget.textInputAction,
-            onFieldSubmitted: widget.onFieldSubmitted,
-            key: widget.key,
-            validator: widget.validator,
-            onSaved: widget.onSaved,
-            obscureText: widget.isPassword != null && !widget.isPassword
-                ? false
-                : !_showPassword,
-            decoration: InputDecoration(
-              errorStyle: TextStyle(fontSize: 16),
-              border: InputBorder.none,
-              contentPadding: widget.isPassword != null && widget.isPassword
-                  ? EdgeInsets.all(15)
-                  : EdgeInsets.only(left: 15),
-              suffixIcon: widget.isPassword != null && widget.isPassword
-                  ? IconButton(
-                      icon: Icon(!_showPassword
-                          ? Icons.visibility_off
-                          : Icons.visibility),
-                      onPressed: () =>
-                          setState(() => _showPassword = !_showPassword),
-                    )
-                  : null,
+        Flexible(
+          flex: 1,
+          child: Material(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
             ),
-            keyboardType: widget.keyboardType,
+            elevation: 5,
+            child: TextFormField(
+              focusNode: widget.focusNode != null ? widget.focusNode : null,
+              controller: widget.controller,
+              textInputAction: widget.textInputAction,
+              onFieldSubmitted: widget.onFieldSubmitted,
+              key: widget.key,
+              validator: widget.validator,
+              onSaved: widget.onSaved,
+              obscureText: widget.isPassword != null && !widget.isPassword
+                  ? false
+                  : !_showPassword,
+              decoration: InputDecoration(
+                errorStyle: TextStyle(fontSize: 22.nsp),
+                border: InputBorder.none,
+                contentPadding: widget.isPassword != null && widget.isPassword
+                    ? EdgeInsets.all(15)
+                    : EdgeInsets.only(left: 15),
+                suffixIcon: widget.isPassword != null && widget.isPassword
+                    ? IconButton(
+                        icon: Icon(!_showPassword
+                            ? Icons.visibility_off
+                            : Icons.visibility),
+                        onPressed: () =>
+                            setState(() => _showPassword = !_showPassword),
+                      )
+                    : null,
+              ),
+              keyboardType: widget.keyboardType,
+            ),
           ),
         ),
         if (widget.errorText != null) ErrorMessageText(widget.errorText),

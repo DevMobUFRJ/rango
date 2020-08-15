@@ -25,8 +25,7 @@ class ListaHorizontal extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
-          padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.04),
+          padding: EdgeInsets.symmetric(horizontal: 0.04.wp),
           child: AutoSizeText(
             title,
             style: TextStyle(
@@ -36,11 +35,12 @@ class ListaHorizontal extends StatelessWidget {
           ),
         ),
         Container(
-          height: MediaQuery.of(context).size.height * 0.16,
+          height: 250.h,
           width: double.infinity,
           child: ListView.builder(
             itemCount: meals.length,
             scrollDirection: Axis.horizontal,
+            shrinkWrap: true,
             itemBuilder: (ctx, index) => GestureDetector(
               onTap: () => pushNewScreen(context,
                   screen: DetalhesQuentinhaScreen(
@@ -53,6 +53,7 @@ class ListaHorizontal extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8)),
                 child: Column(
+                  mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
                     Hero(
                       tag: meals[index].hashCode * tagM,
@@ -60,30 +61,34 @@ class ListaHorizontal extends StatelessWidget {
                         placeholder: 'assets/imgs/quentinha_placeholder.png',
                         image: meals[index].picture,
                         fit: BoxFit.cover,
-                        height: MediaQuery.of(context).size.height * 0.10,
-                        width: MediaQuery.of(context).size.width * 0.38,
+                        height: 150.h,
+                        width: 0.4.wp,
                       ),
                     ),
-                    Column(
-                      mainAxisSize: MainAxisSize.max,
-                      children: <Widget>[
-                        FittedBox(
-                          fit: BoxFit.cover,
-                          child: AutoSizeText(
-                            meals[index].name,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.montserrat(fontSize: 14.nsp),
+                    Container(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          Container(
+                            width: 0.35.wp,
+                            child: Text(
+                              meals[index].name,
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              style: GoogleFonts.montserrat(fontSize: 28.ssp),
+                            ),
                           ),
-                        ),
-                        FittedBox(
-                          child: AutoSizeText(
-                            'R\$${meals[index].price}',
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.montserrat(fontSize: 14.nsp),
+                          Container(
+                            width: 0.35.wp,
+                            child: AutoSizeText(
+                              'R\$${meals[index].price}',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.montserrat(fontSize: 28.ssp),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),

@@ -31,7 +31,7 @@ class CustomCheckBox extends StatelessWidget {
               text,
               overflow: TextOverflow.clip,
               style: TextStyle(
-                  color: isActive ? orange : Colors.grey, fontSize: 22.nsp),
+                  color: isActive ? orange : Colors.grey, fontSize: 32.nsp),
             ),
           ),
         ),

@@ -52,7 +52,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
     await showDialog(
       context: context,
       builder: (BuildContext ctx) => AlertDialog(
-        insetPadding: EdgeInsets.symmetric(horizontal: 60),
+        insetPadding: EdgeInsets.symmetric(horizontal: 0.1.wp),
         backgroundColor: Color(0xFFF9B152),
         actionsPadding: EdgeInsets.all(10),
         contentPadding: EdgeInsets.only(
@@ -70,7 +70,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
               Navigator.of(ctx).pop();
               FirebaseAuth.instance.signOut();
             },
-            child: AutoSizeText(
+            child: Text(
               'Sair',
               style: GoogleFonts.montserrat(
                 decoration: TextDecoration.underline,
@@ -81,7 +81,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
           ),
           FlatButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: AutoSizeText(
+            child: Text(
               'Cancelar',
               style: GoogleFonts.montserrat(
                 decoration: TextDecoration.underline,
@@ -91,7 +91,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
             ),
           ),
         ],
-        title: AutoSizeText(
+        title: Text(
           'Já satisfeito?',
           style: GoogleFonts.montserrat(
             color: Colors.white,
@@ -99,11 +99,11 @@ class _ProfileSettingsState extends State<ProfileSettings> {
             fontSize: 38.ssp,
           ),
         ),
-        content: AutoSizeText(
+        content: Text(
           'Tem certeza que deseja sair da sua conta?',
           style: GoogleFonts.montserrat(
             color: Colors.white,
-            fontSize: 24.nsp,
+            fontSize: 28.nsp,
           ),
         ),
       ),
@@ -164,7 +164,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
               child: Column(
                 children: [
                   Container(
-                    height: 0.06.hp,
+                    height: 0.07.hp,
                     child: CustomCheckBox(
                       changeValue: (value) => setState(() => _attValue = value),
                       text: 'Atualização dos vendedores favoritos',
@@ -173,7 +173,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                     ),
                   ),
                   Container(
-                    height: 0.06.hp,
+                    height: 0.07.hp,
                     child: CustomCheckBox(
                       changeValue: (value) =>
                           setState(() => _reservaValue = value),
@@ -183,7 +183,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                     ),
                   ),
                   Container(
-                    height: 0.06.hp,
+                    height: 0.07.hp,
                     child: CustomCheckBox(
                       changeValue: (value) =>
                           setState(() => _newMessagesValue = value),
@@ -193,7 +193,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                     ),
                   ),
                   Container(
-                    height: 0.06.hp,
+                    height: 0.07.hp,
                     child: CustomCheckBox(
                       changeValue: (value) =>
                           setState(() => _promotionsValue = value),
@@ -207,6 +207,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
             ),
             Container(
               margin: EdgeInsets.symmetric(vertical: 0.01.hp),
+              width: 0.6.wp,
               child: RaisedButton(
                 padding:
                     EdgeInsets.symmetric(vertical: 0.01.hp, horizontal: 0.1.wp),
@@ -218,7 +219,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                 child: AutoSizeText(
                   'Confirmar',
                   style: GoogleFonts.montserrat(
-                    fontSize: 32.nsp,
+                    fontSize: 36.nsp,
                   ),
                 ),
               ),
@@ -237,7 +238,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                   child: AutoSizeText(
                     'Sobre',
                     style: GoogleFonts.montserrat(
-                      fontSize: 32.nsp,
+                      fontSize: 36.nsp,
                       decoration: TextDecoration.underline,
                       color: green,
                     ),
@@ -254,7 +255,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                   child: AutoSizeText(
                     'Sair',
                     style: GoogleFonts.montserrat(
-                      fontSize: 32.nsp,
+                      fontSize: 36.nsp,
                       decoration: TextDecoration.underline,
                       color: green,
                     ),

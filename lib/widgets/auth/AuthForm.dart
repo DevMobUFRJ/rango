@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/widgets/auth/CustomTextFormField.dart';
 import 'package:rango/widgets/pickers/UserImagePicker.dart';
@@ -59,161 +60,179 @@ class _AuthFormState extends State<AuthForm> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, width: 750, height: 1334);
     return LayoutBuilder(
       builder: (ctx, constraint) => SingleChildScrollView(
         child: ConstrainedBox(
-          constraints: BoxConstraints(minHeight: constraint.maxHeight),
+          constraints: BoxConstraints(maxHeight: 0.9.hp),
           child: Padding(
             padding: EdgeInsets.all(16),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 if (widget._isLogin)
-                  Text(
-                    "RANGO",
-                    style: GoogleFonts.montserrat(
-                      fontSize: 50,
-                      color: Theme.of(context).accentColor,
+                  Flexible(
+                    flex: 3,
+                    child: Text(
+                      "RANGO",
+                      style: GoogleFonts.montserrat(
+                        fontSize: 80.nsp,
+                        color: Theme.of(context).accentColor,
+                      ),
                     ),
                   ),
-                Form(
-                  key: _formKey,
-                  child: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        if (!widget._isLogin) UserImagePicker(_pickedImage),
-                        if (!widget._isLogin) SizedBox(height: 30),
-                        CustomTextFormField(
-                          labelText: 'Email:',
-                          key: ValueKey('email'),
-                          validator: (value) {
-                            if (value.isEmpty || !value.contains('@')) {
-                              setState(() {
-                                _emailErrorMessage = 'Coloque um email válido';
-                              });
-                            } else {
-                              setState(() {
-                                _emailErrorMessage = null;
-                              });
-                            }
-                            return null;
-                          },
-                          onSaved: (value) => _email = value,
-                          keyboardType: TextInputType.emailAddress,
-                          onFieldSubmitted: (_) =>
-                              FocusScope.of(context).nextFocus(),
-                          textInputAction: TextInputAction.next,
-                          errorText: _emailErrorMessage,
-                        ),
-                        SizedBox(height: 30),
-                        if (!widget._isLogin)
-                          CustomTextFormField(
-                            labelText: 'Nome',
-                            errorText: _nameErrorMessage,
-                            key: ValueKey('name'),
-                            onSaved: (value) => _name = value,
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                setState(() {
-                                  _nameErrorMessage = 'Digite seu nome';
-                                });
-                              } else {
-                                setState(() {
-                                  _nameErrorMessage = null;
-                                });
-                              }
-                              return null;
-                            },
-                            onFieldSubmitted: (_) =>
-                                FocusScope.of(context).nextFocus(),
-                            textInputAction: TextInputAction.next,
-                          ),
-                        SizedBox(height: 30),
-                        CustomTextFormField(
-                          labelText: 'Senha:',
-                          key: ValueKey('password'),
-                          controller: _pass,
-                          validator: (value) {
-                            if (value.isEmpty || value.length < 7) {
-                              setState(() => _passwordErrorMessage =
-                                  'Senha precisa ter no mínimo 7 caracteres');
-                            } else {
-                              setState(() => _passwordErrorMessage = null);
-                            }
-                            return null;
-                          },
-                          onSaved: (value) =>
-                              {setState(() => _password = value)},
-                          errorText: _passwordErrorMessage,
-                          isPassword: true,
-                          textInputAction: !widget._isLogin
-                              ? TextInputAction.next
-                              : TextInputAction.done,
-                          onFieldSubmitted: !widget._isLogin
-                              ? (_) => FocusScope.of(context)
-                                  .requestFocus(_focusNodeConfirmPass)
-                              : null,
-                        ),
-                        if (!widget._isLogin) SizedBox(height: 30),
-                        if (!widget._isLogin)
-                          CustomTextFormField(
-                            labelText: 'Confirmar Senha:',
-                            controller: _confirmPass,
-                            key: ValueKey('confirmPassword'),
-                            focusNode: _focusNodeConfirmPass,
-                            validator: (value) {
-                              if (value.isEmpty ||
-                                  value.length < 7 ||
-                                  value != _pass.text) {
-                                setState(() => _confirmPasswordErrorMessage =
-                                    'Senhas não conferem');
-                              } else {
-                                setState(
-                                    () => _confirmPasswordErrorMessage = null);
-                              }
-                              return null;
-                            },
-                            errorText: _confirmPasswordErrorMessage,
-                            isPassword: true,
-                          ),
-                        SizedBox(height: 25),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 60),
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: RaisedButton(
-                              padding: EdgeInsets.symmetric(vertical: 10),
-                              disabledColor: Colors.grey,
-                              onPressed: widget._isLoading
-                                  ? () => {
-                                        Scaffold.of(context).showSnackBar(
-                                            SnackBar(
-                                                content: Text(
-                                                    'Carregando, aguarde.')))
-                                      }
-                                  : _submit,
-                              child: widget._isLoading
-                                  ? SizedBox(
-                                      child: CircularProgressIndicator(
-                                        valueColor:
-                                            new AlwaysStoppedAnimation<Color>(
-                                                Colors.white),
-                                        strokeWidth: 3.0,
-                                      ),
-                                      height: 15,
-                                      width: 15,
-                                    )
-                                  : Text(
-                                      'Continuar',
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 20),
-                                    ),
+                Expanded(
+                  flex: widget._isLogin ? 3 : 6,
+                  child: Form(
+                    key: _formKey,
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          if (!widget._isLogin) UserImagePicker(_pickedImage),
+                          Flexible(
+                            flex: 2,
+                            child: CustomTextFormField(
+                              labelText: 'Email:',
+                              key: ValueKey('email'),
+                              validator: (value) {
+                                if (value.isEmpty || !value.contains('@')) {
+                                  setState(() {
+                                    _emailErrorMessage =
+                                        'Coloque um email válido';
+                                  });
+                                } else {
+                                  setState(() {
+                                    _emailErrorMessage = null;
+                                  });
+                                }
+                                return null;
+                              },
+                              onSaved: (value) => _email = value,
+                              keyboardType: TextInputType.emailAddress,
+                              onFieldSubmitted: (_) =>
+                                  FocusScope.of(context).nextFocus(),
+                              textInputAction: TextInputAction.next,
+                              errorText: _emailErrorMessage,
                             ),
                           ),
-                        ),
-                      ],
+                          if (!widget._isLogin)
+                            Flexible(
+                              flex: 2,
+                              child: CustomTextFormField(
+                                labelText: 'Nome',
+                                errorText: _nameErrorMessage,
+                                key: ValueKey('name'),
+                                onSaved: (value) => _name = value,
+                                validator: (value) {
+                                  if (value.isEmpty) {
+                                    setState(() {
+                                      _nameErrorMessage = 'Digite seu nome';
+                                    });
+                                  } else {
+                                    setState(() {
+                                      _nameErrorMessage = null;
+                                    });
+                                  }
+                                  return null;
+                                },
+                                onFieldSubmitted: (_) =>
+                                    FocusScope.of(context).nextFocus(),
+                                textInputAction: TextInputAction.next,
+                              ),
+                            ),
+                          Flexible(
+                            flex: 2,
+                            child: CustomTextFormField(
+                              labelText: 'Senha:',
+                              key: ValueKey('password'),
+                              controller: _pass,
+                              validator: (value) {
+                                if (value.isEmpty || value.length < 7) {
+                                  setState(() => _passwordErrorMessage =
+                                      'Senha precisa ter no mínimo 7 caracteres');
+                                } else {
+                                  setState(() => _passwordErrorMessage = null);
+                                }
+                                return null;
+                              },
+                              onSaved: (value) =>
+                                  {setState(() => _password = value)},
+                              errorText: _passwordErrorMessage,
+                              isPassword: true,
+                              textInputAction: !widget._isLogin
+                                  ? TextInputAction.next
+                                  : TextInputAction.done,
+                              onFieldSubmitted: !widget._isLogin
+                                  ? (_) => FocusScope.of(context)
+                                      .requestFocus(_focusNodeConfirmPass)
+                                  : null,
+                            ),
+                          ),
+                          if (!widget._isLogin)
+                            Flexible(
+                              flex: 2,
+                              child: CustomTextFormField(
+                                labelText: 'Confirmar Senha:',
+                                controller: _confirmPass,
+                                key: ValueKey('confirmPassword'),
+                                focusNode: _focusNodeConfirmPass,
+                                validator: (value) {
+                                  if (value.isEmpty ||
+                                      value.length < 7 ||
+                                      value != _pass.text) {
+                                    setState(() =>
+                                        _confirmPasswordErrorMessage =
+                                            'Senhas não conferem');
+                                  } else {
+                                    setState(() =>
+                                        _confirmPasswordErrorMessage = null);
+                                  }
+                                  return null;
+                                },
+                                errorText: _confirmPasswordErrorMessage,
+                                isPassword: true,
+                              ),
+                            ),
+                          Flexible(
+                            flex: 1,
+                            child: SizedBox(
+                              width: 0.7.wp,
+                              child: RaisedButton(
+                                padding:
+                                    EdgeInsets.symmetric(vertical: 0.02.wp),
+                                disabledColor: Colors.grey,
+                                onPressed: widget._isLoading
+                                    ? () => {
+                                          Scaffold.of(context).showSnackBar(
+                                              SnackBar(
+                                                  content: Text(
+                                                      'Carregando, aguarde.')))
+                                        }
+                                    : _submit,
+                                child: widget._isLoading
+                                    ? SizedBox(
+                                        child: CircularProgressIndicator(
+                                          valueColor:
+                                              new AlwaysStoppedAnimation<Color>(
+                                                  Colors.white),
+                                          strokeWidth: 3.0,
+                                        ),
+                                        height: 30.w,
+                                        width: 30.w,
+                                      )
+                                    : Text(
+                                        'Continuar',
+                                        style: GoogleFonts.montserrat(
+                                            color: Colors.white,
+                                            fontSize: 36.nsp),
+                                      ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

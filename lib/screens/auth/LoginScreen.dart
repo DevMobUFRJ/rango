@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/screens/auth/AuthScreen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, width: 750, height: 1334);
     final String assetName = 'assets/imgs/curva_home.svg';
     final String asset2Name = 'assets/imgs/curva2_home.svg';
     return Scaffold(
@@ -23,20 +25,20 @@ class LoginScreen extends StatelessWidget {
                     flex: 1,
                     child: Text(
                       "RANGO",
-                      style: TextStyle(color: Colors.white, fontSize: 30.0),
+                      style: TextStyle(color: Colors.white, fontSize: 58.nsp),
                     ),
                   ),
                   Flexible(
                     fit: FlexFit.loose,
                     flex: 3,
                     child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 0.05.wp, vertical: 0),
                       child: Container(
                         margin: EdgeInsets.only(bottom: 20),
                         width: double.infinity,
                         child: RaisedButton(
-                          padding: EdgeInsets.symmetric(vertical: 12),
+                          padding: EdgeInsets.symmetric(vertical: 0.015.hp),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -46,7 +48,8 @@ class LoginScreen extends StatelessWidget {
                             'Login',
                             style: GoogleFonts.montserratTextTheme(
                                     Theme.of(context).textTheme)
-                                .button,
+                                .button
+                                .copyWith(fontSize: 38.nsp),
                           ),
                         ),
                       ),
@@ -55,10 +58,10 @@ class LoginScreen extends StatelessWidget {
                   Flexible(
                     flex: 3,
                     child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 0.05.wp, vertical: 0),
                       child: Container(
-                        margin: EdgeInsets.symmetric(vertical: 20),
+                        margin: EdgeInsets.symmetric(vertical: 0.015.hp),
                         width: double.infinity,
                         child: RaisedButton(
                           padding: EdgeInsets.symmetric(vertical: 12),
@@ -72,7 +75,8 @@ class LoginScreen extends StatelessWidget {
                             'Cadastro',
                             style: GoogleFonts.montserratTextTheme(
                                     Theme.of(context).textTheme)
-                                .button,
+                                .button
+                                .copyWith(fontSize: 38.nsp),
                           ),
                         ),
                       ),
@@ -87,7 +91,7 @@ class LoginScreen extends StatelessWidget {
                 child: SvgPicture.asset(
                   assetName,
                   semanticsLabel: 'curvaHome',
-                  width: MediaQuery.of(context).size.width,
+                  width: 1.wp,
                 ),
               ),
             ),

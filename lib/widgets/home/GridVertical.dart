@@ -31,7 +31,7 @@ class GridVertical extends StatelessWidget {
             title,
             style: TextStyle(
               color: Theme.of(context).accentColor,
-              fontSize: 22.nsp,
+              fontSize: 28.nsp,
             ),
           ),
         ),
@@ -71,14 +71,12 @@ class GridVertical extends StatelessWidget {
                           children: <Widget>[
                             AutoSizeText(
                               meals[index].name,
-                              overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.montserrat(fontSize: 20.nsp),
+                              style: GoogleFonts.montserrat(fontSize: 28.nsp),
                             ),
                             AutoSizeText(
                               'R\$${meals[index].price}',
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.montserrat(fontSize: 20.nsp),
+                              style: GoogleFonts.montserrat(fontSize: 28.nsp),
                             ),
                           ],
                         ),

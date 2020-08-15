@@ -33,7 +33,7 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
           child: AutoSizeText(
             marmita.sellerName,
             style: GoogleFonts.montserrat(
-                color: Theme.of(context).accentColor, fontSize: 35.nsp),
+                color: Theme.of(context).accentColor, fontSize: 40.nsp),
           ),
         ),
       ),
@@ -81,6 +81,7 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                             alignment: Alignment.topLeft,
                             child: AutoSizeText(
                               marmita.name,
+                              maxLines: 1,
                               style: GoogleFonts.montserratTextTheme(
                                       Theme.of(context).textTheme)
                                   .headline2
@@ -92,12 +93,12 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                       Flexible(
                         flex: 2,
                         child: Container(
-                          height: 80.h,
+                          height: 120.h,
                           child: Align(
                             alignment: Alignment.topLeft,
                             child: AutoSizeText(
                               marmita.description,
-                              maxLines: 3,
+                              maxLines: 4,
                               style: GoogleFonts.montserratTextTheme(
                                       Theme.of(context).textTheme)
                                   .headline2,
@@ -128,7 +129,7 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
               Flexible(
                 flex: 3,
                 child: Container(
-                  width: 0.45.wp,
+                  width: 0.6.wp,
                   child: RaisedButton(
                     onPressed: () {},
                     padding:

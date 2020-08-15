@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -32,6 +33,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
                 'Escolha de onde pegar a imagem',
                 style: GoogleFonts.montserrat(
                   color: Theme.of(context).accentColor,
+                  fontSize: 38.nsp,
                 ),
               ),
               content: Row(
@@ -46,6 +48,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
                       'Galeria',
                       style: GoogleFonts.montserrat(
                         color: Theme.of(context).accentColor,
+                        fontSize: 36.nsp,
                       ),
                     ),
                   ),
@@ -58,6 +61,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
                       'Câmera',
                       style: GoogleFonts.montserrat(
                         color: Theme.of(context).accentColor,
+                        fontSize: 36.nsp,
                       ),
                     ),
                   ),
@@ -92,6 +96,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, width: 750, height: 1334);
     return GestureDetector(
       onTap: _pickImage,
       child: Container(
@@ -102,7 +107,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
               alignment: Alignment.center,
               children: <Widget>[
                 CircleAvatar(
-                  radius: 55,
+                  radius: 120.w,
                   backgroundImage: _pickedImage != null
                       ? FileImage(_pickedImage)
                       : widget.image != null
@@ -114,17 +119,17 @@ class _UserImagePickerState extends State<UserImagePicker> {
                   Icon(
                     Icons.person,
                     color: Theme.of(context).backgroundColor,
-                    size: 85,
+                    size: 160.nsp,
                   ),
               ],
             ),
             if (widget.editText != null)
               Padding(
-                padding: EdgeInsets.only(left: 10),
+                padding: EdgeInsets.only(left: 0.05.wp),
                 child: Text(
                   widget.editText,
                   style: GoogleFonts.montserrat(
-                    fontSize: 20,
+                    fontSize: 36.nsp,
                     color: Color(0xFF609B90),
                     decoration: TextDecoration.underline,
                   ),

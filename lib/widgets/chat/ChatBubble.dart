@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ChatBubble extends StatelessWidget {
   final String message;
@@ -21,7 +22,7 @@ class ChatBubble extends StatelessWidget {
       mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
       children: <Widget>[
         Container(
-          constraints: BoxConstraints(maxWidth: 0.45.wp),
+          constraints: BoxConstraints(maxWidth: 0.55.wp),
           decoration: BoxDecoration(
             color: isMe ? Theme.of(context).accentColor : yellow,
             borderRadius: BorderRadius.only(
@@ -32,15 +33,16 @@ class ChatBubble extends StatelessWidget {
             ),
           ),
           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-          margin: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+          margin: EdgeInsets.symmetric(vertical: 3, horizontal: 8),
           child: Column(
             crossAxisAlignment:
                 isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
             children: <Widget>[
-              AutoSizeText(
+              Text(
                 message,
-                style: TextStyle(
+                style: GoogleFonts.montserrat(
                   color: Colors.white,
+                  fontSize: 28.nsp,
                 ),
                 textAlign: TextAlign.left,
               ),

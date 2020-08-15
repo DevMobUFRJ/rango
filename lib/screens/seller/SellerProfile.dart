@@ -57,7 +57,7 @@ class _SellerProfileState extends State<SellerProfile> {
               onTap: () => setState(() => isFavorite = !isFavorite),
               child: Icon(
                 isFavorite ? Icons.star : Icons.star_border,
-                size: 42.nsp,
+                size: 48.nsp,
               ),
             ),
           )
@@ -73,9 +73,9 @@ class _SellerProfileState extends State<SellerProfile> {
                       alignment: Alignment.center,
                       children: <Widget>[
                         Container(
-                          margin: EdgeInsets.only(left: 80.w, bottom: 50.h),
-                          height: 230.h,
-                          width: 260.w,
+                          margin: EdgeInsets.only(left: 80.w, bottom: 40.h),
+                          height: 210.h,
+                          width: 240.w,
                           decoration: BoxDecoration(
                             borderRadius:
                                 BorderRadius.circular(ScreenUtil().setSp(30)),
@@ -129,7 +129,7 @@ class _SellerProfileState extends State<SellerProfile> {
                           PageTransitionAnimation.cupertino,
                     ),
                     label: Container(
-                      width: 270.w,
+                      width: 0.5.wp,
                       child: AutoSizeText(
                         'Chat com o vendedor',
                         maxLines: 1,
@@ -147,7 +147,7 @@ class _SellerProfileState extends State<SellerProfile> {
                     ),
                     onPressed: () {},
                     label: Container(
-                      width: 190.w,
+                      width: 0.35.wp,
                       child: AutoSizeText(
                         'Ver localização',
                         maxLines: 1,

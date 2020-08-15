@@ -14,6 +14,7 @@ class AboutScreen extends StatelessWidget {
           maxLines: 1,
           style: GoogleFonts.montserrat(
             color: Theme.of(context).accentColor,
+            fontSize: 35.nsp,
           ),
         ),
       ),
@@ -31,7 +32,7 @@ class AboutScreen extends StatelessWidget {
                   horizontal: 0.08.wp,
                 ),
                 child: Container(
-                  height: MediaQuery.of(context).size.height * 0.9,
+                  height: 0.9.hp,
                   child: Column(
                     children: [
                       Flexible(
@@ -39,9 +40,9 @@ class AboutScreen extends StatelessWidget {
                         child: AutoSizeText(
                           'Rango é um aplicativo desenvolvido por pessoas que anseiam pelo momento do almoço, e o entendem como uma brecha de prazer e distração em meio a um dia corrido.',
                           textAlign: TextAlign.left,
-                          overflow: TextOverflow.clip,
                           style: GoogleFonts.montserrat(
                             color: Colors.grey[600],
+                            fontSize: 30.nsp,
                           ),
                         ),
                       ),
@@ -51,22 +52,21 @@ class AboutScreen extends StatelessWidget {
                         child: AutoSizeText(
                           'Feito para ajudar o rango universitário a acontecer de forma mais organizada, nesse aplicativo conectamos quem quer comprar a quem quer vender, de modo que a comunicação seja mais clara e concisa. Assim, facilitamos o horário de almoço para todo mundo e ninguém passa fome!',
                           textAlign: TextAlign.left,
-                          overflow: TextOverflow.clip,
                           style: GoogleFonts.montserrat(
                             color: Colors.grey[600],
+                            fontSize: 30.nsp,
                           ),
                         ),
                       ),
                       SizedBox(height: 0.01.hp),
                       Flexible(
                         flex: 1,
-                        child: Container(
-                          child: AutoSizeText(
-                            'Protótipo feito por: Fernanda Arnaut, Julia Lopes e Luísa Forain.',
-                            textAlign: TextAlign.left,
-                            style: GoogleFonts.montserrat(
-                              color: Colors.grey[600],
-                            ),
+                        child: AutoSizeText(
+                          'Protótipo feito por: Fernanda Arnaut, Julia Lopes e Luísa Forain.',
+                          textAlign: TextAlign.left,
+                          style: GoogleFonts.montserrat(
+                            color: Colors.grey[600],
+                            fontSize: 30.nsp,
                           ),
                         ),
                       ),
@@ -78,17 +78,17 @@ class AboutScreen extends StatelessWidget {
                           textAlign: TextAlign.left,
                           style: GoogleFonts.montserrat(
                             color: Colors.grey[600],
+                            fontSize: 30.nsp,
                           ),
                         ),
                       ),
                       SizedBox(height: 0.01.hp),
                       Expanded(
-                        flex: 2,
+                        flex: 3,
                         child: Container(
                           alignment: Alignment.bottomCenter,
                           child: Image.asset(
                             'assets/imgs/logo_devmob.png',
-                            width: 200.w,
                           ),
                         ),
                       ),

@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -33,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
-        height: MediaQuery.of(context).size.height - 56,
+        height: 1.hp - 56,
         child: SingleChildScrollView(
           child: Stack(
             children: <Widget>[
@@ -44,14 +43,14 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Container(
                 margin: EdgeInsets.only(top: 0.03.hp),
-                width: 1.wp,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    SizedBox(height: 0.01.hp),
                     Container(
-                      width: 0.6.wp,
+                      width: 0.7.wp,
                       padding: EdgeInsets.symmetric(
-                          horizontal: 0.04.wp, vertical: 10),
+                          horizontal: 0.04.wp, vertical: 0.01.hp),
                       child: AutoSizeText(
                         'Olá, ${widget.usuario.name.split(" ")[0]}!\nBateu a fome?',
                         maxLines: 2,
@@ -61,34 +60,23 @@ class _HomeScreenState extends State<HomeScreen> {
                             .headline1,
                       ),
                     ),
-                    SizedBox(height: 0.05.hp),
-                    Container(
-                      height: 260.h,
-                      padding: EdgeInsets.symmetric(horizontal: 2),
-                      child: ListaHorizontal(
-                        title: 'Peça novamente',
-                        meals: meals,
-                        tagM: new Random().nextDouble(),
-                      ),
+                    SizedBox(height: 0.06.hp),
+                    ListaHorizontal(
+                      title: 'Peça novamente',
+                      tagM: Random().nextDouble(),
+                      meals: meals,
                     ),
-                    SizedBox(height: 0.01.hp),
-                    Container(
-                      height: 260.h,
-                      padding: EdgeInsets.symmetric(horizontal: 2),
-                      child: ListaHorizontal(
-                        title: 'Sugestões para você',
-                        meals: meals,
-                        tagM: new Random().nextDouble(),
-                      ),
+                    SizedBox(height: 0.02.hp),
+                    ListaHorizontal(
+                      title: 'Sugestões',
+                      tagM: Random().nextDouble(),
+                      meals: meals,
                     ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 0),
-                      child: GridVertical(
-                        title: 'Promoções da semana',
-                        meals: meals,
-                        tagM: new Random().nextDouble(),
-                      ),
+                    SizedBox(height: 0.02.hp),
+                    GridVertical(
+                      tagM: Random().nextDouble(),
+                      title: 'Recomendado para você',
+                      meals: meals,
                     ),
                   ],
                 ),
