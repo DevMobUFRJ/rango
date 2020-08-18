@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:rango/screens/auth/ForgotPasswordScreen.dart';
 import 'package:rango/widgets/auth/CustomTextFormField.dart';
 import 'package:rango/widgets/pickers/UserImagePicker.dart';
 
@@ -193,6 +195,21 @@ class _AuthFormState extends State<AuthForm> {
                                 },
                                 errorText: _confirmPasswordErrorMessage,
                                 isPassword: true,
+                              ),
+                            ),
+                          if (widget._isLogin)
+                            Expanded(
+                              flex: 1,
+                              child: FlatButton(
+                                onPressed: () => Navigator.of(context)
+                                    .pushNamed(ForgotPasswordScreen.routeName),
+                                child: Text(
+                                  'Esqueceu a senha?',
+                                  style: GoogleFonts.montserrat(
+                                    decoration: TextDecoration.underline,
+                                    color: Color(0xFF72A69C),
+                                  ),
+                                ),
                               ),
                             ),
                           Flexible(
