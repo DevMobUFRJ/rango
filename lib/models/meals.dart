@@ -18,4 +18,13 @@ class Meal {
     @required this.sellerId,
     @required this.sellerName,
   });
+
+  Meal.fromJson(Map<String, dynamic> json)
+      : name = json['name'],
+        description = json['description'],
+        featured = json['featured'],
+        picture = json['picture'],
+        price = json['price'],
+        sellerName = json['sellerName'],
+        sellerId = json['sellerId'];
 }

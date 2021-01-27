@@ -9,6 +9,8 @@ import 'package:rango/models/client.dart';
 import 'package:rango/models/meals.dart';
 import 'package:rango/widgets/home/GridVertical.dart';
 import 'package:rango/widgets/home/ListaHorizontal.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
 
 class HomeScreen extends StatefulWidget {
   final Client usuario;
@@ -19,15 +21,37 @@ class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
+List<Meal> meals = new List<Meal>();
 
 class _HomeScreenState extends State<HomeScreen> {
+  final _database = Firestore.instance;
+  void _fetch() async {
+    try {
+      print("Start fetch");
+      await _database.collection("sellers")
+          .getDocuments()
+          .then((QuerySnapshot snapshot) {
+            for(var i=0; i<snapshot.documents.length; i++){
+              snapshot.documents[i].reference.collection("currentMeals")
+              .getDocuments()
+              .then((QuerySnapshot snapshot) {
+                snapshot.documents.forEach((meal) {
+                  Meal currentMeal = Meal.fromJson(meal.data);
+                  meals.add(currentMeal);
+                });
+              });
+            }
+      });
+    } catch(e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 750, height: 1334);
-    List<Meal> meals = new List<Meal>();
-    sellers.forEach((element) {
-      meals.add(element.currentMeals[0]);
-    });
+    _fetch();
+    print(meals);
     final String assetName = 'assets/imgs/curva_principal.svg';
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
