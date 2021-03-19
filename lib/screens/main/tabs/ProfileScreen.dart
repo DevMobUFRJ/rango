@@ -4,13 +4,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/dadosMarretados.dart';
 import 'package:rango/models/client.dart';
+import 'package:rango/models/seller.dart';
 import 'package:rango/screens/main/profile/EditProfileScreen.dart';
 import 'package:rango/screens/main/profile/ProfileSettings.dart';
-import 'package:rango/screens/seller/SellerProfile.dart';
+import 'package:rango/screens/seller/ClientProfile.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProfileScreen extends StatefulWidget {
-  final Client usuario;
+  final Seller usuario;
 
   ProfileScreen(this.usuario);
 
@@ -162,11 +163,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: ListView.separated(
                   separatorBuilder: (context, index) =>
                       SizedBox(height: 0.01.hp),
-                  itemCount: sellers.length,
+                  itemCount: clients.length,
                   itemBuilder: (ctx, index) => GestureDetector(
                     onTap: () => pushNewScreen(
                       context,
-                      screen: SellerProfile(sellers[index].name),
+                      screen: ClientProfile(clients[index].name),
                       withNavBar: true,
                       pageTransitionAnimation:
                           PageTransitionAnimation.cupertino,
@@ -183,12 +184,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         children: [
                           CircleAvatar(
                             backgroundImage:
-                                NetworkImage(sellers[index].picture),
+                                NetworkImage(clients[index].picture),
                             radius: ScreenUtil().setSp(50),
                           ),
                           SizedBox(width: 0.03.wp),
                           AutoSizeText(
-                            sellers[index].name,
+                            clients[index].name,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.montserrat(
                               color: Colors.white,

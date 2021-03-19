@@ -46,7 +46,7 @@ class _AuthScreenState extends State<AuthScreen> {
           url = await ref.getDownloadURL();
         }
         await Firestore.instance
-            .collection('clients')
+            .collection('sellers')
             .document(authResult.user.uid)
             .setData({
           'name': name,

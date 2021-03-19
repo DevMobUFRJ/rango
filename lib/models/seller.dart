@@ -3,6 +3,7 @@ import 'package:rango/models/meals.dart';
 import 'package:rango/models/shift.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/foundation.dart';
+import 'package:rango/models/user_notification_settings.dart';
 
 class Seller {
   final bool active;
@@ -14,16 +15,22 @@ class Seller {
   final Shift shift;
   final List<Meal> currentMeals;
   final List<Meal> meals;
+  final String email;
+  final String phone;
+  final UserNotificationSettings notificationSettings;
 
   Seller({
-    @required this.active,
+    this.active,
     this.contact,
-    @required this.currentMeals,
-    @required this.location,
+    this.currentMeals,
+    this.location,
     this.logo,
-    @required this.meals,
+    this.meals,
     @required this.name,
     this.picture,
-    @required this.shift,
+    this.shift,
+    this.email,
+    this.phone,
+    this.notificationSettings,
   });
 }

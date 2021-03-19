@@ -1,34 +1,31 @@
-import 'dart:math';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/dadosMarretados.dart';
-import 'package:rango/models/seller.dart';
+import 'package:rango/models/client.dart';
 import 'package:rango/screens/seller/ChatScreen.dart';
-import 'package:rango/widgets/home/ListaHorizontal.dart';
 
-class SellerProfile extends StatefulWidget {
-  final String sellerName;
+class ClientProfile extends StatefulWidget {
+  final String clientName;
 
-  SellerProfile(this.sellerName);
+  ClientProfile(this.clientName);
 
   @override
-  _SellerProfileState createState() => _SellerProfileState();
+  _ClientProfileState createState() => _ClientProfileState();
 }
 
-class _SellerProfileState extends State<SellerProfile> {
+class _ClientProfileState extends State<ClientProfile> {
   bool isFavorite = false;
   bool loading = true;
-  Seller seller;
+  Client client;
 
   @override
   void initState() {
     setState(() {
-      seller =
-          sellers.firstWhere((element) => element.name == widget.sellerName);
+      client =
+          clients.firstWhere((element) => element.name == widget.clientName);
       loading = false;
     });
     super.initState();
@@ -41,7 +38,7 @@ class _SellerProfileState extends State<SellerProfile> {
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
-          widget.sellerName,
+          widget.clientName,
           maxLines: 1,
           style: GoogleFonts.montserrat(
             color: Theme.of(context).accentColor,
@@ -86,8 +83,8 @@ class _SellerProfileState extends State<SellerProfile> {
                           margin: EdgeInsets.only(top: 20),
                           child: CircleAvatar(
                             backgroundColor: Theme.of(context).accentColor,
-                            backgroundImage: seller.picture != null
-                                ? NetworkImage(seller.picture)
+                            backgroundImage: client.picture != null
+                                ? NetworkImage(client.picture)
                                 : null,
                             radius: 130.w,
                           ),
@@ -103,17 +100,11 @@ class _SellerProfileState extends State<SellerProfile> {
                       Container(
                         width: 170.w,
                         child: AutoSizeText(
-                          seller.contact.phone,
+                          client.phone,
                           maxLines: 1,
                         ),
                       ),
                     ],
-                  ),
-                  SizedBox(height: 20.h),
-                  ListaHorizontal(
-                    title: 'Quentinhas disponíveis',
-                    tagM: Random().nextDouble(),
-                    meals: seller.meals,
                   ),
                   SizedBox(height: 40.h),
                   RaisedButton.icon(
@@ -123,7 +114,7 @@ class _SellerProfileState extends State<SellerProfile> {
                     ),
                     onPressed: () => pushNewScreen(
                       context,
-                      screen: ChatScreen(seller),
+                      screen: ChatScreen(client),
                       withNavBar: false,
                       pageTransitionAnimation:
                           PageTransitionAnimation.cupertino,
@@ -131,7 +122,7 @@ class _SellerProfileState extends State<SellerProfile> {
                     label: Container(
                       width: 0.5.wp,
                       child: AutoSizeText(
-                        'Chat com o vendedor',
+                        'Chat com o cliente',
                         maxLines: 1,
                         style: GoogleFonts.montserrat(),
                       ),

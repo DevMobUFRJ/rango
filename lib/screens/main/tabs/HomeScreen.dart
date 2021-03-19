@@ -2,16 +2,17 @@ import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/dadosMarretados.dart';
 import 'package:rango/models/client.dart';
-import 'package:rango/models/meals.dart';
+import 'package:rango/models/seller.dart';
 import 'package:rango/widgets/home/GridVertical.dart';
-import 'package:rango/widgets/home/ListaHorizontal.dart';
+import 'package:rango/widgets/home/OrderContainer.dart';
 
 class HomeScreen extends StatefulWidget {
-  final Client usuario;
+  final Seller usuario;
 
   HomeScreen(this.usuario);
   static const String name = 'homeScreen';
@@ -24,10 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 750, height: 1334);
-    List<Meal> meals = new List<Meal>();
-    sellers.forEach((element) {
-      meals.add(element.currentMeals[0]);
-    });
+    List<Client> clientes = clients;
     final String assetName = 'assets/imgs/curva_principal.svg';
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
@@ -52,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: EdgeInsets.symmetric(
                           horizontal: 0.04.wp, vertical: 0.01.hp),
                       child: AutoSizeText(
-                        'Olá, ${widget.usuario.name.split(" ")[0]}!\nBateu a fome?',
+                        'Olá,\n${widget.usuario.name}!',
                         maxLines: 2,
                         textAlign: TextAlign.start,
                         style: GoogleFonts.montserratTextTheme(
@@ -60,25 +58,17 @@ class _HomeScreenState extends State<HomeScreen> {
                             .headline1,
                       ),
                     ),
-                    SizedBox(height: 0.06.hp),
-                    ListaHorizontal(
-                      title: 'Peça novamente',
-                      tagM: Random().nextDouble(),
-                      meals: meals,
-                    ),
-                    SizedBox(height: 0.02.hp),
-                    ListaHorizontal(
-                      title: 'Sugestões',
-                      tagM: Random().nextDouble(),
-                      meals: meals,
-                    ),
-                    SizedBox(height: 0.02.hp),
-                    GridVertical(
-                      tagM: Random().nextDouble(),
-                      title: 'Recomendado para você',
-                      meals: meals,
-                    ),
                   ],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 0.2.hp),
+                child: StaggeredGridView.countBuilder(
+                  crossAxisCount: 1,
+                  shrinkWrap: true,
+                  itemCount: clientes.length,
+                  itemBuilder: (ctx, index) => OrderContainer(clientes[index]),
+                  staggeredTileBuilder: (index) => StaggeredTile.fit(1),
                 ),
               ),
             ],

@@ -2,11 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rango/models/client.dart';
+import 'package:rango/models/seller.dart';
 import 'package:rango/models/user_notification_settings.dart';
 import 'package:rango/screens/SplashScreen.dart';
 import 'package:rango/screens/main/tabs/HomeScreen.dart';
 import 'package:rango/screens/main/tabs/ProfileScreen.dart';
-import 'package:rango/screens/main/tabs/SearchScreen.dart';
+import 'package:rango/screens/main/tabs/AddMealScreen.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class NewTabsScreen extends StatefulWidget {
@@ -21,19 +22,19 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
     super.initState();
   }
 
-  Client client;
+  Seller seller;
   bool _loading = true;
 
   Future<void> _getUser() async {
     final user = await FirebaseAuth.instance.currentUser();
     final userData =
-        await Firestore.instance.collection("clients").document(user.uid).get();
+        await Firestore.instance.collection("sellers").document(user.uid).get();
     setState(() {
-      client = new Client(
+      seller = new Seller(
         email: userData?.data['email']?.toString(),
         picture: userData?.data['picture']?.toString(),
         name: userData.data['name'].toString(),
-        phone: userData?.data['phone']?.toString(),
+        // phone: userData?.data['phone']?.toString(),
         notificationSettings: userData.data['notificationSettings'] != null
             ? UserNotificationSettings(
                 discounts: userData.data['notifications']['discounts'],
@@ -76,9 +77,9 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
               duration: Duration(milliseconds: 180),
             ),
             screens: <Widget>[
-              HomeScreen(client),
-              SearchScreen(client),
-              ProfileScreen(client),
+              HomeScreen(seller),
+              AddMealScreen(seller),
+              ProfileScreen(seller),
             ],
             items: [
               PersistentBottomNavBarItem(

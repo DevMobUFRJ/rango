@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
-import 'package:rango/models/client.dart';
+import 'package:rango/models/seller.dart';
 import 'package:rango/screens/main/profile/AboutScreen.dart';
 import 'package:rango/widgets/settings/CustomCheckBox.dart';
 
 class ProfileSettings extends StatefulWidget {
-  final Client user;
+  final Seller user;
 
   ProfileSettings(this.user);
 

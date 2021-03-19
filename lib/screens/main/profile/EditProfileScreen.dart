@@ -7,12 +7,12 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:rango/models/client.dart';
+import 'package:rango/models/seller.dart';
 import 'package:rango/widgets/auth/CustomTextFormField.dart';
 import 'package:rango/widgets/pickers/UserImagePicker.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  final Client user;
+  final Seller user;
 
   EditProfileScreen(this.user);
 
