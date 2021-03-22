@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/dadosMarretados.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/models/seller.dart';
-import 'package:rango/widgets/home/GridVertical.dart';
 import 'package:rango/widgets/home/OrderContainer.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -22,10 +20,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  var orders = pedidos;
+
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 750, height: 1334);
-    List<Client> clientes = clients;
     final String assetName = 'assets/imgs/curva_principal.svg';
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
@@ -62,12 +61,34 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(top: 0.2.hp),
+                margin: EdgeInsets.only(top: 0.2.hp, left: 0.1.wp),
+                child: AutoSizeText(
+                  "Pedidos do dia",
+                  style: GoogleFonts.montserrat(
+                    textStyle: TextStyle(
+                      color: Theme.of(context).accentColor,
+                      fontSize: 29.nsp,
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 0.23.hp),
+                height: 0.68.hp,
                 child: StaggeredGridView.countBuilder(
+                  padding: EdgeInsets.all(0),
                   crossAxisCount: 1,
                   shrinkWrap: true,
-                  itemCount: clientes.length,
-                  itemBuilder: (ctx, index) => OrderContainer(clientes[index]),
+                  itemCount: orders.length,
+                  itemBuilder: (ctx, index) => OrderContainer(
+                    orders[index],
+                    ({bool value}) {
+                      setState(() => orders[index].reservada = value);
+                    },
+                    ({bool value}) {
+                      setState(() => orders[index].vendida = value);
+                    },
+                  ),
                   staggeredTileBuilder: (index) => StaggeredTile.fit(1),
                 ),
               ),
