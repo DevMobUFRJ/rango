@@ -1,5 +1,6 @@
 import 'package:rango/models/contact.dart';
 import 'package:rango/models/meals.dart';
+import 'package:rango/models/order.dart';
 import 'package:rango/models/shift.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/foundation.dart';
@@ -13,6 +14,7 @@ class Seller {
   final String name;
   final String picture;
   final Shift shift;
+  final List<Order> pedidos;
   final List<Meal> currentMeals;
   final List<Meal> meals;
   final String email;
@@ -26,6 +28,7 @@ class Seller {
     this.location,
     this.logo,
     this.meals,
+    this.pedidos,
     @required this.name,
     this.picture,
     this.shift,
