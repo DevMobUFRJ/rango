@@ -2,7 +2,9 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/order.dart';
+import 'package:rango/screens/seller/ClientProfile.dart';
 
 class OrderContainer extends StatefulWidget {
   final Order pedido;
@@ -46,14 +48,20 @@ class _OrderContainerState extends State<OrderContainer> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      AutoSizeText(
-                        widget.pedido.cliente.name,
-                        style: GoogleFonts.montserrat(
-                          textStyle: TextStyle(
-                            color: Colors.white,
-                            fontSize: 29.nsp,
-                            fontWeight: FontWeight.bold,
-                            decoration: TextDecoration.underline,
+                      GestureDetector(
+                        onTap: () => pushNewScreen(
+                          context,
+                          screen: ClientProfile(widget.pedido.cliente),
+                        ),
+                        child: AutoSizeText(
+                          widget.pedido.cliente.name,
+                          style: GoogleFonts.montserrat(
+                            textStyle: TextStyle(
+                              color: Colors.white,
+                              fontSize: 29.nsp,
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.underline,
+                            ),
                           ),
                         ),
                       ),

@@ -8,9 +8,9 @@ import 'package:rango/models/client.dart';
 import 'package:rango/screens/seller/ChatScreen.dart';
 
 class ClientProfile extends StatefulWidget {
-  final String clientName;
+  final Client client;
 
-  ClientProfile(this.clientName);
+  ClientProfile(this.client);
 
   @override
   _ClientProfileState createState() => _ClientProfileState();
@@ -25,7 +25,7 @@ class _ClientProfileState extends State<ClientProfile> {
   void initState() {
     setState(() {
       client =
-          clients.firstWhere((element) => element.name == widget.clientName);
+          clients.firstWhere((element) => element.name == widget.client.name);
       loading = false;
     });
     super.initState();
@@ -38,27 +38,13 @@ class _ClientProfileState extends State<ClientProfile> {
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
-          widget.clientName,
+          client.name,
           maxLines: 1,
           style: GoogleFonts.montserrat(
             color: Theme.of(context).accentColor,
             fontSize: 35.nsp,
           ),
         ),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(
-              right: 20,
-            ),
-            child: GestureDetector(
-              onTap: () => setState(() => isFavorite = !isFavorite),
-              child: Icon(
-                isFavorite ? Icons.star : Icons.star_border,
-                size: 48.nsp,
-              ),
-            ),
-          )
-        ],
       ),
       body: loading
           ? CircularProgressIndicator()
@@ -93,20 +79,20 @@ class _ClientProfileState extends State<ClientProfile> {
                     ),
                   ),
                   SizedBox(height: 20.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.phone, size: 38.nsp),
-                      Container(
-                        width: 170.w,
-                        child: AutoSizeText(
-                          client.phone,
-                          maxLines: 1,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 40.h),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     Icon(Icons.phone, size: 38.nsp),
+                  //     Container(
+                  //       width: 170.w,
+                  //       child: AutoSizeText(
+                  //         client.phone,
+                  //         maxLines: 1,
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                  // SizedBox(height: 40.h),
                   RaisedButton.icon(
                     icon: Icon(Icons.chat, size: 38.nsp),
                     shape: RoundedRectangleBorder(
@@ -123,24 +109,6 @@ class _ClientProfileState extends State<ClientProfile> {
                       width: 0.5.wp,
                       child: AutoSizeText(
                         'Chat com o cliente',
-                        maxLines: 1,
-                        style: GoogleFonts.montserrat(),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10.h),
-                  RaisedButton.icon(
-                    icon: Icon(Icons.map, size: 38.nsp),
-                    padding: EdgeInsets.symmetric(
-                        vertical: 0.005.hp, horizontal: 0.03.wp),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    onPressed: () {},
-                    label: Container(
-                      width: 0.35.wp,
-                      child: AutoSizeText(
-                        'Ver localização',
                         maxLines: 1,
                         style: GoogleFonts.montserrat(),
                       ),
