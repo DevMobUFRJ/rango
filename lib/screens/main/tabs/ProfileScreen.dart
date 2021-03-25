@@ -1,14 +1,15 @@
+import 'dart:math';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/dadosMarretados.dart';
-import 'package:rango/models/client.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/screens/main/profile/EditProfileScreen.dart';
 import 'package:rango/screens/main/profile/ProfileSettings.dart';
-import 'package:rango/screens/seller/ClientProfile.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:rango/widgets/quentinha/ListaHorizontal.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Seller usuario;
@@ -140,69 +141,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
                     AutoSizeText(
-                      'Favoritos',
+                      'Cardápio do dia',
                       maxLines: 1,
                       style: GoogleFonts.montserrat(
                         color: yellow,
                         fontSize: 30.nsp,
                       ),
                     ),
-                    SizedBox(width: 2),
-                    Icon(
-                      Icons.star,
-                      color: yellow,
-                      size: ScreenUtil().setSp(35),
-                    )
                   ],
                 ),
               ),
             ),
             Expanded(
-              flex: 7,
+              flex: 4,
+              child: ListaHorizontal(
+                tagM: Random().nextDouble(),
+                orders: pedidos,
+                isReservation: false,
+              ),
+            ),
+            Flexible(
+              flex: 1,
               child: Container(
-                child: ListView.separated(
-                  separatorBuilder: (context, index) =>
-                      SizedBox(height: 0.01.hp),
-                  itemCount: clients.length,
-                  itemBuilder: (ctx, index) => GestureDetector(
-                    onTap: () => pushNewScreen(
-                      context,
-                      screen: ClientProfile(clients[index]),
-                      withNavBar: true,
-                      pageTransitionAnimation:
-                          PageTransitionAnimation.cupertino,
-                    ),
-                    child: Container(
-                      height: 120.h,
-                      padding: EdgeInsets.symmetric(
-                          vertical: 0.01.hp, horizontal: 0.05.wp),
-                      decoration: BoxDecoration(
-                          color: Theme.of(context).accentColor,
-                          borderRadius:
-                              BorderRadius.circular(ScreenUtil().setSp(22))),
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            backgroundImage:
-                                NetworkImage(clients[index].picture),
-                            radius: ScreenUtil().setSp(50),
-                          ),
-                          SizedBox(width: 0.03.wp),
-                          AutoSizeText(
-                            clients[index].name,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.montserrat(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w300,
-                              decoration: TextDecoration.underline,
-                              fontSize: 32.nsp,
-                            ),
-                          ),
-                        ],
+                padding: EdgeInsets.symmetric(
+                    horizontal: 0.03.wp, vertical: 0.01.hp),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    AutoSizeText(
+                      'Reservas do dia',
+                      maxLines: 1,
+                      style: GoogleFonts.montserrat(
+                        color: yellow,
+                        fontSize: 30.nsp,
                       ),
                     ),
-                  ),
+                  ],
                 ),
+              ),
+            ),
+            Expanded(
+              flex: 4,
+              child: ListaHorizontal(
+                tagM: Random().nextDouble(),
+                orders: pedidos,
+                isReservation: true,
               ),
             ),
           ],
