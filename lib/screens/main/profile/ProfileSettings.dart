@@ -166,15 +166,6 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                   Container(
                     height: 0.07.hp,
                     child: CustomCheckBox(
-                      changeValue: (value) => setState(() => _attValue = value),
-                      text: 'Atualização dos vendedores favoritos',
-                      value: _attValue,
-                      isActive: _switchValue,
-                    ),
-                  ),
-                  Container(
-                    height: 0.07.hp,
-                    child: CustomCheckBox(
                       changeValue: (value) =>
                           setState(() => _reservaValue = value),
                       text: 'Reserva confirmada',
@@ -189,16 +180,6 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                           setState(() => _newMessagesValue = value),
                       text: 'Novas mensagens',
                       value: _newMessagesValue,
-                      isActive: _switchValue,
-                    ),
-                  ),
-                  Container(
-                    height: 0.07.hp,
-                    child: CustomCheckBox(
-                      changeValue: (value) =>
-                          setState(() => _promotionsValue = value),
-                      text: 'Promoções',
-                      value: _promotionsValue,
                       isActive: _switchValue,
                     ),
                   ),
