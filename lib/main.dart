@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
         ),
         scaffoldBackgroundColor: Color(0xFFF5F5F5),
         backgroundColor: Color(0xFFF5F5F5),
-        accentColor: Color.fromRGBO(252, 116, 79, 1),
+        accentColor: Color(0xFFFFC744F),
         primaryColor: Color(0xFF8FDDCE),
         textTheme: GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
             .copyWith(
