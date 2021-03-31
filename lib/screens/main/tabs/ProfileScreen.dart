@@ -35,11 +35,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
-        padding: EdgeInsets.only(left: 0.1.wp, right: 0.1.wp),
         height: MediaQuery.of(context).size.height - kToolbarHeight - 86,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Flexible(
               flex: 4,
@@ -80,9 +78,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Flexible(
               flex: 1,
               child: Container(
+                constraints: BoxConstraints(maxWidth: 0.6.wp),
                 margin: EdgeInsets.symmetric(vertical: 0.01.hp),
                 child: AutoSizeText(
                   widget.usuario.name,
+                  maxLines: 1,
                   style: GoogleFonts.montserrat(
                     color: Theme.of(context).accentColor,
                     fontWeight: FontWeight.w500,
