@@ -13,7 +13,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _scaffoldKey = GlobalKey<ScaffoldMessengerState>();
   String _email;
   String _emailErrorMessage;
 
@@ -25,7 +25,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       try {
         final firebaseAuth = FirebaseAuth.instance;
         await firebaseAuth.sendPasswordResetEmail(email: _email);
-        _scaffoldKey.currentState
+        ScaffoldMessenger.of(context)
             .showSnackBar(
               SnackBar(
                 backgroundColor: Theme.of(ctx).accentColor,

@@ -33,8 +33,16 @@ class _AuthScreenState extends State<AuthScreen> {
         try {
           authResult = await _auth.signInWithEmailAndPassword(
               email: email, password: password);
-        } catch (e) {
-
+        } on PlatformException catch (error)  {
+          setState(() => _isLoading = false);
+          print(error.message);
+          ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
+            content: Text("Senha incorreta"),
+            backgroundColor: Theme.of(context).errorColor,
+          ));
+        } catch (error) {
+          setState(() => _isLoading = false);
+          print(error);
         }
 
       } else {
@@ -66,7 +74,7 @@ class _AuthScreenState extends State<AuthScreen> {
       if (error.message != null) {
         message = error.message;
       }
-      Scaffold.of(ctx).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
         content: Text(message),
         backgroundColor: Theme.of(context).errorColor,
       ));

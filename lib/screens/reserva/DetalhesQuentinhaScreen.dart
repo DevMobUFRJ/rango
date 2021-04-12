@@ -5,6 +5,7 @@ import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/meals.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
+import 'package:rango/utils/string_formatters.dart';
 
 class DetalhesQuentinhaScreen extends StatelessWidget {
   final Meal marmita;
@@ -18,7 +19,7 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
   static const routeName = '/detalhes-reserva-quentinha';
   @override
   Widget build(BuildContext context) {
-    String price = 'R\$${marmita.price.toString().replaceAll('.', ',')}';
+    String price = intToCurrency(marmita.price);
     ScreenUtil.init(context, width: 750, height: 1334);
     if (price.length == 6 && price.contains(',')) price = '${price}0';
     return Scaffold(

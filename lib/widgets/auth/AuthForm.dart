@@ -222,7 +222,7 @@ class _AuthFormState extends State<AuthForm> {
                                 disabledColor: Colors.grey,
                                 onPressed: widget._isLoading
                                     ? () => {
-                                          Scaffold.of(context).showSnackBar(
+                                          ScaffoldMessenger.of(context).showSnackBar(
                                               SnackBar(
                                                   content: Text(
                                                       'Carregando, aguarde.')))

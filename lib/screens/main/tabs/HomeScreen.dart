@@ -21,7 +21,7 @@ class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
-List<Meal> meals = new List<Meal>();
+List<Meal> meals = [];
 
 class _HomeScreenState extends State<HomeScreen> {
   final _database = Firestore.instance;
@@ -31,16 +31,24 @@ class _HomeScreenState extends State<HomeScreen> {
       await _database.collection("sellers")
           .getDocuments()
           .then((QuerySnapshot snapshot) {
+            List<Meal> tempMeals = [];
+            print(snapshot.documents.length.toString() + " sellers found");
             for(var i=0; i<snapshot.documents.length; i++){
-              snapshot.documents[i].reference.collection("currentMeals")
+              // Iterar todos os vendedores
+              var seller = snapshot.documents[i];
+              seller.reference.collection("meals")
               .getDocuments()
               .then((QuerySnapshot snapshot) {
                 snapshot.documents.forEach((meal) {
+                  // Iterar todos os meals
                   Meal currentMeal = Meal.fromJson(meal.data);
-                  meals.add(currentMeal);
+                  currentMeal.sellerName = seller.data["name"];
+                  currentMeal.sellerId = seller.documentID;
+                  tempMeals.add(currentMeal);
                 });
               });
             }
+            meals = tempMeals;
       });
     } catch(e) {
       print(e);

@@ -7,6 +7,7 @@ import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/meals.dart';
 import 'package:flutter/foundation.dart';
 import 'package:rango/screens/reserva/DetalhesQuentinhaScreen.dart';
+import 'package:rango/utils/string_formatters.dart';
 
 class GridVertical extends StatelessWidget {
   final double tagM;
@@ -75,7 +76,7 @@ class GridVertical extends StatelessWidget {
                               style: GoogleFonts.montserrat(fontSize: 28.nsp),
                             ),
                             AutoSizeText(
-                              'R\$${meals[index].price}',
+                              intToCurrency(meals[index].price),
                               style: GoogleFonts.montserrat(fontSize: 28.nsp),
                             ),
                           ],

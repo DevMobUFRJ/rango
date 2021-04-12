@@ -5,9 +5,9 @@ class Meal {
   final bool featured;
   final String name;
   final String picture;
-  final double price;
-  final String sellerName;
-  final String sellerId;
+  final int price;
+  String sellerName;
+  String sellerId;
 
   Meal({
     @required this.description,

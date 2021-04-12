@@ -6,6 +6,7 @@ import 'package:rango/models/meals.dart';
 import 'package:flutter/foundation.dart';
 import 'package:rango/screens/reserva/DetalhesQuentinhaScreen.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:rango/utils/string_formatters.dart';
 
 class ListaHorizontal extends StatelessWidget {
   final String title;
@@ -82,7 +83,7 @@ class ListaHorizontal extends StatelessWidget {
                           Container(
                             width: 0.35.wp,
                             child: AutoSizeText(
-                              'R\$${meals[index].price}',
+                              intToCurrency(meals[index].price),
                               textAlign: TextAlign.center,
                               style: GoogleFonts.montserrat(fontSize: 28.ssp),
                             ),
