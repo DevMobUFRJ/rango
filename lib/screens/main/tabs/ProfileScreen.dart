@@ -132,61 +132,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             Flexible(
-              flex: 1,
+              flex: 2,
               child: Container(
                 padding: EdgeInsets.symmetric(
                     horizontal: 0.03.wp, vertical: 0.01.hp),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
-                    AutoSizeText(
-                      'Cardápio do dia',
-                      maxLines: 1,
-                      style: GoogleFonts.montserrat(
+                    Container(
+                      child: IconButton(
+                        iconSize: ScreenUtil().setSp(120),
+                        icon: Icon(
+                          Icons.map,
+                          color: Colors.white,
+                        ),
+                        onPressed: () => {},
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(60)),
                         color: yellow,
-                        fontSize: 30.nsp,
+                      ),
+                    ),
+                    Container(
+                      child: IconButton(
+                        iconSize: ScreenUtil().setSp(120),
+                        icon: Icon(
+                          Icons.schedule,
+                          color: Colors.white,
+                        ),
+                        onPressed: () => {},
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(60)),
+                        color: yellow,
                       ),
                     ),
                   ],
                 ),
-              ),
-            ),
-            Expanded(
-              flex: 4,
-              child: ListaHorizontal(
-                tagM: Random().nextDouble(),
-                orders: pedidos,
-                isReservation: false,
-              ),
-            ),
-            Flexible(
-              flex: 1,
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                    horizontal: 0.03.wp, vertical: 0.01.hp),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.max,
-                  children: <Widget>[
-                    AutoSizeText(
-                      'Reservas do dia',
-                      maxLines: 1,
-                      style: GoogleFonts.montserrat(
-                        color: yellow,
-                        fontSize: 30.nsp,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 4,
-              child: ListaHorizontal(
-                tagM: Random().nextDouble(),
-                orders: pedidos,
-                isReservation: true,
               ),
             ),
           ],
