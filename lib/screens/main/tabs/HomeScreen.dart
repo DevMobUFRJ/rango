@@ -35,7 +35,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     try {
       print("Start fetch");
-      Stream<List<DocumentSnapshot>> stream = geo.collection(collectionRef: _database.collection("sellers"))
+      var queryRef = _database.collection("sellers");//.where("active", isEqualTo: true); //TODO Query por shift .where("shift")
+      Stream<List<DocumentSnapshot>> stream = geo.collection(collectionRef: queryRef)
           .within(center: center, radius: radius, field: "location", strictMode: true);
 
       stream.listen((List<DocumentSnapshot> documentList) {
@@ -47,8 +48,10 @@ class _HomeScreenState extends State<HomeScreen> {
           var seller = documentList[i];
           print("Distance to seller ${seller.data["name"]}: ${center.distance(lat: seller.data["location"]["geopoint"].latitude, lng: seller.data["location"]["geopoint"].longitude)} km");
 
-          // TODO Limitar quantidade de pratos para seção Sugestões ou filtrar por featured?
+          // TODO Limitar quantidade de pratos para seção Sugestões e filtrar por featured
           seller.reference.collection("meals")
+              //.where("featured", isEqualTo: true)
+              //.limit(2)
               .getDocuments()
               .then((QuerySnapshot snapshot) {
             snapshot.documents.forEach((meal) {

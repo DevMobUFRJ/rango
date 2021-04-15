@@ -27,7 +27,7 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
         title: GestureDetector(
           onTap: () => pushNewScreen(
             context,
-            screen: SellerProfile(marmita.sellerName),
+            screen: SellerProfile(marmita.sellerId, marmita.sellerName),
             withNavBar: true,
             pageTransitionAnimation: PageTransitionAnimation.cupertino,
           ),

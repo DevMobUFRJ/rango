@@ -166,7 +166,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   itemBuilder: (ctx, index) => GestureDetector(
                     onTap: () => pushNewScreen(
                       context,
-                      screen: SellerProfile(sellers[index].name),
+                      //TODO
+                      screen: SellerProfile("", sellers[index].name),
                       withNavBar: true,
                       pageTransitionAnimation:
                           PageTransitionAnimation.cupertino,
