@@ -6,14 +6,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:rango/models/order.dart';
-import 'package:rango/widgets/quentinha/DetalhesQuentinhaScreen.dart';
+import 'package:rango/screens/seller/ManageOrder.dart';
 
 class GridHorizontal extends StatelessWidget {
-  final double tagM;
   final List<Order> orders;
 
   GridHorizontal({
-    @required this.tagM,
     @required this.orders,
   });
 
@@ -36,8 +34,10 @@ class GridHorizontal extends StatelessWidget {
             itemCount: orders.length,
             itemBuilder: (ctx, index) => GestureDetector(
               onTap: () => pushNewScreen(context,
-                  screen: DetalhesQuentinhaScreen(
-                      marmita: orders[index].quentinha, tagM: tagM),
+                  screen: ManageOrder(
+                    isEdit: true,
+                    order: orders[index],
+                  ),
                   withNavBar: true,
                   pageTransitionAnimation: PageTransitionAnimation.cupertino),
               child: Container(
@@ -48,13 +48,10 @@ class GridHorizontal extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8)),
                   child: Column(
                     children: <Widget>[
-                      Hero(
-                        tag: orders[index].quentinha.hashCode * tagM,
-                        child: FadeInImage.assetNetwork(
-                          placeholder: 'assets/imgs/quentinha_placeholder.png',
-                          image: orders[index].quentinha.picture,
-                          fit: BoxFit.fitWidth,
-                        ),
+                      FadeInImage.assetNetwork(
+                        placeholder: 'assets/imgs/quentinha_placeholder.png',
+                        image: orders[index].quentinha.picture,
+                        fit: BoxFit.fitWidth,
                       ),
                       Container(
                         padding: EdgeInsets.symmetric(vertical: 5),

@@ -1,8 +1,5 @@
-import 'dart:math';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
@@ -11,7 +8,6 @@ import 'package:rango/models/seller.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/screens/seller/ManageOrder.dart';
 import 'package:rango/widgets/home/GridHorizontal.dart';
-import 'package:rango/widgets/quentinha/ListaHorizontal.dart';
 
 class AddMealScreen extends StatefulWidget {
   final Seller usuario;
@@ -73,7 +69,6 @@ class _AddMealScreenState extends State<AddMealScreen> {
               ),
             ),
             GridHorizontal(
-              tagM: Random().nextDouble(),
               orders: pedidos,
             ),
             Align(
@@ -85,7 +80,12 @@ class _AddMealScreenState extends State<AddMealScreen> {
                   ),
                   onPressed: () =>
                       pushNewScreen(context, screen: ManageOrder()),
-                  child: AutoSizeText("Adicionar prato"),
+                  child: AutoSizeText(
+                    "Adicionar prato",
+                    style: GoogleFonts.montserrat(
+                      fontSize: 32.nsp,
+                    ),
+                  ),
                 ),
               ),
             ),
