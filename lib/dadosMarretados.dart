@@ -12,7 +12,7 @@ final List<Client> clients = [
 final List<Meal> quentinhas = [
   Meal(
       name: "Moqueca de banana da terra",
-      description: '',
+      description: 'Moqueca bem gostosa feita na hora e com banana fresca',
       price: 10,
       sellerId: '1',
       picture:
@@ -20,7 +20,7 @@ final List<Meal> quentinhas = [
       sellerName: 'Quentinha Top'),
   Meal(
       name: "Lasanha",
-      description: '',
+      description: 'Lasanha com bastante molho e recheio, massa natural',
       price: 10,
       picture:
           "https://img.itdg.com.br/tdg/images/recipes/000/000/876/324587/324587_original.jpg?mode=crop&width=710&height=400",
