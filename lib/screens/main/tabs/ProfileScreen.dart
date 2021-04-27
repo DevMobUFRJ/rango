@@ -140,33 +140,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
-                    Container(
-                      child: IconButton(
-                        iconSize: ScreenUtil().setSp(120),
-                        icon: Icon(
-                          Icons.map,
-                          color: Colors.white,
+                    Column(
+                      children: [
+                        Container(
+                          child: IconButton(
+                            iconSize: ScreenUtil().setSp(120),
+                            icon: Icon(
+                              Icons.map,
+                              color: Colors.white,
+                            ),
+                            onPressed: () => {},
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(60)),
+                            color: yellow,
+                          ),
                         ),
-                        onPressed: () => {},
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(60)),
-                        color: yellow,
-                      ),
+                        Text('Localização'),
+                      ],
                     ),
-                    Container(
-                      child: IconButton(
-                        iconSize: ScreenUtil().setSp(120),
-                        icon: Icon(
-                          Icons.schedule,
-                          color: Colors.white,
+                    Column(
+                      children: [
+                        Container(
+                          child: IconButton(
+                            iconSize: ScreenUtil().setSp(120),
+                            icon: Icon(
+                              Icons.schedule,
+                              color: Colors.white,
+                            ),
+                            onPressed: () => {},
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(60)),
+                            color: yellow,
+                          ),
                         ),
-                        onPressed: () => {},
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(60)),
-                        color: yellow,
-                      ),
+                        Text('Horários de funcionamento'),
+                      ],
                     ),
                   ],
                 ),
