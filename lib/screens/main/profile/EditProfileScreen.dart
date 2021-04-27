@@ -121,7 +121,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     Flexible(
                       flex: 1,
                       child: GestureDetector(
-                        onTap: () {},
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
