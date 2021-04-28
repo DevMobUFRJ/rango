@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart' show GeoPoint;
 import 'package:rango/models/contact.dart';
 import 'package:rango/models/meals.dart';
 import 'package:rango/models/shift.dart';
@@ -49,31 +49,10 @@ class Seller {
         logo = json['logo'],
         location = Location.fromJson(json['location']),
         picture = json['picture'],
-        //currentMeals = (json['currentMeals'] as List).map((i) => Meal.fromJson(i)).toList(),
         currentMeals = [],
         meals = [];
 
-  /*
-  factory Seller.fromJson(Map<String, dynamic> json){
-    print(json['meals']);
-    return Seller(
-        contact: Contact.fromJson(json['contact']),
-        shift: Shift.fromJson(json['shift']),
-        name: json['name'],
-        active: json['active'],
-        logo: json['logo'],
-        location: Location.fromJson(json['location']),
-        picture: json['picture'],
-        meals: [],
-        currentMeals: []
-    );
-  }
-
-   */
-
   Map<String, dynamic> toJson() => {
     'name': name,
-    'meals': meals,
-    'currentMeals': currentMeals
   };
 }

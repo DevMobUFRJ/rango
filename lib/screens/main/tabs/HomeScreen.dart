@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:rango/widgets/home/ListaHorizontal.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:rxdart/rxdart.dart' show CombineLatestStream;
 
 class HomeScreen extends StatefulWidget {
   final Client usuario;
@@ -21,61 +23,42 @@ class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
-List<Meal> meals = [];
 
 class _HomeScreenState extends State<HomeScreen> {
   final geo = Geoflutterfire();
   final _database = Firestore.instance;
-  void _fetch() async {
-    var userLocation = await Geolocator.getCurrentPosition();
-    print("User location: $userLocation");
 
-    GeoFirePoint center = geo.point(latitude: userLocation.latitude, longitude: userLocation.longitude); // Niterói
-    double radius = 30; // Em km
+  Stream<Position> getUserLocationStream() {
+    // Stream para pegar a localização da pessoa
+    return Geolocator.getCurrentPosition().asStream();
+  }
 
-    try {
-      print("Start fetch");
-      var queryRef = _database.collection("sellers");//.where("active", isEqualTo: true); //TODO Query por shift .where("shift")
-      Stream<List<DocumentSnapshot>> stream = geo.collection(collectionRef: queryRef)
-          .within(center: center, radius: radius, field: "location", strictMode: true);
+  Stream<List<DocumentSnapshot>> getSellersStream(Position userLocation) {
+    // Stream para pegar os vendedores próximos
+    GeoFirePoint center = geo.point(latitude: userLocation.latitude, longitude: userLocation.longitude);
+    double radius = 30; // Em km TODO Pegar isso de SharedPreferences
+    var queryRef = _database.collection("sellers"); //.where("active", isEqualTo: true); //TODO Adicionar query por "active" e "shift"
+    return geo.collection(collectionRef: queryRef)
+        .within(center: center, radius: radius, field: "location", strictMode: true);
+  }
 
-      stream.listen((List<DocumentSnapshot> documentList) {
-        List<Meal> tempMeals = [];
-        print("${documentList.length} sellers found");
+  Stream<List<QuerySnapshot>> getMealsStream(List<DocumentSnapshot> documentList) {
+    List<Stream<QuerySnapshot>> streams = [];
 
-        for(var i=0; i < documentList.length; i++){
-          // Iterar todos os vendedores
-          var seller = documentList[i];
-          print("Distance to seller ${seller.data["name"]}: ${center.distance(lat: seller.data["location"]["geopoint"].latitude, lng: seller.data["location"]["geopoint"].longitude)} km");
+    for (var i = 0; i < documentList.length; i++) {
+      // Iterar todos os vendedores
+      var seller = documentList[i];
 
-          // TODO Limitar quantidade de pratos para seção Sugestões e filtrar por featured
-          seller.reference.collection("meals")
-              //.where("featured", isEqualTo: true)
-              //.limit(2)
-              .getDocuments()
-              .then((QuerySnapshot snapshot) {
-            snapshot.documents.forEach((meal) {
-              // Iterar todos os meals
-              // print(meal.reference.parent().parent().documentID);
-              Meal currentMeal = Meal.fromJson(meal.data);
-              currentMeal.sellerName = seller.data["name"];
-              currentMeal.sellerId = seller.documentID;
-              tempMeals.add(currentMeal);
-            });
-          });
-        }
-        tempMeals.shuffle();
-        meals = tempMeals;
-      });
-    } catch(e) {
-      print(e);
+      // TODO Limitar quantidade de pratos para seção Sugestões e filtrar por featured
+      streams.add(seller.reference.collection("meals").getDocuments().asStream()); //.where("featured", isEqualTo: true).limit(2)
     }
+
+    return CombineLatestStream.list<QuerySnapshot>(streams).asBroadcastStream();
   }
 
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 750, height: 1334);
-    _fetch();
     final String assetName = 'assets/imgs/curva_principal.svg';
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
@@ -109,22 +92,69 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     SizedBox(height: 0.06.hp),
-                    ListaHorizontal(
-                      title: 'Peça novamente',
-                      tagM: Random().nextDouble(),
-                      meals: meals,
+                    StreamBuilder(
+                      stream: getUserLocationStream(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return CircularProgressIndicator();
+                        }
+                        if (snapshot.hasError) {
+                          return Text(snapshot.error.toString());
+                        }
+                        return StreamBuilder(
+                          stream: getSellersStream(snapshot.data),
+                          builder: (context, AsyncSnapshot<List<DocumentSnapshot> >snapshot) {
+                            if (!snapshot.hasData) {
+                              return CircularProgressIndicator();
+                            }
+                            if (snapshot.hasError) {
+                              return Text(snapshot.error.toString());
+                            }
+                            var sellerMap = Map();
+                            snapshot.data.forEach((seller) {
+                              sellerMap[seller.documentID] = seller.data["name"];
+                            });
+                            return StreamBuilder(
+                              stream: getMealsStream(snapshot.data),
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData) {
+                                  return CircularProgressIndicator();
+                                }
+                                if (snapshot.hasError) {
+                                  return Text(snapshot.error.toString());
+                                }
+                                List<Meal> tempMeals = [];
+                                snapshot.data.forEach((QuerySnapshot seller) {
+                                  // Iterar todos os meals
+                                  seller.documents.forEach((meal) {
+                                    Meal currentMeal = Meal.fromJson(meal.data);
+                                    currentMeal.sellerName = sellerMap[meal.reference.parent().parent().documentID];
+                                    currentMeal.sellerId = meal.reference.parent().parent().documentID;
+                                    tempMeals.add(currentMeal);
+                                  });
+                                });
+                                return ListaHorizontal(
+                                  title: 'Peça novamente',
+                                  tagM: Random().nextDouble(),
+                                  meals: tempMeals,
+                                );
+                              },
+                            );
+                          }
+                        );
+                      },
                     ),
                     SizedBox(height: 0.02.hp),
                     ListaHorizontal(
                       title: 'Sugestões',
                       tagM: Random().nextDouble(),
-                      meals: meals,
+                      meals: [],
                     ),
                     SizedBox(height: 0.02.hp),
                     GridVertical(
                       tagM: Random().nextDouble(),
                       title: 'Recomendado para você',
-                      meals: meals,
+                      meals: [],
                     ),
                   ],
                 ),
