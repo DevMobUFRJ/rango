@@ -1,13 +1,10 @@
 import 'dart:io';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:rango/models/order.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/widgets/pickers/MealImagePicker.dart';
-import 'package:rango/widgets/pickers/UserImagePicker.dart';
 
 class ManageOrder extends StatefulWidget {
   final Order order;
@@ -192,12 +189,12 @@ class _ManageOrderState extends State<ManageOrder> {
                     controller: _mealQuantity,
                     keyboardType: TextInputType.number,
                     style: GoogleFonts.montserrat(
-                      fontSize: 32.ssp,
+                      fontSize: 28.ssp,
                       fontWeight: FontWeight.w500,
                       color: Theme.of(context).accentColor,
                     ),
                     decoration: InputDecoration(
-                      hintText: 'Quantidade',
+                      hintText: 'Quantidade disponível',
                       hintStyle: GoogleFonts.montserrat(
                         color: Color(0xFFFC3C3C3),
                       ),

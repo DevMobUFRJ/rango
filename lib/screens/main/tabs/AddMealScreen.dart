@@ -7,6 +7,7 @@ import 'package:rango/dadosMarretados.dart';
 import 'package:rango/models/seller.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/screens/seller/ManageOrder.dart';
+import 'package:rango/screens/seller/MealsHistory.dart';
 import 'package:rango/widgets/home/GridHorizontal.dart';
 
 class AddMealScreen extends StatefulWidget {
@@ -71,23 +72,49 @@ class _AddMealScreenState extends State<AddMealScreen> {
             GridHorizontal(
               orders: pedidos,
             ),
-            Align(
-              alignment: Alignment.center,
-              child: Container(
-                child: RaisedButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  onPressed: () =>
-                      pushNewScreen(context, screen: ManageOrder()),
-                  child: AutoSizeText(
-                    "Adicionar prato",
-                    style: GoogleFonts.montserrat(
-                      fontSize: 32.nsp,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    margin: EdgeInsets.only(right: 0.05.wp),
+                    child: RaisedButton(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      onPressed: () =>
+                          pushNewScreen(context, screen: ManageOrder()),
+                      child: AutoSizeText(
+                        "Adicionar",
+                        style: GoogleFonts.montserrat(
+                          fontSize: 32.nsp,
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
+                Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    child: RaisedButton(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      onPressed: () => pushNewScreen(
+                        context,
+                        screen: MealsHistory(orders: pedidos),
+                      ),
+                      child: AutoSizeText(
+                        "Histórico",
+                        style: GoogleFonts.montserrat(
+                          fontSize: 32.nsp,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
             SizedBox(
               height: 0.01.hp,
