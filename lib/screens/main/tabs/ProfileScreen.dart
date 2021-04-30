@@ -1,15 +1,11 @@
-import 'dart:math';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
-import 'package:rango/dadosMarretados.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/screens/main/profile/EditProfileScreen.dart';
 import 'package:rango/screens/main/profile/ProfileSettings.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:rango/widgets/quentinha/ListaHorizontal.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Seller usuario;
@@ -143,8 +139,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Column(
                       children: [
                         Container(
+                          margin: EdgeInsets.only(bottom: 5),
                           child: IconButton(
-                            iconSize: ScreenUtil().setSp(120),
+                            iconSize: ScreenUtil().setSp(90),
                             icon: Icon(
                               Icons.map,
                               color: Colors.white,
@@ -156,14 +153,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             color: yellow,
                           ),
                         ),
-                        Text('Localização'),
+                        AutoSizeText(
+                          'Localização',
+                          style: GoogleFonts.montserrat(
+                            color: yellow,
+                          ),
+                        ),
                       ],
                     ),
                     Column(
                       children: [
                         Container(
+                          margin: EdgeInsets.only(bottom: 5),
                           child: IconButton(
-                            iconSize: ScreenUtil().setSp(120),
+                            iconSize: ScreenUtil().setSp(90),
                             icon: Icon(
                               Icons.schedule,
                               color: Colors.white,
@@ -175,12 +178,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             color: yellow,
                           ),
                         ),
-                        Text('Horários de funcionamento'),
+                        AutoSizeText(
+                          'Meus horários',
+                          style: GoogleFonts.montserrat(
+                            color: yellow,
+                          ),
+                        ),
                       ],
                     ),
                   ],
                 ),
               ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Container(
+                  child: Column(
+                children: [
+                  AutoSizeText("Resumo dos últimos 7 dias:"),
+                  AutoSizeText("Você realizou X vendas para Y clientes"),
+                  AutoSizeText("E vendeu um total de ZZ,ZZ reais"),
+                  RaisedButton(child: Text("Ver mais"), onPressed: () => {}),
+                ],
+              )),
             ),
           ],
         ),
