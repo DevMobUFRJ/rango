@@ -51,7 +51,6 @@ class ListaHorizontal extends StatelessWidget {
                           order: orders[index],
                         )
                       : ManageOrder(
-                          isEdit: true,
                           order: orders[index],
                         ),
                   withNavBar: true,

@@ -8,11 +8,9 @@ import 'package:rango/widgets/pickers/MealImagePicker.dart';
 
 class ManageOrder extends StatefulWidget {
   final Order order;
-  final bool isEdit;
 
   ManageOrder({
     this.order,
-    this.isEdit = false,
   });
 
   @override
