@@ -28,6 +28,16 @@ class _MealsHistoryState extends State<MealsHistory> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: AutoSizeText(
+          'Histórico',
+          maxLines: 1,
+          style: GoogleFonts.montserrat(
+            color: Theme.of(context).accentColor,
+            fontSize: 35.nsp,
+          ),
+        ),
+      ),
       body: ordersCheckedValue == null || ordersCheckedValue.length == 0
           ? Container(
               child: Text("vazio"),
