@@ -48,7 +48,7 @@ class _ManageOrderState extends State<ManageOrder> {
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
-          widget.isEdit ? "Edite a quentinha" : "E aí, o que tem hoje?",
+          widget.order != null ? "Edite a quentinha" : "E aí, o que tem hoje?",
           maxLines: 1,
           style: GoogleFonts.montserrat(
             color: Theme.of(context).accentColor,

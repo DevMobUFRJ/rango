@@ -35,7 +35,6 @@ class GridHorizontal extends StatelessWidget {
             itemBuilder: (ctx, index) => GestureDetector(
               onTap: () => pushNewScreen(context,
                   screen: ManageOrder(
-                    isEdit: true,
                     order: orders[index],
                   ),
                   withNavBar: true,
