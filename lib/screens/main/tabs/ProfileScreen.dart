@@ -34,6 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         height: MediaQuery.of(context).size.height - kToolbarHeight - 86,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             Flexible(
               flex: 4,
@@ -157,6 +158,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           'Localização',
                           style: GoogleFonts.montserrat(
                             color: yellow,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
@@ -174,7 +176,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             onPressed: () => {},
                           ),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(60)),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(60),
+                            ),
                             color: yellow,
                           ),
                         ),
@@ -182,6 +186,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           'Meus horários',
                           style: GoogleFonts.montserrat(
                             color: yellow,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
@@ -190,17 +195,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             ),
+            SizedBox(height: 0.02.hp),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: Container(
+                  width: 0.8.wp,
                   child: Column(
-                children: [
-                  AutoSizeText("Resumo dos últimos 7 dias:"),
-                  AutoSizeText("Você realizou X vendas para Y clientes"),
-                  AutoSizeText("E vendeu um total de ZZ,ZZ reais"),
-                  RaisedButton(child: Text("Ver mais"), onPressed: () => {}),
-                ],
-              )),
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AutoSizeText(
+                        "Nos últimos 7 dias:",
+                        maxLines: 1,
+                        style: GoogleFonts.montserrat(
+                          fontSize: 40.nsp,
+                          color: Theme.of(context).accentColor,
+                        ),
+                      ),
+                      SizedBox(height: 0.01.hp),
+                      AutoSizeText(
+                        "Você realizou um total de X vendas para Y clientes e vendeu um total de ZZ,ZZ reais",
+                        style: GoogleFonts.montserrat(
+                          fontSize: 30.nsp,
+                          color: Theme.of(context).accentColor,
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: RaisedButton(
+                          child: Text("Ver mais"),
+                          onPressed: () => {},
+                        ),
+                      ),
+                    ],
+                  )),
             ),
           ],
         ),
