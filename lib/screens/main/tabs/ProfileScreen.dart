@@ -124,13 +124,77 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         size: ScreenUtil().setSp(48),
                       ),
                     ),
+                    GestureDetector(
+                      onTap: () => {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext ctx) => AlertDialog(
+                            insetPadding:
+                                EdgeInsets.symmetric(horizontal: 0.1.wp),
+                            backgroundColor: Color(0xFFF9B152),
+                            actionsPadding: EdgeInsets.all(10),
+                            contentPadding: EdgeInsets.only(
+                              top: 20,
+                              left: 24,
+                              right: 24,
+                              bottom: 0,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            actions: [
+                              FlatButton(
+                                onPressed: () {
+                                  Navigator.of(ctx).pop();
+                                },
+                                child: Text(
+                                  'Fechar',
+                                  style: GoogleFonts.montserrat(
+                                    decoration: TextDecoration.underline,
+                                    color: Colors.white,
+                                    fontSize: 34.nsp,
+                                  ),
+                                ),
+                              ),
+                              FlatButton(
+                                onPressed: () => Navigator.of(ctx).pop(),
+                                child: Text(
+                                  'Cancelar',
+                                  style: GoogleFonts.montserrat(
+                                    decoration: TextDecoration.underline,
+                                    color: Colors.white,
+                                    fontSize: 34.nsp,
+                                  ),
+                                ),
+                              ),
+                            ],
+                            title: Text(
+                              'Fechando a loja',
+                              style: GoogleFonts.montserrat(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 38.ssp,
+                              ),
+                            ),
+                            content: Text(
+                              'Deseja realmente fechar a loja? Ela ficará fechada até ser aberta manualmente novamente',
+                              style: GoogleFonts.montserrat(
+                                color: Colors.white,
+                                fontSize: 28.nsp,
+                              ),
+                            ),
+                          ),
+                        )
+                      },
+                      child: Icon(
+                        Icons.store,
+                        color: yellow,
+                        size: ScreenUtil().setSp(48),
+                      ),
+                    ),
                   ],
                 ),
               ),
-            ),
-            RaisedButton(
-              onPressed: () => {},
-              child: Text('Fechar loja'),
             ),
             Flexible(
               flex: 2,
