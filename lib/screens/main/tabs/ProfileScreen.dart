@@ -128,6 +128,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             ),
+            RaisedButton(
+              onPressed: () => {},
+              child: Text('Fechar loja'),
+            ),
             Flexible(
               flex: 2,
               child: Container(
@@ -142,7 +146,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Container(
                           margin: EdgeInsets.only(bottom: 5),
                           child: IconButton(
-                            iconSize: ScreenUtil().setSp(90),
+                            iconSize: ScreenUtil().setSp(75),
                             icon: Icon(
                               Icons.map,
                               color: Colors.white,
@@ -168,7 +172,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Container(
                           margin: EdgeInsets.only(bottom: 5),
                           child: IconButton(
-                            iconSize: ScreenUtil().setSp(90),
+                            iconSize: ScreenUtil().setSp(75),
                             icon: Icon(
                               Icons.schedule,
                               color: Colors.white,
@@ -195,7 +199,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 0.02.hp),
             Expanded(
               flex: 3,
               child: Container(
