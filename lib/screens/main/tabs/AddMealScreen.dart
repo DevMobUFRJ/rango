@@ -28,172 +28,319 @@ class _AddMealScreenState extends State<AddMealScreen> {
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
         height: 1.hp - 56,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Stack(
-              children: [
-                SvgPicture.asset(
-                  assetName,
-                  semanticsLabel: 'curvaHome',
-                  width: 1.wp,
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                    margin: EdgeInsets.symmetric(
-                        horizontal: 0.02.wp, vertical: 0.04.hp),
-                    width: 0.6.wp,
-                    child: AutoSizeText(
-                      "E aí, o que tem pra hoje?",
-                      maxLines: 2,
-                      textAlign: TextAlign.start,
-                      style: GoogleFonts.montserratTextTheme(
-                              Theme.of(context).textTheme)
-                          .headline1,
+        child: pedidos.length < 1
+            ? Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Stack(
+                    children: [
+                      SvgPicture.asset(
+                        assetName,
+                        semanticsLabel: 'curvaHome',
+                        width: 1.wp,
+                      ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Container(
+                          margin: EdgeInsets.symmetric(
+                              horizontal: 0.02.wp, vertical: 0.04.hp),
+                          width: 0.6.wp,
+                          child: AutoSizeText(
+                            "E aí, o que tem pra hoje?",
+                            maxLines: 2,
+                            textAlign: TextAlign.start,
+                            style: GoogleFonts.montserratTextTheme(
+                                    Theme.of(context).textTheme)
+                                .headline1,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Flexible(
+                    flex: 4,
+                    child: Container(
+                      child: Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Container(
+                              margin: EdgeInsets.symmetric(horizontal: 0.03.wp),
+                              child: AutoSizeText(
+                                "Cardápio do dia",
+                                style: GoogleFonts.montserrat(
+                                  color: Theme.of(context).accentColor,
+                                  fontSize: 30.ssp,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.symmetric(
+                              vertical: 10,
+                              horizontal: 10,
+                            ),
+                            child: AutoSizeText(
+                                'Você ainda não configurou o cardápio do dia!\nClique nos botões abaixo para fazer isso:',
+                                style: GoogleFonts.montserrat(
+                                  color: Theme.of(context).accentColor,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 36.nsp,
+                                )),
+                          ),
+                          Container(
+                            margin: EdgeInsets.symmetric(
+                              vertical: 10,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: Container(
+                                    margin: EdgeInsets.only(right: 0.05.wp),
+                                    child: RaisedButton(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      onPressed: () => pushNewScreen(context,
+                                          screen: ManageOrder()),
+                                      child: AutoSizeText(
+                                        "Adicionar",
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: 32.nsp,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: Container(
+                                    child: RaisedButton(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      onPressed: () => pushNewScreen(
+                                        context,
+                                        screen: MealsHistory(orders: pedidos),
+                                      ),
+                                      child: AutoSizeText(
+                                        "Histórico",
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: 32.nsp,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            Flexible(
-              flex: 4,
-              child: Container(
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 0.03.wp),
-                        child: AutoSizeText(
-                          "Cardápio do dia",
+                  Flexible(
+                    flex: 3,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        AutoSizeText(
+                          "Adicionar pratos já cadastrados:",
                           style: GoogleFonts.montserrat(
                             color: Theme.of(context).accentColor,
-                            fontSize: 30.ssp,
+                            fontSize: 32.nsp,
                           ),
                         ),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 4,
-                      child: Container(
-                        child: GridHorizontal(
-                          orders: pedidos,
+                        Container(
+                          margin:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          child: AutoSizeText(
+                              'Aqui irão aparecer quentinhas antigas para serem adicionadas rapidamente ao cardápio do dia!',
+                              style: GoogleFonts.montserrat(
+                                color: Theme.of(context).accentColor,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 36.nsp,
+                              )),
                         ),
-                      ),
+                      ],
                     ),
-                    Flexible(
-                        flex: 2,
-                        child: Container(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Align(
-                                alignment: Alignment.center,
-                                child: Container(
-                                  margin: EdgeInsets.only(right: 0.05.wp),
-                                  child: RaisedButton(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    onPressed: () => pushNewScreen(context,
-                                        screen: ManageOrder()),
-                                    child: AutoSizeText(
-                                      "Adicionar",
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 32.nsp,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Align(
-                                alignment: Alignment.center,
-                                child: Container(
-                                  child: RaisedButton(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    onPressed: () => pushNewScreen(
-                                      context,
-                                      screen: MealsHistory(orders: pedidos),
-                                    ),
-                                    child: AutoSizeText(
-                                      "Histórico",
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 32.nsp,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )),
-                  ],
-                ),
-              ),
-            ),
-            Flexible(
-              flex: 3,
-              child: Column(
+                  ),
+                ],
+              )
+            : Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Flexible(
-                    flex: 1,
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: AutoSizeText(
-                        "Adicionar pratos já cadastrados:",
-                        style: GoogleFonts.montserrat(
-                          color: Theme.of(context).accentColor,
-                          fontSize: 32.nsp,
+                  Stack(
+                    children: [
+                      SvgPicture.asset(
+                        assetName,
+                        semanticsLabel: 'curvaHome',
+                        width: 1.wp,
+                      ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Container(
+                          margin: EdgeInsets.symmetric(
+                              horizontal: 0.02.wp, vertical: 0.04.hp),
+                          width: 0.6.wp,
+                          child: AutoSizeText(
+                            "E aí, o que tem pra hoje?",
+                            maxLines: 2,
+                            textAlign: TextAlign.start,
+                            style: GoogleFonts.montserratTextTheme(
+                                    Theme.of(context).textTheme)
+                                .headline1,
+                          ),
                         ),
+                      ),
+                    ],
+                  ),
+                  Flexible(
+                    flex: 4,
+                    child: Container(
+                      child: Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Container(
+                              margin: EdgeInsets.symmetric(horizontal: 0.03.wp),
+                              child: AutoSizeText(
+                                "Cardápio do dia",
+                                style: GoogleFonts.montserrat(
+                                  color: Theme.of(context).accentColor,
+                                  fontSize: 30.ssp,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Flexible(
+                            flex: 4,
+                            child: Container(
+                              child: GridHorizontal(
+                                orders: pedidos,
+                              ),
+                            ),
+                          ),
+                          Flexible(
+                            flex: 2,
+                            child: Container(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Container(
+                                      margin: EdgeInsets.only(right: 0.05.wp),
+                                      child: RaisedButton(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        onPressed: () => pushNewScreen(context,
+                                            screen: ManageOrder()),
+                                        child: AutoSizeText(
+                                          "Adicionar",
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 32.nsp,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Container(
+                                      child: RaisedButton(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        onPressed: () => pushNewScreen(
+                                          context,
+                                          screen: MealsHistory(orders: pedidos),
+                                        ),
+                                        child: AutoSizeText(
+                                          "Histórico",
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 32.nsp,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                   Flexible(
-                    flex: 9,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 0.2.wp),
-                      child: Container(
-                        child: ListView.builder(
-                          padding: EdgeInsets.all(0),
-                          itemCount: pedidos.length,
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemBuilder: (ctx, index) => Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                constraints: BoxConstraints(maxWidth: 0.5.wp),
-                                child: GestureDetector(
-                                  onTap: () => {},
-                                  child: AutoSizeText(
-                                    pedidos[index].quentinha.name,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.montserrat(
-                                      color: Color(0xFFF9B152),
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 28.ssp,
-                                    ),
-                                  ),
-                                ),
+                    flex: 3,
+                    child: Column(
+                      children: [
+                        Flexible(
+                          flex: 1,
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: AutoSizeText(
+                              "Adicionar pratos já cadastrados:",
+                              style: GoogleFonts.montserrat(
+                                color: Theme.of(context).accentColor,
+                                fontSize: 32.nsp,
                               ),
-                              Icon(
-                                Icons.add_circle,
-                                color: Color(0xFFF9B152),
-                              ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
+                        Flexible(
+                          flex: 9,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 0.2.wp),
+                            child: Container(
+                              child: ListView.builder(
+                                padding: EdgeInsets.all(0),
+                                itemCount: pedidos.length,
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                itemBuilder: (ctx, index) => Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                      constraints:
+                                          BoxConstraints(maxWidth: 0.5.wp),
+                                      child: GestureDetector(
+                                        onTap: () => {},
+                                        child: AutoSizeText(
+                                          pedidos[index].quentinha.name,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.montserrat(
+                                            color: Color(0xFFF9B152),
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 28.ssp,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Icon(
+                                      Icons.add_circle,
+                                      color: Color(0xFFF9B152),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }

@@ -22,6 +22,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   var orders = pedidos;
+  var ordersClosed = pedidosConcluidos;
 
   @override
   Widget build(BuildContext context) {
@@ -31,95 +32,161 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
         height: 1.hp - 56,
-        child: SingleChildScrollView(
-          child: Stack(
-            children: <Widget>[
-              SvgPicture.asset(
-                assetName,
-                semanticsLabel: 'curvaHome',
-                width: 1.wp,
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 0.03.hp),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        child: orders.length < 1 && ordersClosed.length < 1
+            ? SingleChildScrollView(
+                child: Stack(
                   children: <Widget>[
-                    SizedBox(height: 0.01.hp),
-                    Container(
-                      width: 0.7.wp,
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 0.04.wp, vertical: 0.01.hp),
-                      child: AutoSizeText(
-                        'Olá,\n${widget.usuario.name}!',
-                        maxLines: 2,
-                        textAlign: TextAlign.start,
-                        style: GoogleFonts.montserratTextTheme(
-                                Theme.of(context).textTheme)
-                            .headline1,
-                      ),
+                    SvgPicture.asset(
+                      assetName,
+                      semanticsLabel: 'curvaHome',
+                      width: 1.wp,
                     ),
-                  ],
-                ),
-              ),
-              Container(
-                margin:
-                    EdgeInsets.only(top: 0.2.hp, left: 0.1.wp, right: 0.1.wp),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
                     Container(
-                      child: AutoSizeText(
-                        "Pedidos do dia",
-                        style: GoogleFonts.montserrat(
-                          textStyle: TextStyle(
-                            color: Theme.of(context).accentColor,
-                            fontSize: 29.nsp,
+                      margin: EdgeInsets.only(top: 0.03.hp),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          SizedBox(height: 0.01.hp),
+                          Container(
+                            width: 0.7.wp,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 0.04.wp, vertical: 0.01.hp),
+                            child: AutoSizeText(
+                              'Olá,\n${widget.usuario.name}!',
+                              maxLines: 2,
+                              textAlign: TextAlign.start,
+                              style: GoogleFonts.montserratTextTheme(
+                                      Theme.of(context).textTheme)
+                                  .headline1,
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(right: 0.02.wp),
-                      child: GestureDetector(
-                        onTap: () => pushNewScreen(
-                          context,
-                          screen: OrdersHistory(widget.usuario),
-                        ),
-                        child: Icon(
-                          Icons.history,
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.symmetric(
+                        vertical: 0.2.hp,
+                        horizontal: 0.05.wp,
+                      ),
+                      child: AutoSizeText(
+                        'Você ainda não recebeu pedidos hoje! Aproveite para gerenciar suas quentinhas e o cardápio de hoje na aba de quentinhas ou configurar horário de funcionamento, localização e outras coisas na aba de perfil!',
+                        style: GoogleFonts.montserrat(
                           color: Theme.of(context).accentColor,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 36.nsp,
                         ),
                       ),
-                    )
+                    ),
+                  ],
+                ),
+              )
+            : SingleChildScrollView(
+                child: Stack(
+                  children: <Widget>[
+                    SvgPicture.asset(
+                      assetName,
+                      semanticsLabel: 'curvaHome',
+                      width: 1.wp,
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 0.03.hp),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          SizedBox(height: 0.01.hp),
+                          Container(
+                            width: 0.7.wp,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 0.04.wp, vertical: 0.01.hp),
+                            child: AutoSizeText(
+                              'Olá,\n${widget.usuario.name}!',
+                              maxLines: 2,
+                              textAlign: TextAlign.start,
+                              style: GoogleFonts.montserratTextTheme(
+                                      Theme.of(context).textTheme)
+                                  .headline1,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(
+                          top: 0.2.hp, left: 0.1.wp, right: 0.1.wp),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            child: AutoSizeText(
+                              "Pedidos do dia",
+                              style: GoogleFonts.montserrat(
+                                textStyle: TextStyle(
+                                  color: Theme.of(context).accentColor,
+                                  fontSize: 29.nsp,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(right: 0.02.wp),
+                            child: GestureDetector(
+                              onTap: () => pushNewScreen(
+                                context,
+                                screen: OrdersHistory(widget.usuario),
+                              ),
+                              child: Icon(
+                                Icons.history,
+                                color: Theme.of(context).accentColor,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 0.23.hp),
+                      height: 0.68.hp,
+                      child: ordersClosed.length > 1 && orders.length < 1
+                          ? Container(
+                              margin: EdgeInsets.symmetric(
+                                horizontal: 0.1.wp,
+                                vertical: 8,
+                              ),
+                              child: AutoSizeText(
+                                'Você não tem mais pedidos em abertos hoje!\nPara verificar os pedidos já fechados, clique acima no ícone de histórico.',
+                                style: GoogleFonts.montserrat(
+                                  color: Theme.of(context).accentColor,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 36.nsp,
+                                ),
+                              ),
+                            )
+                          : StaggeredGridView.countBuilder(
+                              padding: EdgeInsets.all(0),
+                              crossAxisCount: 1,
+                              shrinkWrap: true,
+                              itemCount: orders.length,
+                              itemBuilder: (ctx, index) => OrderContainer(
+                                orders[index],
+                                ({bool value}) {
+                                  setState(
+                                      () => orders[index].reservada = value);
+                                },
+                                ({bool value}) {
+                                  setState(() => {
+                                        orders[index].vendida = value,
+                                        orders.removeAt(index),
+                                      });
+                                },
+                              ),
+                              staggeredTileBuilder: (index) =>
+                                  StaggeredTile.fit(1),
+                            ),
+                    ),
                   ],
                 ),
               ),
-              Container(
-                margin: EdgeInsets.only(top: 0.23.hp),
-                height: 0.68.hp,
-                child: StaggeredGridView.countBuilder(
-                  padding: EdgeInsets.all(0),
-                  crossAxisCount: 1,
-                  shrinkWrap: true,
-                  itemCount: orders.length,
-                  itemBuilder: (ctx, index) => OrderContainer(
-                    orders[index],
-                    ({bool value}) {
-                      setState(() => orders[index].reservada = value);
-                    },
-                    ({bool value}) {
-                      setState(() => {
-                            orders[index].vendida = value,
-                            orders.removeAt(index),
-                          });
-                    },
-                  ),
-                  staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

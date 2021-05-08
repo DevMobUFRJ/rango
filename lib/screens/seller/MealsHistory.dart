@@ -44,7 +44,14 @@ class _MealsHistoryState extends State<MealsHistory> {
       ),
       body: ordersCheckedValue == null || ordersCheckedValue.length == 0
           ? Container(
-              child: Text("vazio"),
+              alignment: Alignment.center,
+              margin: EdgeInsets.symmetric(horizontal: 0.1.wp),
+              child: AutoSizeText("Você não tem histórico de quentinhas.",
+                  style: GoogleFonts.montserrat(
+                    color: Theme.of(context).accentColor,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 36.nsp,
+                  )),
             )
           : Container(
               height: 1.hp - 0.2.hp,
