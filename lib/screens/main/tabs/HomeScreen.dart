@@ -4,8 +4,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/dadosMarretados.dart';
 import 'package:rango/models/seller.dart';
+import 'package:rango/screens/main/OrdersHistory.dart';
 import 'package:rango/widgets/home/OrderContainer.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -60,15 +62,36 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(top: 0.2.hp, left: 0.1.wp),
-                child: AutoSizeText(
-                  "Pedidos do dia",
-                  style: GoogleFonts.montserrat(
-                    textStyle: TextStyle(
-                      color: Theme.of(context).accentColor,
-                      fontSize: 29.nsp,
+                margin:
+                    EdgeInsets.only(top: 0.2.hp, left: 0.1.wp, right: 0.1.wp),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      child: AutoSizeText(
+                        "Pedidos do dia",
+                        style: GoogleFonts.montserrat(
+                          textStyle: TextStyle(
+                            color: Theme.of(context).accentColor,
+                            fontSize: 29.nsp,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    Container(
+                      margin: EdgeInsets.only(right: 0.02.wp),
+                      child: GestureDetector(
+                        onTap: () => pushNewScreen(
+                          context,
+                          screen: OrdersHistory(widget.usuario),
+                        ),
+                        child: Icon(
+                          Icons.history,
+                          color: Theme.of(context).accentColor,
+                        ),
+                      ),
+                    )
+                  ],
                 ),
               ),
               Container(
@@ -85,7 +108,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       setState(() => orders[index].reservada = value);
                     },
                     ({bool value}) {
-                      setState(() => orders[index].vendida = value);
+                      setState(() => {
+                            orders[index].vendida = value,
+                            orders.removeAt(index),
+                          });
                     },
                   ),
                   staggeredTileBuilder: (index) => StaggeredTile.fit(1),
