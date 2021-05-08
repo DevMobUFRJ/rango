@@ -28,6 +28,72 @@ final List<Meal> quentinhas = [
       sellerName: 'Quentinha Top'),
 ];
 
+final List<Order> pedidosConcluidos = [
+  Order(
+    cliente: clients[0],
+    quentinha: quentinhas[0],
+    reservada: true,
+    vendida: true,
+    orderId: 1,
+  ),
+  Order(
+    cliente: clients[1],
+    quentinha: quentinhas[0],
+    reservada: true,
+    vendida: true,
+    orderId: 2,
+  ),
+  Order(
+    cliente: clients[2],
+    quentinha: quentinhas[1],
+    reservada: true,
+    vendida: true,
+    orderId: 3,
+  ),
+  Order(
+    cliente: clients[2],
+    quentinha: quentinhas[1],
+    reservada: true,
+    vendida: true,
+    orderId: 4,
+  ),
+  Order(
+    cliente: clients[1],
+    quentinha: quentinhas[0],
+    reservada: true,
+    vendida: true,
+    orderId: 5,
+  ),
+  Order(
+    cliente: clients[2],
+    quentinha: quentinhas[1],
+    reservada: true,
+    vendida: true,
+    orderId: 6,
+  ),
+  Order(
+    cliente: clients[2],
+    quentinha: quentinhas[1],
+    reservada: true,
+    vendida: true,
+    orderId: 7,
+  ),
+  Order(
+    cliente: clients[2],
+    quentinha: quentinhas[1],
+    reservada: true,
+    vendida: true,
+    orderId: 8,
+  ),
+  Order(
+    cliente: clients[2],
+    quentinha: quentinhas[1],
+    reservada: true,
+    vendida: true,
+    orderId: 9,
+  ),
+];
+
 final List<Order> pedidos = [
   Order(
     cliente: clients[0],
