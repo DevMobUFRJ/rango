@@ -112,7 +112,8 @@ class _UserImagePickerState extends State<UserImagePicker> {
                       ? FileImage(_pickedImage)
                       : widget.image != null
                           ? NetworkImage(widget.image)
-                          : null,
+                          : NetworkImage(
+                              'https://ra.ac.ae/wp-content/uploads/2017/02/user-icon-placeholder.png'),
                   backgroundColor: Theme.of(context).accentColor,
                 ),
                 if (_pickedImage == null && widget.image == null)

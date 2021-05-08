@@ -71,7 +71,8 @@ class _ClientProfileState extends State<ClientProfile> {
                             backgroundColor: Theme.of(context).accentColor,
                             backgroundImage: client.picture != null
                                 ? NetworkImage(client.picture)
-                                : null,
+                                : NetworkImage(
+                                    'https://ra.ac.ae/wp-content/uploads/2017/02/user-icon-placeholder.png'),
                             radius: 130.w,
                           ),
                         ),
