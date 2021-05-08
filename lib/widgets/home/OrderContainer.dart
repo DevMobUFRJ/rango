@@ -31,7 +31,7 @@ class _OrderContainerState extends State<OrderContainer> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          color: Color(0xFFF9B152),
+          color: widget.pedido.vendida ? Colors.grey : Color(0xFFF9B152),
           child: ConstrainedBox(
             constraints: new BoxConstraints(
               minHeight: 0.12.hp,
@@ -95,7 +95,9 @@ class _OrderContainerState extends State<OrderContainer> {
                               height: 24,
                               width: 24,
                               child: Checkbox(
-                                checkColor: Color(0xFFF9B152),
+                                checkColor: widget.pedido.vendida
+                                    ? Colors.grey
+                                    : Color(0xFFF9B152),
                                 activeColor: Colors.white,
                                 value: widget.pedido.reservada,
                                 onChanged: (valor) =>
@@ -121,7 +123,9 @@ class _OrderContainerState extends State<OrderContainer> {
                               height: 24,
                               width: 24,
                               child: Checkbox(
-                                checkColor: Color(0xFFF9B152),
+                                checkColor: widget.pedido.vendida
+                                    ? Colors.grey
+                                    : Color(0xFFF9B152),
                                 activeColor: Colors.white,
                                 value: widget.pedido.vendida,
                                 onChanged: (valor) =>
