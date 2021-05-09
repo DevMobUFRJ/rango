@@ -18,57 +18,66 @@ class GridHorizontal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StaggeredGridView.countBuilder(
-      scrollDirection: Axis.horizontal,
-      crossAxisCount: orders.length > 6 ? 2 : 1,
-      mainAxisSpacing: 0,
-      crossAxisSpacing: 0,
-      padding: EdgeInsets.all(0),
-      itemCount: orders.length,
-      itemBuilder: (ctx, index) => GestureDetector(
-        onTap: () => pushNewScreen(context,
-            screen: ManageOrder(
-              order: orders[index],
-            ),
-            withNavBar: true,
-            pageTransitionAnimation: PageTransitionAnimation.cupertino),
-        child: Card(
-          semanticContainer: true,
-          clipBehavior: Clip.antiAliasWithSaveLayer,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          child: Column(
-            children: <Widget>[
-              FadeInImage.assetNetwork(
-                placeholder: 'assets/imgs/quentinha_placeholder.png',
-                image: orders[index].quentinha.picture,
-                fit: BoxFit.fitWidth,
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 5),
+        scrollDirection: Axis.horizontal,
+        crossAxisCount: orders.length > 6 ? 2 : 1,
+        mainAxisSpacing: 0,
+        crossAxisSpacing: 0,
+        padding: EdgeInsets.all(0),
+        itemCount: orders.length,
+        itemBuilder: (ctx, index) => GestureDetector(
+              onTap: () => pushNewScreen(context,
+                  screen: ManageOrder(
+                    order: orders[index],
+                  ),
+                  withNavBar: true,
+                  pageTransitionAnimation: PageTransitionAnimation.cupertino),
+              child: Card(
+                semanticContainer: true,
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
                 child: Column(
                   children: <Widget>[
-                    AutoSizeText(
-                      orders[index].quentinha.name,
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.montserrat(
-                        fontSize: orders.length > 6 ? 24.nsp : 28.nsp,
+                    Flexible(
+                      flex: 3,
+                      child: FadeInImage.assetNetwork(
+                        placeholder: 'assets/imgs/quentinha_placeholder.png',
+                        image: orders[index].quentinha.picture,
+                        fit: BoxFit.fitWidth,
                       ),
                     ),
-                    AutoSizeText(
-                      'R\$${orders[index].quentinha.price}',
-                      style: GoogleFonts.montserrat(
-                        fontSize: orders.length > 6 ? 24.nsp : 28.nsp,
+                    Flexible(
+                      flex: 2,
+                      child: Container(
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.symmetric(vertical: 5),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            AutoSizeText(
+                              orders[index].quentinha.name,
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.montserrat(
+                                fontSize: orders.length > 6 ? 24.nsp : 32.nsp,
+                              ),
+                            ),
+                            AutoSizeText(
+                              'R\$${orders[index].quentinha.price}',
+                              style: GoogleFonts.montserrat(
+                                fontSize: orders.length > 6 ? 24.nsp : 32.nsp,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
-      staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-    );
+            ),
+        staggeredTileBuilder: (index) => StaggeredTile.count(1, 1));
   }
 }

@@ -198,15 +198,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             Flexible(
-              flex: 2,
+              flex: 3,
               child: Container(
-                padding: EdgeInsets.symmetric(
-                    horizontal: 0.03.wp, vertical: 0.01.hp),
+                margin: EdgeInsets.symmetric(vertical: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
                     Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
                           margin: EdgeInsets.only(bottom: 5),
@@ -233,6 +234,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ],
                     ),
                     Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
                           margin: EdgeInsets.only(bottom: 5),
@@ -265,33 +269,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             Expanded(
-              flex: 3,
+              flex: 5,
               child: Container(
                   width: 0.8.wp,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      AutoSizeText(
-                        "Nos últimos 7 dias:",
-                        maxLines: 1,
-                        style: GoogleFonts.montserrat(
-                          fontSize: 40.nsp,
-                          color: Theme.of(context).accentColor,
+                      Flexible(
+                        flex: 1,
+                        child: AutoSizeText(
+                          "Nos últimos 7 dias:",
+                          maxLines: 1,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 40.nsp,
+                            color: Theme.of(context).accentColor,
+                          ),
                         ),
                       ),
                       SizedBox(height: 0.01.hp),
-                      AutoSizeText(
-                        "Você realizou um total de X vendas para Y clientes e vendeu um total de ZZ,ZZ reais",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 30.nsp,
-                          color: Theme.of(context).accentColor,
+                      Flexible(
+                        flex: 1,
+                        child: AutoSizeText(
+                          "Você realizou um total de X vendas para Y clientes e vendeu um total de ZZ,ZZ reais",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 30.nsp,
+                            color: Theme.of(context).accentColor,
+                          ),
                         ),
                       ),
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: RaisedButton(
-                          child: Text("Ver mais"),
-                          onPressed: () => {},
+                      Flexible(
+                        flex: 1,
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: RaisedButton(
+                            child: Text("Ver mais"),
+                            onPressed: () => {},
+                          ),
                         ),
                       ),
                     ],

@@ -217,7 +217,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
                             ),
                           ),
                           Flexible(
-                            flex: 4,
+                            flex: 3,
                             child: Container(
                               child: GridHorizontal(
                                 orders: pedidos,
@@ -225,7 +225,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
                             ),
                           ),
                           Flexible(
-                            flex: 2,
+                            flex: 1,
                             child: Container(
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
