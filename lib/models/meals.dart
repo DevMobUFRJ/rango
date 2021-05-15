@@ -8,6 +8,7 @@ class Meal {
   final double price;
   final String sellerName;
   final String sellerId;
+  final int quantidadeDisponivel;
 
   Meal({
     @required this.description,
@@ -17,5 +18,6 @@ class Meal {
     @required this.price,
     @required this.sellerId,
     @required this.sellerName,
+    this.quantidadeDisponivel = 1,
   });
 }

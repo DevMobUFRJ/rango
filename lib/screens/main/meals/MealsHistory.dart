@@ -87,8 +87,8 @@ class _MealsHistoryState extends State<MealsHistory> {
                                       FadeInImage.assetNetwork(
                                         placeholder:
                                             'assets/imgs/quentinha_placeholder.png',
-                                        image: widget
-                                            .orders[index].quentinha.picture,
+                                        image: widget.orders[index]
+                                            .quentinhas[0].quentinha.picture,
                                         fit: BoxFit.fitWidth,
                                       ),
                                       Container(
@@ -97,8 +97,8 @@ class _MealsHistoryState extends State<MealsHistory> {
                                         child: Column(
                                           children: <Widget>[
                                             AutoSizeText(
-                                              widget
-                                                  .orders[index].quentinha.name,
+                                              widget.orders[index].quentinhas[0]
+                                                  .quentinha.name,
                                               textAlign: TextAlign.center,
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
@@ -106,7 +106,7 @@ class _MealsHistoryState extends State<MealsHistory> {
                                                   fontSize: 24.nsp),
                                             ),
                                             AutoSizeText(
-                                              'R\$${widget.orders[index].quentinha.price}',
+                                              'R\$${widget.orders[index].quentinhas[0].quentinha.price}',
                                               style: GoogleFonts.montserrat(
                                                   fontSize: 24.nsp),
                                             ),

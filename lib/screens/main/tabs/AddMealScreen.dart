@@ -316,7 +316,10 @@ class _AddMealScreenState extends State<AddMealScreen> {
                                       child: GestureDetector(
                                         onTap: () => {},
                                         child: AutoSizeText(
-                                          pedidos[index].quentinha.name,
+                                          pedidos[index]
+                                              .quentinhas[0]
+                                              .quentinha
+                                              .name,
                                           overflow: TextOverflow.ellipsis,
                                           style: GoogleFonts.montserrat(
                                             color: Color(0xFFF9B152),

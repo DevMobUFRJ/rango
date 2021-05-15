@@ -47,6 +47,7 @@ class _OrderContainerState extends State<OrderContainer> {
                   margin: EdgeInsets.only(left: 12, top: 8, bottom: 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       GestureDetector(
                         onTap: () => pushNewScreen(
@@ -65,13 +66,17 @@ class _OrderContainerState extends State<OrderContainer> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 2),
-                      AutoSizeText(
-                        widget.pedido.quentinha.name,
-                        style: GoogleFonts.montserrat(
-                          textStyle: TextStyle(
-                            color: Colors.white,
-                            fontSize: 26.nsp,
+                      ListView.builder(
+                        shrinkWrap: true,
+                        padding: EdgeInsets.all(0),
+                        itemCount: widget.pedido.quentinhas.length,
+                        itemBuilder: (ctx, index) => AutoSizeText(
+                          '${widget.pedido.quentinhas[index].quantidade}x ${widget.pedido.quentinhas[index].quentinha.name}',
+                          style: GoogleFonts.montserrat(
+                            textStyle: TextStyle(
+                              color: Colors.white,
+                              fontSize: 26.nsp,
+                            ),
                           ),
                         ),
                       ),

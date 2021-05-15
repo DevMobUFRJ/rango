@@ -42,7 +42,7 @@ class GridHorizontal extends StatelessWidget {
                       flex: 3,
                       child: FadeInImage.assetNetwork(
                         placeholder: 'assets/imgs/quentinha_placeholder.png',
-                        image: orders[index].quentinha.picture,
+                        image: orders[index].quentinhas[0].quentinha.picture,
                         fit: BoxFit.fitWidth,
                       ),
                     ),
@@ -56,7 +56,7 @@ class GridHorizontal extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
                             AutoSizeText(
-                              orders[index].quentinha.name,
+                              orders[index].quentinhas[0].quentinha.name,
                               textAlign: TextAlign.center,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -65,7 +65,7 @@ class GridHorizontal extends StatelessWidget {
                               ),
                             ),
                             AutoSizeText(
-                              'R\$${orders[index].quentinha.price}',
+                              'R\$${orders[index].quentinhas[0].quentinha.price}',
                               style: GoogleFonts.montserrat(
                                 fontSize: orders.length > 6 ? 24.nsp : 32.nsp,
                               ),

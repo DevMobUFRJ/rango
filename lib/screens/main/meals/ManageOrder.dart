@@ -29,12 +29,15 @@ class _ManageOrderState extends State<ManageOrder> {
     TextEditingController _mealDescription;
     TextEditingController _mealQuantity;
     if (widget.order != null) {
-      _mealName = TextEditingController(text: widget.order.quentinha.name);
-      _mealValue =
-          TextEditingController(text: widget.order.quentinha.price.toString());
-      _mealDescription =
-          TextEditingController(text: widget.order.quentinha.description);
-      _mealQuantity = TextEditingController();
+      _mealName = TextEditingController(
+          text: widget.order.quentinhas[0].quentinha.name);
+      _mealValue = TextEditingController(
+          text: widget.order.quentinhas[0].quentinha.price.toString());
+      _mealDescription = TextEditingController(
+          text: widget.order.quentinhas[0].quentinha.description);
+      _mealQuantity = TextEditingController(
+          text: widget.order.quentinhas[0].quentinha.quantidadeDisponivel
+              .toString());
     } else {
       _mealName = TextEditingController();
       _mealValue = TextEditingController();
@@ -63,8 +66,8 @@ class _ManageOrderState extends State<ManageOrder> {
                 MealImagePicker(
                   _pickedImage,
                   image: widget.order != null &&
-                          widget.order.quentinha.picture != null
-                      ? widget.order.quentinha.picture
+                          widget.order.quentinhas[0].quentinha.picture != null
+                      ? widget.order.quentinhas[0].quentinha.picture
                       : null,
                   editText: "Clique para editar",
                 ),
