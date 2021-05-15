@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:rango/models/order.dart';
-import 'package:rango/screens/seller/ManageOrder.dart';
+import 'package:rango/screens/main/meals/ManageOrder.dart';
 
 class GridHorizontal extends StatelessWidget {
   final List<Order> orders;

@@ -1,13 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:rango/models/client.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/models/user_notification_settings.dart';
 import 'package:rango/screens/SplashScreen.dart';
 import 'package:rango/screens/main/tabs/AddMealScreen.dart';
 import 'package:rango/screens/main/tabs/HomeScreen.dart';
-import 'package:rango/screens/seller/ManageOrder.dart';
 import 'package:rango/screens/main/tabs/ProfileScreen.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 

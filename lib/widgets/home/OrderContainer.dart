@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/order.dart';
-import 'package:rango/screens/seller/ClientProfile.dart';
+import 'package:rango/screens/main/home/ClientProfile.dart';
 
 class OrderContainer extends StatefulWidget {
   final Order pedido;

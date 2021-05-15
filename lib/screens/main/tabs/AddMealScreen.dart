@@ -6,8 +6,8 @@ import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/dadosMarretados.dart';
 import 'package:rango/models/seller.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:rango/screens/seller/ManageOrder.dart';
-import 'package:rango/screens/seller/MealsHistory.dart';
+import 'package:rango/screens/main/meals/ManageOrder.dart';
+import 'package:rango/screens/main/meals/MealsHistory.dart';
 import 'package:rango/widgets/home/GridHorizontal.dart';
 
 class AddMealScreen extends StatefulWidget {

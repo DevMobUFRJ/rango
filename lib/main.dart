@@ -4,7 +4,7 @@ import 'package:rango/screens/SplashScreen.dart';
 import 'package:rango/screens/auth/AuthScreen.dart';
 import 'package:rango/screens/auth/ForgotPasswordScreen.dart';
 import 'package:rango/screens/auth/LoginScreen.dart';
-import 'package:rango/screens/main/NewTabsScreen.dart';
+import 'package:rango/screens/main/tabs/NewTabsScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() {

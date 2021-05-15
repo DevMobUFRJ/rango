@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/dadosMarretados.dart';
 import 'package:rango/models/client.dart';
-import 'package:rango/screens/seller/ChatScreen.dart';
+import 'package:rango/screens/main/home/ChatScreen.dart';
 
 class ClientProfile extends StatefulWidget {
   final Client client;
@@ -80,20 +80,21 @@ class _ClientProfileState extends State<ClientProfile> {
                     ),
                   ),
                   SizedBox(height: 20.h),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.center,
-                  //   children: [
-                  //     Icon(Icons.phone, size: 38.nsp),
-                  //     Container(
-                  //       width: 170.w,
-                  //       child: AutoSizeText(
-                  //         client.phone,
-                  //         maxLines: 1,
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
-                  // SizedBox(height: 40.h),
+                  if (client.phone != null)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.phone, size: 38.nsp),
+                        Container(
+                          width: 170.w,
+                          child: AutoSizeText(
+                            client.phone,
+                            maxLines: 1,
+                          ),
+                        ),
+                      ],
+                    ),
+                  SizedBox(height: 40.h),
                   RaisedButton.icon(
                     icon: Icon(Icons.chat, size: 38.nsp),
                     shape: RoundedRectangleBorder(

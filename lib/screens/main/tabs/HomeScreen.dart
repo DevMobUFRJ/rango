@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/dadosMarretados.dart';
 import 'package:rango/models/seller.dart';
-import 'package:rango/screens/main/OrdersHistory.dart';
+import 'package:rango/screens/main/home/OrdersHistory.dart';
 import 'package:rango/widgets/home/OrderContainer.dart';
 
 class HomeScreen extends StatefulWidget {
