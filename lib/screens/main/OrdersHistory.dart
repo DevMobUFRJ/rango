@@ -20,6 +20,7 @@ class OrdersHistory extends StatefulWidget {
 
 class _OrdersHistoryState extends State<OrdersHistory> {
   var orders = pedidosConcluidos;
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -67,28 +68,59 @@ class _OrdersHistoryState extends State<OrdersHistory> {
                         ],
                       ),
                     ),
-                    Container(
-                      constraints: BoxConstraints(maxHeight: 0.7.hp),
-                      child: StaggeredGridView.countBuilder(
-                        padding: EdgeInsets.all(0),
-                        crossAxisCount: 1,
-                        shrinkWrap: true,
-                        itemCount: orders.length,
-                        itemBuilder: (ctx, index) => OrderContainer(
-                          orders[index],
-                          ({bool value}) {
-                            setState(() => orders[index].reservada = value);
-                          },
-                          ({bool value}) {
-                            setState(() => {
-                                  orders[index].vendida = value,
-                                  orders.removeAt(index)
-                                });
-                          },
-                        ),
-                        staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-                      ),
-                    ),
+                    orders.length == 0
+                        ? Container(
+                            margin: EdgeInsets.symmetric(
+                              horizontal: 0.05.wp,
+                            ),
+                            child: AutoSizeText(
+                              'Você ainda não possui pedidos finalizados hoje!',
+                              style: GoogleFonts.montserrat(
+                                color: Theme.of(context).accentColor,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 36.nsp,
+                              ),
+                            ),
+                          )
+                        : Container(
+                            constraints: BoxConstraints(maxHeight: 0.7.hp),
+                            child: AnimatedList(
+                              key: _listKey,
+                              initialItemCount: orders.length,
+                              itemBuilder: (ctx, index, animation) =>
+                                  OrderContainer(
+                                orders[index],
+                                ({bool value}) {
+                                  setState(
+                                      () => orders[index].reservada = value);
+                                },
+                                ({bool value}) {
+                                  var removedItem;
+                                  setState(
+                                    () => {
+                                      removedItem = orders.removeAt(index),
+                                    },
+                                  );
+                                  _listKey.currentState.removeItem(
+                                    index,
+                                    (context, animation) => SlideTransition(
+                                      position: animation.drive(
+                                        Tween<Offset>(
+                                          begin: Offset(1, 0),
+                                          end: Offset.zero,
+                                        ),
+                                      ),
+                                      child: OrderContainer(
+                                        removedItem,
+                                        ({bool value}) => {},
+                                        ({bool value}) => {},
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
                   ],
                 ),
               ),

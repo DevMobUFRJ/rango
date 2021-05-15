@@ -23,6 +23,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   var orders = pedidos;
   var ordersClosed = pedidosConcluidos;
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +65,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     Container(
-                      alignment: Alignment.center,
                       margin: EdgeInsets.symmetric(
                         vertical: 0.2.hp,
                         horizontal: 0.05.wp,
@@ -179,12 +179,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                       ),
                                     )
-                                  : StaggeredGridView.countBuilder(
-                                      padding: EdgeInsets.all(0),
-                                      crossAxisCount: 1,
-                                      shrinkWrap: true,
-                                      itemCount: orders.length,
-                                      itemBuilder: (ctx, index) =>
+                                  : AnimatedList(
+                                      key: _listKey,
+                                      initialItemCount: orders.length,
+                                      itemBuilder: (ctx, index, animation) =>
                                           OrderContainer(
                                         orders[index],
                                         ({bool value}) {
@@ -192,14 +190,32 @@ class _HomeScreenState extends State<HomeScreen> {
                                               orders[index].reservada = value);
                                         },
                                         ({bool value}) {
-                                          setState(() => {
-                                                orders[index].vendida = value,
-                                                orders.removeAt(index),
-                                              });
+                                          var removedItem;
+                                          setState(
+                                            () => {
+                                              removedItem =
+                                                  orders.removeAt(index),
+                                            },
+                                          );
+                                          _listKey.currentState.removeItem(
+                                            index,
+                                            (context, animation) =>
+                                                SlideTransition(
+                                              position: animation.drive(
+                                                Tween<Offset>(
+                                                  begin: Offset(1, 0),
+                                                  end: Offset.zero,
+                                                ),
+                                              ),
+                                              child: OrderContainer(
+                                                removedItem,
+                                                ({bool value}) => {},
+                                                ({bool value}) => {},
+                                              ),
+                                            ),
+                                          );
                                         },
                                       ),
-                                      staggeredTileBuilder: (index) =>
-                                          StaggeredTile.fit(1),
                                     ),
                             ),
                           ),
