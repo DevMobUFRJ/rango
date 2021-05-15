@@ -123,15 +123,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Container(
-                                    child: AutoSizeText(
-                                      "Pedidos do dia",
-                                      style: GoogleFonts.montserrat(
-                                        textStyle: TextStyle(
-                                          color: Theme.of(context).accentColor,
-                                          fontSize: 29.nsp,
-                                        ),
-                                      ),
-                                    ),
+                                    child: ordersClosed.length > 1 &&
+                                            orders.length < 1
+                                        ? Text('')
+                                        : AutoSizeText(
+                                            "Pedidos do dia",
+                                            style: GoogleFonts.montserrat(
+                                              textStyle: TextStyle(
+                                                color: Theme.of(context)
+                                                    .accentColor,
+                                                fontSize: 29.nsp,
+                                              ),
+                                            ),
+                                          ),
                                   ),
                                   Container(
                                     margin: EdgeInsets.only(
