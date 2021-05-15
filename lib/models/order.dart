@@ -8,6 +8,7 @@ class Order {
   bool reservada;
   bool vendida;
   final Meal quentinha;
+  final double valorTotal;
 
   Order({
     @required this.cliente,
@@ -15,5 +16,6 @@ class Order {
     this.reservada,
     this.vendida,
     @required this.quentinha,
+    @required this.valorTotal,
   });
 }

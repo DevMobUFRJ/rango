@@ -35,6 +35,7 @@ final List<Order> pedidosConcluidos = [
     reservada: true,
     vendida: true,
     orderId: 1,
+    valorTotal: quentinhas[0].price,
   ),
   Order(
     cliente: clients[1],
@@ -42,6 +43,7 @@ final List<Order> pedidosConcluidos = [
     reservada: true,
     vendida: true,
     orderId: 2,
+    valorTotal: quentinhas[0].price,
   ),
   Order(
     cliente: clients[2],
@@ -49,6 +51,7 @@ final List<Order> pedidosConcluidos = [
     reservada: true,
     vendida: true,
     orderId: 3,
+    valorTotal: quentinhas[1].price,
   ),
   Order(
     cliente: clients[2],
@@ -56,6 +59,7 @@ final List<Order> pedidosConcluidos = [
     reservada: true,
     vendida: true,
     orderId: 4,
+    valorTotal: quentinhas[1].price,
   ),
   Order(
     cliente: clients[1],
@@ -63,6 +67,7 @@ final List<Order> pedidosConcluidos = [
     reservada: true,
     vendida: true,
     orderId: 5,
+    valorTotal: quentinhas[0].price,
   ),
   Order(
     cliente: clients[2],
@@ -70,6 +75,7 @@ final List<Order> pedidosConcluidos = [
     reservada: true,
     vendida: true,
     orderId: 6,
+    valorTotal: quentinhas[1].price,
   ),
   Order(
     cliente: clients[2],
@@ -77,6 +83,7 @@ final List<Order> pedidosConcluidos = [
     reservada: true,
     vendida: true,
     orderId: 7,
+    valorTotal: quentinhas[1].price,
   ),
   Order(
     cliente: clients[2],
@@ -84,6 +91,7 @@ final List<Order> pedidosConcluidos = [
     reservada: true,
     vendida: true,
     orderId: 8,
+    valorTotal: quentinhas[1].price,
   ),
   Order(
     cliente: clients[2],
@@ -91,6 +99,7 @@ final List<Order> pedidosConcluidos = [
     reservada: true,
     vendida: true,
     orderId: 9,
+    valorTotal: quentinhas[1].price,
   ),
 ];
 
@@ -101,6 +110,7 @@ final List<Order> pedidos = [
     reservada: false,
     vendida: false,
     orderId: 1,
+    valorTotal: quentinhas[0].price,
   ),
   Order(
     cliente: clients[1],
@@ -108,6 +118,7 @@ final List<Order> pedidos = [
     reservada: false,
     vendida: false,
     orderId: 2,
+    valorTotal: quentinhas[0].price,
   ),
   Order(
     cliente: clients[2],
@@ -115,6 +126,7 @@ final List<Order> pedidos = [
     reservada: false,
     vendida: false,
     orderId: 3,
+    valorTotal: quentinhas[1].price,
   ),
   Order(
     cliente: clients[2],
@@ -122,6 +134,7 @@ final List<Order> pedidos = [
     reservada: false,
     vendida: false,
     orderId: 4,
+    valorTotal: quentinhas[1].price,
   ),
   Order(
     cliente: clients[1],
@@ -129,6 +142,7 @@ final List<Order> pedidos = [
     reservada: false,
     vendida: false,
     orderId: 5,
+    valorTotal: quentinhas[0].price,
   ),
   Order(
     cliente: clients[2],
@@ -136,6 +150,7 @@ final List<Order> pedidos = [
     reservada: false,
     vendida: false,
     orderId: 6,
+    valorTotal: quentinhas[1].price,
   ),
   Order(
     cliente: clients[2],
@@ -143,6 +158,7 @@ final List<Order> pedidos = [
     reservada: false,
     vendida: false,
     orderId: 7,
+    valorTotal: quentinhas[1].price,
   ),
   Order(
     cliente: clients[2],
@@ -150,6 +166,7 @@ final List<Order> pedidos = [
     reservada: false,
     vendida: false,
     orderId: 8,
+    valorTotal: quentinhas[1].price,
   ),
   Order(
     cliente: clients[2],
@@ -157,5 +174,6 @@ final List<Order> pedidos = [
     reservada: false,
     vendida: false,
     orderId: 9,
+    valorTotal: quentinhas[1].price,
   ),
 ];
