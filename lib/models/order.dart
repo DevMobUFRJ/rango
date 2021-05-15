@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:rango/models/client.dart';
-import 'package:rango/models/meals.dart';
+import 'package:rango/models/mealInOrder.dart';
 
 class Order {
   final Client cliente;
   final int orderId;
   bool reservada;
   bool vendida;
-  final List<Meal> quentinhas;
+  final List<MealInOrder> quentinhas;
   final double valorTotal;
 
   Order({
