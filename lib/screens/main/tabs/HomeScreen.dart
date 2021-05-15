@@ -90,99 +90,121 @@ class _HomeScreenState extends State<HomeScreen> {
                       width: 1.wp,
                     ),
                     Container(
-                      margin: EdgeInsets.only(top: 0.03.hp),
+                      margin: EdgeInsets.only(top: 0.07.hp),
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(height: 0.01.hp),
-                          Container(
-                            width: 0.7.wp,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 0.04.wp, vertical: 0.01.hp),
-                            child: AutoSizeText(
-                              'Olá,\n${widget.usuario.name}!',
-                              maxLines: 2,
-                              textAlign: TextAlign.start,
-                              style: GoogleFonts.montserratTextTheme(
-                                      Theme.of(context).textTheme)
-                                  .headline1,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(
-                          top: 0.2.hp, left: 0.1.wp, right: 0.1.wp),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            child: AutoSizeText(
-                              "Pedidos do dia",
-                              style: GoogleFonts.montserrat(
-                                textStyle: TextStyle(
-                                  color: Theme.of(context).accentColor,
-                                  fontSize: 29.nsp,
-                                ),
+                          Flexible(
+                            flex: 1,
+                            child: Container(
+                              width: 0.7.wp,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 0.04.wp, vertical: 0.01.hp),
+                              child: AutoSizeText(
+                                'Olá,\n${widget.usuario.name}!',
+                                maxLines: 2,
+                                textAlign: TextAlign.start,
+                                style: GoogleFonts.montserratTextTheme(
+                                        Theme.of(context).textTheme)
+                                    .headline1,
                               ),
                             ),
                           ),
-                          Container(
-                            margin: EdgeInsets.only(right: 0.02.wp),
-                            child: GestureDetector(
-                              onTap: () => pushNewScreen(
-                                context,
-                                screen: OrdersHistory(widget.usuario),
+                          Flexible(
+                            flex: 1,
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                left: 0.1.wp,
+                                right: 0.1.wp,
                               ),
-                              child: Icon(
-                                Icons.history,
-                                color: Theme.of(context).accentColor,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    child: AutoSizeText(
+                                      "Pedidos do dia",
+                                      style: GoogleFonts.montserrat(
+                                        textStyle: TextStyle(
+                                          color: Theme.of(context).accentColor,
+                                          fontSize: 29.nsp,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        right: 0.02.wp, bottom: 2),
+                                    padding: EdgeInsets.only(
+                                        top: 3, bottom: 3, right: 4, left: 3),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(
+                                        ScreenUtil().setSp(30),
+                                      ),
+                                      color: Theme.of(context).accentColor,
+                                    ),
+                                    child: GestureDetector(
+                                      onTap: () => pushNewScreen(
+                                        context,
+                                        screen: OrdersHistory(widget.usuario),
+                                      ),
+                                      child: Icon(
+                                        Icons.history,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
-                          )
+                          ),
+                          Flexible(
+                            flex: 3,
+                            child: Container(
+                              constraints: BoxConstraints(maxHeight: 0.68.hp),
+                              child: ordersClosed.length > 1 &&
+                                      orders.length < 1
+                                  ? Container(
+                                      margin: EdgeInsets.symmetric(
+                                        horizontal: 0.1.wp,
+                                        vertical: 8,
+                                      ),
+                                      child: AutoSizeText(
+                                        'Você não tem mais pedidos em abertos hoje!\nPara verificar os pedidos já fechados, clique acima no ícone de histórico.',
+                                        style: GoogleFonts.montserrat(
+                                          color: Theme.of(context).accentColor,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 36.nsp,
+                                        ),
+                                      ),
+                                    )
+                                  : StaggeredGridView.countBuilder(
+                                      padding: EdgeInsets.all(0),
+                                      crossAxisCount: 1,
+                                      shrinkWrap: true,
+                                      itemCount: orders.length,
+                                      itemBuilder: (ctx, index) =>
+                                          OrderContainer(
+                                        orders[index],
+                                        ({bool value}) {
+                                          setState(() =>
+                                              orders[index].reservada = value);
+                                        },
+                                        ({bool value}) {
+                                          setState(() => {
+                                                orders[index].vendida = value,
+                                                orders.removeAt(index),
+                                              });
+                                        },
+                                      ),
+                                      staggeredTileBuilder: (index) =>
+                                          StaggeredTile.fit(1),
+                                    ),
+                            ),
+                          ),
                         ],
                       ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 0.23.hp),
-                      height: 0.68.hp,
-                      child: ordersClosed.length > 1 && orders.length < 1
-                          ? Container(
-                              margin: EdgeInsets.symmetric(
-                                horizontal: 0.1.wp,
-                                vertical: 8,
-                              ),
-                              child: AutoSizeText(
-                                'Você não tem mais pedidos em abertos hoje!\nPara verificar os pedidos já fechados, clique acima no ícone de histórico.',
-                                style: GoogleFonts.montserrat(
-                                  color: Theme.of(context).accentColor,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 36.nsp,
-                                ),
-                              ),
-                            )
-                          : StaggeredGridView.countBuilder(
-                              padding: EdgeInsets.all(0),
-                              crossAxisCount: 1,
-                              shrinkWrap: true,
-                              itemCount: orders.length,
-                              itemBuilder: (ctx, index) => OrderContainer(
-                                orders[index],
-                                ({bool value}) {
-                                  setState(
-                                      () => orders[index].reservada = value);
-                                },
-                                ({bool value}) {
-                                  setState(() => {
-                                        orders[index].vendida = value,
-                                        orders.removeAt(index),
-                                      });
-                                },
-                              ),
-                              staggeredTileBuilder: (index) =>
-                                  StaggeredTile.fit(1),
-                            ),
                     ),
                   ],
                 ),
