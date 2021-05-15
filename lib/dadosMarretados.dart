@@ -31,7 +31,7 @@ final List<Meal> quentinhas = [
 final List<Order> pedidosConcluidos = [
   Order(
     cliente: clients[0],
-    quentinha: quentinhas[0],
+    quentinhas: [quentinhas[0], quentinhas[1]],
     reservada: true,
     vendida: true,
     orderId: 1,
@@ -39,7 +39,7 @@ final List<Order> pedidosConcluidos = [
   ),
   Order(
     cliente: clients[1],
-    quentinha: quentinhas[0],
+    quentinhas: [quentinhas[0], quentinhas[1]],
     reservada: true,
     vendida: true,
     orderId: 2,
@@ -47,7 +47,7 @@ final List<Order> pedidosConcluidos = [
   ),
   Order(
     cliente: clients[2],
-    quentinha: quentinhas[1],
+    quentinhas: [quentinhas[1]],
     reservada: true,
     vendida: true,
     orderId: 3,
@@ -55,7 +55,7 @@ final List<Order> pedidosConcluidos = [
   ),
   Order(
     cliente: clients[2],
-    quentinha: quentinhas[1],
+    quentinhas: [quentinhas[1]],
     reservada: true,
     vendida: true,
     orderId: 4,
@@ -63,7 +63,7 @@ final List<Order> pedidosConcluidos = [
   ),
   Order(
     cliente: clients[1],
-    quentinha: quentinhas[0],
+    quentinhas: [quentinhas[0]],
     reservada: true,
     vendida: true,
     orderId: 5,
@@ -71,7 +71,7 @@ final List<Order> pedidosConcluidos = [
   ),
   Order(
     cliente: clients[2],
-    quentinha: quentinhas[1],
+    quentinhas: [quentinhas[1]],
     reservada: true,
     vendida: true,
     orderId: 6,
@@ -79,7 +79,7 @@ final List<Order> pedidosConcluidos = [
   ),
   Order(
     cliente: clients[2],
-    quentinha: quentinhas[1],
+    quentinhas: [quentinhas[1]],
     reservada: true,
     vendida: true,
     orderId: 7,
@@ -87,7 +87,7 @@ final List<Order> pedidosConcluidos = [
   ),
   Order(
     cliente: clients[2],
-    quentinha: quentinhas[1],
+    quentinhas: [quentinhas[0]],
     reservada: true,
     vendida: true,
     orderId: 8,
@@ -95,7 +95,7 @@ final List<Order> pedidosConcluidos = [
   ),
   Order(
     cliente: clients[2],
-    quentinha: quentinhas[1],
+    quentinhas: [quentinhas[1]],
     reservada: true,
     vendida: true,
     orderId: 9,
@@ -106,7 +106,7 @@ final List<Order> pedidosConcluidos = [
 final List<Order> pedidos = [
   Order(
     cliente: clients[0],
-    quentinha: quentinhas[0],
+    quentinhas: [quentinhas[0], quentinhas[1]],
     reservada: false,
     vendida: false,
     orderId: 1,
@@ -114,7 +114,7 @@ final List<Order> pedidos = [
   ),
   Order(
     cliente: clients[1],
-    quentinha: quentinhas[0],
+    quentinhas: [quentinhas[0]],
     reservada: false,
     vendida: false,
     orderId: 2,
@@ -122,7 +122,7 @@ final List<Order> pedidos = [
   ),
   Order(
     cliente: clients[2],
-    quentinha: quentinhas[1],
+    quentinhas: [quentinhas[1]],
     reservada: false,
     vendida: false,
     orderId: 3,
@@ -130,7 +130,7 @@ final List<Order> pedidos = [
   ),
   Order(
     cliente: clients[2],
-    quentinha: quentinhas[1],
+    quentinhas: [quentinhas[1]],
     reservada: false,
     vendida: false,
     orderId: 4,
@@ -138,7 +138,7 @@ final List<Order> pedidos = [
   ),
   Order(
     cliente: clients[1],
-    quentinha: quentinhas[0],
+    quentinhas: [quentinhas[0]],
     reservada: false,
     vendida: false,
     orderId: 5,
@@ -146,7 +146,7 @@ final List<Order> pedidos = [
   ),
   Order(
     cliente: clients[2],
-    quentinha: quentinhas[1],
+    quentinhas: [quentinhas[1]],
     reservada: false,
     vendida: false,
     orderId: 6,
@@ -154,7 +154,7 @@ final List<Order> pedidos = [
   ),
   Order(
     cliente: clients[2],
-    quentinha: quentinhas[1],
+    quentinhas: [quentinhas[1]],
     reservada: false,
     vendida: false,
     orderId: 7,
@@ -162,7 +162,7 @@ final List<Order> pedidos = [
   ),
   Order(
     cliente: clients[2],
-    quentinha: quentinhas[1],
+    quentinhas: [quentinhas[0]],
     reservada: false,
     vendida: false,
     orderId: 8,
@@ -170,7 +170,7 @@ final List<Order> pedidos = [
   ),
   Order(
     cliente: clients[2],
-    quentinha: quentinhas[1],
+    quentinhas: [quentinhas[1]],
     reservada: false,
     vendida: false,
     orderId: 9,
