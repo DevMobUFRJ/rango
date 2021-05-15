@@ -65,9 +65,19 @@ class _OrderContainerState extends State<OrderContainer> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 0.01.hp),
+                      SizedBox(height: 2),
                       AutoSizeText(
                         widget.pedido.quentinha.name,
+                        style: GoogleFonts.montserrat(
+                          textStyle: TextStyle(
+                            color: Colors.white,
+                            fontSize: 26.nsp,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      AutoSizeText(
+                        'Valor total: R\$${widget.pedido.valorTotal}',
                         style: GoogleFonts.montserrat(
                           textStyle: TextStyle(
                             color: Colors.white,
