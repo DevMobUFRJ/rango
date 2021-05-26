@@ -128,6 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   // Iterar todos os meals
                                   seller.documents.forEach((meal) {
                                     Meal currentMeal = Meal.fromJson(meal.data);
+                                    currentMeal.id = meal.reference.documentID;
                                     currentMeal.sellerName = sellerMap[meal.reference.parent().parent().documentID];
                                     currentMeal.sellerId = meal.reference.parent().parent().documentID;
                                     tempMeals.add(currentMeal);

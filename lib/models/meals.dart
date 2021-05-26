@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Meal {
+  String id;
   final String description;
   final bool featured;
   final String name;
@@ -10,6 +11,7 @@ class Meal {
   String sellerId;
 
   Meal({
+    this.id,
     @required this.description,
     this.featured,
     @required this.name,

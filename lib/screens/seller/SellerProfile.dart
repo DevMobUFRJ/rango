@@ -4,13 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
-import 'package:rango/models/contact.dart';
 import 'package:rango/models/meals.dart';
 import 'package:rango/models/seller.dart';
-import 'package:rango/models/shift.dart';
 import 'package:rango/screens/seller/ChatScreen.dart';
 import 'package:rango/widgets/home/ListaHorizontal.dart';
-import 'package:cloud_firestore/cloud_firestore.dart' show Firestore, GeoPoint;
+import 'package:cloud_firestore/cloud_firestore.dart' show DocumentSnapshot, Firestore;
+import 'package:rango/blocs/bloc.dart';
 
 class SellerProfile extends StatefulWidget {
   final String sellerName;
@@ -56,13 +55,13 @@ class _SellerProfileState extends State<SellerProfile> {
         ],
       ),
       body: StreamBuilder(
-        stream: _database.collection("sellers").document(widget.sellerId).snapshots(),
-        builder: (context, snapshot) {
+        stream: bloc.seller(widget.sellerId),
+        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (!snapshot.hasData) {
             return CircularProgressIndicator();
           }
-          var doc = snapshot.data;
-          Seller seller = Seller.fromJson(doc.data);
+          print("Is from cache: ${snapshot.data.metadata.isFromCache}");
+          Seller seller = Seller.fromJson(snapshot.data.data);
           return Column(
             children: [
               Container(
@@ -108,7 +107,7 @@ class _SellerProfileState extends State<SellerProfile> {
               ),
               SizedBox(height: 20.h),
               StreamBuilder(
-                stream: _database.collection("sellers").document(widget.sellerId).collection("meals").getDocuments().asStream(),
+                stream: bloc.sellerMeals(widget.sellerId),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return CircularProgressIndicator();

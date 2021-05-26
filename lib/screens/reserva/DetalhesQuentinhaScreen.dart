@@ -1,11 +1,17 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth, FirebaseUser;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/meals.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rango/models/order.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
 import 'package:rango/utils/string_formatters.dart';
+import 'package:rango/blocs/bloc.dart';
+
+final FirebaseAuth auth = FirebaseAuth.instance;
 
 class DetalhesQuentinhaScreen extends StatelessWidget {
   final Meal marmita;
@@ -132,7 +138,22 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                 child: Container(
                   width: 0.6.wp,
                   child: RaisedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      final FirebaseUser user = await auth.currentUser();
+
+                      Order order = Order(
+                        clientId: user.uid,
+                        clientName: user.displayName,
+                        sellerId: marmita.sellerId,
+                        sellerName: marmita.sellerName,
+                        mealId: marmita.id,
+                        mealName: marmita.name,
+                        price: marmita.price,
+                        quantity: 1,
+                        status: "requested"
+                      );
+                      await bloc.ordersCollection.add(order.toJson());
+                    },
                     padding:
                         EdgeInsets.symmetric(vertical: 12, horizontal: 0.05.wp),
                     shape: RoundedRectangleBorder(
