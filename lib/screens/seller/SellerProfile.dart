@@ -6,10 +6,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/meals.dart';
 import 'package:rango/models/seller.dart';
+import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/seller/ChatScreen.dart';
 import 'package:rango/widgets/home/ListaHorizontal.dart';
 import 'package:cloud_firestore/cloud_firestore.dart' show DocumentSnapshot, Firestore;
-import 'package:rango/blocs/bloc.dart';
 
 class SellerProfile extends StatefulWidget {
   final String sellerName;
@@ -23,7 +23,6 @@ class SellerProfile extends StatefulWidget {
 
 class _SellerProfileState extends State<SellerProfile> {
   bool isFavorite = false;
-  final _database = Firestore.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +54,7 @@ class _SellerProfileState extends State<SellerProfile> {
         ],
       ),
       body: StreamBuilder(
-        stream: bloc.seller(widget.sellerId),
+        stream: Repository.instance.getSellerAsStream(widget.sellerId),
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (!snapshot.hasData) {
             return CircularProgressIndicator();
@@ -107,7 +106,7 @@ class _SellerProfileState extends State<SellerProfile> {
               ),
               SizedBox(height: 20.h),
               StreamBuilder(
-                stream: bloc.sellerMeals(widget.sellerId),
+                stream: Repository.instance.getSellerCurrentMealsAsStream(widget.sellerId),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return CircularProgressIndicator();

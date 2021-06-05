@@ -7,9 +7,9 @@ import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/meals.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/order.dart';
+import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
 import 'package:rango/utils/string_formatters.dart';
-import 'package:rango/blocs/bloc.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -152,7 +152,7 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                         quantity: 1,
                         status: "requested"
                       );
-                      await bloc.ordersCollection.add(order.toJson());
+                      await Repository.instance.addOrder(order);
                     },
                     padding:
                         EdgeInsets.symmetric(vertical: 12, horizontal: 0.05.wp),
