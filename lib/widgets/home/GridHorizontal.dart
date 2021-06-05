@@ -55,19 +55,25 @@ class GridHorizontal extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
-                            AutoSizeText(
-                              orders[index].quentinhas[0].quentinha.name,
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.montserrat(
-                                fontSize: orders.length > 6 ? 24.nsp : 32.nsp,
+                            Flexible(
+                              flex: 1,
+                              child: Text(
+                                orders[index].quentinhas[0].quentinha.name,
+                                textAlign: TextAlign.center,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.montserrat(
+                                  fontSize: orders.length > 6 ? 22.nsp : 32.nsp,
+                                ),
                               ),
                             ),
-                            AutoSizeText(
-                              'R\$${orders[index].quentinhas[0].quentinha.price}',
-                              style: GoogleFonts.montserrat(
-                                fontSize: orders.length > 6 ? 24.nsp : 32.nsp,
+                            Flexible(
+                              flex: 1,
+                              child: AutoSizeText(
+                                'R\$${orders[index].quentinhas[0].quentinha.price}',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: orders.length > 6 ? 22.nsp : 32.nsp,
+                                ),
                               ),
                             ),
                           ],
