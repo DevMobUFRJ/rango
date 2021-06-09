@@ -54,7 +54,7 @@ class _SellerProfileState extends State<SellerProfile> {
         ],
       ),
       body: StreamBuilder(
-        stream: Repository.instance.getSellerAsStream(widget.sellerId),
+        stream: Repository.instance.getSeller(widget.sellerId),
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (!snapshot.hasData) {
             return CircularProgressIndicator();
@@ -106,7 +106,7 @@ class _SellerProfileState extends State<SellerProfile> {
               ),
               SizedBox(height: 20.h),
               StreamBuilder(
-                stream: Repository.instance.getSellerCurrentMealsAsStream(widget.sellerId),
+                stream: Repository.instance.getSellerCurrentMeals(widget.sellerId),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return CircularProgressIndicator();
