@@ -10,9 +10,11 @@ class Order {
   final String mealName;
   final int price;
   final int quantity;
-  final String status; // requested, reserved, sold
+  final String status; // requested, reserved, sold, canceled
+  final Timestamp requestedAt;
   final Timestamp reservedAt;
   final Timestamp soldAt;
+  final Timestamp canceledAt;
 
   Order({
     @required this.clientId,
@@ -24,8 +26,10 @@ class Order {
     @required this.price,
     @required this.quantity,
     @required this.status,
+    this.requestedAt,
     this.reservedAt,
     this.soldAt,
+    this.canceledAt
   });
 
   Order.fromJson(Map<String, dynamic> json)
@@ -38,7 +42,9 @@ class Order {
         price = json['price'],
         quantity = json['quantity'],
         status = json['status'],
+        requestedAt = json['requestedAt'],
         reservedAt = json['reservedAt'],
+        canceledAt = json['canceledAt'],
         soldAt = json['soldAt'];
 
   Map<String, dynamic> toJson() => {
@@ -51,7 +57,9 @@ class Order {
     'price': price,
     'quantity': quantity,
     'status': status,
+    'requestedAt': requestedAt,
     'reservedAt': reservedAt,
+    'canceledAt': canceledAt,
     'soldAt': soldAt
   };
 }

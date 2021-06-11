@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rango/models/meals.dart';
 import 'package:rango/models/order.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
@@ -27,8 +28,17 @@ class Repository {
     return sellersRef.document(uid).collection('currentMeals').snapshots();
   }
 
-  Future<DocumentReference> addOrder(Order order) {
+  Future<DocumentReference> addOrder(Order order) async {
+    var currentMealDoc = await sellersRef.document(order.sellerId).collection('currentMeals').document(order.mealId).get();
+    Meal currentMeal = Meal.fromJson(currentMealDoc.data);
+    if (currentMeal.quantity < order.quantity) {
+      throw('Não há quentinhas suficientes para o seu pedido. Quantidade disponível: ${currentMeal.quantity}.');
+    }
     return ordersRef.add(order.toJson());
+  }
+  
+  Stream<QuerySnapshot> getOrdersFromClient(String clientUid) {
+    return ordersRef.where('clientId', isEqualTo: clientUid).snapshots();
   }
 
   // Não tá sendo usada

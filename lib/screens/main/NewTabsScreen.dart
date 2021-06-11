@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/models/user_notification_settings.dart';
 import 'package:rango/screens/SplashScreen.dart';
+import 'package:rango/screens/history/OrderHistory.dart';
 import 'package:rango/screens/main/tabs/HomeScreen.dart';
 import 'package:rango/screens/main/tabs/ProfileScreen.dart';
 import 'package:rango/screens/main/tabs/SearchScreen.dart';
@@ -78,6 +79,7 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
             screens: <Widget>[
               HomeScreen(client),
               SearchScreen(client),
+              OrderHistoryScreen(),
               ProfileScreen(client),
             ],
             items: [
@@ -87,6 +89,10 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
                   inactiveColor: Theme.of(context).primaryColor),
               PersistentBottomNavBarItem(
                   icon: Icon(Icons.local_dining, size: 40),
+                  activeColor: Color(0xFF609B90),
+                  inactiveColor: Theme.of(context).primaryColor),
+              PersistentBottomNavBarItem(
+                  icon: Icon(Icons.list_sharp, size: 40),
                   activeColor: Color(0xFF609B90),
                   inactiveColor: Theme.of(context).primaryColor),
               PersistentBottomNavBarItem(

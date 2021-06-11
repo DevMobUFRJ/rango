@@ -9,6 +9,7 @@ class Meal {
   final int price;
   String sellerName;
   String sellerId;
+  int quantity;
 
   Meal({
     this.id,
@@ -19,6 +20,7 @@ class Meal {
     @required this.price,
     @required this.sellerId,
     @required this.sellerName,
+    this.quantity
   });
 
   Meal.fromJson(Map<String, dynamic> json)
@@ -28,5 +30,6 @@ class Meal {
         picture = json['picture'],
         price = json['price'],
         sellerName = json['sellerName'],
+        quantity = json['quantity'],
         sellerId = json['sellerId'];
 }

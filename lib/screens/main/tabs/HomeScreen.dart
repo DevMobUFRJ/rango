@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -63,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       future: Repository.instance.getUserLocation(),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) {
-                          return CircularProgressIndicator();
+                          return Center(child: CircularProgressIndicator());
                         }
                         if (snapshot.hasError) {
                           return Text(snapshot.error.toString());
@@ -78,7 +77,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               return Text(snapshot.error.toString());
                             }
 
-
                             var sellerMap = Map();
                             snapshot.data.forEach((seller) {
                               sellerMap[seller.documentID] = seller.data["name"];
@@ -88,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               stream: Repository.instance.getCurrentMealsStream(snapshot.data),
                               builder: (context, snapshot) {
                                 if (!snapshot.hasData) {
-                                  return CircularProgressIndicator();
+                                  return Center(child: CircularProgressIndicator());
                                 }
                                 if (snapshot.hasError) {
                                   return Text(snapshot.error.toString());

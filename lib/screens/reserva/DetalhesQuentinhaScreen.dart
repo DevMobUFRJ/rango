@@ -8,6 +8,7 @@ import 'package:rango/models/meals.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/order.dart';
 import 'package:rango/resources/repository.dart';
+import 'package:rango/screens/history/OrderHistory.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
 import 'package:rango/utils/string_formatters.dart';
 
@@ -138,28 +139,13 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                 child: Container(
                   width: 0.6.wp,
                   child: RaisedButton(
-                    onPressed: () async {
-                      final FirebaseUser user = await auth.currentUser();
-
-                      Order order = Order(
-                        clientId: user.uid,
-                        clientName: user.displayName,
-                        sellerId: marmita.sellerId,
-                        sellerName: marmita.sellerName,
-                        mealId: marmita.id,
-                        mealName: marmita.name,
-                        price: marmita.price,
-                        quantity: 1,
-                        status: "requested"
-                      );
-                      await Repository.instance.addOrder(order);
-                    },
+                    onPressed: () => _showOrderDialog(context, marmita.quantity),
                     padding:
                         EdgeInsets.symmetric(vertical: 12, horizontal: 0.05.wp),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: AutoSizeText('Confirmar Reserva',
+                    child: AutoSizeText('Reservar',
                         maxLines: 1,
                         style: GoogleFonts.montserratTextTheme(
                                 Theme.of(context).textTheme)
@@ -169,6 +155,163 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
               )
             ],
           )),
+    );
+  }
+
+  void _showOrderDialog(context, maxQuantity) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        int _quantity = 1;
+        return StatefulBuilder(
+            builder: (context, setState) {
+              return AlertDialog(
+                insetPadding: EdgeInsets.symmetric(horizontal: 0.1.wp),
+                backgroundColor: Color(0xFFF9B152),
+                actionsPadding: EdgeInsets.all(10),
+                contentPadding: EdgeInsets.only(
+                  top: 20,
+                  left: 24,
+                  right: 24,
+                  bottom: 0,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                title: Text(
+                  'Confirmar Reserva',
+                  style: GoogleFonts.montserrat(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 38.ssp,
+                  ),
+                ),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('Quantos deseja reservar?',
+                      style: GoogleFonts.montserrat(
+                        color: Colors.white,
+                        fontSize: 28.nsp,
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 10),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          FloatingActionButton(
+                            onPressed: () {
+                              setState(() {
+                                if (_quantity > 1) {
+                                  _quantity -= 1;
+                                }
+                              });
+                            },
+                            child: Icon(
+                                Icons.remove,
+                                color: Colors.black
+                            ),
+                            backgroundColor: Colors.white,
+                          ),
+                          Text(
+                              '$_quantity',
+                              style: TextStyle(fontSize: 80.nsp)
+                          ),
+                          FloatingActionButton(
+                            onPressed: () {
+                              setState(() {
+                                if (_quantity < maxQuantity) {
+                                  _quantity += 1;
+                                }
+                              });
+                            },
+                            child: Icon(
+                              Icons.add,
+                              color: Colors.black,
+                            ),
+                            backgroundColor: Colors.white,
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+                actions: [
+                  FlatButton(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                    },
+                    child: Text(
+                      'Cancelar',
+                      style: GoogleFonts.montserrat(
+                        decoration: TextDecoration.underline,
+                        color: Colors.white,
+                        fontSize: 34.nsp,
+                      ),
+                    ),
+                  ),
+                  FlatButton(
+                    onPressed: () async {
+                      final FirebaseUser user = await auth.currentUser();
+
+                      Order order = Order(
+                          clientId: user.uid,
+                          clientName: user.displayName,
+                          sellerId: marmita.sellerId,
+                          sellerName: marmita.sellerName,
+                          mealId: marmita.id,
+                          mealName: marmita.name,
+                          price: marmita.price,
+                          quantity: _quantity,
+                          requestedAt: Timestamp.now(),
+                          status: "requested"
+                      );
+                      try {
+                        await Repository.instance.addOrder(order);
+                        Navigator.of(ctx).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: Text("Reserva feita com sucesso."),
+                          ),
+                        ));
+                        //TODO Redirecionar para a tela de histórico
+
+                        pushNewScreen(
+                          context,
+                          screen: OrderHistoryScreen(),
+                          withNavBar: true,
+                          pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                        );
+                      } catch (e) {
+                        print(e);
+                        Navigator.of(ctx).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          padding: EdgeInsets.only(bottom: 60),
+                          content: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(e.toString()),
+                          ),
+                          backgroundColor: Theme.of(context).errorColor,
+                        ));
+                      }
+                    },
+                    child: Text(
+                      'Confirmar',
+                      style: GoogleFonts.montserrat(
+                        decoration: TextDecoration.underline,
+                        color: Colors.white,
+                        fontSize: 34.nsp,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
+        );
+      }
     );
   }
 }
