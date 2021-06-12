@@ -1,15 +1,21 @@
 import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/models/meals.dart';
+import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/widgets/home/GridVertical.dart';
 import 'package:rango/widgets/home/ListaHorizontal.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rango/widgets/home/SellerGridVertical.dart';
+
+final FirebaseAuth auth = FirebaseAuth.instance;
 
 class HomeScreen extends StatefulWidget {
   final Client usuario;
@@ -29,7 +35,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
-        height: 1.hp - 56,
         child: SingleChildScrollView(
           child: Stack(
             children: <Widget>[
@@ -60,15 +65,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     SizedBox(height: 0.06.hp),
                     FutureBuilder(
                       future: Repository.instance.getUserLocation(),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
+                      builder: (context, AsyncSnapshot<Position> locationSnapshot) {
+                        if (!locationSnapshot.hasData) {
                           return Center(child: CircularProgressIndicator());
                         }
-                        if (snapshot.hasError) {
-                          return Text(snapshot.error.toString());
+                        if (locationSnapshot.hasError) {
+                          return Text(locationSnapshot.error.toString());
                         }
                         return StreamBuilder(
-                          stream: Repository.instance.getNearbySellersStream(snapshot.data),
+                          stream: Repository.instance.getNearbySellersStream(locationSnapshot.data),
                           builder: (context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
                             if (!snapshot.hasData) {
                               return CircularProgressIndicator();
@@ -78,53 +83,102 @@ class _HomeScreenState extends State<HomeScreen> {
                             }
 
                             var sellerMap = Map();
+                            List<Seller> sellerList = [];
                             snapshot.data.forEach((seller) {
                               sellerMap[seller.documentID] = seller.data["name"];
+                              Seller currentSeller = Seller.fromJson(seller.data, id: seller.documentID);
+                              sellerList.add(currentSeller);
                               //print("${seller.data["name"]} is from cache: ${seller.metadata.isFromCache}");
                             });
-                            return StreamBuilder(
-                              stream: Repository.instance.getCurrentMealsStream(snapshot.data),
-                              builder: (context, snapshot) {
-                                if (!snapshot.hasData) {
-                                  return Center(child: CircularProgressIndicator());
-                                }
-                                if (snapshot.hasError) {
-                                  return Text(snapshot.error.toString());
-                                }
-                                List<Meal> tempMeals = [];
-                                snapshot.data.forEach((QuerySnapshot seller) {
-                                  // Iterar todos os meals
-                                  seller.documents.forEach((meal) {
-                                    //print("${meal.data["name"]} is from cache: ${meal.metadata.isFromCache}");
-                                    Meal currentMeal = Meal.fromJson(meal.data);
-                                    currentMeal.id = meal.reference.documentID;
-                                    currentMeal.sellerName = sellerMap[meal.reference.parent().parent().documentID];
-                                    currentMeal.sellerId = meal.reference.parent().parent().documentID;
-                                    tempMeals.add(currentMeal);
-                                  });
-                                });
-                                return ListaHorizontal(
-                                  title: 'Peça novamente',
+                            return Column(
+                              children: [
+                                StreamBuilder(
+                                  stream: Repository.instance.getCurrentMealsStream(snapshot.data),
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return Center(child: CircularProgressIndicator());
+                                    }
+                                    if (snapshot.hasError) {
+                                      return Text(snapshot.error.toString());
+                                    }
+                                    List<Meal> tempMeals = [];
+                                    snapshot.data.forEach((QuerySnapshot seller) {
+                                      // Iterar todos os meals
+                                      seller.documents.forEach((meal) {
+                                        //print("${meal.data["name"]} is from cache: ${meal.metadata.isFromCache}");
+                                        Meal currentMeal = Meal.fromJson(meal.data);
+                                        currentMeal.id = meal.reference.documentID;
+                                        currentMeal.sellerName = sellerMap[meal.reference.parent().parent().documentID];
+                                        currentMeal.sellerId = meal.reference.parent().parent().documentID;
+                                        tempMeals.add(currentMeal);
+                                      });
+                                      tempMeals.shuffle();
+                                    });
+                                    return Column(
+                                      children: [
+                                        FutureBuilder(
+                                            future: auth.currentUser(),
+                                            builder: (context, AsyncSnapshot<FirebaseUser> authSnapshot) {
+                                              if (!authSnapshot.hasData) {
+                                                return CircularProgressIndicator();
+                                              }
+                                              if (authSnapshot.hasError) {
+                                                return Text(authSnapshot.error.toString());
+                                              }
+
+                                              return StreamBuilder(
+                                                  stream: Repository.instance.getOrdersFromClient(authSnapshot.data.uid, limit: 10),
+                                                  builder: (context, AsyncSnapshot<QuerySnapshot> orderSnapshot) {
+                                                    if (!orderSnapshot.hasData) {
+                                                      return CircularProgressIndicator();
+                                                    }
+                                                    if (orderSnapshot.hasError) {
+                                                      return Text(orderSnapshot.error.toString());
+                                                    }
+
+                                                    List<Meal> orderedMeals = List.of(tempMeals);
+                                                    var mealIds = orderSnapshot.data.documents.map((order) => order.data["mealId"]).toSet().toList();
+                                                    orderedMeals.removeWhere((meal) => !mealIds.contains(meal.id));
+
+                                                    if (orderedMeals.length > 0) {
+                                                      return Column(
+                                                        children: [
+                                                          ListaHorizontal(
+                                                            title: 'Peça Novamente',
+                                                            tagM: Random().nextDouble(),
+                                                            meals: orderedMeals,
+                                                          ),
+                                                          SizedBox(height: 0.02.hp),
+                                                        ],
+                                                      );
+                                                    }
+
+                                                    return SizedBox();
+                                                  }
+                                              );
+                                            }
+                                        ),
+                                        ListaHorizontal(
+                                          title: 'Sugestões',
+                                          tagM: Random().nextDouble(),
+                                          meals: tempMeals,
+                                        )
+                                      ],
+                                    );
+                                  },
+                                ),
+                                SizedBox(height: 0.02.hp),
+                                SellerGridVertical(
                                   tagM: Random().nextDouble(),
-                                  meals: tempMeals,
-                                );
-                              },
+                                  title: 'Vendedores',
+                                  sellers: sellerList,
+                                  userLocation: locationSnapshot.data,
+                                ),
+                              ],
                             );
                           }
                         );
                       },
-                    ),
-                    SizedBox(height: 0.02.hp),
-                    ListaHorizontal(
-                      title: 'Sugestões',
-                      tagM: Random().nextDouble(),
-                      meals: [],
-                    ),
-                    SizedBox(height: 0.02.hp),
-                    GridVertical(
-                      tagM: Random().nextDouble(),
-                      title: 'Recomendado para você',
-                      meals: [],
                     ),
                   ],
                 ),

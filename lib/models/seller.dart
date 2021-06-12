@@ -19,6 +19,7 @@ class Location {
 }
 
 class Seller {
+  final String id;
   final Contact contact;
   final Shift shift;
   final String name;
@@ -30,6 +31,7 @@ class Seller {
   List<Meal> meals;
 
   Seller({
+    this.id,
     this.contact,
     @required this.shift,
     @required this.name,
@@ -41,8 +43,9 @@ class Seller {
     this.currentMeals,
   });
 
-  Seller.fromJson(Map<String, dynamic> json)
-      : contact = Contact.fromJson(json['contact']),
+  Seller.fromJson(Map<String, dynamic> json, {String id})
+      : id = id,
+        contact = Contact.fromJson(json['contact']),
         shift = Shift.fromJson(json['shift']),
         name = json['name'],
         active = json['active'],

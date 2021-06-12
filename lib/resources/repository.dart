@@ -25,6 +25,7 @@ class Repository {
   }
 
   Stream<QuerySnapshot> getSellerCurrentMeals(String uid) {
+    //TODO Filtrar pelo tempo?
     return sellersRef.document(uid).collection('currentMeals').snapshots();
   }
 
@@ -36,38 +37,20 @@ class Repository {
     }
     return ordersRef.add(order.toJson());
   }
-  
-  Stream<QuerySnapshot> getOrdersFromClient(String clientUid) {
-    return ordersRef.where('clientId', isEqualTo: clientUid).snapshots();
+
+  Future<void> cancelOrder(String orderUid) async {
+    return ordersRef.document(orderUid).updateData(
+        {
+          'status': 'canceled',
+          'canceledAt': Timestamp.now()
+        });
   }
-
-  // Não tá sendo usada
-  Stream<List<QuerySnapshot>> getMealsFromNearbySellers() {
-    Position position = Position();
-    Geolocator.getCurrentPosition()
-        .then((value) => position = value)
-        .catchError(() => print("error on getCurrentPosition"));
-
-    GeoFirePoint center = geo.point(latitude: position.latitude, longitude: position.longitude);
-    double radius = 30; // Em km TODO Pegar isso de SharedPreferences
-    var queryRef = sellersRef; //.where("active", isEqualTo: true); //TODO Adicionar query por "active" e "shift"
-    Stream<List<DocumentSnapshot>> sellersStream = geo.collection(collectionRef: queryRef)
-        .within(center: center, radius: radius, field: "location", strictMode: true);
-
-    List<Stream<QuerySnapshot>> mealsStreams = [];
-
-    sellersStream.listen((List<DocumentSnapshot> sellers) {
-      mealsStreams = [];
-      for (var i = 0; i < sellers.length; i++) {
-        // Iterar todos os vendedores
-        var seller = sellers[i];
-
-        // TODO Limitar quantidade de pratos para seção Sugestões e filtrar por featured
-        mealsStreams.add(seller.reference.collection('currentMeals').snapshots()); //.where("featured", isEqualTo: true).limit(2)
-      }
-    });
-
-    return CombineLatestStream.list<QuerySnapshot>(mealsStreams).asBroadcastStream(); //TODO Usar transformer para retornar stream de Meal?
+  
+  Stream<QuerySnapshot> getOrdersFromClient(String clientId, {int limit}) {
+    if (limit != null && limit > 0) {
+      return ordersRef.where('clientId', isEqualTo: clientId).limit(limit).snapshots();
+    }
+    return ordersRef.where('clientId', isEqualTo: clientId).snapshots();
   }
 
   Future<Position> getUserLocation() {
@@ -98,7 +81,7 @@ class Repository {
         .where("active", isEqualTo: true)
         .where("shift.$weekday.open", isEqualTo: true);
 
-    //return filterTimeRange(geo.collection(collectionRef: queryRef).within(center: center, radius: radius, field: "location", strictMode: true));
+    // TODO return filterTimeRange(geo.collection(collectionRef: queryRef).within(center: center, radius: radius, field: "location", strictMode: true));
     return geo.collection(collectionRef: queryRef).within(center: center, radius: radius, field: "location", strictMode: true);
   }
 
@@ -109,7 +92,7 @@ class Repository {
       // Iterar todos os vendedores
       var seller = documentList[i];
 
-      // TODO Limitar quantidade de pratos para seção Sugestões e filtrar por featured
+      // TODO Limitar quantidade de pratos para seção Sugestões e filtrar por featured?
       streams.add(seller.reference.collection("currentMeals").getDocuments(source: Source.cache).asStream()); //.where("featured", isEqualTo: true).limit(2)
     }
 

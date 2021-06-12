@@ -59,7 +59,6 @@ class _SellerProfileState extends State<SellerProfile> {
           if (!snapshot.hasData) {
             return CircularProgressIndicator();
           }
-          print("Is from cache: ${snapshot.data.metadata.isFromCache}");
           Seller seller = Seller.fromJson(snapshot.data.data);
           return Column(
             children: [

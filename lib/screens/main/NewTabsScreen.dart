@@ -60,7 +60,7 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
             controller: _controller,
             navBarStyle: NavBarStyle.style6,
             confineInSafeArea: true,
-            bottomScreenMargin: 0,
+            bottomScreenMargin: 56,
             backgroundColor: Theme.of(context).backgroundColor,
             handleAndroidBackButtonPress: true,
             resizeToAvoidBottomInset: true,
@@ -92,7 +92,7 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
                   activeColor: Color(0xFF609B90),
                   inactiveColor: Theme.of(context).primaryColor),
               PersistentBottomNavBarItem(
-                  icon: Icon(Icons.list_sharp, size: 40),
+                  icon: Icon(Icons.history, size: 40),
                   activeColor: Color(0xFF609B90),
                   inactiveColor: Theme.of(context).primaryColor),
               PersistentBottomNavBarItem(
