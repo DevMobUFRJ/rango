@@ -67,17 +67,25 @@ class _ClientProfileState extends State<ClientProfile> {
                             color: yellow,
                           ),
                         ),
-                        Container(
-                          margin: EdgeInsets.only(top: 20),
-                          child: CircleAvatar(
-                            backgroundColor: Theme.of(context).accentColor,
-                            backgroundImage: client.picture != null
-                                ? NetworkImage(client.picture)
-                                : NetworkImage(
-                                    'https://ra.ac.ae/wp-content/uploads/2017/02/user-icon-placeholder.png'),
-                            radius: 130.w,
+                        if (client.picture != null)
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(130.w),
+                            child: Container(
+                              color: Theme.of(context).accentColor,
+                              height: 0.18.hp,
+                              child: FadeInImage.assetNetwork(
+                                  placeholder:
+                                      'assets/imgs/user_placeholder.png',
+                                  image: client.picture),
+                            ),
                           ),
-                        ),
+                        if (client.picture == null)
+                          CircleAvatar(
+                            backgroundColor: Theme.of(context).accentColor,
+                            backgroundImage:
+                                AssetImage('assets/imgs/user_placeholder.png'),
+                            radius: 120.w,
+                          ),
                       ],
                     ),
                   ),

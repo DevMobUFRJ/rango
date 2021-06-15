@@ -4,7 +4,12 @@ import 'package:rango/models/meals.dart';
 import 'package:rango/models/order.dart';
 
 final List<Client> clients = [
-  Client(email: 'gabriel@email.com', name: 'Gabriel', phone: "(21)123456789"),
+  Client(
+      email: 'gabriel@email.com',
+      name: 'Gabriel',
+      phone: "(21)123456789",
+      picture:
+          'https://media-exp1.licdn.com/dms/image/C4E03AQHdg4EwdRIqVg/profile-displayphoto-shrink_200_200/0/1618438339520?e=1629331200&v=beta&t=o8ID9WcfkfRb72EaNhsiVhUbP_MABhjSv7FhPQdISYQ'),
   Client(
       email: "guilherme@email.com", name: 'Guilherme', phone: "(21)123456789"),
   Client(email: 'rebeca@email.com', name: 'Rebeca', phone: "(21)123456789")
