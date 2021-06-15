@@ -28,7 +28,6 @@ class GridHorizontal extends StatelessWidget {
               onTap: () => pushNewScreen(context,
                   screen: ManageOrder(
                     order: orders[index],
-                    heroTag: index.toString(),
                   ),
                   withNavBar: true,
                   pageTransitionAnimation: PageTransitionAnimation.cupertino),
@@ -41,13 +40,10 @@ class GridHorizontal extends StatelessWidget {
                   children: <Widget>[
                     Flexible(
                       flex: 3,
-                      child: Hero(
-                        tag: orders[index].orderId,
-                        child: FadeInImage.assetNetwork(
-                          placeholder: 'assets/imgs/quentinha_placeholder.png',
-                          image: orders[index].quentinhas[0].quentinha.picture,
-                          fit: BoxFit.fitWidth,
-                        ),
+                      child: FadeInImage.assetNetwork(
+                        placeholder: 'assets/imgs/quentinha_placeholder.png',
+                        image: orders[index].quentinhas[0].quentinha.picture,
+                        fit: BoxFit.fitWidth,
                       ),
                     ),
                     Flexible(
