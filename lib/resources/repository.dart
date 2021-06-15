@@ -4,6 +4,7 @@ import 'package:rango/models/order.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const weekdayMap = {
   1: 'monday',
@@ -25,7 +26,6 @@ class Repository {
   }
 
   Stream<QuerySnapshot> getSellerCurrentMeals(String uid) {
-    //TODO Filtrar pelo tempo?
     return sellersRef.document(uid).collection('currentMeals').snapshots();
   }
 
@@ -69,34 +69,52 @@ class Repository {
     return stream.map((documents) => documents.where((seller) => isInTimeRange(seller, weekday, formattedTime)).map((i) => i).toList());
   }
 
-  Stream<List<DocumentSnapshot>> getNearbySellersStream(Position userLocation) {
+  Stream<List<DocumentSnapshot>> getNearbySellersStream(Position userLocation, double radius, {bool queryByActive = false, bool queryByTime = false}) {
     // Stream para pegar os vendedores próximos
     GeoFirePoint center = geo.point(latitude: userLocation.latitude, longitude: userLocation.longitude);
-    double radius = 30; // Em km TODO Pegar isso de SharedPreferences
 
     DateTime currentTime = DateTime.now();
     String weekday = weekdayMap[currentTime.weekday];
 
-    var queryRef = sellersRef
-        .where("active", isEqualTo: true)
-        .where("shift.$weekday.open", isEqualTo: true);
+    var queryRef = sellersRef.where("active");
+    if (queryByActive) queryRef = queryRef.where("active", isEqualTo: true);
+    if (queryByTime) queryRef = queryRef.where("shift.$weekday.open", isEqualTo: true);
 
-    // TODO return filterTimeRange(geo.collection(collectionRef: queryRef).within(center: center, radius: radius, field: "location", strictMode: true));
-    return geo.collection(collectionRef: queryRef).within(center: center, radius: radius, field: "location", strictMode: true);
+    if (queryByTime) {
+      return filterTimeRange(geo.collection(collectionRef: queryRef).within(center: center, radius: radius, field: "location", strictMode: true));
+    } else {
+      return geo.collection(collectionRef: queryRef).within(center: center, radius: radius, field: "location", strictMode: true);
+    }
   }
 
-  Stream<List<QuerySnapshot>> getCurrentMealsStream(List<DocumentSnapshot> documentList) {
+  Stream<List<QuerySnapshot>> getCurrentMealsStream(List<DocumentSnapshot> documentList, {bool queryByFeatured = false, int limit = -1}) {
     List<Stream<QuerySnapshot>> streams = [];
 
     for (var i = 0; i < documentList.length; i++) {
       // Iterar todos os vendedores
       var seller = documentList[i];
 
-      // TODO Limitar quantidade de pratos para seção Sugestões e filtrar por featured?
-      streams.add(seller.reference.collection("currentMeals").getDocuments(source: Source.cache).asStream()); //.where("featured", isEqualTo: true).limit(2)
+      var queryRef = seller.reference.collection("currentMeals").where("name");
+      if (queryByFeatured == true) queryRef = queryRef.where("featured", isEqualTo: true);
+      if (limit != -1) queryRef = queryRef.limit(limit);
+
+      streams.add(queryRef.snapshots());
     }
 
     return CombineLatestStream.list<QuerySnapshot>(streams).asBroadcastStream();
+  }
+
+  Future<double> getSellerRange() async {
+    var prefs = await SharedPreferences.getInstance();
+    if (prefs.getDouble('seller_range') == null) {
+      return Future.value(10.0);
+    }
+    return Future.value(prefs.getDouble('seller_range'));
+  }
+
+  setSellerRange(double range) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setDouble('seller_range', range);
   }
 
   static Repository get instance => Repository(); // TODO Necessario?

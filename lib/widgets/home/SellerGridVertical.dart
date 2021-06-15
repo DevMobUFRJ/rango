@@ -32,7 +32,7 @@ class SellerGridVertical extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 0.04.hp),
+          padding: EdgeInsets.symmetric(horizontal: 0.04.wp),
           child: AutoSizeText(
             title,
             style: TextStyle(
@@ -41,13 +41,12 @@ class SellerGridVertical extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: 0.01.hp),
         Container(
-          height: 0.46.hp,
           padding: EdgeInsets.symmetric(horizontal: 0.02.hp),
           width: double.infinity,
           child: StaggeredGridView.countBuilder(
             shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(), // Desativa o scroll separado e mantem somente o da tela principal
             crossAxisCount: 2,
             itemCount: sellers.length,
             itemBuilder: (ctx, index) => GestureDetector(

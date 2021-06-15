@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/dadosMarretados.dart';
 import 'package:rango/models/client.dart';
+import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/main/profile/EditProfileScreen.dart';
 import 'package:rango/screens/main/profile/ProfileSettings.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
@@ -112,13 +113,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () => pushNewScreen(
-                        context,
-                        screen: ProfileSettings(widget.usuario),
-                        withNavBar: true,
-                        pageTransitionAnimation:
-                            PageTransitionAnimation.cupertino,
-                      ),
+                      onTap: () async {
+                        var sellerRange = await Repository.instance.getSellerRange();
+                        return pushNewScreen(
+                          context,
+                          screen: ProfileSettings(widget.usuario, sellerRange),
+                          withNavBar: true,
+                          pageTransitionAnimation:
+                          PageTransitionAnimation.cupertino,
+                        );
+                      },
                       child: Icon(
                         Icons.settings,
                         color: yellow,
