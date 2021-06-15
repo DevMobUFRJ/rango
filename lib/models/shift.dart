@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:rango/models/dayShift.dart';
 
 class Shift {
-  final String opening;
-  final String closing;
-  final bool friday;
-  final bool monday;
-  final bool saturday;
-  final bool sunday;
-  final bool thursday;
-  final bool tuesday;
-  final bool wednesday;
+  DayShift friday;
+  DayShift monday;
+  DayShift saturday;
+  DayShift sunday;
+  DayShift thursday;
+  DayShift tuesday;
+  DayShift wednesday;
 
   Shift({
-    @required this.closing,
     @required this.friday,
     @required this.monday,
-    @required this.opening,
     @required this.saturday,
     @required this.sunday,
     @required this.thursday,
