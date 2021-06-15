@@ -8,9 +8,11 @@ import 'package:rango/widgets/pickers/MealImagePicker.dart';
 
 class ManageOrder extends StatefulWidget {
   final Order order;
+  final String heroTag;
 
   ManageOrder({
     this.order,
+    this.heroTag,
   });
 
   @override
@@ -45,7 +47,6 @@ class _ManageOrderState extends State<ManageOrder> {
       _mealQuantity = TextEditingController();
     }
 
-    print(_userImageFile.toString());
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
@@ -63,13 +64,16 @@ class _ManageOrderState extends State<ManageOrder> {
             margin: EdgeInsets.only(top: 15),
             child: Column(
               children: [
-                MealImagePicker(
-                  _pickedImage,
-                  image: widget.order != null &&
-                          widget.order.quentinhas[0].quentinha.picture != null
-                      ? widget.order.quentinhas[0].quentinha.picture
-                      : null,
-                  editText: "Clique para editar",
+                Hero(
+                  tag: widget.order.orderId,
+                  child: MealImagePicker(
+                    _pickedImage,
+                    image: widget.order != null &&
+                            widget.order.quentinhas[0].quentinha.picture != null
+                        ? widget.order.quentinhas[0].quentinha.picture
+                        : null,
+                    editText: "Clique para editar",
+                  ),
                 ),
                 Container(
                   margin: EdgeInsets.only(
