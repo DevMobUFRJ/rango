@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/screens/main/profile/EditProfileScreen.dart';
+import 'package:rango/screens/main/profile/HorariosScreen.dart';
 import 'package:rango/screens/main/profile/ProfileSettings.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -246,7 +247,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Icons.schedule,
                               color: Colors.white,
                             ),
-                            onPressed: () => {},
+                            onPressed: () => pushNewScreen(context,
+                                screen: HorariosScreen()),
                           ),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.all(
