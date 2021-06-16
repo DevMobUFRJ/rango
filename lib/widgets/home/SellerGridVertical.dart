@@ -44,6 +44,9 @@ class SellerGridVertical extends StatelessWidget {
         Container(
           padding: EdgeInsets.symmetric(horizontal: 0.02.hp),
           width: double.infinity,
+          // FIXME Quando o primeiro seller é 'Fundo de Quintal' fica um espaço vazio na grid
+          // FIXME Acontece porque a imagem é um pouco maior que as outras
+          // FIXME Solução: mudar esse grid para uma simples 2 itens por linha
           child: StaggeredGridView.countBuilder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(), // Desativa o scroll separado e mantem somente o da tela principal

@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rango/models/client.dart';
 import 'package:rango/models/meals.dart';
 import 'package:rango/models/order.dart';
 import 'package:geolocator/geolocator.dart';
@@ -18,15 +20,33 @@ const weekdayMap = {
 
 class Repository {
   final sellersRef = Firestore.instance.collection('sellers');
+  final clientsRef = Firestore.instance.collection('clients');
   final ordersRef = Firestore.instance.collection('orders');
   final geo = Geoflutterfire();
+  final auth = FirebaseAuth.instance;
 
   Stream<DocumentSnapshot> getSeller(String uid) {
     return sellersRef.document(uid).snapshots();
   }
 
+  Future<FirebaseUser> getCurrentUser() {
+    return auth.currentUser();
+  }
+
+  Stream<DocumentSnapshot> getClientStream(String uid) {
+    return clientsRef.document(uid).snapshots();
+  }
+
   Stream<QuerySnapshot> getSellerCurrentMeals(String uid) {
     return sellersRef.document(uid).collection('currentMeals').snapshots();
+  }
+
+  Future<void> addSellerToClientFavorites(String clientId, String sellerId) {
+    return clientsRef.document(clientId).updateData({'favoriteSellers': FieldValue.arrayUnion([sellerId])});
+  }
+
+  Future<void> removeSellerFromClientFavorites(String clientId, String sellerId) {
+    return clientsRef.document(clientId).updateData({'favoriteSellers': FieldValue.arrayRemove([sellerId])});
   }
 
   Future<DocumentReference> addOrder(Order order) async {

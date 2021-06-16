@@ -1,15 +1,17 @@
 import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:rango/models/client.dart';
 import 'package:rango/models/meals.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/seller/ChatScreen.dart';
 import 'package:rango/widgets/home/ListaHorizontal.dart';
-import 'package:cloud_firestore/cloud_firestore.dart' show DocumentSnapshot, Firestore;
+import 'package:cloud_firestore/cloud_firestore.dart' show DocumentSnapshot;
 
 class SellerProfile extends StatefulWidget {
   final String sellerName;
@@ -22,8 +24,6 @@ class SellerProfile extends StatefulWidget {
 }
 
 class _SellerProfileState extends State<SellerProfile> {
-  bool isFavorite = false;
-
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 750, height: 1334);
@@ -39,18 +39,7 @@ class _SellerProfileState extends State<SellerProfile> {
           ),
         ),
         actions: [
-          Padding(
-            padding: EdgeInsets.only(
-              right: 20,
-            ),
-            child: GestureDetector(
-              onTap: () => setState(() => isFavorite = !isFavorite),
-              child: Icon(
-                isFavorite ? Icons.star : Icons.star_border,
-                size: 48.nsp,
-              ),
-            ),
-          )
+          _buildFavoriteButton()
         ],
       ),
       body: StreamBuilder(
@@ -170,6 +159,62 @@ class _SellerProfileState extends State<SellerProfile> {
           );
         }
       )
+    );
+  }
+
+  _buildFavoriteButton() {
+    return FutureBuilder(
+      future: Repository.instance.getCurrentUser(),
+      builder: (context, AsyncSnapshot<FirebaseUser> authSnapshot) {
+        if (!authSnapshot.hasData || authSnapshot.hasError) {
+          return Padding(
+            padding: EdgeInsets.only(
+              right: 20,
+            ),
+            child: Icon(
+              Icons.star_border,
+              size: 48.nsp,
+            ),
+          );
+        }
+
+        return StreamBuilder(
+            stream: Repository.instance.getClientStream(authSnapshot.data.uid),
+            builder: (context, AsyncSnapshot<DocumentSnapshot> clientSnapshot) {
+              if (!clientSnapshot.hasData || clientSnapshot.hasError) {
+                return Padding(
+                  padding: EdgeInsets.only(
+                    right: 20,
+                  ),
+                  child: Icon(
+                    Icons.star_border,
+                    size: 48.nsp,
+                  ),
+                );
+              }
+
+              var isFavorite = clientSnapshot.data.data['favoriteSellers'].contains(widget.sellerId);
+              return Padding(
+                padding: EdgeInsets.only(
+                  right: 20,
+                ),
+                child: GestureDetector(
+                  onTap: () async {
+                    if (isFavorite) {
+                      Repository.instance.removeSellerFromClientFavorites(clientSnapshot.data.documentID, widget.sellerId);
+                    } else {
+                      Repository.instance.addSellerToClientFavorites(clientSnapshot.data.documentID, widget.sellerId);
+                    }
+                  },
+                  child: Icon(
+                    isFavorite == true ? Icons.star : Icons.star_border,
+                    size: 48.nsp,
+                  ),
+                ),
+              );
+            }
+        );
+      },
     );
   }
 }
