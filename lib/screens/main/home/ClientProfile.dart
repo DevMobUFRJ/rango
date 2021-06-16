@@ -69,22 +69,27 @@ class _ClientProfileState extends State<ClientProfile> {
                         ),
                         if (client.picture != null)
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(130.w),
+                            borderRadius: BorderRadius.circular(120),
                             child: Container(
+                              width: 120,
+                              height: 120,
                               color: Theme.of(context).accentColor,
-                              height: 0.18.hp,
                               child: FadeInImage.assetNetwork(
-                                  placeholder:
-                                      'assets/imgs/user_placeholder.png',
-                                  image: client.picture),
+                                placeholder: 'assets/imgs/user_placeholder.png',
+                                image: client.picture,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         if (client.picture == null)
-                          CircleAvatar(
-                            backgroundColor: Theme.of(context).accentColor,
-                            backgroundImage:
-                                AssetImage('assets/imgs/user_placeholder.png'),
-                            radius: 120.w,
+                          FittedBox(
+                            fit: BoxFit.cover,
+                            child: CircleAvatar(
+                              backgroundColor: Theme.of(context).accentColor,
+                              backgroundImage: AssetImage(
+                                  'assets/imgs/user_placeholder.png'),
+                              radius: 120.w,
+                            ),
                           ),
                       ],
                     ),

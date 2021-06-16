@@ -47,8 +47,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       fit: BoxFit.cover,
                       child: Container(
                         margin: EdgeInsets.only(left: 80.w, bottom: 50.h),
-                        height: 230.h,
-                        width: 260.w,
+                        height: 210.h,
+                        width: 240.w,
                         decoration: BoxDecoration(
                           borderRadius:
                               BorderRadius.circular(ScreenUtil().setSp(30)),
@@ -56,20 +56,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                     ),
-                    Container(
-                      margin: EdgeInsets.only(top: 20),
-                      child: FittedBox(
+                    if (widget.usuario.picture != null)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(120),
+                        child: Container(
+                          width: 120,
+                          height: 120,
+                          color: Theme.of(context).accentColor,
+                          child: FadeInImage.assetNetwork(
+                            placeholder: 'assets/imgs/user_placeholder.png',
+                            image: widget.usuario.picture,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    if (widget.usuario.picture == null)
+                      FittedBox(
                         fit: BoxFit.cover,
                         child: CircleAvatar(
                           backgroundColor: Theme.of(context).accentColor,
-                          backgroundImage: widget.usuario.picture != null
-                              ? NetworkImage(widget.usuario.picture)
-                              : NetworkImage(
-                                  'https://ra.ac.ae/wp-content/uploads/2017/02/user-icon-placeholder.png'),
-                          radius: 150.w,
+                          backgroundImage:
+                              AssetImage('assets/imgs/user_placeholder.png'),
+                          radius: 120.w,
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),

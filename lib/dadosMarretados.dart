@@ -11,7 +11,11 @@ final List<Client> clients = [
       picture:
           'https://media-exp1.licdn.com/dms/image/C4E03AQHdg4EwdRIqVg/profile-displayphoto-shrink_200_200/0/1618438339520?e=1629331200&v=beta&t=o8ID9WcfkfRb72EaNhsiVhUbP_MABhjSv7FhPQdISYQ'),
   Client(
-      email: "guilherme@email.com", name: 'Guilherme', phone: "(21)123456789"),
+      email: "guilherme@email.com",
+      name: 'Guilherme',
+      phone: "(21)123456789",
+      picture:
+          'https://api.time.com/wp-content/uploads/2017/12/terry-crews-person-of-year-2017-time-magazine-2.jpg'),
   Client(email: 'rebeca@email.com', name: 'Rebeca', phone: "(21)123456789")
 ];
 
