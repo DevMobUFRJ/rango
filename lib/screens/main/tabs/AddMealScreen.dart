@@ -223,7 +223,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
                             ),
                           ),
                           Flexible(
-                            flex: 3,
+                            flex: 2,
                             child: Container(
                               child: GridHorizontal(
                                 orders: pedidos,

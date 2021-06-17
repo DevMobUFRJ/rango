@@ -57,13 +57,13 @@ class GridHorizontal extends StatelessWidget {
                           children: <Widget>[
                             Flexible(
                               flex: 1,
-                              child: Text(
+                              child: AutoSizeText(
                                 orders[index].quentinhas[0].quentinha.name,
                                 textAlign: TextAlign.center,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.montserrat(
-                                  fontSize: orders.length > 6 ? 22.nsp : 32.nsp,
+                                  fontSize: orders.length > 6 ? 22.nsp : 50.nsp,
                                 ),
                               ),
                             ),
@@ -72,7 +72,7 @@ class GridHorizontal extends StatelessWidget {
                               child: AutoSizeText(
                                 'R\$${orders[index].quentinhas[0].quentinha.price}',
                                 style: GoogleFonts.montserrat(
-                                  fontSize: orders.length > 6 ? 22.nsp : 32.nsp,
+                                  fontSize: orders.length > 6 ? 22.nsp : 40.nsp,
                                 ),
                               ),
                             ),

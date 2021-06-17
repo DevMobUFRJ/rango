@@ -46,8 +46,10 @@ class _HorariosScreenState extends State<HorariosScreen> {
               children: [
                 Flexible(
                   flex: 1,
-                  child: Text(
-                      'Selecione as caixas referentes aos dias de abertura e então selecione os horários de funcionamento'),
+                  child: AutoSizeText(
+                    'Selecione as caixas referentes aos dias de abertura e então selecione os horários de funcionamento',
+                    style: GoogleFonts.montserrat(fontSize: 30.nsp),
+                  ),
                 ),
                 Flexible(
                   flex: 1,
@@ -61,7 +63,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                               minWidth: 35, maxWidth: 35, maxHeight: 20),
                           child: AutoSizeText(
                             'Dom',
-                            style: GoogleFonts.montserrat(),
+                            style: GoogleFonts.montserrat(fontSize: 30.nsp),
                           ),
                         ),
                       ),
@@ -169,7 +171,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                           child: AutoSizeText(
                             'Seg',
                             style: GoogleFonts.montserrat(
-                              fontSize: 50.nsp,
+                              fontSize: 30.nsp,
                             ),
                           ),
                         ),
@@ -275,7 +277,8 @@ class _HorariosScreenState extends State<HorariosScreen> {
                         child: Container(
                           constraints: BoxConstraints(
                               minWidth: 35, maxWidth: 35, maxHeight: 20),
-                          child: AutoSizeText('Ter'),
+                          child: AutoSizeText('Ter',
+                              style: GoogleFonts.montserrat(fontSize: 30.nsp)),
                         ),
                       ),
                       Flexible(
@@ -377,7 +380,10 @@ class _HorariosScreenState extends State<HorariosScreen> {
                         child: Container(
                           constraints: BoxConstraints(
                               minWidth: 35, maxWidth: 35, maxHeight: 20),
-                          child: AutoSizeText('Qua'),
+                          child: AutoSizeText(
+                            'Qua',
+                            style: GoogleFonts.montserrat(fontSize: 30.nsp),
+                          ),
                         ),
                       ),
                       Flexible(
@@ -481,7 +487,10 @@ class _HorariosScreenState extends State<HorariosScreen> {
                         child: Container(
                           constraints: BoxConstraints(
                               minWidth: 35, maxWidth: 35, maxHeight: 20),
-                          child: AutoSizeText('Qui'),
+                          child: AutoSizeText(
+                            'Qui',
+                            style: GoogleFonts.montserrat(fontSize: 30.nsp),
+                          ),
                         ),
                       ),
                       Flexible(
@@ -585,7 +594,10 @@ class _HorariosScreenState extends State<HorariosScreen> {
                         child: Container(
                           constraints: BoxConstraints(
                               minWidth: 35, maxWidth: 35, maxHeight: 20),
-                          child: AutoSizeText('Sex'),
+                          child: AutoSizeText(
+                            'Sex',
+                            style: GoogleFonts.montserrat(fontSize: 30.nsp),
+                          ),
                         ),
                       ),
                       Flexible(
@@ -687,7 +699,10 @@ class _HorariosScreenState extends State<HorariosScreen> {
                         child: Container(
                           constraints: BoxConstraints(
                               minWidth: 35, maxWidth: 35, maxHeight: 20),
-                          child: AutoSizeText('Sab'),
+                          child: AutoSizeText(
+                            'Sab',
+                            style: GoogleFonts.montserrat(fontSize: 30.nsp),
+                          ),
                         ),
                       ),
                       Flexible(
