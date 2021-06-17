@@ -71,8 +71,8 @@ class _ClientProfileState extends State<ClientProfile> {
                           ClipRRect(
                             borderRadius: BorderRadius.circular(120),
                             child: Container(
-                              width: 120,
-                              height: 120,
+                              width: 260.w,
+                              height: 260.w,
                               color: Theme.of(context).accentColor,
                               child: FadeInImage.assetNetwork(
                                 placeholder: 'assets/imgs/user_placeholder.png',
@@ -132,6 +132,7 @@ class _ClientProfileState extends State<ClientProfile> {
                         'Chat com o cliente',
                         maxLines: 1,
                         style: GoogleFonts.montserrat(),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),

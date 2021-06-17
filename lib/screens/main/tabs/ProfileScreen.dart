@@ -60,8 +60,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(120),
                         child: Container(
-                          width: 120,
-                          height: 120,
+                          width: 260.w,
+                          height: 260.w,
                           color: Theme.of(context).accentColor,
                           child: FadeInImage.assetNetwork(
                             placeholder: 'assets/imgs/user_placeholder.png',
