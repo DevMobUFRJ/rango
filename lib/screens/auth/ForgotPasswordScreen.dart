@@ -25,7 +25,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       try {
         final firebaseAuth = FirebaseAuth.instance;
         await firebaseAuth.sendPasswordResetEmail(email: _email);
-        _scaffoldKey.currentState
+        ScaffoldMessenger.of(context)
             .showSnackBar(
               SnackBar(
                 backgroundColor: Theme.of(ctx).accentColor,
@@ -113,16 +113,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             ),
             Flexible(
               flex: 1,
-              child: RaisedButton(
+              child: Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: 0.1.wp,
                   vertical: 0.01.hp,
                 ),
-                onPressed: () => _submit(context),
-                child: AutoSizeText(
-                  'Confirmar',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 38.nsp,
+                child: ElevatedButton(
+                  onPressed: () => _submit(context),
+                  child: AutoSizeText(
+                    'Confirmar',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 38.nsp,
+                    ),
                   ),
                 ),
               ),

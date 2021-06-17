@@ -65,7 +65,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
           borderRadius: BorderRadius.circular(20),
         ),
         actions: [
-          FlatButton(
+          TextButton(
             onPressed: () {
               Navigator.of(ctx).pop();
               FirebaseAuth.instance.signOut();
@@ -79,7 +79,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
               ),
             ),
           ),
-          FlatButton(
+          TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
             child: Text(
               'Cancelar',
@@ -189,18 +189,22 @@ class _ProfileSettingsState extends State<ProfileSettings> {
             Container(
               margin: EdgeInsets.symmetric(vertical: 0.01.hp),
               width: 0.6.wp,
-              child: RaisedButton(
-                padding:
-                    EdgeInsets.symmetric(vertical: 0.01.hp, horizontal: 0.1.wp),
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
                 ),
                 onPressed: () {},
-                child: AutoSizeText(
-                  'Confirmar',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 36.nsp,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                      vertical: 0.01.hp, horizontal: 0.1.wp),
+                  child: AutoSizeText(
+                    'Confirmar',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 36.nsp,
+                    ),
                   ),
                 ),
               ),

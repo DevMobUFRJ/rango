@@ -45,13 +45,14 @@ class MyApp extends StatelessWidget {
             fontSize: 20,
           ),
         ),
-        buttonTheme: ButtonTheme.of(context).copyWith(
-          buttonColor: Color.fromRGBO(252, 116, 79, 1),
-          textTheme: ButtonTextTheme.accent,
-          colorScheme:
-              Theme.of(context).colorScheme.copyWith(secondary: Colors.white),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            primary: Color.fromRGBO(252, 116, 79, 1),
+            textStyle: GoogleFonts.montserrat(),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
         ),
       ),
       home: StreamBuilder(

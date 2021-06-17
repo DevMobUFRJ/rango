@@ -15,6 +15,7 @@ class CustomTextFormField extends StatefulWidget {
   final bool isPassword;
   final TextEditingController controller;
   final FocusNode focusNode;
+  final Function(String) onChanged;
 
   CustomTextFormField({
     @required this.labelText,
@@ -28,6 +29,7 @@ class CustomTextFormField extends StatefulWidget {
     this.isPassword = false,
     this.controller,
     this.focusNode,
+    this.onChanged,
   });
 
   @override
@@ -70,6 +72,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               key: widget.key,
               validator: widget.validator,
               onSaved: widget.onSaved,
+              onChanged: widget.onChanged,
               obscureText: widget.isPassword != null && !widget.isPassword
                   ? false
                   : !_showPassword,
@@ -81,9 +84,12 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                     : EdgeInsets.only(left: 15),
                 suffixIcon: widget.isPassword != null && widget.isPassword
                     ? IconButton(
-                        icon: Icon(!_showPassword
-                            ? Icons.visibility_off
-                            : Icons.visibility),
+                        icon: Icon(
+                          !_showPassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: Color(0xFF8FDDCE),
+                        ),
                         onPressed: () =>
                             setState(() => _showPassword = !_showPassword),
                       )

@@ -99,9 +99,12 @@ class _AddMealScreenState extends State<AddMealScreen> {
                                   alignment: Alignment.center,
                                   child: Container(
                                     margin: EdgeInsets.only(right: 0.05.wp),
-                                    child: RaisedButton(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
                                       ),
                                       onPressed: () => pushNewScreen(context,
                                           screen: ManageOrder()),
@@ -117,9 +120,12 @@ class _AddMealScreenState extends State<AddMealScreen> {
                                 Align(
                                   alignment: Alignment.center,
                                   child: Container(
-                                    child: RaisedButton(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
                                       ),
                                       onPressed: () => pushNewScreen(
                                         context,
@@ -234,10 +240,12 @@ class _AddMealScreenState extends State<AddMealScreen> {
                                     alignment: Alignment.center,
                                     child: Container(
                                       margin: EdgeInsets.only(right: 0.05.wp),
-                                      child: RaisedButton(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
                                         ),
                                         onPressed: () => pushNewScreen(context,
                                             screen: ManageOrder()),
@@ -253,10 +261,12 @@ class _AddMealScreenState extends State<AddMealScreen> {
                                   Align(
                                     alignment: Alignment.center,
                                     child: Container(
-                                      child: RaisedButton(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
                                         ),
                                         onPressed: () => pushNewScreen(
                                           context,

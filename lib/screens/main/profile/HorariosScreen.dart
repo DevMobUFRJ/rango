@@ -783,11 +783,16 @@ class _HorariosScreenState extends State<HorariosScreen> {
                 ),
                 Flexible(
                   flex: 1,
-                  child: RaisedButton(
-                    onPressed: () {},
-                    child: AutoSizeText(
-                      'Salvar',
-                      style: GoogleFonts.montserrat(),
+                  child: Container(
+                    width: 0.3.wp,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      child: AutoSizeText(
+                        'Salvar',
+                        style: GoogleFonts.montserrat(
+                          textStyle: TextStyle(fontSize: 36.nsp),
+                        ),
+                      ),
                     ),
                   ),
                 ),

@@ -209,16 +209,20 @@ class _ManageOrderState extends State<ManageOrder> {
                   height: 0.01.hp,
                 ),
                 Center(
-                  child: RaisedButton(
-                    padding: EdgeInsets.symmetric(horizontal: 0.1.wp),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
                     ),
                     onPressed: () => {},
-                    child: AutoSizeText(
-                      "Confirmar",
-                      style: GoogleFonts.montserrat(
-                        fontSize: 32.ssp,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 0.1.wp),
+                      child: AutoSizeText(
+                        "Confirmar",
+                        style: GoogleFonts.montserrat(
+                          fontSize: 32.ssp,
+                        ),
                       ),
                     ),
                   ),

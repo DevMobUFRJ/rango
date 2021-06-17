@@ -54,11 +54,11 @@ class _MealsHistoryState extends State<MealsHistory> {
                   )),
             )
           : Container(
-              height: 1.hp - 0.2.hp,
+              height: 1.hp - 0.216.hp,
               child: Column(
                 children: [
                   Flexible(
-                    flex: 7,
+                    flex: 6,
                     child: Container(
                       child: StaggeredGridView.countBuilder(
                         scrollDirection: Axis.vertical,
@@ -142,33 +142,40 @@ class _MealsHistoryState extends State<MealsHistory> {
                   ),
                   Expanded(
                     flex: 1,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(right: 5),
-                          child: RaisedButton(
-                            child: Text("Adicionar"),
-                            disabledColor: Colors.grey[400],
-                            disabledTextColor: Colors.white,
+                    child: Container(
+                      color: Color(0xFFF5F5F5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(right: 5),
+                            child: ElevatedButton(
+                              child: AutoSizeText(
+                                "Adicionar",
+                                style: GoogleFonts.montserrat(
+                                    color: Colors.white, fontSize: 36.nsp),
+                              ),
+                              onPressed: ordersCheckedValue == null ||
+                                      ordersCheckedValue.length == 0 ||
+                                      _hasAnySelected == false
+                                  ? null
+                                  : () => {},
+                            ),
+                          ),
+                          ElevatedButton(
+                            child: AutoSizeText(
+                              "Remover",
+                              style: GoogleFonts.montserrat(
+                                  color: Colors.white, fontSize: 36.nsp),
+                            ),
                             onPressed: ordersCheckedValue == null ||
                                     ordersCheckedValue.length == 0 ||
                                     _hasAnySelected == false
                                 ? null
                                 : () => {},
                           ),
-                        ),
-                        RaisedButton(
-                          child: Text("Remover"),
-                          disabledColor: Colors.grey[400],
-                          disabledTextColor: Colors.white,
-                          onPressed: ordersCheckedValue == null ||
-                                  ordersCheckedValue.length == 0 ||
-                                  _hasAnySelected == false
-                              ? null
-                              : () => {},
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ],

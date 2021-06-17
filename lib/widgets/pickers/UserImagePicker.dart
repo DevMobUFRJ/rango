@@ -39,7 +39,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
               content: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  FlatButton(
+                  TextButton(
                     onPressed: () {
                       pickImgFromGallery = true;
                       Navigator.of(ctx).pop();
@@ -52,7 +52,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
                       ),
                     ),
                   ),
-                  FlatButton(
+                  TextButton(
                     onPressed: () {
                       pickImgFromGallery = false;
                       Navigator.of(ctx).pop();
@@ -84,7 +84,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
           setState(() => _pickedImage = pickedImageFile);
         }
       } catch (error) {
-        Scaffold.of(context).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content:
                 Text('Ocorreu um erro ao escolher a foto, tente novmanete'),
@@ -116,12 +116,6 @@ class _UserImagePickerState extends State<UserImagePicker> {
                               'https://ra.ac.ae/wp-content/uploads/2017/02/user-icon-placeholder.png'),
                   backgroundColor: Theme.of(context).accentColor,
                 ),
-                if (_pickedImage == null && widget.image == null)
-                  Icon(
-                    Icons.person,
-                    color: Theme.of(context).backgroundColor,
-                    size: 160.nsp,
-                  ),
               ],
             ),
             if (widget.editText != null)

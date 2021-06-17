@@ -25,12 +25,14 @@ class AuthForm extends StatefulWidget {
 
 class _AuthFormState extends State<AuthForm> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _pass = TextEditingController();
   final TextEditingController _confirmPass = TextEditingController();
 
   String _name = '';
   String _email = '';
   String _password = '';
+  String _confirmPassword = '';
   File _userImageFile;
   String _emailErrorMessage;
   String _nameErrorMessage;
@@ -97,6 +99,12 @@ class _AuthFormState extends State<AuthForm> {
                             child: CustomTextFormField(
                               labelText: 'Email:',
                               key: ValueKey('email'),
+                              controller: _emailController,
+                              onChanged: (value) => {
+                                setState(
+                                  () => _email = value,
+                                )
+                              },
                               validator: (value) {
                                 if (value.isEmpty || !value.contains('@')) {
                                   setState(() {
@@ -110,7 +118,8 @@ class _AuthFormState extends State<AuthForm> {
                                 }
                                 return null;
                               },
-                              onSaved: (value) => _email = value,
+                              onSaved: (value) =>
+                                  setState(() => _email = value),
                               keyboardType: TextInputType.emailAddress,
                               onFieldSubmitted: (_) =>
                                   FocusScope.of(context).nextFocus(),
@@ -124,6 +133,8 @@ class _AuthFormState extends State<AuthForm> {
                               child: CustomTextFormField(
                                 labelText: 'Nome',
                                 errorText: _nameErrorMessage,
+                                onChanged: (value) =>
+                                    {setState(() => _name = value)},
                                 key: ValueKey('name'),
                                 onSaved: (value) => _name = value,
                                 validator: (value) {
@@ -149,6 +160,11 @@ class _AuthFormState extends State<AuthForm> {
                               labelText: 'Senha:',
                               key: ValueKey('password'),
                               controller: _pass,
+                              onChanged: (value) => {
+                                setState(
+                                  () => _password = value,
+                                )
+                              },
                               validator: (value) {
                                 if (value.isEmpty || value.length < 7) {
                                   setState(() => _passwordErrorMessage =
@@ -177,6 +193,8 @@ class _AuthFormState extends State<AuthForm> {
                               child: CustomTextFormField(
                                 labelText: 'Confirmar Senha:',
                                 controller: _confirmPass,
+                                onChanged: (value) =>
+                                    setState(() => _confirmPassword = value),
                                 key: ValueKey('confirmPassword'),
                                 focusNode: _focusNodeConfirmPass,
                                 validator: (value) {
@@ -199,7 +217,7 @@ class _AuthFormState extends State<AuthForm> {
                           if (widget._isLogin)
                             Expanded(
                               flex: 1,
-                              child: FlatButton(
+                              child: TextButton(
                                 onPressed: () => Navigator.of(context)
                                     .pushNamed(ForgotPasswordScreen.routeName),
                                 child: Text(
@@ -215,34 +233,48 @@ class _AuthFormState extends State<AuthForm> {
                             flex: 1,
                             child: SizedBox(
                               width: 0.7.wp,
-                              child: RaisedButton(
-                                padding:
-                                    EdgeInsets.symmetric(vertical: 0.02.wp),
-                                disabledColor: Colors.grey,
+                              child: ElevatedButton(
                                 onPressed: widget._isLoading
                                     ? () => {
-                                          Scaffold.of(context).showSnackBar(
-                                              SnackBar(
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
                                                   content: Text(
                                                       'Carregando, aguarde.')))
                                         }
-                                    : _submit,
+                                    : (widget._isLogin &&
+                                                (_email.isEmpty ||
+                                                    _password.isEmpty)) ||
+                                            (!widget._isLogin &&
+                                                (_email.isEmpty ||
+                                                    _password.isEmpty ||
+                                                    _name.isEmpty ||
+                                                    _confirmPassword.isEmpty))
+                                        ? null
+                                        : _submit,
                                 child: widget._isLoading
-                                    ? SizedBox(
-                                        child: CircularProgressIndicator(
-                                          valueColor:
-                                              new AlwaysStoppedAnimation<Color>(
-                                                  Colors.white),
-                                          strokeWidth: 3.0,
+                                    ? Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 0.02.wp),
+                                        child: SizedBox(
+                                          child: CircularProgressIndicator(
+                                            valueColor:
+                                                new AlwaysStoppedAnimation<
+                                                    Color>(Colors.white),
+                                            strokeWidth: 3.0,
+                                          ),
+                                          height: 30.w,
+                                          width: 30.w,
                                         ),
-                                        height: 30.w,
-                                        width: 30.w,
                                       )
-                                    : Text(
-                                        'Continuar',
-                                        style: GoogleFonts.montserrat(
-                                            color: Colors.white,
-                                            fontSize: 36.nsp),
+                                    : Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 0.02.wp),
+                                        child: Text(
+                                          'Continuar',
+                                          style: GoogleFonts.montserrat(
+                                              color: Colors.white,
+                                              fontSize: 36.nsp),
+                                        ),
                                       ),
                               ),
                             ),

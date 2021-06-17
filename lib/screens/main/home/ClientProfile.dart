@@ -114,11 +114,11 @@ class _ClientProfileState extends State<ClientProfile> {
                       style: GoogleFonts.montserrat(),
                     ),
                   ),
-                  RaisedButton.icon(
+                  ElevatedButton.icon(
                     icon: Icon(Icons.chat, size: 38.nsp),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
+                    // shape: RoundedRectangleBorder(
+                    //   borderRadius: BorderRadius.circular(15),
+                    // ),
                     onPressed: () => pushNewScreen(
                       context,
                       screen: ChatScreen(client),

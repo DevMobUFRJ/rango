@@ -39,7 +39,7 @@ class _MealImagePickerState extends State<MealImagePicker> {
               content: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  FlatButton(
+                  TextButton(
                     onPressed: () {
                       pickImgFromGallery = true;
                       Navigator.of(ctx).pop();
@@ -52,7 +52,7 @@ class _MealImagePickerState extends State<MealImagePicker> {
                       ),
                     ),
                   ),
-                  FlatButton(
+                  TextButton(
                     onPressed: () {
                       pickImgFromGallery = false;
                       Navigator.of(ctx).pop();
@@ -84,7 +84,7 @@ class _MealImagePickerState extends State<MealImagePicker> {
           setState(() => _pickedImage = pickedImageFile);
         }
       } catch (error) {
-        Scaffold.of(context).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content:
                 Text('Ocorreu um erro ao escolher a foto, tente novmanete'),

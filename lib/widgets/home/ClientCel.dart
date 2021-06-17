@@ -15,7 +15,7 @@ class ClientCel extends StatelessWidget {
     return GestureDetector(
       //TODO clicar e copiar para área de transferência
       onTap: () {
-        Scaffold.of(context).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('teste'),
             duration: const Duration(seconds: 1),

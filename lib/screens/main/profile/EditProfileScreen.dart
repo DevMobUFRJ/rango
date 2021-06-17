@@ -31,13 +31,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   String _phone;
   String _password;
-  String _userImage;
+  String _telefone;
   String _confirmPassword;
   File _userImageFile;
   bool _loading = false;
   final _focusNodeConfirmPass = FocusNode();
 
-  void _pickedImage(File image) => _userImageFile = image;
+  void _pickedImage(File image) => setState(() => _userImageFile = image);
 
   @override
   void initState() {
@@ -83,7 +83,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         Navigator.of(context).pop();
         //TODO: trocar senha e tratar erros
       } catch (error) {
-        Scaffold.of(context).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(error.toString()),
           ),
@@ -148,6 +148,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 labelText: 'Telefone:',
                                 key: ValueKey('phone'),
                                 controller: _tel,
+                                onChanged: (value) =>
+                                    setState(() => _telefone = value),
                                 validator: (String value) {
                                   if (value.trim() != '' &&
                                       value.trim().length != 11) {
@@ -170,6 +172,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 child: CustomTextFormField(
                                   labelText: 'Senha:',
                                   controller: _pass,
+                                  onChanged: (value) =>
+                                      setState(() => _password = value),
                                   isPassword: true,
                                   onFieldSubmitted: (_) =>
                                       FocusScope.of(context)
@@ -194,6 +198,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 labelText: 'Confimar Senha:',
                                 focusNode: _focusNodeConfirmPass,
                                 controller: _confirmPass,
+                                onChanged: (value) =>
+                                    setState(() => _confirmPassword = value),
                                 isPassword: true,
                                 onSaved: (value) => _password = value,
                                 key: ValueKey('confirmPassword'),
@@ -214,34 +220,47 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     horizontal: 0.05.wp, vertical: 0.01.hp),
                                 child: SizedBox(
                                   width: 0.7.wp,
-                                  child: RaisedButton(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 0.01.hp),
-                                    disabledColor: Colors.grey,
+                                  child: ElevatedButton(
                                     onPressed: _loading
                                         ? () => {
-                                              Scaffold.of(context).showSnackBar(
-                                                  SnackBar(
-                                                      content: Text(
-                                                          'Carregando, aguarde.')))
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      'Carregando, aguarde.'),
+                                                ),
+                                              ),
                                             }
-                                        : () => _submit(ctx),
+                                        : (_userImageFile != null ||
+                                                (_password != null &&
+                                                    _confirmPassword != null) ||
+                                                _telefone != null)
+                                            ? () => _submit(ctx)
+                                            : null,
                                     child: _loading
-                                        ? SizedBox(
-                                            child: CircularProgressIndicator(
-                                              valueColor:
-                                                  new AlwaysStoppedAnimation<
-                                                      Color>(Colors.white),
-                                              strokeWidth: 3.0,
+                                        ? Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 0.01.hp),
+                                            child: SizedBox(
+                                              child: CircularProgressIndicator(
+                                                valueColor:
+                                                    new AlwaysStoppedAnimation<
+                                                        Color>(Colors.white),
+                                                strokeWidth: 3.0,
+                                              ),
+                                              height: 30.w,
+                                              width: 30.w,
                                             ),
-                                            height: 30.w,
-                                            width: 30.w,
                                           )
-                                        : AutoSizeText(
-                                            'Continuar',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 38.nsp,
+                                        : Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 0.01.hp),
+                                            child: AutoSizeText(
+                                              'Continuar',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 38.nsp,
+                                              ),
                                             ),
                                           ),
                                   ),

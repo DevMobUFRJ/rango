@@ -155,7 +155,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               borderRadius: BorderRadius.circular(20),
                             ),
                             actions: [
-                              FlatButton(
+                              TextButton(
                                 onPressed: () {
                                   Navigator.of(ctx).pop();
                                 },
@@ -168,7 +168,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                 ),
                               ),
-                              FlatButton(
+                              TextButton(
                                 onPressed: () => Navigator.of(ctx).pop(),
                                 child: Text(
                                   'Cancelar',
@@ -314,9 +314,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         flex: 1,
                         child: Align(
                           alignment: Alignment.bottomCenter,
-                          child: RaisedButton(
-                            child: Text("Ver mais"),
-                            onPressed: () => {},
+                          child: Container(
+                            width: 0.35.wp,
+                            child: ElevatedButton(
+                              child: AutoSizeText(
+                                "Ver mais",
+                                style: TextStyle(fontSize: 36.nsp),
+                              ),
+                              onPressed: () => {},
+                            ),
                           ),
                         ),
                       ),
