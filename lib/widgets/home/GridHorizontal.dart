@@ -63,16 +63,16 @@ class GridHorizontal extends StatelessWidget {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.montserrat(
-                                  fontSize: orders.length > 6 ? 22.nsp : 50.nsp,
+                                  fontSize: orders.length > 6 ? 22.nsp : 30.nsp,
                                 ),
                               ),
                             ),
                             Flexible(
                               flex: 1,
-                              child: AutoSizeText(
+                              child: Text(
                                 'R\$${orders[index].quentinhas[0].quentinha.price}',
                                 style: GoogleFonts.montserrat(
-                                  fontSize: orders.length > 6 ? 22.nsp : 40.nsp,
+                                  fontSize: orders.length > 6 ? 22.nsp : 36.nsp,
                                 ),
                               ),
                             ),

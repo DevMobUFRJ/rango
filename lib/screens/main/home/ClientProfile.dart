@@ -109,7 +109,7 @@ class _ClientProfileState extends State<ClientProfile> {
                       vertical: 0.01.hp,
                     ),
                     child: AutoSizeText(
-                      '${client.name} comprou X vezes com você e gastou um total de R\$YY,YY',
+                      '${client.name} comprou X vezes com você, gastando um total de R\$YY,YY',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.montserrat(fontSize: 32.nsp),
                     ),

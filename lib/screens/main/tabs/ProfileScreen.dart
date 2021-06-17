@@ -91,7 +91,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 margin: EdgeInsets.symmetric(vertical: 0.01.hp),
                 child: AutoSizeText(
                   widget.usuario.name,
-                  maxLines: 1,
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
                   style: GoogleFonts.montserrat(
                     color: Theme.of(context).accentColor,
                     fontWeight: FontWeight.w500,

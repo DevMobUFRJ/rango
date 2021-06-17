@@ -42,16 +42,18 @@ class _AddMealScreenState extends State<AddMealScreen> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Container(
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 0.02.wp, vertical: 0.04.hp),
+                          margin: EdgeInsets.only(
+                              left: 0.02.wp, top: 0.07.hp, bottom: 0.01.hp),
                           width: 0.6.wp,
                           child: AutoSizeText(
                             "E aí, o que tem pra hoje?",
                             maxLines: 2,
                             textAlign: TextAlign.start,
-                            style: GoogleFonts.montserratTextTheme(
-                                    Theme.of(context).textTheme)
-                                .headline1,
+                            style: GoogleFonts.montserrat(
+                              color: Colors.deepOrange[300],
+                              fontWeight: FontWeight.w500,
+                              fontSize: 60.nsp,
+                            ),
                           ),
                         ),
                       ),
@@ -189,16 +191,18 @@ class _AddMealScreenState extends State<AddMealScreen> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Container(
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 0.02.wp, vertical: 0.04.hp),
+                          margin: EdgeInsets.only(
+                              left: 0.02.wp, top: 0.07.hp, bottom: 0.01.hp),
                           width: 0.6.wp,
                           child: AutoSizeText(
                             "E aí, o que tem pra hoje?",
                             maxLines: 2,
                             textAlign: TextAlign.start,
-                            style: GoogleFonts.montserratTextTheme(
-                                    Theme.of(context).textTheme)
-                                .headline1,
+                            style: GoogleFonts.montserrat(
+                              color: Colors.deepOrange[300],
+                              fontWeight: FontWeight.w500,
+                              fontSize: 60.nsp,
+                            ),
                           ),
                         ),
                       ),
@@ -223,7 +227,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
                             ),
                           ),
                           Flexible(
-                            flex: 2,
+                            flex: pedidos.length > 6 ? 3 : 1,
                             child: Container(
                               child: GridHorizontal(
                                 orders: pedidos,

@@ -15,16 +15,16 @@ class ClientCel extends StatelessWidget {
     return GestureDetector(
       //TODO clicar e copiar para área de transferência
       onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('teste'),
-            duration: const Duration(seconds: 1),
-            action: SnackBarAction(
-              label: 'ACTION',
-              onPressed: () {},
-            ),
-          ),
-        );
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     content: Text('teste'),
+        //     duration: const Duration(seconds: 1),
+        //     action: SnackBarAction(
+        //       label: 'ACTION',
+        //       onPressed: () {},
+        //     ),
+        //   ),
+        // );
       },
       child: Container(
         child: AutoSizeText(
