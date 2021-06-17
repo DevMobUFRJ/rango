@@ -111,14 +111,16 @@ class _ClientProfileState extends State<ClientProfile> {
                     child: AutoSizeText(
                       '${client.name} comprou X vezes com você e gastou um total de R\$YY,YY',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.montserrat(),
+                      style: GoogleFonts.montserrat(fontSize: 32.nsp),
                     ),
                   ),
                   ElevatedButton.icon(
                     icon: Icon(Icons.chat, size: 38.nsp),
-                    // shape: RoundedRectangleBorder(
-                    //   borderRadius: BorderRadius.circular(15),
-                    // ),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
                     onPressed: () => pushNewScreen(
                       context,
                       screen: ChatScreen(client),
@@ -131,7 +133,7 @@ class _ClientProfileState extends State<ClientProfile> {
                       child: AutoSizeText(
                         'Chat com o cliente',
                         maxLines: 1,
-                        style: GoogleFonts.montserrat(),
+                        style: GoogleFonts.montserrat(fontSize: 36.nsp),
                         textAlign: TextAlign.center,
                       ),
                     ),

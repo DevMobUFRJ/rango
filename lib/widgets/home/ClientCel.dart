@@ -31,7 +31,7 @@ class ClientCel extends StatelessWidget {
           clientCel,
           maxLines: 1,
           style: GoogleFonts.montserrat(
-            fontSize: 30.nsp,
+            fontSize: 32.nsp,
           ),
         ),
       ),

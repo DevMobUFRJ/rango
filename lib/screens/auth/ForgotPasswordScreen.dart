@@ -92,6 +92,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 child: CustomTextFormField(
                   labelText: 'Email',
                   key: ValueKey('email'),
+                  onChanged: (value) => setState(() => _email = value),
                   validator: (value) {
                     if (value.isEmpty || !value.contains('@')) {
                       setState(() {
@@ -113,18 +114,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             ),
             Flexible(
               flex: 1,
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 0.1.wp,
-                  vertical: 0.01.hp,
-                ),
-                child: ElevatedButton(
-                  onPressed: () => _submit(context),
+              child: ElevatedButton(
+                onPressed: _email.isEmpty ? null : () => _submit(context),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 0.1.wp,
+                    vertical: 0.01.hp,
+                  ),
                   child: AutoSizeText(
                     'Confirmar',
                     style: GoogleFonts.montserrat(
-                      fontSize: 38.nsp,
-                    ),
+                        fontSize: 36.nsp, color: Colors.white),
                   ),
                 ),
               ),
