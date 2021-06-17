@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,7 +23,6 @@ class UserImagePicker extends StatefulWidget {
 
 class _UserImagePickerState extends State<UserImagePicker> {
   File _pickedImage;
-
   void _pickImage() async {
     bool pickImgFromGallery;
     await showDialog(
@@ -106,21 +107,28 @@ class _UserImagePickerState extends State<UserImagePicker> {
             Stack(
               alignment: Alignment.center,
               children: <Widget>[
-                CircleAvatar(
-                  radius: 120.w,
-                  backgroundImage: _pickedImage != null
-                      ? FileImage(_pickedImage)
-                      : widget.image != null
-                          ? NetworkImage(widget.image)
-                          : NetworkImage(
-                              'https://ra.ac.ae/wp-content/uploads/2017/02/user-icon-placeholder.png'),
-                  backgroundColor: Theme.of(context).accentColor,
-                ),
-                if (_pickedImage == null && widget.image == null)
-                  Icon(
-                    Icons.person,
-                    color: Theme.of(context).backgroundColor,
-                    size: 160.nsp,
+                if (_pickedImage == null)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(120),
+                    child: Container(
+                      width: 260.w,
+                      height: 260.w,
+                      color: Theme.of(context).accentColor,
+                      child: FadeInImage.assetNetwork(
+                        placeholder: 'assets/imgs/user_placeholder.png',
+                        image: widget.image,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                if (_pickedImage != null)
+                  FittedBox(
+                    fit: BoxFit.cover,
+                    child: CircleAvatar(
+                      backgroundColor: Theme.of(context).accentColor,
+                      backgroundImage: FileImage(_pickedImage),
+                      radius: 120.w,
+                    ),
                   ),
               ],
             ),
