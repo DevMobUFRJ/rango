@@ -44,8 +44,7 @@ class ListaHorizontal extends StatelessWidget {
             shrinkWrap: true,
             itemBuilder: (ctx, index) => GestureDetector(
               onTap: () => pushNewScreen(context,
-                  screen: DetalhesQuentinhaScreen(
-                      marmita: meals[index], tagM: tagM),
+                  screen: DetalhesQuentinhaScreen(marmita: meals[index], tagM: tagM),
                   withNavBar: true,
                   pageTransitionAnimation: PageTransitionAnimation.cupertino),
               child: Card(

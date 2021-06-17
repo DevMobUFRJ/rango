@@ -23,8 +23,9 @@ class Meal {
     this.quantity
   });
 
-  Meal.fromJson(Map<String, dynamic> json)
-      : name = json['name'],
+  Meal.fromJson(Map<String, dynamic> json, {String id})
+      : id = id,
+        name = json['name'],
         description = json['description'],
         featured = json['featured'],
         picture = json['picture'],

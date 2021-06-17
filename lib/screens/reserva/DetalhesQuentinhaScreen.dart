@@ -1,6 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth, FirebaseUser;
+import 'package:firebase_auth/firebase_auth.dart' show FirebaseUser;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
@@ -8,11 +8,9 @@ import 'package:rango/models/meals.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/order.dart';
 import 'package:rango/resources/repository.dart';
-import 'package:rango/screens/history/OrderHistory.dart';
+import 'file:///C:/Repositorios/github.com/rango/lib/screens/main/tabs/OrderHistory.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
 import 'package:rango/utils/string_formatters.dart';
-
-final FirebaseAuth auth = FirebaseAuth.instance;
 
 class DetalhesQuentinhaScreen extends StatelessWidget {
   final Meal marmita;
@@ -254,7 +252,7 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                   ),
                   FlatButton(
                     onPressed: () async {
-                      final FirebaseUser user = await auth.currentUser();
+                      final FirebaseUser user = await Repository.instance.getCurrentUser();
 
                       Order order = Order(
                           clientId: user.uid,
@@ -277,7 +275,6 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                             child: Text("Reserva feita com sucesso."),
                           ),
                         ));
-                        //TODO Redirecionar para a tela de histórico
 
                         pushNewScreen(
                           context,

@@ -11,8 +11,6 @@ import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
 import 'package:rango/utils/string_formatters.dart';
 
-final FirebaseAuth auth = FirebaseAuth.instance;
-
 class OrderHistoryScreen extends StatelessWidget {
   OrderHistoryScreen();
 
@@ -82,7 +80,7 @@ class OrderHistoryScreen extends StatelessWidget {
         ),
         body: Container(
           child: FutureBuilder(
-            future: auth.currentUser(),
+            future: Repository.instance.getCurrentUser(),
             builder: (context, AsyncSnapshot<FirebaseUser> authSnapshot) {
               if (!authSnapshot.hasData) {
                 return CircularProgressIndicator();

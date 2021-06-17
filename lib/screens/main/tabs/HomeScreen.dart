@@ -9,12 +9,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/models/meals.dart';
 import 'package:rango/models/seller.dart';
+import 'package:rango/resources/rangeChangeNotifier.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/widgets/home/ListaHorizontal.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rango/widgets/home/SellerGridVertical.dart';
-
-final FirebaseAuth auth = FirebaseAuth.instance;
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   final Client usuario;
@@ -53,85 +53,76 @@ class _HomeScreenState extends State<HomeScreen> {
                         return Text(locationSnapshot.error.toString());
                       }
 
-                      return FutureBuilder(
-                        future: Repository.instance.getSellerRange(),
-                        builder: (context, AsyncSnapshot<double> rangeSnapshot) {
-                          if (!rangeSnapshot.hasData) {
-                            return Center(child: CircularProgressIndicator());
-                          }
-                          if (rangeSnapshot.hasError) {
-                            return Text(rangeSnapshot.error.toString());
-                          }
-
+                      return Consumer<RangeChangeNotifier>(
+                        builder: (context, shouldChange, child) {
                           return FutureBuilder(
-                              future: Repository.instance.getCurrentUser(),
-                              builder: (context, AsyncSnapshot<FirebaseUser> userSnapshot) {
-                                if (!userSnapshot.hasData) {
-                                  return Center(child: CircularProgressIndicator());
-                                }
-                                if (userSnapshot.hasError) {
-                                  return Text(userSnapshot.error.toString());
-                                }
-
-                                return StreamBuilder(
-                                    stream: Repository.instance.getNearbySellersStream(locationSnapshot.data, rangeSnapshot.data, queryByActive: false, queryByTime: false),
-                                    builder: (context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
-                                      if (!snapshot.hasData) {
-                                        return CircularProgressIndicator();
-                                      }
-                                      if (snapshot.hasError) {
-                                        return Text(snapshot.error.toString());
-                                      }
-
-                                      var sellerMap = Map();
-                                      List<Seller> sellerList = [];
-                                      snapshot.data.forEach((seller) {
-                                        sellerMap[seller.documentID] = seller.data["name"];
-                                        Seller currentSeller = Seller.fromJson(seller.data, id: seller.documentID);
-                                        sellerList.add(currentSeller);
-                                        //print("${seller.data["name"]} is from cache: ${seller.metadata.isFromCache}");
-                                      });
-                                      return Column(
-                                        children: [
-                                          StreamBuilder(
-                                            stream: Repository.instance.getCurrentMealsStream(snapshot.data, queryByFeatured: false, limit: -1),
-                                            builder: (context, snapshot) {
-                                              if (!snapshot.hasData) {
-                                                return Center(child: CircularProgressIndicator());
-                                              }
-                                              if (snapshot.hasError) {
-                                                return Text(snapshot.error.toString());
-                                              }
-
-                                              List<Meal> tempMeals = [];
-                                              snapshot.data.forEach((QuerySnapshot seller) {
-                                                // Iterar todos os meals
-                                                seller.documents.forEach((meal) {
-                                                  //print("${meal.data["name"]} is from cache: ${meal.metadata.isFromCache}");
-                                                  Meal currentMeal = Meal.fromJson(meal.data);
-                                                  currentMeal.id = meal.reference.documentID;
-                                                  currentMeal.sellerName = sellerMap[meal.reference.parent().parent().documentID];
-                                                  currentMeal.sellerId = meal.reference.parent().parent().documentID;
-                                                  tempMeals.add(currentMeal);
-                                                });
-                                                //tempMeals.shuffle();
-                                              });
-                                              return Column(
-                                                children: [
-                                                  _buildOrderAgain(tempMeals, userSnapshot.data), // TODO Se usar queryByFeatured ou limit, não poderá usar tempMeals
-                                                  SizedBox(height: 0.02.hp),
-                                                  _buildSuggestions(tempMeals),
-                                                  SizedBox(height: 0.02.hp),
-                                                ],
-                                              );
-                                            },
-                                          ),
-                                          _buildSellers(sellerList, locationSnapshot, userSnapshot.data)
-                                        ],
-                                      );
-                                    }
-                                );
+                            future: Repository.instance.getSellerRange(),
+                            builder: (context, AsyncSnapshot<double> rangeSnapshot) {
+                              if (!rangeSnapshot.hasData) {
+                                return Center(child: CircularProgressIndicator());
                               }
+                              if (rangeSnapshot.hasError) {
+                                return Text(rangeSnapshot.error.toString());
+                              }
+
+                              return StreamBuilder(
+                                  stream: Repository.instance.getNearbySellersStream(locationSnapshot.data, rangeSnapshot.data, queryByActive: false, queryByTime: false),
+                                  builder: (context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return CircularProgressIndicator();
+                                    }
+                                    if (snapshot.hasError) {
+                                      return Text(snapshot.error.toString());
+                                    }
+
+                                    var sellerMap = Map();
+                                    List<Seller> sellerList = [];
+                                    snapshot.data.forEach((seller) {
+                                      sellerMap[seller.documentID] = seller.data["name"];
+                                      Seller currentSeller = Seller.fromJson(seller.data, id: seller.documentID);
+                                      sellerList.add(currentSeller);
+                                      //print("${seller.data["name"]} is from cache: ${seller.metadata.isFromCache}");
+                                    });
+                                    return Column(
+                                      children: [
+                                        StreamBuilder(
+                                          stream: Repository.instance.getCurrentMealsStream(snapshot.data, queryByFeatured: false, limit: -1),
+                                          builder: (context, snapshot) {
+                                            if (!snapshot.hasData) {
+                                              return Center(child: CircularProgressIndicator());
+                                            }
+                                            if (snapshot.hasError) {
+                                              return Text(snapshot.error.toString());
+                                            }
+
+                                            List<Meal> tempMeals = [];
+                                            snapshot.data.forEach((QuerySnapshot seller) {
+                                              // Iterar todos os meals
+                                              seller.documents.forEach((meal) {
+                                                //print("${meal.data["name"]} is from cache: ${meal.metadata.isFromCache}");
+                                                Meal currentMeal = Meal.fromJson(meal.data, id: meal.documentID);
+                                                currentMeal.sellerName = sellerMap[meal.reference.parent().parent().documentID];
+                                                currentMeal.sellerId = meal.reference.parent().parent().documentID;
+                                                tempMeals.add(currentMeal);
+                                              });
+                                              //tempMeals.shuffle();
+                                            });
+                                            return Column(
+                                              children: [
+                                                _buildOrderAgain(tempMeals, widget.usuario.id), // TODO Se usar queryByFeatured ou limit, não poderá usar tempMeals
+                                                SizedBox(height: 0.02.hp),
+                                                _buildSuggestions(tempMeals),
+                                                SizedBox(height: 0.02.hp),
+                                              ],
+                                            );
+                                          },
+                                        ),
+                                        _buildSellers(sellerList, locationSnapshot, widget.usuario.id)
+                                      ],
+                                    );
+                                  }
+                              );
+                            },
                           );
                         },
                       );
@@ -182,9 +173,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSellers(List<Seller> sellerList, AsyncSnapshot<Position> locationSnapshot, FirebaseUser client) {
+  Widget _buildSellers(List<Seller> sellerList, AsyncSnapshot<Position> locationSnapshot, String clientId) {
     return StreamBuilder(
-        stream: Repository.instance.getClientStream(client.uid),
+        stream: Repository.instance.getClientStream(clientId),
         builder: (context, AsyncSnapshot<DocumentSnapshot> clientSnapshot) {
           if (!clientSnapshot.hasData) {
             return CircularProgressIndicator();
@@ -215,9 +206,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildOrderAgain(List<Meal> tempMeals, FirebaseUser client) {
+  Widget _buildOrderAgain(List<Meal> tempMeals, String clientId) {
     return StreamBuilder(
-        stream: Repository.instance.getOrdersFromClient(client.uid, limit: 10),
+        stream: Repository.instance.getOrdersFromClient(clientId, limit: 10),
         builder: (context, AsyncSnapshot<QuerySnapshot> orderSnapshot) {
           if (!orderSnapshot.hasData) {
             return CircularProgressIndicator();

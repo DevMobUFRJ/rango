@@ -43,6 +43,7 @@ dependencies:
     geolocator: ^6.2.1
     rxdart: ^0.23.1
     shared_preferences: 0.5.12+4
+    provider: 4.3.3
 
 dev_dependencies:
     flutter_test:

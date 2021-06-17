@@ -1,9 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/dadosMarretados.dart';
 import 'package:rango/models/client.dart';
+import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/main/profile/EditProfileScreen.dart';
 import 'package:rango/screens/main/profile/ProfileSettings.dart';
@@ -163,50 +166,78 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Expanded(
               flex: 7,
               child: Container(
-                child: ListView.separated(
-                  separatorBuilder: (context, index) =>
-                      SizedBox(height: 0.01.hp),
-                  itemCount: sellers.length,
-                  itemBuilder: (ctx, index) => GestureDetector(
-                    onTap: () => pushNewScreen(
-                      context,
-                      //TODO
-                      screen: SellerProfile("", sellers[index].name),
-                      withNavBar: true,
-                      pageTransitionAnimation:
-                          PageTransitionAnimation.cupertino,
-                    ),
-                    child: Container(
-                      height: 120.h,
-                      padding: EdgeInsets.symmetric(
-                          vertical: 0.01.hp, horizontal: 0.05.wp),
-                      decoration: BoxDecoration(
-                          color: Theme.of(context).accentColor,
-                          borderRadius:
-                              BorderRadius.circular(ScreenUtil().setSp(22))),
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            backgroundImage:
-                                NetworkImage(sellers[index].picture),
-                            radius: ScreenUtil().setSp(50),
-                          ),
-                          SizedBox(width: 0.03.wp),
-                          AutoSizeText(
-                            sellers[index].name,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.montserrat(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w300,
-                              decoration: TextDecoration.underline,
-                              fontSize: 32.nsp,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+                child: StreamBuilder(
+                    stream: Repository.instance.getClientStream(widget.usuario.id),
+                    builder: (context, AsyncSnapshot<DocumentSnapshot> clientSnapshot) {
+                      if (!clientSnapshot.hasData) {
+                        return CircularProgressIndicator();
+                      }
+                      if (clientSnapshot.hasError) {
+                        return Text(clientSnapshot.error.toString());
+                      }
+
+                      final favoriteSellers = List<String>.from(clientSnapshot.data.data['favoriteSellers']);
+
+                      // Um belo exemplo de list view! A busca pelo seller só acontece quando o elemento pode aparecer na tela.
+                      // Usa-se um StreamBuilder para aproveitar a cache do firestore
+                      return ListView.separated(
+                          separatorBuilder: (context, index) => SizedBox(height: 0.01.hp),
+                          itemCount: favoriteSellers.length,
+                          itemBuilder: (ctx, index) => StreamBuilder(
+                              stream: Repository.instance.getSeller(favoriteSellers[index]),
+                              builder: (context, AsyncSnapshot<DocumentSnapshot> sellerSnapshot) {
+                                if (!sellerSnapshot.hasData) {
+                                  return Center(child: CircularProgressIndicator());
+                                }
+                                if (sellerSnapshot.hasError) {
+                                  return Text(sellerSnapshot.error.toString());
+                                }
+
+                                Seller seller = Seller.fromJson(sellerSnapshot.data.data, id: sellerSnapshot.data.documentID);
+
+                                return GestureDetector(
+                                  onTap: () => pushNewScreen(
+                                    context,
+                                    screen: SellerProfile(seller.id, seller.name),
+                                    withNavBar: true,
+                                    pageTransitionAnimation:
+                                    PageTransitionAnimation.cupertino,
+                                  ),
+                                  child: Container(
+                                    height: 120.h,
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 0.01.hp, horizontal: 0.05.wp),
+                                    decoration: BoxDecoration(
+                                        color: Theme.of(context).accentColor,
+                                        borderRadius:
+                                        BorderRadius.circular(ScreenUtil().setSp(22))),
+                                    child: Row(
+                                      children: [
+                                        CircleAvatar(
+                                          backgroundImage:
+                                          NetworkImage(seller.picture),
+                                          radius: ScreenUtil().setSp(50),
+                                        ),
+                                        SizedBox(width: 0.03.wp),
+                                        AutoSizeText(
+                                          seller.name,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.montserrat(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w300,
+                                            decoration: TextDecoration.underline,
+                                            fontSize: 32.nsp,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }
+                          )
+                      );
+                    }
+                )
               ),
             ),
           ],

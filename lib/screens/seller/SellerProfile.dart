@@ -11,7 +11,7 @@ import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/seller/ChatScreen.dart';
 import 'package:rango/widgets/home/ListaHorizontal.dart';
-import 'package:cloud_firestore/cloud_firestore.dart' show DocumentSnapshot;
+import 'package:cloud_firestore/cloud_firestore.dart' show DocumentSnapshot, QuerySnapshot;
 
 class SellerProfile extends StatefulWidget {
   final String sellerName;
@@ -95,7 +95,7 @@ class _SellerProfileState extends State<SellerProfile> {
               SizedBox(height: 20.h),
               StreamBuilder(
                 stream: Repository.instance.getSellerCurrentMeals(widget.sellerId),
-                builder: (context, snapshot) {
+                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (!snapshot.hasData) {
                     return CircularProgressIndicator();
                   }
@@ -105,7 +105,10 @@ class _SellerProfileState extends State<SellerProfile> {
                   List<Meal> meals = [];
                   var mealsDocuments = snapshot.data.documents;
                   for(var i=0; i < mealsDocuments.length; i++){
-                    meals.add(Meal.fromJson(mealsDocuments[i].data));
+                    final meal = Meal.fromJson(mealsDocuments[i].data, id: mealsDocuments[i].documentID);
+                    meal.sellerName = widget.sellerName;
+                    meal.sellerId = widget.sellerId;
+                    meals.add(meal);
                   }
                   return ListaHorizontal(
                     title: 'Quentinhas disponíveis',

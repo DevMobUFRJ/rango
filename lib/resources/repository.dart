@@ -29,6 +29,10 @@ class Repository {
     return sellersRef.document(uid).snapshots();
   }
 
+  Future<DocumentSnapshot> getSellerFuture(String uid) {
+    return sellersRef.document(uid).get();
+  }
+
   Future<FirebaseUser> getCurrentUser() {
     return auth.currentUser();
   }
@@ -39,6 +43,11 @@ class Repository {
 
   Stream<QuerySnapshot> getSellerCurrentMeals(String uid) {
     return sellersRef.document(uid).collection('currentMeals').snapshots();
+  }
+
+  Stream<QuerySnapshot> getFavoriteSellers(List<String> favorites) {
+    // Essa query whereIn tem o limite de 10 items
+    return sellersRef.where(FieldPath.documentId, whereIn: favorites).snapshots();
   }
 
   Future<void> addSellerToClientFavorites(String clientId, String sellerId) {
@@ -68,9 +77,9 @@ class Repository {
   
   Stream<QuerySnapshot> getOrdersFromClient(String clientId, {int limit}) {
     if (limit != null && limit > 0) {
-      return ordersRef.where('clientId', isEqualTo: clientId).limit(limit).snapshots();
+      return ordersRef.where('clientId', isEqualTo: clientId).orderBy('requestedAt', descending: true).limit(limit).snapshots();
     }
-    return ordersRef.where('clientId', isEqualTo: clientId).snapshots();
+    return ordersRef.where('clientId', isEqualTo: clientId).orderBy('requestedAt', descending: true).snapshots();
   }
 
   Future<Position> getUserLocation() {
@@ -107,12 +116,12 @@ class Repository {
     }
   }
 
-  Stream<List<QuerySnapshot>> getCurrentMealsStream(List<DocumentSnapshot> documentList, {bool queryByFeatured = false, int limit = -1}) {
+  Stream<List<QuerySnapshot>> getCurrentMealsStream(List<DocumentSnapshot> sellerList, {bool queryByFeatured = false, int limit = -1}) {
     List<Stream<QuerySnapshot>> streams = [];
 
-    for (var i = 0; i < documentList.length; i++) {
+    for (var i = 0; i < sellerList.length; i++) {
       // Iterar todos os vendedores
-      var seller = documentList[i];
+      var seller = sellerList[i];
 
       var queryRef = seller.reference.collection("currentMeals").where("name");
       if (queryByFeatured == true) queryRef = queryRef.where("featured", isEqualTo: true);
