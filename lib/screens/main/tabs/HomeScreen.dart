@@ -122,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Flexible(
                             flex: 3,
                             child: Container(
-                              constraints: BoxConstraints(maxHeight: 0.68.hp),
+                              constraints: BoxConstraints(maxHeight: 0.67.hp),
                               child: ordersClosed.length > 1 &&
                                       orders.length < 1
                                   ? Container(

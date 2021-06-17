@@ -59,9 +59,11 @@ class _OrdersHistoryState extends State<OrdersHistory> {
                               'Histórico de pedidos',
                               maxLines: 2,
                               textAlign: TextAlign.start,
-                              style: GoogleFonts.montserratTextTheme(
-                                      Theme.of(context).textTheme)
-                                  .headline1,
+                              style: GoogleFonts.montserrat(
+                                color: Colors.deepOrange[300],
+                                fontWeight: FontWeight.w500,
+                                fontSize: 60.nsp,
+                              ),
                             ),
                           ),
                         ],
@@ -82,7 +84,7 @@ class _OrdersHistoryState extends State<OrdersHistory> {
                             ),
                           )
                         : Container(
-                            constraints: BoxConstraints(maxHeight: 0.7.hp),
+                            constraints: BoxConstraints(maxHeight: 0.67.hp),
                             child: AnimatedList(
                               key: _listKey,
                               initialItemCount: orders.length,
