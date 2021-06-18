@@ -58,9 +58,9 @@ class _ClientProfileState extends State<ClientProfile> {
                       alignment: Alignment.center,
                       children: <Widget>[
                         Container(
-                          margin: EdgeInsets.only(left: 80.w, bottom: 40.h),
-                          height: 210.h,
-                          width: 240.w,
+                          margin: EdgeInsets.only(left: 40, bottom: 40),
+                          height: 140,
+                          width: 140,
                           decoration: BoxDecoration(
                             borderRadius:
                                 BorderRadius.circular(ScreenUtil().setSp(30)),
@@ -71,8 +71,8 @@ class _ClientProfileState extends State<ClientProfile> {
                           ClipRRect(
                             borderRadius: BorderRadius.circular(120),
                             child: Container(
-                              width: 260.w,
-                              height: 260.w,
+                              width: 160,
+                              height: 160,
                               color: Theme.of(context).accentColor,
                               child: FadeInImage.assetNetwork(
                                 placeholder: 'assets/imgs/user_placeholder.png',
