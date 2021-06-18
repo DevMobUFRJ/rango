@@ -102,7 +102,6 @@ class _ClientProfileState extends State<ClientProfile> {
                           size: 38.nsp,
                         ),
                         GestureDetector(
-                          //TODO clicar e copiar para área de transferência
                           onTap: () => {
                             Clipboard.setData(
                               ClipboardData(text: client.phone),
@@ -115,6 +114,10 @@ class _ClientProfileState extends State<ClientProfile> {
                                   style: GoogleFonts.montserrat(),
                                 ),
                                 duration: Duration(seconds: 2),
+                                // action: SnackBarAction(
+                                //   label: 'Whatsapp',
+                                //   onPressed: () => print('teste'),
+                                // ),
                               ),
                             )
                           },
