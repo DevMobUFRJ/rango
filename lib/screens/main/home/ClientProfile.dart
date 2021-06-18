@@ -1,13 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/dadosMarretados.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/screens/main/home/ChatScreen.dart';
-import 'package:rango/widgets/home/ClientCel.dart';
 
 class ClientProfile extends StatefulWidget {
   final Client client;
@@ -35,7 +33,6 @@ class _ClientProfileState extends State<ClientProfile> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
     final yellow = Color(0xFFF9B152);
     return Scaffold(
       appBar: AppBar(
@@ -100,7 +97,26 @@ class _ClientProfileState extends State<ClientProfile> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.phone, size: 38.nsp),
-                        ClientCel(clientCel: client.phone),
+                        GestureDetector(
+                          //TODO clicar e copiar para área de transferência
+                          onTap: () => {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('teste'),
+                                duration: const Duration(seconds: 1),
+                              ),
+                            )
+                          },
+                          child: Container(
+                            child: AutoSizeText(
+                              client.phone,
+                              maxLines: 1,
+                              style: GoogleFonts.montserrat(
+                                fontSize: 32.nsp,
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   Container(
