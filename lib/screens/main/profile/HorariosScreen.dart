@@ -47,7 +47,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                 Flexible(
                   flex: 1,
                   child: AutoSizeText(
-                    'Selecione as caixas referentes aos dias de abertura e então selecione os horários de funcionamento',
+                    'Selecione as caixas referentes aos dias de funcionamento e então selecione os horários de abertura/fechamento',
                     style: GoogleFonts.montserrat(fontSize: 30.nsp),
                   ),
                 ),
@@ -86,16 +86,29 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                     showTimePicker(
                                       context: context,
                                       initialTime: TimeOfDay.now(),
+                                      cancelText: 'Cancelar',
+                                      confirmText: 'Confirmar',
+                                      helpText: 'Horário de abertura',
+                                      builder: (BuildContext context,
+                                              Widget child) =>
+                                          MediaQuery(
+                                              data: MediaQuery.of(context)
+                                                  .copyWith(
+                                                      alwaysUse24HourFormat:
+                                                          true),
+                                              child: child),
                                     ).then(
-                                      (value) => setState(
-                                        () => _horariosFuncionamento
-                                                .sunday.openingTime =
-                                            DateFormat("HH:mm").format(
-                                          DateFormat("hh:mm a").parse(
-                                            value.format(context),
-                                          ),
-                                        ),
-                                      ),
+                                      (value) => value == null
+                                          ? null
+                                          : setState(
+                                              () => _horariosFuncionamento
+                                                      .sunday.openingTime =
+                                                  DateFormat("HH:mm").format(
+                                                DateFormat("hh:mm a").parse(
+                                                  value.format(context),
+                                                ),
+                                              ),
+                                            ),
                                     ),
                                   },
                           child: Material(
@@ -123,18 +136,31 @@ class _HorariosScreenState extends State<HorariosScreen> {
                               ? () {}
                               : () => {
                                     showTimePicker(
-                                            context: context,
-                                            initialTime: TimeOfDay.now())
-                                        .then(
-                                      (value) => setState(
-                                        () => _horariosFuncionamento
-                                                .sunday.closingTime =
-                                            DateFormat("HH:mm").format(
-                                          DateFormat("hh:mm a").parse(
-                                            value.format(context),
-                                          ),
-                                        ),
-                                      ),
+                                      context: context,
+                                      initialTime: TimeOfDay.now(),
+                                      cancelText: 'Cancelar',
+                                      confirmText: 'Confirmar',
+                                      helpText: 'Horário de fechamento',
+                                      builder: (BuildContext context,
+                                              Widget child) =>
+                                          MediaQuery(
+                                              data: MediaQuery.of(context)
+                                                  .copyWith(
+                                                      alwaysUse24HourFormat:
+                                                          true),
+                                              child: child),
+                                    ).then(
+                                      (value) => value == null
+                                          ? null
+                                          : setState(
+                                              () => _horariosFuncionamento
+                                                      .sunday.closingTime =
+                                                  DateFormat("HH:mm").format(
+                                                DateFormat("hh:mm a").parse(
+                                                  value.format(context),
+                                                ),
+                                              ),
+                                            ),
                                     ),
                                   },
                           child: Material(
@@ -195,16 +221,29 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                     showTimePicker(
                                       context: context,
                                       initialTime: TimeOfDay.now(),
+                                      cancelText: 'Cancelar',
+                                      confirmText: 'Confirmar',
+                                      helpText: 'Horário de abertura',
+                                      builder: (BuildContext context,
+                                              Widget child) =>
+                                          MediaQuery(
+                                              data: MediaQuery.of(context)
+                                                  .copyWith(
+                                                      alwaysUse24HourFormat:
+                                                          true),
+                                              child: child),
                                     ).then(
-                                      (value) => setState(
-                                        () => _horariosFuncionamento
-                                                .monday.openingTime =
-                                            DateFormat("HH:mm").format(
-                                          DateFormat("hh:mm a").parse(
-                                            value.format(context),
-                                          ),
-                                        ),
-                                      ),
+                                      (value) => value == null
+                                          ? null
+                                          : setState(
+                                              () => _horariosFuncionamento
+                                                      .monday.openingTime =
+                                                  DateFormat("HH:mm").format(
+                                                DateFormat("hh:mm a").parse(
+                                                  value.format(context),
+                                                ),
+                                              ),
+                                            ),
                                     ),
                                   },
                           child: Material(
@@ -234,16 +273,29 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                     showTimePicker(
                                       context: context,
                                       initialTime: TimeOfDay.now(),
+                                      cancelText: 'Cancelar',
+                                      confirmText: 'Confirmar',
+                                      helpText: 'Horário de fechamento',
+                                      builder: (BuildContext context,
+                                              Widget child) =>
+                                          MediaQuery(
+                                              data: MediaQuery.of(context)
+                                                  .copyWith(
+                                                      alwaysUse24HourFormat:
+                                                          true),
+                                              child: child),
                                     ).then(
-                                      (value) => setState(
-                                        () => _horariosFuncionamento
-                                                .monday.closingTime =
-                                            DateFormat("HH:mm").format(
-                                          DateFormat("hh:mm a").parse(
-                                            value.format(context),
-                                          ),
-                                        ),
-                                      ),
+                                      (value) => value == null
+                                          ? null
+                                          : setState(
+                                              () => _horariosFuncionamento
+                                                      .monday.closingTime =
+                                                  DateFormat("HH:mm").format(
+                                                DateFormat("hh:mm a").parse(
+                                                  value.format(context),
+                                                ),
+                                              ),
+                                            ),
                                     ),
                                   },
                           child: Material(
@@ -298,16 +350,29 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                     showTimePicker(
                                       context: context,
                                       initialTime: TimeOfDay.now(),
+                                      cancelText: 'Cancelar',
+                                      confirmText: 'Confirmar',
+                                      helpText: 'Horário de abertura',
+                                      builder: (BuildContext context,
+                                              Widget child) =>
+                                          MediaQuery(
+                                              data: MediaQuery.of(context)
+                                                  .copyWith(
+                                                      alwaysUse24HourFormat:
+                                                          true),
+                                              child: child),
                                     ).then(
-                                      (value) => setState(
-                                        () => _horariosFuncionamento
-                                                .tuesday.openingTime =
-                                            DateFormat("HH:mm").format(
-                                          DateFormat("hh:mm a").parse(
-                                            value.format(context),
-                                          ),
-                                        ),
-                                      ),
+                                      (value) => value == null
+                                          ? null
+                                          : setState(
+                                              () => _horariosFuncionamento
+                                                      .tuesday.openingTime =
+                                                  DateFormat("HH:mm").format(
+                                                DateFormat("hh:mm a").parse(
+                                                  value.format(context),
+                                                ),
+                                              ),
+                                            ),
                                     ),
                                   },
                           child: Material(
@@ -337,16 +402,29 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                     showTimePicker(
                                       context: context,
                                       initialTime: TimeOfDay.now(),
+                                      cancelText: 'Cancelar',
+                                      confirmText: 'Confirmar',
+                                      helpText: 'Horário de fechamento',
+                                      builder: (BuildContext context,
+                                              Widget child) =>
+                                          MediaQuery(
+                                              data: MediaQuery.of(context)
+                                                  .copyWith(
+                                                      alwaysUse24HourFormat:
+                                                          true),
+                                              child: child),
                                     ).then(
-                                      (value) => setState(
-                                        () => _horariosFuncionamento
-                                                .tuesday.closingTime =
-                                            DateFormat("HH:mm").format(
-                                          DateFormat("hh:mm a").parse(
-                                            value.format(context),
-                                          ),
-                                        ),
-                                      ),
+                                      (value) => value == null
+                                          ? null
+                                          : setState(
+                                              () => _horariosFuncionamento
+                                                      .tuesday.closingTime =
+                                                  DateFormat("HH:mm").format(
+                                                DateFormat("hh:mm a").parse(
+                                                  value.format(context),
+                                                ),
+                                              ),
+                                            ),
                                     ),
                                   },
                           child: Material(
@@ -403,16 +481,29 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                     showTimePicker(
                                       context: context,
                                       initialTime: TimeOfDay.now(),
+                                      cancelText: 'Cancelar',
+                                      confirmText: 'Confirmar',
+                                      helpText: 'Horário de abertura',
+                                      builder: (BuildContext context,
+                                              Widget child) =>
+                                          MediaQuery(
+                                              data: MediaQuery.of(context)
+                                                  .copyWith(
+                                                      alwaysUse24HourFormat:
+                                                          true),
+                                              child: child),
                                     ).then(
-                                      (value) => setState(
-                                        () => _horariosFuncionamento
-                                                .wednesday.openingTime =
-                                            DateFormat("HH:mm").format(
-                                          DateFormat("hh:mm a").parse(
-                                            value.format(context),
-                                          ),
-                                        ),
-                                      ),
+                                      (value) => value == null
+                                          ? null
+                                          : setState(
+                                              () => _horariosFuncionamento
+                                                      .wednesday.openingTime =
+                                                  DateFormat("HH:mm").format(
+                                                DateFormat("hh:mm a").parse(
+                                                  value.format(context),
+                                                ),
+                                              ),
+                                            ),
                                     ),
                                   },
                           child: Material(
@@ -443,16 +534,29 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                     showTimePicker(
                                       context: context,
                                       initialTime: TimeOfDay.now(),
+                                      cancelText: 'Cancelar',
+                                      confirmText: 'Confirmar',
+                                      helpText: 'Horário de fechamento',
+                                      builder: (BuildContext context,
+                                              Widget child) =>
+                                          MediaQuery(
+                                              data: MediaQuery.of(context)
+                                                  .copyWith(
+                                                      alwaysUse24HourFormat:
+                                                          true),
+                                              child: child),
                                     ).then(
-                                      (value) => setState(
-                                        () => _horariosFuncionamento
-                                                .wednesday.closingTime =
-                                            DateFormat("HH:mm").format(
-                                          DateFormat("hh:mm a").parse(
-                                            value.format(context),
-                                          ),
-                                        ),
-                                      ),
+                                      (value) => value == null
+                                          ? null
+                                          : setState(
+                                              () => _horariosFuncionamento
+                                                      .wednesday.closingTime =
+                                                  DateFormat("HH:mm").format(
+                                                DateFormat("hh:mm a").parse(
+                                                  value.format(context),
+                                                ),
+                                              ),
+                                            ),
                                     ),
                                   },
                           child: Material(
@@ -510,16 +614,29 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                     showTimePicker(
                                       context: context,
                                       initialTime: TimeOfDay.now(),
+                                      cancelText: 'Cancelar',
+                                      confirmText: 'Confirmar',
+                                      helpText: 'Horário de abertura',
+                                      builder: (BuildContext context,
+                                              Widget child) =>
+                                          MediaQuery(
+                                              data: MediaQuery.of(context)
+                                                  .copyWith(
+                                                      alwaysUse24HourFormat:
+                                                          true),
+                                              child: child),
                                     ).then(
-                                      (value) => setState(
-                                        () => _horariosFuncionamento
-                                                .thursday.openingTime =
-                                            DateFormat("HH:mm").format(
-                                          DateFormat("hh:mm a").parse(
-                                            value.format(context),
-                                          ),
-                                        ),
-                                      ),
+                                      (value) => value == null
+                                          ? null
+                                          : setState(
+                                              () => _horariosFuncionamento
+                                                      .thursday.openingTime =
+                                                  DateFormat("HH:mm").format(
+                                                DateFormat("hh:mm a").parse(
+                                                  value.format(context),
+                                                ),
+                                              ),
+                                            ),
                                     ),
                                   },
                           child: Material(
@@ -550,16 +667,29 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                     showTimePicker(
                                       context: context,
                                       initialTime: TimeOfDay.now(),
+                                      cancelText: 'Cancelar',
+                                      confirmText: 'Confirmar',
+                                      helpText: 'Horário de fechamento',
+                                      builder: (BuildContext context,
+                                              Widget child) =>
+                                          MediaQuery(
+                                              data: MediaQuery.of(context)
+                                                  .copyWith(
+                                                      alwaysUse24HourFormat:
+                                                          true),
+                                              child: child),
                                     ).then(
-                                      (value) => setState(
-                                        () => _horariosFuncionamento
-                                                .thursday.closingTime =
-                                            DateFormat("HH:mm").format(
-                                          DateFormat("hh:mm a").parse(
-                                            value.format(context),
-                                          ),
-                                        ),
-                                      ),
+                                      (value) => value == null
+                                          ? null
+                                          : setState(
+                                              () => _horariosFuncionamento
+                                                      .thursday.closingTime =
+                                                  DateFormat("HH:mm").format(
+                                                DateFormat("hh:mm a").parse(
+                                                  value.format(context),
+                                                ),
+                                              ),
+                                            ),
                                     ),
                                   },
                           child: Material(
@@ -617,16 +747,29 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                     showTimePicker(
                                       context: context,
                                       initialTime: TimeOfDay.now(),
+                                      cancelText: 'Cancelar',
+                                      confirmText: 'Confirmar',
+                                      helpText: 'Horário de abertura',
+                                      builder: (BuildContext context,
+                                              Widget child) =>
+                                          MediaQuery(
+                                              data: MediaQuery.of(context)
+                                                  .copyWith(
+                                                      alwaysUse24HourFormat:
+                                                          true),
+                                              child: child),
                                     ).then(
-                                      (value) => setState(
-                                        () => _horariosFuncionamento
-                                                .friday.openingTime =
-                                            DateFormat("HH:mm").format(
-                                          DateFormat("hh:mm a").parse(
-                                            value.format(context),
-                                          ),
-                                        ),
-                                      ),
+                                      (value) => value == null
+                                          ? null
+                                          : setState(
+                                              () => _horariosFuncionamento
+                                                      .friday.openingTime =
+                                                  DateFormat("HH:mm").format(
+                                                DateFormat("hh:mm a").parse(
+                                                  value.format(context),
+                                                ),
+                                              ),
+                                            ),
                                     ),
                                   },
                           child: Material(
@@ -656,16 +799,29 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                     showTimePicker(
                                       context: context,
                                       initialTime: TimeOfDay.now(),
+                                      cancelText: 'Cancelar',
+                                      confirmText: 'Confirmar',
+                                      helpText: 'Horário de fechamento',
+                                      builder: (BuildContext context,
+                                              Widget child) =>
+                                          MediaQuery(
+                                              data: MediaQuery.of(context)
+                                                  .copyWith(
+                                                      alwaysUse24HourFormat:
+                                                          true),
+                                              child: child),
                                     ).then(
-                                      (value) => setState(
-                                        () => _horariosFuncionamento
-                                                .friday.closingTime =
-                                            DateFormat("HH:mm").format(
-                                          DateFormat("hh:mm a").parse(
-                                            value.format(context),
-                                          ),
-                                        ),
-                                      ),
+                                      (value) => value == null
+                                          ? null
+                                          : setState(
+                                              () => _horariosFuncionamento
+                                                      .friday.closingTime =
+                                                  DateFormat("HH:mm").format(
+                                                DateFormat("hh:mm a").parse(
+                                                  value.format(context),
+                                                ),
+                                              ),
+                                            ),
                                     ),
                                   },
                           child: Material(
@@ -722,16 +878,29 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                     showTimePicker(
                                       context: context,
                                       initialTime: TimeOfDay.now(),
+                                      cancelText: 'Cancelar',
+                                      confirmText: 'Confirmar',
+                                      helpText: 'Horário de abertura',
+                                      builder: (BuildContext context,
+                                              Widget child) =>
+                                          MediaQuery(
+                                              data: MediaQuery.of(context)
+                                                  .copyWith(
+                                                      alwaysUse24HourFormat:
+                                                          true),
+                                              child: child),
                                     ).then(
-                                      (value) => setState(
-                                        () => _horariosFuncionamento
-                                                .saturday.openingTime =
-                                            DateFormat("HH:mm").format(
-                                          DateFormat("hh:mm a").parse(
-                                            value.format(context),
-                                          ),
-                                        ),
-                                      ),
+                                      (value) => value == null
+                                          ? null
+                                          : setState(
+                                              () => _horariosFuncionamento
+                                                      .saturday.openingTime =
+                                                  DateFormat("HH:mm").format(
+                                                DateFormat("hh:mm a").parse(
+                                                  value.format(context),
+                                                ),
+                                              ),
+                                            ),
                                     ),
                                   },
                           child: Material(
@@ -762,16 +931,29 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                     showTimePicker(
                                       context: context,
                                       initialTime: TimeOfDay.now(),
+                                      cancelText: 'Cancelar',
+                                      confirmText: 'Confirmar',
+                                      helpText: 'Horário de abertura',
+                                      builder: (BuildContext context,
+                                              Widget child) =>
+                                          MediaQuery(
+                                              data: MediaQuery.of(context)
+                                                  .copyWith(
+                                                      alwaysUse24HourFormat:
+                                                          true),
+                                              child: child),
                                     ).then(
-                                      (value) => setState(
-                                        () => _horariosFuncionamento
-                                                .saturday.closingTime =
-                                            DateFormat("HH:mm").format(
-                                          DateFormat("hh:mm a").parse(
-                                            value.format(context),
-                                          ),
-                                        ),
-                                      ),
+                                      (value) => value == null
+                                          ? null
+                                          : setState(
+                                              () => _horariosFuncionamento
+                                                      .saturday.closingTime =
+                                                  DateFormat("HH:mm").format(
+                                                DateFormat("hh:mm a").parse(
+                                                  value.format(context),
+                                                ),
+                                              ),
+                                            ),
                                     ),
                                   },
                           child: Material(
