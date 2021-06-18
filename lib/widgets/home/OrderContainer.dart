@@ -53,6 +53,7 @@ class _OrderContainerState extends State<OrderContainer> {
                         onTap: () => pushNewScreen(
                           context,
                           screen: ClientProfile(widget.pedido.cliente),
+                          withNavBar: false,
                         ),
                         child: AutoSizeText(
                           widget.pedido.cliente.name,

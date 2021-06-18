@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
@@ -96,14 +97,24 @@ class _ClientProfileState extends State<ClientProfile> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.phone, size: 38.nsp),
+                        Icon(
+                          Icons.phone,
+                          size: 38.nsp,
+                        ),
                         GestureDetector(
                           //TODO clicar e copiar para área de transferência
                           onTap: () => {
+                            Clipboard.setData(
+                              ClipboardData(text: client.phone),
+                            ),
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('teste'),
-                                duration: const Duration(seconds: 1),
+                                content: AutoSizeText(
+                                  'Número copiado para área de transferência',
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.montserrat(),
+                                ),
+                                duration: Duration(seconds: 2),
                               ),
                             )
                           },
@@ -113,6 +124,7 @@ class _ClientProfileState extends State<ClientProfile> {
                               maxLines: 1,
                               style: GoogleFonts.montserrat(
                                 fontSize: 32.nsp,
+                                decoration: TextDecoration.underline,
                               ),
                             ),
                           ),
