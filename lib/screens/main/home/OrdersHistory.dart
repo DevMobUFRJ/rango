@@ -32,6 +32,7 @@ class _OrdersHistoryState extends State<OrdersHistory> {
       extendBodyBehindAppBar: true,
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
+        height: 1.hp,
         child: SingleChildScrollView(
           child: Stack(
             children: <Widget>[
@@ -43,7 +44,7 @@ class _OrdersHistoryState extends State<OrdersHistory> {
               Container(
                 margin: EdgeInsets.only(top: 0.07.hp),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
@@ -84,7 +85,7 @@ class _OrdersHistoryState extends State<OrdersHistory> {
                             ),
                           )
                         : Container(
-                            constraints: BoxConstraints(maxHeight: 0.67.hp),
+                            constraints: BoxConstraints(maxHeight: 0.7.hp),
                             child: AnimatedList(
                               key: _listKey,
                               initialItemCount: orders.length,

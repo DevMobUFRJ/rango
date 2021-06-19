@@ -32,7 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
-        height: 1.hp - 56,
         child: orders.length < 1 && ordersClosed.length < 1
             ? NoOrdersWidget(assetName: assetName, widget: widget)
             : SingleChildScrollView(
@@ -75,8 +74,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 right: 0.1.wp,
                               ),
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Container(
                                     child: ordersClosed.length > 1 &&
@@ -94,8 +91,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                   ),
                                   Container(
-                                    margin: EdgeInsets.only(
-                                        right: 0.02.wp, bottom: 2),
+                                    margin:
+                                        EdgeInsets.only(left: 10, bottom: 2),
                                     padding: EdgeInsets.only(
                                         top: 3, bottom: 3, right: 4, left: 3),
                                     decoration: BoxDecoration(
@@ -112,6 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       child: Icon(
                                         Icons.history,
                                         color: Colors.white,
+                                        size: 18,
                                       ),
                                     ),
                                   )

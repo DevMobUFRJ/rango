@@ -27,7 +27,6 @@ class _AddMealScreenState extends State<AddMealScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
-        height: 1.hp - 56,
         child: pedidos.length < 1
             ? Column(
                 mainAxisSize: MainAxisSize.min,
