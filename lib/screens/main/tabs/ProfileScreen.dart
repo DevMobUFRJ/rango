@@ -74,7 +74,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           backgroundColor: Theme.of(context).accentColor,
                           backgroundImage:
                               AssetImage('assets/imgs/user_placeholder.png'),
-                          radius: 120.w,
+                          radius: 80,
                         ),
                       ),
                   ],

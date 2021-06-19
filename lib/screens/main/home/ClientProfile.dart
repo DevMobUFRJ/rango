@@ -7,6 +7,7 @@ import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/dadosMarretados.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/screens/main/home/ChatScreen.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ClientProfile extends StatefulWidget {
   final Client client;
@@ -86,7 +87,7 @@ class _ClientProfileState extends State<ClientProfile> {
                               backgroundColor: Theme.of(context).accentColor,
                               backgroundImage: AssetImage(
                                   'assets/imgs/user_placeholder.png'),
-                              radius: 120.w,
+                              radius: 80,
                             ),
                           ),
                       ],
@@ -129,6 +130,20 @@ class _ClientProfileState extends State<ClientProfile> {
                                 fontSize: 32.nsp,
                                 decoration: TextDecoration.underline,
                               ),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(
+                            left: 4,
+                            bottom: 2,
+                          ),
+                          child: GestureDetector(
+                            onTap: () => {},
+                            child: FaIcon(
+                              FontAwesomeIcons.whatsapp,
+                              color: Colors.green,
+                              size: 38.nsp,
                             ),
                           ),
                         ),
