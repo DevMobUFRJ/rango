@@ -226,22 +226,24 @@ class _OrderContainerState extends State<OrderContainer> {
                 ),
               ),
             ),
-            Container(
-              width: 25,
-              height: 25,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                color: Theme.of(context).accentColor,
-              ),
-              child: GestureDetector(
-                onTap: () => _cancelOrder(widget.pedido),
-                child: Icon(
-                  Icons.close,
-                  size: 15,
-                  color: Colors.white,
+            if (!widget.pedido.vendida)
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  color: Colors.red[400],
+                ),
+                child: GestureDetector(
+                  onTap: () => _cancelOrder(widget.pedido),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Icon(
+                      Icons.close,
+                      size: 15,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),
