@@ -7,6 +7,8 @@ import 'package:rango/screens/main/profile/EditProfileScreen.dart';
 import 'package:rango/screens/main/profile/HorariosScreen.dart';
 import 'package:rango/screens/main/profile/ProfileSettings.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:rango/screens/main/profile/ReportsScreen.dart';
+import 'package:rango/screens/main/profile/SetLocationScreen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Seller usuario;
@@ -226,7 +228,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Icons.map,
                               color: Colors.white,
                             ),
-                            onPressed: () => {},
+                            onPressed: () => pushNewScreen(
+                              context,
+                              screen: SetLocationScreen(),
+                            ),
                           ),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.all(Radius.circular(60)),
@@ -319,7 +324,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 "Ver mais",
                                 style: TextStyle(fontSize: 36.nsp),
                               ),
-                              onPressed: () => {},
+                              onPressed: () => pushNewScreen(
+                                context,
+                                screen: ReportsScreen(),
+                              ),
                             ),
                           ),
                         ),

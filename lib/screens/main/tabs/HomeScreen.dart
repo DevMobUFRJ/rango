@@ -27,7 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
     final String assetName = 'assets/imgs/curva_principal.svg';
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
