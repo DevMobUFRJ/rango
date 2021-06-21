@@ -50,20 +50,47 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Flexible(
                             flex: 1,
-                            child: Container(
-                              width: 0.7.wp,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 0.04.wp, vertical: 0.01.hp),
-                              child: AutoSizeText(
-                                'Olá,\n${widget.usuario.name}!',
-                                maxLines: 2,
-                                textAlign: TextAlign.start,
-                                style: GoogleFonts.montserrat(
-                                  color: Colors.deepOrange[300],
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 60.nsp,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Container(
+                                  width: 0.7.wp,
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 0.04.wp, vertical: 0.01.hp),
+                                  child: AutoSizeText(
+                                    'Olá,\n${widget.usuario.name}!',
+                                    maxLines: 2,
+                                    textAlign: TextAlign.start,
+                                    style: GoogleFonts.montserrat(
+                                      color: Colors.deepOrange[300],
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 60.nsp,
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                Container(
+                                  margin: EdgeInsets.only(left: 50, bottom: 10),
+                                  padding: EdgeInsets.only(
+                                      top: 3, bottom: 3, right: 4, left: 3),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                      ScreenUtil().setSp(30),
+                                    ),
+                                    color: Theme.of(context).accentColor,
+                                  ),
+                                  child: GestureDetector(
+                                    onTap: () => pushNewScreen(
+                                      context,
+                                      screen: OrdersHistory(widget.usuario),
+                                    ),
+                                    child: Icon(
+                                      Icons.history,
+                                      color: Colors.white,
+                                      size: 22,
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
                           ),
                           Flexible(
@@ -74,6 +101,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 right: 0.1.wp,
                               ),
                               child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Container(
                                     child: ordersClosed.length > 1 &&
@@ -90,29 +119,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ),
                                           ),
                                   ),
-                                  Container(
-                                    margin:
-                                        EdgeInsets.only(left: 10, bottom: 2),
-                                    padding: EdgeInsets.only(
-                                        top: 3, bottom: 3, right: 4, left: 3),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                        ScreenUtil().setSp(30),
-                                      ),
-                                      color: Theme.of(context).accentColor,
-                                    ),
-                                    child: GestureDetector(
-                                      onTap: () => pushNewScreen(
-                                        context,
-                                        screen: OrdersHistory(widget.usuario),
-                                      ),
-                                      child: Icon(
-                                        Icons.history,
-                                        color: Colors.white,
-                                        size: 18,
-                                      ),
-                                    ),
-                                  )
                                 ],
                               ),
                             ),
