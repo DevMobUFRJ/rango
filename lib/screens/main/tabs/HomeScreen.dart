@@ -130,11 +130,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                       orders.length < 1
                                   ? Container(
                                       margin: EdgeInsets.symmetric(
-                                        horizontal: 0.1.wp,
-                                        vertical: 8,
+                                        horizontal: 15,
+                                        vertical: 20,
                                       ),
                                       child: AutoSizeText(
-                                        'Você não tem mais pedidos em abertos hoje!\nPara verificar os pedidos já fechados, clique acima no ícone de histórico.',
+                                        'Você não tem mais pedidos em abertos hoje! Para verificar os pedidos já fechados, clique acima no ícone de histórico.',
                                         style: GoogleFonts.montserrat(
                                           color: Theme.of(context).accentColor,
                                           fontWeight: FontWeight.w400,

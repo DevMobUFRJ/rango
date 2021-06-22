@@ -63,26 +63,12 @@ class _AddMealScreenState extends State<AddMealScreen> {
                     child: Container(
                       child: Column(
                         children: [
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Container(
-                              margin: EdgeInsets.symmetric(horizontal: 0.03.wp),
-                              child: AutoSizeText(
-                                "Cardápio do dia",
-                                style: GoogleFonts.montserrat(
-                                  color: Theme.of(context).accentColor,
-                                  fontSize: 30.ssp,
-                                ),
-                              ),
-                            ),
-                          ),
                           Container(
-                            margin: EdgeInsets.symmetric(
-                              vertical: 10,
-                              horizontal: 10,
-                            ),
+                            margin:
+                                EdgeInsets.only(left: 15, right: 15, top: 8),
                             child: AutoSizeText(
-                                'Você ainda não configurou o cardápio do dia!\nClique nos botões abaixo para fazer isso:',
+                                'Você ainda não configurou o cardápio do dia! Clique nos botões abaixo para configurar:',
+                                textAlign: TextAlign.center,
                                 style: GoogleFonts.montserrat(
                                   color: Theme.of(context).accentColor,
                                   fontWeight: FontWeight.w400,
@@ -154,18 +140,11 @@ class _AddMealScreenState extends State<AddMealScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        AutoSizeText(
-                          "Adicionar pratos já cadastrados:",
-                          style: GoogleFonts.montserrat(
-                            color: Theme.of(context).accentColor,
-                            fontSize: 32.nsp,
-                          ),
-                        ),
                         Container(
-                          margin:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          margin: EdgeInsets.symmetric(horizontal: 15),
                           child: AutoSizeText(
-                              'Aqui irão aparecer quentinhas antigas para serem adicionadas rapidamente ao cardápio do dia!',
+                              'Quentinhas antigas serão mostradas aqui para adição rápida ao cardápio do dia!',
+                              textAlign: TextAlign.center,
                               style: GoogleFonts.montserrat(
                                 color: Theme.of(context).accentColor,
                                 fontWeight: FontWeight.w400,

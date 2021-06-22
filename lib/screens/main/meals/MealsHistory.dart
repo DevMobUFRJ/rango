@@ -46,11 +46,12 @@ class _MealsHistoryState extends State<MealsHistory> {
           ? Container(
               alignment: Alignment.center,
               margin: EdgeInsets.symmetric(horizontal: 0.1.wp),
-              child: AutoSizeText("Você não tem histórico de quentinhas.",
+              child: AutoSizeText(
+                  "Sem histórico de quentinhas! Reservas já finalizadas aparecerão aqui.",
                   style: GoogleFonts.montserrat(
                     color: Theme.of(context).accentColor,
                     fontWeight: FontWeight.w400,
-                    fontSize: 36.nsp,
+                    fontSize: 52.nsp,
                   )),
             )
           : Container(
