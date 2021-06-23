@@ -95,19 +95,13 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                                         alwaysUse24HourFormat:
                                                             true),
                                                 child: child),
-                                  ).then(
-                                    (value) => value == null
-                                        ? null
-                                        : setState(
-                                            () => _horariosFuncionamento
-                                                    .sunday.openingTime =
-                                                DateFormat("HH:mm").format(
-                                              DateFormat("hh:mm a").parse(
-                                                value.format(context),
-                                              ),
-                                            ),
-                                          ),
-                                  ),
+                                  ).then((value) => value == null
+                                      ? null
+                                      : setState(
+                                          () => _horariosFuncionamento
+                                                  .sunday.openingTime =
+                                              value.format(context),
+                                        )),
                                 },
                         child: Material(
                           shape: RoundedRectangleBorder(),
@@ -153,11 +147,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                         : setState(
                                             () => _horariosFuncionamento
                                                     .sunday.closingTime =
-                                                DateFormat("HH:mm").format(
-                                              DateFormat("hh:mm a").parse(
                                                 value.format(context),
-                                              ),
-                                            ),
                                           ),
                                   ),
                                 },
@@ -236,11 +226,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                         : setState(
                                             () => _horariosFuncionamento
                                                     .monday.openingTime =
-                                                DateFormat("HH:mm").format(
-                                              DateFormat("hh:mm a").parse(
                                                 value.format(context),
-                                              ),
-                                            ),
                                           ),
                                   ),
                                 },
@@ -288,11 +274,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                         : setState(
                                             () => _horariosFuncionamento
                                                     .monday.closingTime =
-                                                DateFormat("HH:mm").format(
-                                              DateFormat("hh:mm a").parse(
                                                 value.format(context),
-                                              ),
-                                            ),
                                           ),
                                   ),
                                 },
@@ -365,11 +347,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                         : setState(
                                             () => _horariosFuncionamento
                                                     .tuesday.openingTime =
-                                                DateFormat("HH:mm").format(
-                                              DateFormat("hh:mm a").parse(
                                                 value.format(context),
-                                              ),
-                                            ),
                                           ),
                                   ),
                                 },
@@ -417,11 +395,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                         : setState(
                                             () => _horariosFuncionamento
                                                     .tuesday.closingTime =
-                                                DateFormat("HH:mm").format(
-                                              DateFormat("hh:mm a").parse(
                                                 value.format(context),
-                                              ),
-                                            ),
                                           ),
                                   ),
                                 },
@@ -496,11 +470,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                         : setState(
                                             () => _horariosFuncionamento
                                                     .wednesday.openingTime =
-                                                DateFormat("HH:mm").format(
-                                              DateFormat("hh:mm a").parse(
                                                 value.format(context),
-                                              ),
-                                            ),
                                           ),
                                   ),
                                 },
@@ -548,11 +518,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                         : setState(
                                             () => _horariosFuncionamento
                                                     .wednesday.closingTime =
-                                                DateFormat("HH:mm").format(
-                                              DateFormat("hh:mm a").parse(
                                                 value.format(context),
-                                              ),
-                                            ),
                                           ),
                                   ),
                                 },
@@ -627,11 +593,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                         : setState(
                                             () => _horariosFuncionamento
                                                     .thursday.openingTime =
-                                                DateFormat("HH:mm").format(
-                                              DateFormat("hh:mm a").parse(
                                                 value.format(context),
-                                              ),
-                                            ),
                                           ),
                                   ),
                                 },
@@ -679,11 +641,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                         : setState(
                                             () => _horariosFuncionamento
                                                     .thursday.closingTime =
-                                                DateFormat("HH:mm").format(
-                                              DateFormat("hh:mm a").parse(
                                                 value.format(context),
-                                              ),
-                                            ),
                                           ),
                                   ),
                                 },
@@ -758,11 +716,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                         : setState(
                                             () => _horariosFuncionamento
                                                     .friday.openingTime =
-                                                DateFormat("HH:mm").format(
-                                              DateFormat("hh:mm a").parse(
                                                 value.format(context),
-                                              ),
-                                            ),
                                           ),
                                   ),
                                 },
@@ -810,11 +764,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                         : setState(
                                             () => _horariosFuncionamento
                                                     .friday.closingTime =
-                                                DateFormat("HH:mm").format(
-                                              DateFormat("hh:mm a").parse(
                                                 value.format(context),
-                                              ),
-                                            ),
                                           ),
                                   ),
                                 },
@@ -889,11 +839,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                         : setState(
                                             () => _horariosFuncionamento
                                                     .saturday.openingTime =
-                                                DateFormat("HH:mm").format(
-                                              DateFormat("hh:mm a").parse(
                                                 value.format(context),
-                                              ),
-                                            ),
                                           ),
                                   ),
                                 },
@@ -941,11 +887,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                         : setState(
                                             () => _horariosFuncionamento
                                                     .saturday.closingTime =
-                                                DateFormat("HH:mm").format(
-                                              DateFormat("hh:mm a").parse(
                                                 value.format(context),
-                                              ),
-                                            ),
                                           ),
                                   ),
                                 },
