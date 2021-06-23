@@ -143,7 +143,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         Flexible(
                           flex: 2,
                           child: CustomTextFormField(
-                            labelText: 'Telefone:',
+                            labelText: 'Telefone com DDD:',
                             key: ValueKey('phone'),
                             controller: _tel,
                             onChanged: (value) =>

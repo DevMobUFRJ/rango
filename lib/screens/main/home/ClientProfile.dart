@@ -8,6 +8,7 @@ import 'package:rango/dadosMarretados.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/screens/main/home/ChatScreen.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ClientProfile extends StatefulWidget {
   final Client client;
@@ -31,6 +32,13 @@ class _ClientProfileState extends State<ClientProfile> {
       loading = false;
     });
     super.initState();
+  }
+
+  String encodeQueryParameters(Map<String, String> params) {
+    return params.entries
+        .map((e) =>
+            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .join('&');
   }
 
   @override
@@ -93,7 +101,7 @@ class _ClientProfileState extends State<ClientProfile> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 10),
                   if (client.phone != null)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -115,10 +123,6 @@ class _ClientProfileState extends State<ClientProfile> {
                                   style: GoogleFonts.montserrat(),
                                 ),
                                 duration: Duration(seconds: 2),
-                                // action: SnackBarAction(
-                                //   label: 'Whatsapp',
-                                //   onPressed: () => print('teste'),
-                                // ),
                               ),
                             )
                           },
@@ -127,7 +131,7 @@ class _ClientProfileState extends State<ClientProfile> {
                               client.phone,
                               maxLines: 1,
                               style: GoogleFonts.montserrat(
-                                fontSize: 32.nsp,
+                                fontSize: 38.nsp,
                                 decoration: TextDecoration.underline,
                               ),
                             ),
@@ -136,14 +140,32 @@ class _ClientProfileState extends State<ClientProfile> {
                         Container(
                           margin: EdgeInsets.only(
                             left: 4,
-                            bottom: 2,
                           ),
                           child: GestureDetector(
-                            onTap: () => {},
+                            onTap: () {
+                              try {
+                                final Uri teste = Uri(
+                                  scheme: 'http',
+                                  path:
+                                      "wa.me/+55${client.phone.replaceAll('(', '').replaceAll(')', '')}",
+                                );
+                                launch(teste.toString());
+                              } catch (error) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'WhatsApp não instalado',
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.montserrat(),
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
                             child: FaIcon(
                               FontAwesomeIcons.whatsapp,
                               color: Colors.green,
-                              size: 38.nsp,
+                              size: 42.nsp,
                             ),
                           ),
                         ),
@@ -157,7 +179,9 @@ class _ClientProfileState extends State<ClientProfile> {
                     child: AutoSizeText(
                       '${client.name} comprou X vezes com você, gastando um total de R\$YY,YY',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.montserrat(fontSize: 32.nsp),
+                      style: GoogleFonts.montserrat(
+                        fontSize: 35.nsp,
+                      ),
                     ),
                   ),
                   ElevatedButton.icon(
