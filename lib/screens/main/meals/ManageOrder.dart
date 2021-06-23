@@ -18,10 +18,6 @@ class ManageOrder extends StatefulWidget {
 }
 
 class _ManageOrderState extends State<ManageOrder> {
-  File _userImageFile;
-
-  void _pickedImage(File image) => _userImageFile = image;
-
   @override
   Widget build(BuildContext context) {
     TextEditingController _mealName;
@@ -62,7 +58,6 @@ class _ManageOrderState extends State<ManageOrder> {
             child: Column(
               children: [
                 MealImagePicker(
-                  _pickedImage,
                   image: widget.order != null &&
                           widget.order.quentinhas[0].quentinha.picture != null
                       ? widget.order.quentinhas[0].quentinha.picture
@@ -73,20 +68,20 @@ class _ManageOrderState extends State<ManageOrder> {
                   margin: EdgeInsets.only(
                     bottom: 10,
                   ),
-                  constraints: BoxConstraints(maxWidth: 0.6.wp),
+                  constraints: BoxConstraints(maxWidth: 0.8.wp),
                   child: TextFormField(
                     maxLines: 5,
                     minLines: 1,
                     controller: _mealName,
                     style: GoogleFonts.montserrat(
-                      fontSize: 28.ssp,
+                      fontSize: 38.nsp,
                       fontWeight: FontWeight.w500,
                       color: Theme.of(context).accentColor,
                     ),
                     decoration: InputDecoration(
                       hintText: 'Nome do prato',
                       hintStyle: GoogleFonts.montserrat(
-                        fontSize: 32.ssp,
+                        fontSize: 38.nsp,
                         fontWeight: FontWeight.w500,
                         color: Theme.of(context).accentColor,
                       ),
@@ -108,9 +103,12 @@ class _ManageOrderState extends State<ManageOrder> {
                     ),
                   ),
                 ),
+                SizedBox(
+                  height: 0.01.hp,
+                ),
                 Container(
                   margin: EdgeInsets.only(bottom: 0.01.hp),
-                  constraints: BoxConstraints(maxWidth: 0.6.wp),
+                  constraints: BoxConstraints(maxWidth: 0.8.wp),
                   child: Material(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
@@ -119,9 +117,7 @@ class _ManageOrderState extends State<ManageOrder> {
                     child: TextFormField(
                       controller: _mealDescription,
                       style: GoogleFonts.montserrat(
-                        fontSize: _mealDescription.value.text.length > 0
-                            ? 25.ssp
-                            : 32.ssp,
+                        fontSize: 38.nsp,
                         fontWeight: FontWeight.w500,
                         color: Theme.of(context).accentColor,
                       ),
@@ -130,67 +126,7 @@ class _ManageOrderState extends State<ManageOrder> {
                       decoration: InputDecoration(
                         hintText: 'Descrição',
                         hintStyle: GoogleFonts.montserrat(
-                          color: Color(0xFFFC3C3C3),
-                        ),
-                        isDense: true,
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 5,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 0.01.hp),
-                  constraints: BoxConstraints(maxWidth: 0.6.wp),
-                  child: Material(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    elevation: 5,
-                    child: TextFormField(
-                      controller: _mealValue,
-                      style: GoogleFonts.montserrat(
-                        fontSize: 32.ssp,
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).accentColor,
-                      ),
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        hintText: 'Valor',
-                        hintStyle: GoogleFonts.montserrat(
-                          color: Color(0xFFFC3C3C3),
-                        ),
-                        isDense: true,
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 5,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  constraints: BoxConstraints(maxWidth: 0.6.wp),
-                  child: Material(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    elevation: 5,
-                    child: TextFormField(
-                      controller: _mealQuantity,
-                      keyboardType: TextInputType.number,
-                      style: GoogleFonts.montserrat(
-                        fontSize: 28.ssp,
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).accentColor,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: 'Quantidade disponível',
-                        hintStyle: GoogleFonts.montserrat(
+                          fontSize: 38.nsp,
                           color: Color(0xFFFC3C3C3),
                         ),
                         isDense: true,
@@ -206,6 +142,88 @@ class _ManageOrderState extends State<ManageOrder> {
                 SizedBox(
                   height: 0.01.hp,
                 ),
+                Container(
+                  constraints: BoxConstraints(maxWidth: 0.8.wp),
+                  child: Row(
+                    children: [
+                      Flexible(
+                        flex: 1,
+                        child: Container(
+                          margin: EdgeInsets.only(right: 10),
+                          child: Material(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            elevation: 5,
+                            child: TextFormField(
+                              textAlign: TextAlign.center,
+                              controller: _mealValue,
+                              style: GoogleFonts.montserrat(
+                                fontSize: 38.nsp,
+                                fontWeight: FontWeight.w500,
+                                color: Theme.of(context).accentColor,
+                              ),
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                hintText: 'Valor',
+                                alignLabelWithHint: true,
+                                hintStyle: GoogleFonts.montserrat(
+                                  color: Color(0xFFFC3C3C3),
+                                  fontSize: 38.nsp,
+                                ),
+                                isDense: true,
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                  vertical: 5,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Flexible(
+                        flex: 1,
+                        child: Container(
+                          margin: EdgeInsets.only(left: 10),
+                          child: Material(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            elevation: 5,
+                            child: TextFormField(
+                              controller: _mealQuantity,
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.montserrat(
+                                fontSize: 38.nsp,
+                                fontWeight: FontWeight.w500,
+                                color: Theme.of(context).accentColor,
+                              ),
+                              decoration: InputDecoration(
+                                hintText: 'Quantidade',
+                                hintStyle: GoogleFonts.montserrat(
+                                  color: Color(0xFFFC3C3C3),
+                                  fontSize: 32.nsp,
+                                ),
+                                alignLabelWithHint: true,
+                                isDense: true,
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                  vertical: 5,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 0.01.hp,
+                ),
                 Center(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -215,11 +233,11 @@ class _ManageOrderState extends State<ManageOrder> {
                     ),
                     onPressed: () => {},
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 0.1.wp),
+                      padding: EdgeInsets.symmetric(horizontal: 42),
                       child: AutoSizeText(
                         "Confirmar",
                         style: GoogleFonts.montserrat(
-                          fontSize: 32.ssp,
+                          fontSize: 38.nsp,
                         ),
                       ),
                     ),

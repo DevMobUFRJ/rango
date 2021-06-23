@@ -5,12 +5,10 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
 class MealImagePicker extends StatefulWidget {
-  final Function(File pickedImage) _imagePickFn;
   final String image;
   final String editText;
 
-  MealImagePicker(
-    this._imagePickFn, {
+  MealImagePicker({
     this.image,
     this.editText,
   });
@@ -75,12 +73,12 @@ class _MealImagePickerState extends State<MealImagePicker> {
       try {
         final pickedImage = await picker.getImage(
           source: pickImgFromGallery ? ImageSource.gallery : ImageSource.camera,
-          imageQuality: 75,
-          maxWidth: 150,
+          imageQuality: 85,
+          maxWidth: 0.9.wp,
+          maxHeight: 0.7.hp,
         );
         if (pickedImage != null) {
           final pickedImageFile = File(pickedImage.path);
-          widget._imagePickFn(pickedImageFile);
           setState(() => _pickedImage = pickedImageFile);
         }
       } catch (error) {
@@ -98,57 +96,55 @@ class _MealImagePickerState extends State<MealImagePicker> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: _pickImage,
-      child: Container(
-        child: Column(
-          children: [
-            if (widget.editText != null)
-              Text(
-                widget.editText,
-                style: GoogleFonts.montserrat(
-                  fontSize: 36.nsp,
-                  color: Theme.of(context).accentColor,
-                  decoration: TextDecoration.underline,
-                ),
+      child: Column(
+        children: [
+          if (widget.editText != null)
+            Text(
+              widget.editText,
+              style: GoogleFonts.montserrat(
+                fontSize: 36.nsp,
+                color: Theme.of(context).accentColor,
+                decoration: TextDecoration.underline,
               ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (_pickedImage != null || widget.image != null)
-                  Container(
-                    margin: EdgeInsets.symmetric(vertical: 10),
-                    constraints: BoxConstraints(maxHeight: 0.4.hp),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(6),
-                      child: Image(
-                        image: _pickedImage != null
-                            ? FileImage(_pickedImage)
-                            : NetworkImage(widget.image),
-                        width: 0.6.wp,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                if (_pickedImage == null && widget.image == null)
-                  Container(
-                    margin: EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(8),
-                      ),
-                      color: Theme.of(context).accentColor,
-                    ),
-                    width: 0.5.wp,
-                    height: 0.25.wp,
-                    child: Icon(
-                      Icons.photo,
-                      color: Colors.white,
-                      size: ScreenUtil().setSp(100),
-                    ),
-                  ),
-              ],
             ),
-          ],
-        ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (_pickedImage != null || widget.image != null)
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  constraints:
+                      BoxConstraints(maxHeight: 0.7.hp, maxWidth: 0.9.wp),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: Image(
+                      image: _pickedImage != null
+                          ? FileImage(_pickedImage)
+                          : NetworkImage(widget.image),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              if (_pickedImage == null && widget.image == null)
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(8),
+                    ),
+                    color: Theme.of(context).accentColor,
+                  ),
+                  width: 0.9.wp,
+                  height: 0.5.wp,
+                  child: Icon(
+                    Icons.photo,
+                    color: Colors.white,
+                    size: 160.nsp,
+                  ),
+                ),
+            ],
+          ),
+        ],
       ),
     );
   }
