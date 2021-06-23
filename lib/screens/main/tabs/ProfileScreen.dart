@@ -34,7 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
-        height: MediaQuery.of(context).size.height - kToolbarHeight - 86,
+        height: 1.hp - 56,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
@@ -112,7 +112,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: () => pushNewScreen(
                         context,
                         screen: EditProfileScreen(widget.usuario),
-                        withNavBar: true,
+                        withNavBar: false,
                         pageTransitionAnimation:
                             PageTransitionAnimation.cupertino,
                       ),
@@ -126,7 +126,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: () => pushNewScreen(
                         context,
                         screen: ProfileSettings(widget.usuario),
-                        withNavBar: true,
+                        withNavBar: false,
                         pageTransitionAnimation:
                             PageTransitionAnimation.cupertino,
                       ),
@@ -231,6 +231,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             onPressed: () => pushNewScreen(
                               context,
                               screen: SetLocationScreen(),
+                              withNavBar: false,
                             ),
                           ),
                           decoration: BoxDecoration(
@@ -260,8 +261,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Icons.schedule,
                               color: Colors.white,
                             ),
-                            onPressed: () => pushNewScreen(context,
-                                screen: HorariosScreen()),
+                            onPressed: () => pushNewScreen(
+                              context,
+                              screen: HorariosScreen(),
+                              withNavBar: false,
+                            ),
                           ),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.all(
@@ -327,6 +331,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               onPressed: () => pushNewScreen(
                                 context,
                                 screen: ReportsScreen(),
+                                withNavBar: false,
                               ),
                             ),
                           ),

@@ -22,11 +22,11 @@ class AddMealScreen extends StatefulWidget {
 class _AddMealScreenState extends State<AddMealScreen> {
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
     final String assetName = 'assets/imgs/curva_principal.svg';
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
+        height: 1.hp - 56,
         child: pedidos.length < 1
             ? Column(
                 mainAxisSize: MainAxisSize.min,
@@ -93,8 +93,11 @@ class _AddMealScreenState extends State<AddMealScreen> {
                                               BorderRadius.circular(12),
                                         ),
                                       ),
-                                      onPressed: () => pushNewScreen(context,
-                                          screen: ManageOrder()),
+                                      onPressed: () => pushNewScreen(
+                                        context,
+                                        screen: ManageOrder(),
+                                        withNavBar: false,
+                                      ),
                                       child: AutoSizeText(
                                         "Adicionar",
                                         style: GoogleFonts.montserrat(
@@ -117,6 +120,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
                                       onPressed: () => pushNewScreen(
                                         context,
                                         screen: MealsHistory(orders: pedidos),
+                                        withNavBar: false,
                                       ),
                                       child: AutoSizeText(
                                         "Histórico",
@@ -229,8 +233,11 @@ class _AddMealScreenState extends State<AddMealScreen> {
                                                 BorderRadius.circular(12),
                                           ),
                                         ),
-                                        onPressed: () => pushNewScreen(context,
-                                            screen: ManageOrder()),
+                                        onPressed: () => pushNewScreen(
+                                          context,
+                                          screen: ManageOrder(),
+                                          withNavBar: false,
+                                        ),
                                         child: AutoSizeText(
                                           "Adicionar",
                                           style: GoogleFonts.montserrat(
@@ -253,6 +260,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
                                         onPressed: () => pushNewScreen(
                                           context,
                                           screen: MealsHistory(orders: pedidos),
+                                          withNavBar: false,
                                         ),
                                         child: AutoSizeText(
                                           "Histórico",

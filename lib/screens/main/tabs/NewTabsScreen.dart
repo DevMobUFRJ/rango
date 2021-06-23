@@ -59,7 +59,7 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
             controller: _controller,
             navBarStyle: NavBarStyle.style6,
             confineInSafeArea: true,
-            bottomScreenMargin: 56,
+            bottomScreenMargin: 0,
             backgroundColor: Theme.of(context).backgroundColor,
             handleAndroidBackButtonPress: true,
             resizeToAvoidBottomInset: true,

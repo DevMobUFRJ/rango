@@ -55,11 +55,10 @@ class _MealsHistoryState extends State<MealsHistory> {
                   )),
             )
           : Container(
-              height: 1.hp - 0.216.hp,
               child: Column(
                 children: [
-                  Flexible(
-                    flex: 6,
+                  Expanded(
+                    flex: 8,
                     child: Container(
                       child: StaggeredGridView.countBuilder(
                         scrollDirection: Axis.vertical,
@@ -77,6 +76,7 @@ class _MealsHistoryState extends State<MealsHistory> {
                                   screen: ManageOrder(
                                     order: widget.orders[index],
                                   ),
+                                  withNavBar: false,
                                 ),
                                 child: Card(
                                   semanticContainer: true,
@@ -144,9 +144,11 @@ class _MealsHistoryState extends State<MealsHistory> {
                   Expanded(
                     flex: 1,
                     child: Container(
+                      alignment: Alignment.center,
                       color: Color(0xFFF5F5F5),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
                             margin: EdgeInsets.only(right: 5),

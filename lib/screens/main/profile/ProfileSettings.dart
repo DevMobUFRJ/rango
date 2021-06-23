@@ -215,7 +215,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                 onTap: () => pushNewScreen(
                   context,
                   screen: AboutScreen(),
-                  withNavBar: true,
+                  withNavBar: false,
                   pageTransitionAnimation: PageTransitionAnimation.cupertino,
                 ),
                 child: Align(

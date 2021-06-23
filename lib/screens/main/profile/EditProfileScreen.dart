@@ -29,13 +29,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   TextEditingController _confirmPass = TextEditingController();
   TextEditingController _tel;
 
+  final _passFocusNode = FocusNode();
+  final _focusNodeConfirmPass = FocusNode();
+
   String _phone;
   String _password;
   String _telefone;
   String _confirmPassword;
   File _userImageFile;
   bool _loading = false;
-  final _focusNodeConfirmPass = FocusNode();
 
   void _pickedImage(File image) => setState(() => _userImageFile = image);
 
@@ -96,7 +98,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
@@ -109,171 +110,166 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
       ),
       body: LayoutBuilder(
-        builder: (ctx, constraint) => SingleChildScrollView(
-          child: Container(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: 0.8.hp),
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Flexible(
-                      flex: 1,
-                      child: GestureDetector(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            UserImagePicker(
-                              _pickedImage,
-                              image: widget.user.picture,
-                              editText: 'Editar',
-                            ),
-                          ],
+        builder: (ctx, constraint) => Container(
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: GestureDetector(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        UserImagePicker(
+                          _pickedImage,
+                          image: widget.user.picture,
+                          editText: 'Editar',
                         ),
-                      ),
+                      ],
                     ),
-                    SizedBox(height: 0.02.hp),
-                    Expanded(
-                      flex: 3,
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Flexible(
-                              flex: 2,
-                              child: CustomTextFormField(
-                                labelText: 'Telefone:',
-                                key: ValueKey('phone'),
-                                controller: _tel,
-                                onChanged: (value) =>
-                                    setState(() => _telefone = value),
-                                validator: (String value) {
-                                  if (value.trim() != '' &&
-                                      value.trim().length != 11) {
-                                    setState(() => _telefoneErrorMessage =
-                                        'Telefone precisa ter 11 números');
-                                  }
-                                  return null;
-                                },
-                                errorText: _telefoneErrorMessage,
-                                keyboardType: TextInputType.number,
-                                textInputAction: TextInputAction.next,
-                                onSaved: (value) => _phone = value,
-                                onFieldSubmitted: (_) =>
-                                    FocusScope.of(context).nextFocus(),
-                              ),
+                  ),
+                ),
+                SizedBox(height: 0.02.hp),
+                Expanded(
+                  flex: 3,
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          flex: 2,
+                          child: CustomTextFormField(
+                            labelText: 'Telefone:',
+                            key: ValueKey('phone'),
+                            controller: _tel,
+                            onChanged: (value) =>
+                                setState(() => _telefone = value),
+                            validator: (String value) {
+                              if (value.trim() != '' &&
+                                  value.trim().length != 11) {
+                                setState(() => _telefoneErrorMessage =
+                                    'Telefone precisa ter 11 números');
+                              }
+                              return null;
+                            },
+                            errorText: _telefoneErrorMessage,
+                            keyboardType: TextInputType.number,
+                            textInputAction: TextInputAction.next,
+                            onSaved: (value) => _phone = value,
+                            onFieldSubmitted: (_) => FocusScope.of(context)
+                                .requestFocus(_passFocusNode),
+                          ),
+                        ),
+                        Flexible(
+                          flex: 2,
+                          child: Container(
+                            child: CustomTextFormField(
+                              labelText: 'Senha:',
+                              controller: _pass,
+                              focusNode: _passFocusNode,
+                              onChanged: (value) =>
+                                  setState(() => _password = value),
+                              isPassword: true,
+                              onFieldSubmitted: (_) => FocusScope.of(context)
+                                  .requestFocus(_focusNodeConfirmPass),
+                              onSaved: (value) => _password = value,
+                              textInputAction: TextInputAction.next,
+                              key: ValueKey('password'),
+                              validator: (String value) {
+                                if (value != '' && value.length < 7) {
+                                  setState(() => _passwordErrorMessage =
+                                      'Senha precisa ter pelo menos 7 caracteres');
+                                }
+                                return null;
+                              },
+                              errorText: _passwordErrorMessage,
                             ),
-                            Flexible(
-                              flex: 2,
-                              child: Container(
-                                child: CustomTextFormField(
-                                  labelText: 'Senha:',
-                                  controller: _pass,
-                                  onChanged: (value) =>
-                                      setState(() => _password = value),
-                                  isPassword: true,
-                                  onFieldSubmitted: (_) =>
-                                      FocusScope.of(context)
-                                          .requestFocus(_focusNodeConfirmPass),
-                                  onSaved: (value) => _password = value,
-                                  textInputAction: TextInputAction.next,
-                                  key: ValueKey('password'),
-                                  validator: (String value) {
-                                    if (value != '' && value.length < 7) {
-                                      setState(() => _passwordErrorMessage =
-                                          'Senha precisa ter pelo menos 7 caracteres');
-                                    }
-                                    return null;
-                                  },
-                                  errorText: _passwordErrorMessage,
-                                ),
-                              ),
-                            ),
-                            Flexible(
-                              flex: 2,
-                              child: CustomTextFormField(
-                                labelText: 'Confimar Senha:',
-                                focusNode: _focusNodeConfirmPass,
-                                controller: _confirmPass,
-                                onChanged: (value) =>
-                                    setState(() => _confirmPassword = value),
-                                isPassword: true,
-                                onSaved: (value) => _password = value,
-                                key: ValueKey('confirmPassword'),
-                                validator: (String value) {
-                                  if (value != '' && value.length < 7) {
-                                    setState(() => _passwordErrorMessage =
-                                        'Senha precisa ter pelo menos 7 caracteres');
-                                  }
-                                  return null;
-                                },
-                                errorText: _passwordErrorMessage,
-                              ),
-                            ),
-                            Flexible(
-                              flex: 1,
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 0.05.wp, vertical: 0.01.hp),
-                                child: SizedBox(
-                                  width: 0.7.wp,
-                                  child: ElevatedButton(
-                                    onPressed: _loading
-                                        ? () => {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  content: Text(
-                                                      'Carregando, aguarde.'),
-                                                ),
-                                              ),
-                                            }
-                                        : (_userImageFile != null ||
-                                                (_password != null &&
-                                                    _confirmPassword != null) ||
-                                                _telefone != null)
-                                            ? () => _submit(ctx)
-                                            : null,
-                                    child: _loading
-                                        ? Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 0.01.hp),
-                                            child: SizedBox(
-                                              child: CircularProgressIndicator(
-                                                valueColor:
-                                                    new AlwaysStoppedAnimation<
-                                                        Color>(Colors.white),
-                                                strokeWidth: 3.0,
-                                              ),
-                                              height: 30.w,
-                                              width: 30.w,
-                                            ),
-                                          )
-                                        : Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 0.01.hp),
-                                            child: AutoSizeText(
-                                              'Continuar',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 38.nsp,
-                                              ),
+                          ),
+                        ),
+                        Flexible(
+                          flex: 2,
+                          child: CustomTextFormField(
+                            labelText: 'Confimar Senha:',
+                            focusNode: _focusNodeConfirmPass,
+                            controller: _confirmPass,
+                            onChanged: (value) =>
+                                setState(() => _confirmPassword = value),
+                            isPassword: true,
+                            onSaved: (value) => _password = value,
+                            key: ValueKey('confirmPassword'),
+                            validator: (String value) {
+                              if (value != '' && value.length < 7) {
+                                setState(() => _passwordErrorMessage =
+                                    'Senha precisa ter pelo menos 7 caracteres');
+                              }
+                              return null;
+                            },
+                            errorText: _passwordErrorMessage,
+                          ),
+                        ),
+                        Flexible(
+                          flex: 1,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 0.05.wp, vertical: 0.01.hp),
+                            child: SizedBox(
+                              width: 0.7.wp,
+                              child: ElevatedButton(
+                                onPressed: _loading
+                                    ? () => {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content:
+                                                  Text('Carregando, aguarde.'),
                                             ),
                                           ),
-                                  ),
-                                ),
+                                        }
+                                    : (_userImageFile != null ||
+                                            (_password != null &&
+                                                _confirmPassword != null) ||
+                                            _telefone != null)
+                                        ? () => _submit(ctx)
+                                        : null,
+                                child: _loading
+                                    ? Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 0.01.hp),
+                                        child: SizedBox(
+                                          child: CircularProgressIndicator(
+                                            valueColor:
+                                                new AlwaysStoppedAnimation<
+                                                    Color>(Colors.white),
+                                            strokeWidth: 3.0,
+                                          ),
+                                          height: 30.w,
+                                          width: 30.w,
+                                        ),
+                                      )
+                                    : Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 0.01.hp),
+                                        child: AutoSizeText(
+                                          'Continuar',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 38.nsp,
+                                          ),
+                                        ),
+                                      ),
                               ),
                             ),
-                          ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ),

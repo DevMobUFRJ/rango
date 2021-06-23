@@ -29,7 +29,7 @@ class GridHorizontal extends StatelessWidget {
                   screen: ManageOrder(
                     order: orders[index],
                   ),
-                  withNavBar: true,
+                  withNavBar: false,
                   pageTransitionAnimation: PageTransitionAnimation.cupertino),
               child: Card(
                 semanticContainer: true,

@@ -44,8 +44,6 @@ class _ManageOrderState extends State<ManageOrder> {
       _mealDescription = TextEditingController();
       _mealQuantity = TextEditingController();
     }
-
-    print(_userImageFile.toString());
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
