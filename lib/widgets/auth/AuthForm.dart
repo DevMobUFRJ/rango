@@ -39,6 +39,8 @@ class _AuthFormState extends State<AuthForm> {
   String _passwordErrorMessage;
   String _confirmPasswordErrorMessage;
   final _focusNodeConfirmPass = FocusNode();
+  final _focusNodePass = FocusNode();
+  final _focusNodeName = FocusNode();
 
   void _pickedImage(File image) => _userImageFile = image;
 
@@ -121,8 +123,10 @@ class _AuthFormState extends State<AuthForm> {
                               onSaved: (value) =>
                                   setState(() => _email = value),
                               keyboardType: TextInputType.emailAddress,
-                              onFieldSubmitted: (_) =>
-                                  FocusScope.of(context).nextFocus(),
+                              onFieldSubmitted: (_) => FocusScope.of(context)
+                                  .requestFocus(!widget._isLogin
+                                      ? _focusNodeName
+                                      : _focusNodePass),
                               textInputAction: TextInputAction.next,
                               errorText: _emailErrorMessage,
                             ),
@@ -133,6 +137,7 @@ class _AuthFormState extends State<AuthForm> {
                               child: CustomTextFormField(
                                 labelText: 'Nome',
                                 errorText: _nameErrorMessage,
+                                focusNode: _focusNodeName,
                                 onChanged: (value) =>
                                     {setState(() => _name = value)},
                                 key: ValueKey('name'),
@@ -149,8 +154,8 @@ class _AuthFormState extends State<AuthForm> {
                                   }
                                   return null;
                                 },
-                                onFieldSubmitted: (_) =>
-                                    FocusScope.of(context).nextFocus(),
+                                onFieldSubmitted: (_) => FocusScope.of(context)
+                                    .requestFocus(_focusNodePass),
                                 textInputAction: TextInputAction.next,
                               ),
                             ),
@@ -160,6 +165,7 @@ class _AuthFormState extends State<AuthForm> {
                               labelText: 'Senha:',
                               key: ValueKey('password'),
                               controller: _pass,
+                              focusNode: _focusNodePass,
                               onChanged: (value) => {
                                 setState(
                                   () => _password = value,
