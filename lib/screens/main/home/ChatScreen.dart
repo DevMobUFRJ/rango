@@ -29,7 +29,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
@@ -37,7 +36,7 @@ class _ChatScreenState extends State<ChatScreen> {
           maxLines: 1,
           style: GoogleFonts.montserrat(
             color: Theme.of(context).accentColor,
-            fontSize: 35.nsp,
+            fontSize: 42.nsp,
           ),
         ),
       ),
