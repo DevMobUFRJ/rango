@@ -115,7 +115,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             Flexible(
               flex: 1,
               child: ElevatedButton(
-                onPressed: _email.isEmpty ? null : () => _submit(context),
+                onPressed: _email == null ? null : () => _submit(context),
                 child: Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: 0.1.wp,
