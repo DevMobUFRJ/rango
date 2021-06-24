@@ -22,66 +22,69 @@ class OrderContainer extends StatefulWidget {
 }
 
 class _OrderContainerState extends State<OrderContainer> {
-  void _cancelOrder(Order order) => {
-        showDialog(
-          context: context,
-          builder: (BuildContext ctx) => AlertDialog(
-            insetPadding: EdgeInsets.symmetric(horizontal: 0.1.wp),
-            backgroundColor: Color(0xFFF9B152),
-            actionsPadding: EdgeInsets.all(10),
-            contentPadding: EdgeInsets.only(
-              top: 20,
-              left: 24,
-              right: 24,
-              bottom: 0,
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(ctx).pop();
-                },
-                child: Text(
-                  'Sim',
-                  style: GoogleFonts.montserrat(
-                    decoration: TextDecoration.underline,
-                    color: Colors.white,
-                    fontSize: 34.nsp,
-                  ),
-                ),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(),
-                child: Text(
-                  'Não',
-                  style: GoogleFonts.montserrat(
-                    decoration: TextDecoration.underline,
-                    color: Colors.white,
-                    fontSize: 34.nsp,
-                  ),
-                ),
-              ),
-            ],
-            title: Text(
-              'Cancelando reserva',
+  void _cancelOrder() {
+    final String cancelText = !widget.pedido.vendida
+        ? 'Deseja realmente cancelar esta reserva?'
+        : 'Deseja apagar esse pedido permanentemente do histórico?';
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) => AlertDialog(
+        insetPadding: EdgeInsets.symmetric(horizontal: 0.1.wp),
+        backgroundColor: Color(0xFFF9B152),
+        actionsPadding: EdgeInsets.all(10),
+        contentPadding: EdgeInsets.only(
+          top: 20,
+          left: 24,
+          right: 24,
+          bottom: 0,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+            child: Text(
+              'Sim',
               style: GoogleFonts.montserrat(
+                decoration: TextDecoration.underline,
                 color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 38.ssp,
-              ),
-            ),
-            content: Text(
-              'Deseja realmente cancelar esta reserva?',
-              style: GoogleFonts.montserrat(
-                color: Colors.white,
-                fontSize: 28.nsp,
+                fontSize: 34.nsp,
               ),
             ),
           ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(
+              'Não',
+              style: GoogleFonts.montserrat(
+                decoration: TextDecoration.underline,
+                color: Colors.white,
+                fontSize: 34.nsp,
+              ),
+            ),
+          ),
+        ],
+        title: Text(
+          'Cancelando reserva',
+          style: GoogleFonts.montserrat(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 38.ssp,
+          ),
         ),
-      };
+        content: Text(
+          cancelText,
+          style: GoogleFonts.montserrat(
+            color: Colors.white,
+            fontSize: 28.nsp,
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -180,8 +183,10 @@ class _OrderContainerState extends State<OrderContainer> {
                                         : Color(0xFFF9B152),
                                     activeColor: Colors.white,
                                     value: widget.pedido.reservada,
-                                    onChanged: (valor) =>
-                                        widget.reservadoOnChange(value: valor),
+                                    onChanged: (valor) => widget.pedido.vendida
+                                        ? null
+                                        : widget.reservadoOnChange(
+                                            value: valor),
                                   ),
                                 ),
                               ),
@@ -226,24 +231,23 @@ class _OrderContainerState extends State<OrderContainer> {
                 ),
               ),
             ),
-            if (!widget.pedido.vendida)
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  color: Colors.red[400],
-                ),
-                child: GestureDetector(
-                  onTap: () => _cancelOrder(widget.pedido),
-                  child: Padding(
-                    padding: const EdgeInsets.all(4),
-                    child: Icon(
-                      Icons.close,
-                      size: 15,
-                      color: Colors.white,
-                    ),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                color: Colors.red[400],
+              ),
+              child: GestureDetector(
+                onTap: () => _cancelOrder(),
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Icon(
+                    Icons.close,
+                    size: 15,
+                    color: Colors.white,
                   ),
                 ),
               ),
+            ),
           ],
         ),
       ),
