@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -33,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
+        height: 1.hp - 56,
         child: RefreshIndicator(
           onRefresh: () {
             setState(() {});
@@ -75,48 +75,50 @@ class _HomeScreenState extends State<HomeScreen> {
                                       return Text(snapshot.error.toString());
                                     }
 
-                                    var sellerMap = Map();
+                                    //TODO Juntar os ids dos currentMeals de todos os sellers, filtrando por featured e/ou limitando o número
+                                    List<Map<String, dynamic>> allCurrentMeals = [];
+                                    List<Map<String, dynamic>> filteredCurrentMeals = [];
+
                                     List<Seller> sellerList = [];
                                     snapshot.data.forEach((seller) {
-                                      sellerMap[seller.documentID] = seller.data["name"];
                                       Seller currentSeller = Seller.fromJson(seller.data, id: seller.documentID);
                                       sellerList.add(currentSeller);
                                       //print("${seller.data["name"]} is from cache: ${seller.metadata.isFromCache}");
+                                      var filterByFeatured = false;
+                                      var mealsLimit = 0;
+                                      var currentMeals = currentSeller.currentMeals;
+
+                                      var a = currentMeals.entries.map((meal) {
+                                        return {
+                                          "mealId": meal.key,
+                                          "sellerId": seller.documentID,
+                                          "sellerName": seller.data["name"]
+                                        };
+                                      }).toList();
+                                      allCurrentMeals.addAll(a);
+
+                                      if (filterByFeatured) {
+                                        currentMeals.removeWhere((mealId, details) => !details["featured"]);
+                                      }
+                                      var b = currentMeals.entries.map((meal) {
+                                        return {
+                                          "mealId": meal.key,
+                                          "sellerId": seller.documentID,
+                                          "sellerName": seller.data["name"]
+                                        };
+                                      }).toList();
+                                      if (mealsLimit > 0) {
+                                        b = b.take(mealsLimit).toList();
+                                      }
+                                      filteredCurrentMeals.addAll(b);
                                     });
+
                                     return Column(
                                       children: [
-                                        StreamBuilder(
-                                          stream: Repository.instance.getCurrentMealsStream(snapshot.data, queryByFeatured: false, limit: -1),
-                                          builder: (context, snapshot) {
-                                            if (!snapshot.hasData) {
-                                              return Center(child: CircularProgressIndicator());
-                                            }
-                                            if (snapshot.hasError) {
-                                              return Text(snapshot.error.toString());
-                                            }
-
-                                            List<Meal> tempMeals = [];
-                                            snapshot.data.forEach((QuerySnapshot seller) {
-                                              // Iterar todos os meals
-                                              seller.documents.forEach((meal) {
-                                                //print("${meal.data["name"]} is from cache: ${meal.metadata.isFromCache}");
-                                                Meal currentMeal = Meal.fromJson(meal.data, id: meal.documentID);
-                                                currentMeal.sellerName = sellerMap[meal.reference.parent().parent().documentID];
-                                                currentMeal.sellerId = meal.reference.parent().parent().documentID;
-                                                tempMeals.add(currentMeal);
-                                              });
-                                              //tempMeals.shuffle();
-                                            });
-                                            return Column(
-                                              children: [
-                                                _buildOrderAgain(tempMeals, widget.usuario.id), // TODO Se usar queryByFeatured ou limit, não poderá usar tempMeals
-                                                SizedBox(height: 0.02.hp),
-                                                _buildSuggestions(tempMeals),
-                                                SizedBox(height: 0.02.hp),
-                                              ],
-                                            );
-                                          },
-                                        ),
+                                        _buildOrderAgain(allCurrentMeals, widget.usuario.id),
+                                        SizedBox(height: 0.02.hp),
+                                        _buildSuggestions(filteredCurrentMeals),
+                                        SizedBox(height: 0.02.hp),
                                         _buildSellers(sellerList, locationSnapshot, widget.usuario.id)
                                       ],
                                     );
@@ -198,15 +200,15 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSuggestions(List<Meal> tempMeals) {
+  Widget _buildSuggestions(List<Map<String, dynamic>> meals) {
     return ListaHorizontal(
       title: 'Sugestões',
       tagM: Random().nextDouble(),
-      meals: tempMeals,
+      meals: meals,
     );
   }
 
-  Widget _buildOrderAgain(List<Meal> tempMeals, String clientId) {
+  Widget _buildOrderAgain(List<Map<String, dynamic>> meals, String clientId) {
     return StreamBuilder(
         stream: Repository.instance.getOrdersFromClient(clientId, limit: 10),
         builder: (context, AsyncSnapshot<QuerySnapshot> orderSnapshot) {
@@ -217,16 +219,15 @@ class _HomeScreenState extends State<HomeScreen> {
             return Text(orderSnapshot.error.toString());
           }
 
-          List<Meal> orderedMeals = List.of(tempMeals);
           var mealIds = orderSnapshot.data.documents.map((order) => order.data["mealId"]).toSet().toList();
-          orderedMeals.removeWhere((meal) => !mealIds.contains(meal.id));
+          meals.removeWhere((meal) => !mealIds.contains(meal["mealId"]));
 
           return Column(
             children: [
               ListaHorizontal(
                 title: 'Peça Novamente',
                 tagM: Random().nextDouble(),
-                meals: orderedMeals,
+                meals: meals,
               ),
             ],
           );

@@ -47,9 +47,9 @@ class GridVertical extends StatelessWidget {
             itemCount: meals.length,
             itemBuilder: (ctx, index) => GestureDetector(
               onTap: () => pushNewScreen(context,
+                  withNavBar: false,
                   screen: DetalhesQuentinhaScreen(
                       marmita: meals[index], tagM: tagM),
-                  withNavBar: true,
                   pageTransitionAnimation: PageTransitionAnimation.cupertino),
               child: Container(
                 child: Card(

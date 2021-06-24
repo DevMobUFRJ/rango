@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart' show GeoPoint;
 import 'package:rango/models/contact.dart';
 import 'package:rango/models/meals.dart';
@@ -27,7 +29,7 @@ class Seller {
   final String logo;
   final Location location;
   final String picture;
-  List<Meal> currentMeals;
+  Map<String, dynamic> currentMeals;
   List<Meal> meals;
 
   Seller({
@@ -52,7 +54,7 @@ class Seller {
         logo = json['logo'],
         location = Location.fromJson(json['location']),
         picture = json['picture'],
-        currentMeals = [],
+        currentMeals = json['currentMeals'],
         meals = [];
 
   Map<String, dynamic> toJson() => {

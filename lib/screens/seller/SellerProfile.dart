@@ -49,6 +49,16 @@ class _SellerProfileState extends State<SellerProfile> {
             return CircularProgressIndicator();
           }
           Seller seller = Seller.fromJson(snapshot.data.data);
+          var currentMeals = seller.currentMeals;
+          List<Map<String, dynamic>> allCurrentMeals = currentMeals.entries.map((meal) {
+            return {
+              "mealId": meal.key,
+              "sellerId": snapshot.data.documentID,
+              "sellerName": seller.name,
+              "quantity": meal.value["quantity"]
+            };
+          }).toList();
+
           return Column(
             children: [
               Container(
@@ -93,31 +103,11 @@ class _SellerProfileState extends State<SellerProfile> {
                 ],
               ),
               SizedBox(height: 20.h),
-              StreamBuilder(
-                stream: Repository.instance.getSellerCurrentMeals(widget.sellerId),
-                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (!snapshot.hasData) {
-                    return CircularProgressIndicator();
-                  }
-                  if (snapshot.hasError) {
-                    return Text(snapshot.error.toString());
-                  }
-                  List<Meal> meals = [];
-                  var mealsDocuments = snapshot.data.documents;
-                  for(var i=0; i < mealsDocuments.length; i++){
-                    final meal = Meal.fromJson(mealsDocuments[i].data, id: mealsDocuments[i].documentID);
-                    meal.sellerName = widget.sellerName;
-                    meal.sellerId = widget.sellerId;
-                    meals.add(meal);
-                  }
-                  return ListaHorizontal(
-                    title: 'Quentinhas disponíveis',
-                    tagM: Random().nextDouble(),
-                    meals: meals,
-                  );
-                }
+              ListaHorizontal(
+                title: 'Quentinhas disponíveis',
+                tagM: Random().nextDouble(),
+                meals: allCurrentMeals,
               ),
-
               SizedBox(height: 40.h),
               RaisedButton.icon(
                 icon: Icon(Icons.chat, size: 38.nsp),
@@ -126,8 +116,8 @@ class _SellerProfileState extends State<SellerProfile> {
                 ),
                 onPressed: () => pushNewScreen(
                   context,
-                  screen: ChatScreen(seller),
                   withNavBar: false,
+                  screen: ChatScreen(seller),
                   pageTransitionAnimation:
                   PageTransitionAnimation.cupertino,
                 ),

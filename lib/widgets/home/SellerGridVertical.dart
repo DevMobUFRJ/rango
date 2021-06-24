@@ -54,8 +54,8 @@ class SellerGridVertical extends StatelessWidget {
             itemCount: sellers.length,
             itemBuilder: (ctx, index) => GestureDetector(
               onTap: () => pushNewScreen(context,
+                  withNavBar: false,
                   screen: SellerProfile(sellers[index].id, sellers[index].name),
-                  withNavBar: true,
                   pageTransitionAnimation: PageTransitionAnimation.cupertino),
               child: Container(
                 child: Card(

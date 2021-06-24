@@ -112,8 +112,8 @@ class OrderHistoryScreen extends StatelessWidget {
                               GestureDetector(
                                 onTap: () => pushNewScreen(
                                   context,
+                                  withNavBar: false,
                                   screen: SellerProfile(order.sellerId, order.sellerName),
-                                  withNavBar: true,
                                   pageTransitionAnimation: PageTransitionAnimation.cupertino,
                                 ),
                                 child: Text(order.sellerName),

@@ -32,8 +32,8 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
         title: GestureDetector(
           onTap: () => pushNewScreen(
             context,
+            withNavBar: false,
             screen: SellerProfile(marmita.sellerId, marmita.sellerName),
-            withNavBar: true,
             pageTransitionAnimation: PageTransitionAnimation.cupertino,
           ),
           child: AutoSizeText(
@@ -162,7 +162,7 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
       builder: (BuildContext ctx) {
         int _quantity = 1;
         return StatefulBuilder(
-            builder: (context, setState) {
+            builder: (dialogContext, setState) {
               return AlertDialog(
                 insetPadding: EdgeInsets.symmetric(horizontal: 0.1.wp),
                 backgroundColor: Color(0xFFF9B152),
@@ -251,6 +251,14 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                     ),
                   ),
                   FlatButton(
+                    child: Text(
+                      'Confirmar',
+                      style: GoogleFonts.montserrat(
+                        decoration: TextDecoration.underline,
+                        color: Colors.white,
+                        fontSize: 34.nsp,
+                      ),
+                    ),
                     onPressed: () async {
                       final FirebaseUser user = await Repository.instance.getCurrentUser();
 
@@ -272,7 +280,7 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 20),
-                            child: Text("Reserva feita com sucesso."),
+                            child: Text("Reserva feita com sucesso.", textAlign: TextAlign.center),
                           ),
                         ));
 
@@ -286,23 +294,14 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                         print(e);
                         Navigator.of(ctx).pop();
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          padding: EdgeInsets.only(bottom: 60),
                           content: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 20),
-                            child: Text(e.toString()),
+                            child: Text(e.toString(), textAlign: TextAlign.center),
                           ),
                           backgroundColor: Theme.of(context).errorColor,
                         ));
                       }
                     },
-                    child: Text(
-                      'Confirmar',
-                      style: GoogleFonts.montserrat(
-                        decoration: TextDecoration.underline,
-                        color: Colors.white,
-                        fontSize: 34.nsp,
-                      ),
-                    ),
                   ),
                 ],
               );

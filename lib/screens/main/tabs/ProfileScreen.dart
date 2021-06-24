@@ -104,8 +104,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     GestureDetector(
                       onTap: () => pushNewScreen(
                         context,
+                        withNavBar: false,
                         screen: EditProfileScreen(widget.usuario),
-                        withNavBar: true,
                         pageTransitionAnimation:
                             PageTransitionAnimation.cupertino,
                       ),
@@ -120,8 +120,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         var sellerRange = await Repository.instance.getSellerRange();
                         return pushNewScreen(
                           context,
+                          withNavBar: false,
                           screen: ProfileSettings(widget.usuario, sellerRange),
-                          withNavBar: true,
                           pageTransitionAnimation:
                           PageTransitionAnimation.cupertino,
                         );
@@ -198,8 +198,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 return GestureDetector(
                                   onTap: () => pushNewScreen(
                                     context,
+                                    withNavBar: false,
                                     screen: SellerProfile(seller.id, seller.name),
-                                    withNavBar: true,
                                     pageTransitionAnimation:
                                     PageTransitionAnimation.cupertino,
                                   ),

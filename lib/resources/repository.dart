@@ -29,6 +29,10 @@ class Repository {
     return sellersRef.document(uid).snapshots();
   }
 
+  Stream<DocumentSnapshot> getMealFromSeller(String mealUid, String sellerUid) {
+    return sellersRef.document(sellerUid).collection("meals").document(mealUid).snapshots();
+  }
+
   Future<DocumentSnapshot> getSellerFuture(String uid) {
     return sellersRef.document(uid).get();
   }
@@ -59,10 +63,10 @@ class Repository {
   }
 
   Future<DocumentReference> addOrder(Order order) async {
-    var currentMealDoc = await sellersRef.document(order.sellerId).collection('currentMeals').document(order.mealId).get();
-    Meal currentMeal = Meal.fromJson(currentMealDoc.data);
-    if (currentMeal.quantity < order.quantity) {
-      throw('Não há quentinhas suficientes para o seu pedido. Quantidade disponível: ${currentMeal.quantity}.');
+    var mealDoc = await sellersRef.document(order.sellerId).collection('meals').document(order.mealId).get();
+    Meal meal = Meal.fromJson(mealDoc.data);
+    if (meal.quantity < order.quantity) {
+      throw('Não há quentinhas suficientes para o seu pedido. Quantidade disponível: ${meal.quantity}.');
     }
     return ordersRef.add(order.toJson());
   }

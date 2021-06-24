@@ -8,18 +8,7 @@ final List<Seller> sellers = [
   Seller(
     active: true,
     contact: Contact(name: "Maria", phone: "21994087257"),
-    currentMeals: [
-      Meal(
-        sellerId: "1",
-        sellerName: "Quentinha Legal",
-        name: "Estrogonofe de frango",
-        description:
-            "Estrogonofe de frango muito gostoso, preparado no dia anterior com ingredientes frescos.",
-        price: 1250,
-        picture:
-            "https://img.itdg.com.br/tdg/images/recipes/000/174/031/173715/173715_original.jpg?mode=crop&width=710&height=400",
-      ),
-    ],
+    currentMeals: {},
     meals: [
       Meal(
         sellerId: "1",
