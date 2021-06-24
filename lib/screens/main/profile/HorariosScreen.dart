@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/dayShift.dart';
 import 'package:rango/models/shift.dart';
 import 'package:intl/intl.dart';
+import 'package:rango/widgets/profile/HorarioRow.dart';
 
 class HorariosScreen extends StatefulWidget {
   @override
@@ -22,6 +23,17 @@ class _HorariosScreenState extends State<HorariosScreen> {
     wednesday: DayShift(open: true, openingTime: '12:00', closingTime: '18:00'),
   );
   final _formKey = GlobalKey<FormState>();
+
+  String _handleSelectedSchedule(TimeOfDay initialHorario) {
+    String stringHorario = initialHorario.format(context);
+    if (stringHorario.contains('AM') || stringHorario.contains("PM")) {
+      return DateFormat("HH:mm")
+          .format(DateFormat("hh:mm a").parse(stringHorario));
+    } else {
+      return stringHorario;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,867 +61,102 @@ class _HorariosScreenState extends State<HorariosScreen> {
                   style: GoogleFonts.montserrat(fontSize: 30.nsp),
                 ),
               ),
-              Expanded(
-                flex: 1,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Flexible(
-                      flex: 1,
-                      child: Container(
-                        constraints: BoxConstraints(
-                            minWidth: 35, maxWidth: 35, maxHeight: 20),
-                        child: AutoSizeText(
-                          'Dom',
-                          style: GoogleFonts.montserrat(fontSize: 30.nsp),
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: Checkbox(
-                        value: _horariosFuncionamento.sunday.open,
-                        onChanged: (value) => {
-                          setState(
-                              () => _horariosFuncionamento.sunday.open = value),
-                        },
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: GestureDetector(
-                        onTap: !_horariosFuncionamento.sunday.open
-                            ? () {}
-                            : () => {
-                                  showTimePicker(
-                                    context: context,
-                                    initialTime: TimeOfDay.now(),
-                                    cancelText: 'Cancelar',
-                                    confirmText: 'Confirmar',
-                                    helpText: 'Horário de abertura',
-                                    builder:
-                                        (BuildContext context, Widget child) =>
-                                            MediaQuery(
-                                                data: MediaQuery.of(context)
-                                                    .copyWith(
-                                                        alwaysUse24HourFormat:
-                                                            true),
-                                                child: child),
-                                  ).then((value) => value == null
-                                      ? null
-                                      : setState(
-                                          () => _horariosFuncionamento
-                                                  .sunday.openingTime =
-                                              value.format(context),
-                                        )),
-                                },
-                        child: Material(
-                          shape: RoundedRectangleBorder(),
-                          elevation: 1,
-                          child: TextFormField(
-                            enabled: false,
-                            textAlign: TextAlign.center,
-                            decoration: InputDecoration(
-                              errorStyle:
-                                  GoogleFonts.montserrat(fontSize: 22.nsp),
-                              border: InputBorder.none,
-                              hintText: _horariosFuncionamento.sunday.open
-                                  ? _horariosFuncionamento.sunday.openingTime
-                                  : null,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: GestureDetector(
-                        onTap: !_horariosFuncionamento.sunday.open
-                            ? () {}
-                            : () => {
-                                  showTimePicker(
-                                    context: context,
-                                    initialTime: TimeOfDay.now(),
-                                    cancelText: 'Cancelar',
-                                    confirmText: 'Confirmar',
-                                    helpText: 'Horário de fechamento',
-                                    builder:
-                                        (BuildContext context, Widget child) =>
-                                            MediaQuery(
-                                                data: MediaQuery.of(context)
-                                                    .copyWith(
-                                                        alwaysUse24HourFormat:
-                                                            true),
-                                                child: child),
-                                  ).then(
-                                    (value) => value == null
-                                        ? null
-                                        : setState(
-                                            () => _horariosFuncionamento
-                                                    .sunday.closingTime =
-                                                value.format(context),
-                                          ),
-                                  ),
-                                },
-                        child: Material(
-                          shape: RoundedRectangleBorder(),
-                          elevation: 1,
-                          child: TextFormField(
-                            enabled: false,
-                            textAlign: TextAlign.center,
-                            decoration: InputDecoration(
-                              errorStyle:
-                                  GoogleFonts.montserrat(fontSize: 22.nsp),
-                              border: InputBorder.none,
-                              hintText: _horariosFuncionamento.sunday.open
-                                  ? _horariosFuncionamento.sunday.closingTime
-                                  : null,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+              HorarioRow(
+                day: 'Dom',
+                switchOpen: (value) =>
+                    setState(() => _horariosFuncionamento.sunday.open = value),
+                horarioDia: _horariosFuncionamento.sunday,
+                changeOpeningHour: (value) => setState(
+                  () => _horariosFuncionamento.sunday.openingTime =
+                      _handleSelectedSchedule(value),
+                ),
+                changeClosingHour: (value) => setState(
+                  () => _horariosFuncionamento.sunday.closingTime =
+                      _handleSelectedSchedule(value),
                 ),
               ),
-              Expanded(
-                flex: 1,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Flexible(
-                      flex: 1,
-                      child: Container(
-                        constraints: BoxConstraints(
-                            minWidth: 35, maxWidth: 35, maxHeight: 20),
-                        child: AutoSizeText(
-                          'Seg',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 30.nsp,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: Checkbox(
-                        value: _horariosFuncionamento.monday.open,
-                        onChanged: (value) => {
-                          setState(
-                              () => _horariosFuncionamento.monday.open = value),
-                        },
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: GestureDetector(
-                        onTap: !_horariosFuncionamento.monday.open
-                            ? () {}
-                            : () => {
-                                  showTimePicker(
-                                    context: context,
-                                    initialTime: TimeOfDay.now(),
-                                    cancelText: 'Cancelar',
-                                    confirmText: 'Confirmar',
-                                    helpText: 'Horário de abertura',
-                                    builder:
-                                        (BuildContext context, Widget child) =>
-                                            MediaQuery(
-                                                data: MediaQuery.of(context)
-                                                    .copyWith(
-                                                        alwaysUse24HourFormat:
-                                                            true),
-                                                child: child),
-                                  ).then(
-                                    (value) => value == null
-                                        ? null
-                                        : setState(
-                                            () => _horariosFuncionamento
-                                                    .monday.openingTime =
-                                                value.format(context),
-                                          ),
-                                  ),
-                                },
-                        child: Material(
-                          shape: RoundedRectangleBorder(),
-                          elevation: 1,
-                          child: TextFormField(
-                            enabled: false,
-                            textAlign: TextAlign.center,
-                            decoration: InputDecoration(
-                              errorStyle:
-                                  GoogleFonts.montserrat(fontSize: 22.nsp),
-                              border: InputBorder.none,
-                              hintText: _horariosFuncionamento.monday.open
-                                  ? _horariosFuncionamento.monday.openingTime
-                                  : null,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: GestureDetector(
-                        onTap: !_horariosFuncionamento.monday.open
-                            ? () {}
-                            : () => {
-                                  showTimePicker(
-                                    context: context,
-                                    initialTime: TimeOfDay.now(),
-                                    cancelText: 'Cancelar',
-                                    confirmText: 'Confirmar',
-                                    helpText: 'Horário de fechamento',
-                                    builder:
-                                        (BuildContext context, Widget child) =>
-                                            MediaQuery(
-                                                data: MediaQuery.of(context)
-                                                    .copyWith(
-                                                        alwaysUse24HourFormat:
-                                                            true),
-                                                child: child),
-                                  ).then(
-                                    (value) => value == null
-                                        ? null
-                                        : setState(
-                                            () => _horariosFuncionamento
-                                                    .monday.closingTime =
-                                                value.format(context),
-                                          ),
-                                  ),
-                                },
-                        child: Material(
-                          shape: RoundedRectangleBorder(),
-                          elevation: 1,
-                          child: TextFormField(
-                            enabled: false,
-                            textAlign: TextAlign.center,
-                            decoration: InputDecoration(
-                              errorStyle:
-                                  GoogleFonts.montserrat(fontSize: 22.nsp),
-                              border: InputBorder.none,
-                              hintText: _horariosFuncionamento.monday.open
-                                  ? _horariosFuncionamento.monday.closingTime
-                                  : null,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+              HorarioRow(
+                day: 'Seg',
+                switchOpen: (value) =>
+                    setState(() => _horariosFuncionamento.monday.open = value),
+                horarioDia: _horariosFuncionamento.monday,
+                changeOpeningHour: (value) => setState(
+                  () => _horariosFuncionamento.monday.openingTime =
+                      _handleSelectedSchedule(value),
+                ),
+                changeClosingHour: (value) => setState(
+                  () => _horariosFuncionamento.monday.closingTime =
+                      _handleSelectedSchedule(value),
                 ),
               ),
-              Expanded(
-                flex: 1,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Flexible(
-                      flex: 1,
-                      child: Container(
-                        constraints: BoxConstraints(
-                            minWidth: 35, maxWidth: 35, maxHeight: 20),
-                        child: AutoSizeText('Ter',
-                            style: GoogleFonts.montserrat(fontSize: 30.nsp)),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: Checkbox(
-                        value: _horariosFuncionamento.tuesday.open,
-                        onChanged: (value) => setState(
-                            () => _horariosFuncionamento.tuesday.open = value),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: GestureDetector(
-                        onTap: !_horariosFuncionamento.tuesday.open
-                            ? () {}
-                            : () => {
-                                  showTimePicker(
-                                    context: context,
-                                    initialTime: TimeOfDay.now(),
-                                    cancelText: 'Cancelar',
-                                    confirmText: 'Confirmar',
-                                    helpText: 'Horário de abertura',
-                                    builder:
-                                        (BuildContext context, Widget child) =>
-                                            MediaQuery(
-                                                data: MediaQuery.of(context)
-                                                    .copyWith(
-                                                        alwaysUse24HourFormat:
-                                                            true),
-                                                child: child),
-                                  ).then(
-                                    (value) => value == null
-                                        ? null
-                                        : setState(
-                                            () => _horariosFuncionamento
-                                                    .tuesday.openingTime =
-                                                value.format(context),
-                                          ),
-                                  ),
-                                },
-                        child: Material(
-                          shape: RoundedRectangleBorder(),
-                          elevation: 1,
-                          child: TextFormField(
-                            enabled: false,
-                            textAlign: TextAlign.center,
-                            decoration: InputDecoration(
-                              errorStyle:
-                                  GoogleFonts.montserrat(fontSize: 22.nsp),
-                              border: InputBorder.none,
-                              hintText: _horariosFuncionamento.tuesday.open
-                                  ? _horariosFuncionamento.tuesday.openingTime
-                                  : null,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: GestureDetector(
-                        onTap: !_horariosFuncionamento.tuesday.open
-                            ? () {}
-                            : () => {
-                                  showTimePicker(
-                                    context: context,
-                                    initialTime: TimeOfDay.now(),
-                                    cancelText: 'Cancelar',
-                                    confirmText: 'Confirmar',
-                                    helpText: 'Horário de fechamento',
-                                    builder:
-                                        (BuildContext context, Widget child) =>
-                                            MediaQuery(
-                                                data: MediaQuery.of(context)
-                                                    .copyWith(
-                                                        alwaysUse24HourFormat:
-                                                            true),
-                                                child: child),
-                                  ).then(
-                                    (value) => value == null
-                                        ? null
-                                        : setState(
-                                            () => _horariosFuncionamento
-                                                    .tuesday.closingTime =
-                                                value.format(context),
-                                          ),
-                                  ),
-                                },
-                        child: Material(
-                          shape: RoundedRectangleBorder(),
-                          elevation: 1,
-                          child: TextFormField(
-                            enabled: false,
-                            textAlign: TextAlign.center,
-                            decoration: InputDecoration(
-                              errorStyle:
-                                  GoogleFonts.montserrat(fontSize: 22.nsp),
-                              border: InputBorder.none,
-                              hintText: _horariosFuncionamento.tuesday.open
-                                  ? _horariosFuncionamento.tuesday.closingTime
-                                  : null,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+              HorarioRow(
+                day: 'Ter',
+                switchOpen: (value) =>
+                    setState(() => _horariosFuncionamento.tuesday.open = value),
+                horarioDia: _horariosFuncionamento.tuesday,
+                changeOpeningHour: (value) => setState(
+                  () => _horariosFuncionamento.tuesday.openingTime =
+                      _handleSelectedSchedule(value),
+                ),
+                changeClosingHour: (value) => setState(
+                  () => _horariosFuncionamento.tuesday.closingTime =
+                      _handleSelectedSchedule(value),
                 ),
               ),
-              Expanded(
-                flex: 1,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Flexible(
-                      flex: 1,
-                      child: Container(
-                        constraints: BoxConstraints(
-                            minWidth: 35, maxWidth: 35, maxHeight: 20),
-                        child: AutoSizeText(
-                          'Qua',
-                          style: GoogleFonts.montserrat(fontSize: 30.nsp),
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: Checkbox(
-                        value: _horariosFuncionamento.wednesday.open,
-                        onChanged: (value) => setState(() =>
-                            _horariosFuncionamento.wednesday.open = value),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: GestureDetector(
-                        onTap: !_horariosFuncionamento.wednesday.open
-                            ? () {}
-                            : () => {
-                                  showTimePicker(
-                                    context: context,
-                                    initialTime: TimeOfDay.now(),
-                                    cancelText: 'Cancelar',
-                                    confirmText: 'Confirmar',
-                                    helpText: 'Horário de abertura',
-                                    builder:
-                                        (BuildContext context, Widget child) =>
-                                            MediaQuery(
-                                                data: MediaQuery.of(context)
-                                                    .copyWith(
-                                                        alwaysUse24HourFormat:
-                                                            true),
-                                                child: child),
-                                  ).then(
-                                    (value) => value == null
-                                        ? null
-                                        : setState(
-                                            () => _horariosFuncionamento
-                                                    .wednesday.openingTime =
-                                                value.format(context),
-                                          ),
-                                  ),
-                                },
-                        child: Material(
-                          shape: RoundedRectangleBorder(),
-                          elevation: 1,
-                          child: TextFormField(
-                            enabled: false,
-                            textAlign: TextAlign.center,
-                            decoration: InputDecoration(
-                              errorStyle:
-                                  GoogleFonts.montserrat(fontSize: 22.nsp),
-                              border: InputBorder.none,
-                              hintText: _horariosFuncionamento.wednesday.open
-                                  ? _horariosFuncionamento.wednesday.openingTime
-                                  : null,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: GestureDetector(
-                        onTap: !_horariosFuncionamento.wednesday.open
-                            ? () {}
-                            : () => {
-                                  showTimePicker(
-                                    context: context,
-                                    initialTime: TimeOfDay.now(),
-                                    cancelText: 'Cancelar',
-                                    confirmText: 'Confirmar',
-                                    helpText: 'Horário de fechamento',
-                                    builder:
-                                        (BuildContext context, Widget child) =>
-                                            MediaQuery(
-                                                data: MediaQuery.of(context)
-                                                    .copyWith(
-                                                        alwaysUse24HourFormat:
-                                                            true),
-                                                child: child),
-                                  ).then(
-                                    (value) => value == null
-                                        ? null
-                                        : setState(
-                                            () => _horariosFuncionamento
-                                                    .wednesday.closingTime =
-                                                value.format(context),
-                                          ),
-                                  ),
-                                },
-                        child: Material(
-                          shape: RoundedRectangleBorder(),
-                          elevation: 1,
-                          child: TextFormField(
-                            enabled: false,
-                            textAlign: TextAlign.center,
-                            decoration: InputDecoration(
-                              errorStyle:
-                                  GoogleFonts.montserrat(fontSize: 22.nsp),
-                              border: InputBorder.none,
-                              hintText: _horariosFuncionamento.wednesday.open
-                                  ? _horariosFuncionamento.wednesday.closingTime
-                                  : null,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+              HorarioRow(
+                day: 'Qua',
+                switchOpen: (value) => setState(
+                    () => _horariosFuncionamento.wednesday.open = value),
+                horarioDia: _horariosFuncionamento.wednesday,
+                changeOpeningHour: (value) => setState(
+                  () => _horariosFuncionamento.wednesday.openingTime =
+                      _handleSelectedSchedule(value),
+                ),
+                changeClosingHour: (value) => setState(
+                  () => _horariosFuncionamento.wednesday.closingTime =
+                      _handleSelectedSchedule(value),
                 ),
               ),
-              Expanded(
-                flex: 1,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Flexible(
-                      flex: 1,
-                      child: Container(
-                        constraints: BoxConstraints(
-                            minWidth: 35, maxWidth: 35, maxHeight: 20),
-                        child: AutoSizeText(
-                          'Qui',
-                          style: GoogleFonts.montserrat(fontSize: 30.nsp),
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: Checkbox(
-                        value: _horariosFuncionamento.thursday.open,
-                        onChanged: (value) => setState(
-                            () => _horariosFuncionamento.thursday.open = value),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: GestureDetector(
-                        onTap: !_horariosFuncionamento.thursday.open
-                            ? () {}
-                            : () => {
-                                  showTimePicker(
-                                    context: context,
-                                    initialTime: TimeOfDay.now(),
-                                    cancelText: 'Cancelar',
-                                    confirmText: 'Confirmar',
-                                    helpText: 'Horário de abertura',
-                                    builder:
-                                        (BuildContext context, Widget child) =>
-                                            MediaQuery(
-                                                data: MediaQuery.of(context)
-                                                    .copyWith(
-                                                        alwaysUse24HourFormat:
-                                                            true),
-                                                child: child),
-                                  ).then(
-                                    (value) => value == null
-                                        ? null
-                                        : setState(
-                                            () => _horariosFuncionamento
-                                                    .thursday.openingTime =
-                                                value.format(context),
-                                          ),
-                                  ),
-                                },
-                        child: Material(
-                          shape: RoundedRectangleBorder(),
-                          elevation: 1,
-                          child: TextFormField(
-                            enabled: false,
-                            textAlign: TextAlign.center,
-                            decoration: InputDecoration(
-                              errorStyle:
-                                  GoogleFonts.montserrat(fontSize: 22.nsp),
-                              border: InputBorder.none,
-                              hintText: _horariosFuncionamento.thursday.open
-                                  ? _horariosFuncionamento.thursday.openingTime
-                                  : null,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: GestureDetector(
-                        onTap: !_horariosFuncionamento.thursday.open
-                            ? () {}
-                            : () => {
-                                  showTimePicker(
-                                    context: context,
-                                    initialTime: TimeOfDay.now(),
-                                    cancelText: 'Cancelar',
-                                    confirmText: 'Confirmar',
-                                    helpText: 'Horário de fechamento',
-                                    builder:
-                                        (BuildContext context, Widget child) =>
-                                            MediaQuery(
-                                                data: MediaQuery.of(context)
-                                                    .copyWith(
-                                                        alwaysUse24HourFormat:
-                                                            true),
-                                                child: child),
-                                  ).then(
-                                    (value) => value == null
-                                        ? null
-                                        : setState(
-                                            () => _horariosFuncionamento
-                                                    .thursday.closingTime =
-                                                value.format(context),
-                                          ),
-                                  ),
-                                },
-                        child: Material(
-                          shape: RoundedRectangleBorder(),
-                          elevation: 1,
-                          child: TextFormField(
-                            enabled: false,
-                            textAlign: TextAlign.center,
-                            decoration: InputDecoration(
-                              errorStyle:
-                                  GoogleFonts.montserrat(fontSize: 22.nsp),
-                              border: InputBorder.none,
-                              hintText: _horariosFuncionamento.thursday.open
-                                  ? _horariosFuncionamento.thursday.closingTime
-                                  : null,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+              HorarioRow(
+                day: 'Qui',
+                switchOpen: (value) => setState(
+                    () => _horariosFuncionamento.thursday.open = value),
+                horarioDia: _horariosFuncionamento.thursday,
+                changeOpeningHour: (value) => setState(
+                  () => _horariosFuncionamento.thursday.openingTime =
+                      _handleSelectedSchedule(value),
+                ),
+                changeClosingHour: (value) => setState(
+                  () => _horariosFuncionamento.thursday.closingTime =
+                      _handleSelectedSchedule(value),
                 ),
               ),
-              Expanded(
-                flex: 1,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Flexible(
-                      flex: 1,
-                      child: Container(
-                        constraints: BoxConstraints(
-                            minWidth: 35, maxWidth: 35, maxHeight: 20),
-                        child: AutoSizeText(
-                          'Sex',
-                          style: GoogleFonts.montserrat(fontSize: 30.nsp),
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: Checkbox(
-                        value: _horariosFuncionamento.friday.open,
-                        onChanged: (value) => setState(
-                            () => _horariosFuncionamento.friday.open = value),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: GestureDetector(
-                        onTap: !_horariosFuncionamento.friday.open
-                            ? () {}
-                            : () => {
-                                  showTimePicker(
-                                    context: context,
-                                    initialTime: TimeOfDay.now(),
-                                    cancelText: 'Cancelar',
-                                    confirmText: 'Confirmar',
-                                    helpText: 'Horário de abertura',
-                                    builder:
-                                        (BuildContext context, Widget child) =>
-                                            MediaQuery(
-                                                data: MediaQuery.of(context)
-                                                    .copyWith(
-                                                        alwaysUse24HourFormat:
-                                                            true),
-                                                child: child),
-                                  ).then(
-                                    (value) => value == null
-                                        ? null
-                                        : setState(
-                                            () => _horariosFuncionamento
-                                                    .friday.openingTime =
-                                                value.format(context),
-                                          ),
-                                  ),
-                                },
-                        child: Material(
-                          shape: RoundedRectangleBorder(),
-                          elevation: 1,
-                          child: TextFormField(
-                            enabled: false,
-                            textAlign: TextAlign.center,
-                            decoration: InputDecoration(
-                              errorStyle:
-                                  GoogleFonts.montserrat(fontSize: 22.nsp),
-                              border: InputBorder.none,
-                              hintText: _horariosFuncionamento.friday.open
-                                  ? _horariosFuncionamento.friday.openingTime
-                                  : null,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: GestureDetector(
-                        onTap: !_horariosFuncionamento.friday.open
-                            ? () {}
-                            : () => {
-                                  showTimePicker(
-                                    context: context,
-                                    initialTime: TimeOfDay.now(),
-                                    cancelText: 'Cancelar',
-                                    confirmText: 'Confirmar',
-                                    helpText: 'Horário de fechamento',
-                                    builder:
-                                        (BuildContext context, Widget child) =>
-                                            MediaQuery(
-                                                data: MediaQuery.of(context)
-                                                    .copyWith(
-                                                        alwaysUse24HourFormat:
-                                                            true),
-                                                child: child),
-                                  ).then(
-                                    (value) => value == null
-                                        ? null
-                                        : setState(
-                                            () => _horariosFuncionamento
-                                                    .friday.closingTime =
-                                                value.format(context),
-                                          ),
-                                  ),
-                                },
-                        child: Material(
-                          shape: RoundedRectangleBorder(),
-                          elevation: 1,
-                          child: TextFormField(
-                            enabled: false,
-                            textAlign: TextAlign.center,
-                            decoration: InputDecoration(
-                              errorStyle:
-                                  GoogleFonts.montserrat(fontSize: 22.nsp),
-                              border: InputBorder.none,
-                              hintText: _horariosFuncionamento.friday.open
-                                  ? _horariosFuncionamento.friday.closingTime
-                                  : null,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+              HorarioRow(
+                day: 'Sex',
+                switchOpen: (value) =>
+                    setState(() => _horariosFuncionamento.friday.open = value),
+                horarioDia: _horariosFuncionamento.friday,
+                changeOpeningHour: (value) => setState(
+                  () => _horariosFuncionamento.friday.openingTime =
+                      _handleSelectedSchedule(value),
+                ),
+                changeClosingHour: (value) => setState(
+                  () => _horariosFuncionamento.friday.closingTime =
+                      _handleSelectedSchedule(value),
                 ),
               ),
-              Expanded(
-                flex: 1,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Flexible(
-                      flex: 1,
-                      child: Container(
-                        constraints: BoxConstraints(
-                            minWidth: 35, maxWidth: 35, maxHeight: 20),
-                        child: AutoSizeText(
-                          'Sab',
-                          style: GoogleFonts.montserrat(fontSize: 30.nsp),
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: Checkbox(
-                        value: _horariosFuncionamento.saturday.open,
-                        onChanged: (value) => setState(
-                            () => _horariosFuncionamento.saturday.open = value),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: GestureDetector(
-                        onTap: !_horariosFuncionamento.saturday.open
-                            ? () {}
-                            : () => {
-                                  showTimePicker(
-                                    context: context,
-                                    initialTime: TimeOfDay.now(),
-                                    cancelText: 'Cancelar',
-                                    confirmText: 'Confirmar',
-                                    helpText: 'Horário de abertura',
-                                    builder:
-                                        (BuildContext context, Widget child) =>
-                                            MediaQuery(
-                                                data: MediaQuery.of(context)
-                                                    .copyWith(
-                                                        alwaysUse24HourFormat:
-                                                            true),
-                                                child: child),
-                                  ).then(
-                                    (value) => value == null
-                                        ? null
-                                        : setState(
-                                            () => _horariosFuncionamento
-                                                    .saturday.openingTime =
-                                                value.format(context),
-                                          ),
-                                  ),
-                                },
-                        child: Material(
-                          shape: RoundedRectangleBorder(),
-                          elevation: 1,
-                          child: TextFormField(
-                            enabled: false,
-                            textAlign: TextAlign.center,
-                            decoration: InputDecoration(
-                              errorStyle:
-                                  GoogleFonts.montserrat(fontSize: 22.nsp),
-                              border: InputBorder.none,
-                              hintText: _horariosFuncionamento.saturday.open
-                                  ? _horariosFuncionamento.saturday.openingTime
-                                  : null,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: GestureDetector(
-                        onTap: !_horariosFuncionamento.saturday.open
-                            ? () {}
-                            : () => {
-                                  showTimePicker(
-                                    context: context,
-                                    initialTime: TimeOfDay.now(),
-                                    cancelText: 'Cancelar',
-                                    confirmText: 'Confirmar',
-                                    helpText: 'Horário de abertura',
-                                    builder:
-                                        (BuildContext context, Widget child) =>
-                                            MediaQuery(
-                                                data: MediaQuery.of(context)
-                                                    .copyWith(
-                                                        alwaysUse24HourFormat:
-                                                            true),
-                                                child: child),
-                                  ).then(
-                                    (value) => value == null
-                                        ? null
-                                        : setState(
-                                            () => _horariosFuncionamento
-                                                    .saturday.closingTime =
-                                                value.format(context),
-                                          ),
-                                  ),
-                                },
-                        child: Material(
-                          shape: RoundedRectangleBorder(),
-                          elevation: 1,
-                          child: TextFormField(
-                            enabled: false,
-                            textAlign: TextAlign.center,
-                            decoration: InputDecoration(
-                              errorStyle:
-                                  GoogleFonts.montserrat(fontSize: 22.nsp),
-                              border: InputBorder.none,
-                              hintText: _horariosFuncionamento.saturday.open
-                                  ? _horariosFuncionamento.saturday.closingTime
-                                  : null,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+              HorarioRow(
+                day: 'Ter',
+                switchOpen: (value) => setState(
+                    () => _horariosFuncionamento.saturday.open = value),
+                horarioDia: _horariosFuncionamento.saturday,
+                changeOpeningHour: (value) => setState(
+                  () => _horariosFuncionamento.saturday.openingTime =
+                      _handleSelectedSchedule(value),
+                ),
+                changeClosingHour: (value) => setState(
+                  () => _horariosFuncionamento.saturday.closingTime =
+                      _handleSelectedSchedule(value),
                 ),
               ),
               Flexible(
