@@ -11,12 +11,13 @@ class HorarioRow extends StatefulWidget {
   final void Function(TimeOfDay hour) changeOpeningHour;
   final void Function(TimeOfDay hour) changeClosingHour;
 
-  HorarioRow(
-      {this.day,
-      this.horarioDia,
-      this.switchOpen,
-      this.changeOpeningHour,
-      this.changeClosingHour});
+  HorarioRow({
+    this.day,
+    this.horarioDia,
+    this.switchOpen,
+    this.changeOpeningHour,
+    this.changeClosingHour,
+  });
 
   @override
   _HorarioRowState createState() => _HorarioRowState();
@@ -26,7 +27,7 @@ class _HorarioRowState extends State<HorarioRow> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      flex: 1,
+      flex: 2,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -73,6 +74,7 @@ class _HorarioRowState extends State<HorarioRow> {
                       },
               child: Material(
                 shape: RoundedRectangleBorder(),
+                color: widget.horarioDia.open ? Colors.white : Colors.grey[200],
                 elevation: 1,
                 child: TextFormField(
                   enabled: false,
@@ -113,6 +115,7 @@ class _HorarioRowState extends State<HorarioRow> {
                       },
               child: Material(
                 shape: RoundedRectangleBorder(),
+                color: widget.horarioDia.open ? Colors.white : Colors.grey[200],
                 elevation: 1,
                 child: TextFormField(
                   enabled: false,

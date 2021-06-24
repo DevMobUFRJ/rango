@@ -47,15 +47,14 @@ class _HorariosScreenState extends State<HorariosScreen> {
         ),
       ),
       body: Container(
-        height: 0.9.hp,
         margin: EdgeInsets.symmetric(horizontal: 0.06.wp),
         child: Form(
           key: _formKey,
           child: Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize: MainAxisSize.max,
             children: [
               Flexible(
-                flex: 1,
+                flex: 2,
                 child: AutoSizeText(
                   'Selecione as caixas referentes aos dias de funcionamento e então selecione os horários de abertura/fechamento',
                   style: GoogleFonts.montserrat(fontSize: 30.nsp),
