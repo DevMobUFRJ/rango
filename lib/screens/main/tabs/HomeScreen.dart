@@ -148,6 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         var removedItem;
                                         setState(
                                           () => {
+                                            orders[index].vendida = value,
                                             removedItem =
                                                 orders.removeAt(index),
                                           },

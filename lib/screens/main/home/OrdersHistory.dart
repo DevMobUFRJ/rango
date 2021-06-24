@@ -94,6 +94,7 @@ class _OrdersHistoryState extends State<OrdersHistory> {
                                   var removedItem;
                                   setState(
                                     () => {
+                                      orders[index].vendida = value,
                                       removedItem = orders.removeAt(index),
                                     },
                                   );
