@@ -32,8 +32,7 @@ class GridHorizontal extends StatelessWidget {
                   withNavBar: false,
                   pageTransitionAnimation: PageTransitionAnimation.cupertino),
               child: Card(
-                semanticContainer: true,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
+                clipBehavior: Clip.antiAlias,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8)),
                 child: Column(
@@ -43,10 +42,9 @@ class GridHorizontal extends StatelessWidget {
                       child: FadeInImage.assetNetwork(
                         placeholder: 'assets/imgs/quentinha_placeholder.png',
                         image: orders[index].quentinhas[0].quentinha.picture,
-                        fit: BoxFit.fitWidth,
                       ),
                     ),
-                    Flexible(
+                    Expanded(
                       flex: 2,
                       child: Container(
                         alignment: Alignment.center,

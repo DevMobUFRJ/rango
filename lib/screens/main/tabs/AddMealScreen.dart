@@ -208,12 +208,10 @@ class _AddMealScreenState extends State<AddMealScreen> {
                               ),
                             ),
                           ),
-                          Flexible(
-                            flex: pedidos.length > 6 ? 3 : 1,
-                            child: Container(
-                              child: GridHorizontal(
-                                orders: pedidos,
-                              ),
+                          Expanded(
+                            flex: pedidos.length > 6 ? 5 : 2,
+                            child: GridHorizontal(
+                              orders: pedidos,
                             ),
                           ),
                           Flexible(
