@@ -8,6 +8,7 @@ import 'package:rango/dadosMarretados.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/screens/main/home/ChatScreen.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:rango/widgets/user/UserPicture.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ClientProfile extends StatefulWidget {
@@ -43,7 +44,6 @@ class _ClientProfileState extends State<ClientProfile> {
 
   @override
   Widget build(BuildContext context) {
-    final yellow = Color(0xFFF9B152);
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
@@ -60,47 +60,7 @@ class _ClientProfileState extends State<ClientProfile> {
           : Center(
               child: Column(
                 children: [
-                  Container(
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.only(left: 40, bottom: 40),
-                          height: 140,
-                          width: 140,
-                          decoration: BoxDecoration(
-                            borderRadius:
-                                BorderRadius.circular(ScreenUtil().setSp(30)),
-                            color: yellow,
-                          ),
-                        ),
-                        if (client.picture != null)
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(120),
-                            child: Container(
-                              width: 160,
-                              height: 160,
-                              color: Theme.of(context).accentColor,
-                              child: FadeInImage.assetNetwork(
-                                placeholder: 'assets/imgs/user_placeholder.png',
-                                image: client.picture,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        if (client.picture == null)
-                          FittedBox(
-                            fit: BoxFit.cover,
-                            child: CircleAvatar(
-                              backgroundColor: Theme.of(context).accentColor,
-                              backgroundImage: AssetImage(
-                                  'assets/imgs/user_placeholder.png'),
-                              radius: 80,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
+                  UserPicture(picture: client.picture),
                   SizedBox(height: 10),
                   if (client.phone != null)
                     Row(

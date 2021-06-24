@@ -9,6 +9,7 @@ import 'package:rango/screens/main/profile/ProfileSettings.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/screens/main/profile/ReportsScreen.dart';
 import 'package:rango/screens/main/profile/SetLocationScreen.dart';
+import 'package:rango/widgets/user/UserPicture.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Seller usuario;
@@ -41,47 +42,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: <Widget>[
             Flexible(
               flex: 5,
-              child: Container(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(left: 40, bottom: 40),
-                      height: 140,
-                      width: 140,
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.circular(ScreenUtil().setSp(30)),
-                        color: yellow,
-                      ),
-                    ),
-                    if (widget.usuario.picture != null)
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(120),
-                        child: Container(
-                          width: 160,
-                          height: 160,
-                          color: Theme.of(context).accentColor,
-                          child: FadeInImage.assetNetwork(
-                            placeholder: 'assets/imgs/user_placeholder.png',
-                            image: widget.usuario.picture,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    if (widget.usuario.picture == null)
-                      FittedBox(
-                        fit: BoxFit.cover,
-                        child: CircleAvatar(
-                          backgroundColor: Theme.of(context).accentColor,
-                          backgroundImage:
-                              AssetImage('assets/imgs/user_placeholder.png'),
-                          radius: 80,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
+              child: UserPicture(picture: widget.usuario.picture),
             ),
             Flexible(
               flex: 1,
