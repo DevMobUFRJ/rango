@@ -55,45 +55,50 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
 
     return _loading
         ? SplashScreen()
-        : PersistentTabView(
-            controller: _controller,
-            navBarStyle: NavBarStyle.style6,
-            confineInSafeArea: true,
-            bottomScreenMargin: 0,
-            backgroundColor: Theme.of(context).backgroundColor,
-            handleAndroidBackButtonPress: true,
-            resizeToAvoidBottomInset: true,
-            stateManagement: true,
-            hideNavigationBarWhenKeyboardShows: true,
-            popAllScreensOnTapOfSelectedTab: true,
-            itemAnimationProperties: ItemAnimationProperties(
-              duration: Duration(milliseconds: 200),
-              curve: Curves.ease,
+        : SafeArea(
+            top: false,
+            left: false,
+            right: false,
+            child: PersistentTabView(
+              controller: _controller,
+              navBarStyle: NavBarStyle.style6,
+              confineInSafeArea: false,
+              bottomScreenMargin: 0,
+              backgroundColor: Theme.of(context).backgroundColor,
+              handleAndroidBackButtonPress: true,
+              resizeToAvoidBottomInset: true,
+              stateManagement: true,
+              hideNavigationBarWhenKeyboardShows: true,
+              popAllScreensOnTapOfSelectedTab: true,
+              itemAnimationProperties: ItemAnimationProperties(
+                duration: Duration(milliseconds: 200),
+                curve: Curves.ease,
+              ),
+              screenTransitionAnimation: ScreenTransitionAnimation(
+                animateTabTransition: true,
+                curve: Curves.easeIn,
+                duration: Duration(milliseconds: 180),
+              ),
+              screens: <Widget>[
+                HomeScreen(seller),
+                AddMealScreen(seller),
+                ProfileScreen(seller),
+              ],
+              items: [
+                PersistentBottomNavBarItem(
+                    icon: Icon(Icons.home, size: 40),
+                    activeColor: Color(0xFF609B90),
+                    inactiveColor: Theme.of(context).primaryColor),
+                PersistentBottomNavBarItem(
+                    icon: Icon(Icons.local_dining, size: 40),
+                    activeColor: Color(0xFF609B90),
+                    inactiveColor: Theme.of(context).primaryColor),
+                PersistentBottomNavBarItem(
+                    icon: Icon(Icons.person, size: 40),
+                    activeColor: Color(0xFF609B90),
+                    inactiveColor: Theme.of(context).primaryColor),
+              ],
             ),
-            screenTransitionAnimation: ScreenTransitionAnimation(
-              animateTabTransition: true,
-              curve: Curves.easeIn,
-              duration: Duration(milliseconds: 180),
-            ),
-            screens: <Widget>[
-              HomeScreen(seller),
-              AddMealScreen(seller),
-              ProfileScreen(seller),
-            ],
-            items: [
-              PersistentBottomNavBarItem(
-                  icon: Icon(Icons.home, size: 40),
-                  activeColor: Color(0xFF609B90),
-                  inactiveColor: Theme.of(context).primaryColor),
-              PersistentBottomNavBarItem(
-                  icon: Icon(Icons.local_dining, size: 40),
-                  activeColor: Color(0xFF609B90),
-                  inactiveColor: Theme.of(context).primaryColor),
-              PersistentBottomNavBarItem(
-                  icon: Icon(Icons.person, size: 40),
-                  activeColor: Color(0xFF609B90),
-                  inactiveColor: Theme.of(context).primaryColor),
-            ],
           );
   }
 }
