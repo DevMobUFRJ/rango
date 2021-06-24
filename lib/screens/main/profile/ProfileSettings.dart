@@ -127,11 +127,11 @@ class _ProfileSettingsState extends State<ProfileSettings> {
       ),
       body: Container(
         padding: EdgeInsets.only(top: 0.02.hp),
-        margin: EdgeInsets.symmetric(horizontal: 0.08.wp),
+        margin: EdgeInsets.symmetric(horizontal: 10),
         child: Column(
           children: [
             Container(
-              padding: EdgeInsets.only(right: 0.09.wp),
+              width: 0.8.wp,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -164,7 +164,6 @@ class _ProfileSettingsState extends State<ProfileSettings> {
               child: Column(
                 children: [
                   Container(
-                    height: 0.07.hp,
                     child: CustomCheckBox(
                       changeValue: (value) =>
                           setState(() => _reservaValue = value),
@@ -174,7 +173,6 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                     ),
                   ),
                   Container(
-                    height: 0.07.hp,
                     child: CustomCheckBox(
                       changeValue: (value) =>
                           setState(() => _newMessagesValue = value),
@@ -187,7 +185,6 @@ class _ProfileSettingsState extends State<ProfileSettings> {
               ),
             ),
             Container(
-              margin: EdgeInsets.symmetric(vertical: 0.01.hp),
               width: 0.6.wp,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -210,7 +207,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
               ),
             ),
             Container(
-              margin: EdgeInsets.symmetric(vertical: 0.02.hp),
+              margin: EdgeInsets.only(left: 10, bottom: 10, top: 10),
               child: GestureDetector(
                 onTap: () => pushNewScreen(
                   context,
@@ -232,7 +229,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
               ),
             ),
             Container(
-              margin: EdgeInsets.symmetric(vertical: 0.02.hp),
+              margin: EdgeInsets.symmetric(horizontal: 10),
               child: GestureDetector(
                 onTap: _logout,
                 child: Align(
