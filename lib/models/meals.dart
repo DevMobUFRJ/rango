@@ -1,5 +1,16 @@
 import 'package:flutter/material.dart';
 
+class CurrentMeal {
+  final bool featured;
+
+  CurrentMeal({
+    this.featured
+  });
+
+  CurrentMeal.fromJson(Map<String, dynamic> json):
+      featured = json['featured'];
+}
+
 class Meal {
   String id;
   final String description;

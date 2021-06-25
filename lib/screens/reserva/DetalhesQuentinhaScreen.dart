@@ -7,6 +7,7 @@ import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/meals.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/order.dart';
+import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
 import 'file:///C:/Repositorios/github.com/rango/lib/screens/main/tabs/OrderHistory.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
@@ -14,10 +15,12 @@ import 'package:rango/utils/string_formatters.dart';
 
 class DetalhesQuentinhaScreen extends StatelessWidget {
   final Meal marmita;
+  final Seller seller;
   final double tagM;
 
   DetalhesQuentinhaScreen({
-    this.marmita,
+    @required this.marmita,
+    @required this.seller,
     this.tagM,
   });
 
@@ -33,11 +36,11 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
           onTap: () => pushNewScreen(
             context,
             withNavBar: false,
-            screen: SellerProfile(marmita.sellerId, marmita.sellerName),
+            screen: SellerProfile(seller.id, seller.name),
             pageTransitionAnimation: PageTransitionAnimation.cupertino,
           ),
           child: AutoSizeText(
-            marmita.sellerName,
+            seller.name,
             style: GoogleFonts.montserrat(
                 color: Theme.of(context).accentColor, fontSize: 40.nsp),
           ),
@@ -132,28 +135,45 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              Flexible(
-                flex: 3,
-                child: Container(
-                  width: 0.6.wp,
-                  child: RaisedButton(
-                    onPressed: () => _showOrderDialog(context, marmita.quantity),
-                    padding:
-                        EdgeInsets.symmetric(vertical: 12, horizontal: 0.05.wp),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: AutoSizeText('Reservar',
-                        maxLines: 1,
-                        style: GoogleFonts.montserratTextTheme(
-                                Theme.of(context).textTheme)
-                            .button),
-                  ),
-                ),
-              )
+              _buildReservate(context)
             ],
           )),
     );
+  }
+
+  Widget _buildReservate(context) {
+    if (seller.canReservate) {
+      return Flexible(
+        flex: 3,
+        child: Container(
+          width: 0.6.wp,
+          child: RaisedButton(
+            onPressed: () => _showOrderDialog(context, marmita.quantity),
+            padding:
+            EdgeInsets.symmetric(vertical: 12, horizontal: 0.05.wp),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: AutoSizeText('Reservar',
+                maxLines: 1,
+                style: GoogleFonts.montserratTextTheme(
+                    Theme.of(context).textTheme)
+                    .button),
+          ),
+        ),
+      );
+    } else {
+      return Flexible(
+        flex: 3,
+        child: Container(
+          width: 0.6.wp,
+          child: Text(
+            "Esse vendedor não está trabalhando com reservas, mas você ainda pode ver o cardápio do momento.",
+            textAlign: TextAlign.center,
+          )
+        ),
+      );
+    }
   }
 
   void _showOrderDialog(context, maxQuantity) async {
@@ -265,8 +285,8 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                       Order order = Order(
                           clientId: user.uid,
                           clientName: user.displayName,
-                          sellerId: marmita.sellerId,
-                          sellerName: marmita.sellerName,
+                          sellerId: seller.id,
+                          sellerName: seller.name,
                           mealId: marmita.id,
                           mealName: marmita.name,
                           price: marmita.price,

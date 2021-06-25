@@ -5,13 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
-import 'package:rango/models/client.dart';
-import 'package:rango/models/meals.dart';
+import 'package:rango/models/meal_request.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/seller/ChatScreen.dart';
 import 'package:rango/widgets/home/ListaHorizontal.dart';
-import 'package:cloud_firestore/cloud_firestore.dart' show DocumentSnapshot, QuerySnapshot;
+import 'package:cloud_firestore/cloud_firestore.dart' show DocumentSnapshot;
 
 class SellerProfile extends StatefulWidget {
   final String sellerName;
@@ -48,15 +47,13 @@ class _SellerProfileState extends State<SellerProfile> {
           if (!snapshot.hasData) {
             return CircularProgressIndicator();
           }
-          Seller seller = Seller.fromJson(snapshot.data.data);
+          Seller seller = Seller.fromJson(snapshot.data.data, id: snapshot.data.documentID);
           var currentMeals = seller.currentMeals;
-          List<Map<String, dynamic>> allCurrentMeals = currentMeals.entries.map((meal) {
-            return {
-              "mealId": meal.key,
-              "sellerId": snapshot.data.documentID,
-              "sellerName": seller.name,
-              "quantity": meal.value["quantity"]
-            };
+          List<MealRequest> allCurrentMeals = currentMeals.entries.map((meal) {
+            return MealRequest(
+                mealId: meal.key,
+                seller: seller
+            );
           }).toList();
 
           return Column(

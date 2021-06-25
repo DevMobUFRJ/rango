@@ -6,7 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/client.dart';
-import 'package:rango/models/meals.dart';
+import 'package:rango/models/meal_request.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/rangeChangeNotifier.dart';
 import 'package:rango/resources/repository.dart';
@@ -75,49 +75,46 @@ class _HomeScreenState extends State<HomeScreen> {
                                       return Text(snapshot.error.toString());
                                     }
 
-                                    //TODO Juntar os ids dos currentMeals de todos os sellers, filtrando por featured e/ou limitando o número
-                                    List<Map<String, dynamic>> allCurrentMeals = [];
-                                    List<Map<String, dynamic>> filteredCurrentMeals = [];
+                                    List<MealRequest> allMealsRequests = [];
+                                    List<MealRequest> filteredMealsRequests = [];
 
                                     List<Seller> sellerList = [];
-                                    snapshot.data.forEach((seller) {
-                                      Seller currentSeller = Seller.fromJson(seller.data, id: seller.documentID);
-                                      sellerList.add(currentSeller);
+                                    snapshot.data.forEach((sellerDoc) {
+                                      Seller seller = Seller.fromJson(sellerDoc.data, id: sellerDoc.documentID);
+                                      sellerList.add(seller);
                                       //print("${seller.data["name"]} is from cache: ${seller.metadata.isFromCache}");
                                       var filterByFeatured = false;
                                       var mealsLimit = 0;
-                                      var currentMeals = currentSeller.currentMeals;
+                                      var currentMeals = seller.currentMeals;
 
-                                      var a = currentMeals.entries.map((meal) {
-                                        return {
-                                          "mealId": meal.key,
-                                          "sellerId": seller.documentID,
-                                          "sellerName": seller.data["name"]
-                                        };
+                                      var sellerAll = currentMeals.entries.map((meal) {
+                                        return MealRequest(
+                                            mealId: meal.key,
+                                            seller: seller
+                                        );
                                       }).toList();
-                                      allCurrentMeals.addAll(a);
+                                      allMealsRequests.addAll(sellerAll);
 
                                       if (filterByFeatured) {
-                                        currentMeals.removeWhere((mealId, details) => !details["featured"]);
+                                        currentMeals.removeWhere((mealId, details) => !details.featured);
                                       }
-                                      var b = currentMeals.entries.map((meal) {
-                                        return {
-                                          "mealId": meal.key,
-                                          "sellerId": seller.documentID,
-                                          "sellerName": seller.data["name"]
-                                        };
+                                      var sellerFiltered = currentMeals.entries.map((meal) {
+                                        return MealRequest(
+                                            mealId: meal.key,
+                                            seller: seller
+                                        );
                                       }).toList();
                                       if (mealsLimit > 0) {
-                                        b = b.take(mealsLimit).toList();
+                                        sellerFiltered = sellerFiltered.take(mealsLimit).toList();
                                       }
-                                      filteredCurrentMeals.addAll(b);
+                                      filteredMealsRequests.addAll(sellerFiltered);
                                     });
 
                                     return Column(
                                       children: [
-                                        _buildOrderAgain(allCurrentMeals, widget.usuario.id),
+                                        _buildOrderAgain(allMealsRequests, widget.usuario.id),
                                         SizedBox(height: 0.02.hp),
-                                        _buildSuggestions(filteredCurrentMeals),
+                                        _buildSuggestions(filteredMealsRequests),
                                         SizedBox(height: 0.02.hp),
                                         _buildSellers(sellerList, locationSnapshot, widget.usuario.id)
                                       ],
@@ -200,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSuggestions(List<Map<String, dynamic>> meals) {
+  Widget _buildSuggestions(List<MealRequest> meals) {
     return ListaHorizontal(
       title: 'Sugestões',
       tagM: Random().nextDouble(),
@@ -208,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildOrderAgain(List<Map<String, dynamic>> meals, String clientId) {
+  Widget _buildOrderAgain(List<MealRequest> meals, String clientId) {
     return StreamBuilder(
         stream: Repository.instance.getOrdersFromClient(clientId, limit: 10),
         builder: (context, AsyncSnapshot<QuerySnapshot> orderSnapshot) {
@@ -220,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
           }
 
           var mealIds = orderSnapshot.data.documents.map((order) => order.data["mealId"]).toSet().toList();
-          meals.removeWhere((meal) => !mealIds.contains(meal["mealId"]));
+          meals.removeWhere((meal) => !mealIds.contains(meal.mealId));
 
           return Column(
             children: [

@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rango/models/meal_request.dart';
 import 'package:rango/models/meals.dart';
 import 'package:flutter/foundation.dart';
 import 'package:rango/resources/repository.dart';
@@ -13,7 +14,7 @@ import 'package:rango/utils/string_formatters.dart';
 class ListaHorizontal extends StatelessWidget {
   final String title;
   final double tagM;
-  final List<Map<String, dynamic>> meals;
+  final List<MealRequest> meals;
 
   ListaHorizontal({
     @required this.title,
@@ -45,7 +46,7 @@ class ListaHorizontal extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             shrinkWrap: true,
             itemBuilder: (ctx, index) => StreamBuilder(
-                stream: Repository.instance.getMealFromSeller(meals[index]["mealId"], meals[index]["sellerId"]),
+                stream: Repository.instance.getMealFromSeller(meals[index].mealId, meals[index].seller.id),
                 builder: (context, AsyncSnapshot<DocumentSnapshot> mealSnapshot) {
                   if (!mealSnapshot.hasData) {
                     return Center(child: CircularProgressIndicator());
@@ -54,13 +55,10 @@ class ListaHorizontal extends StatelessWidget {
                     return Text(mealSnapshot.error.toString());
                   }
 
-                  Meal meal = Meal.fromJson(mealSnapshot.data.data);
-                  meal.id = meals[index]["mealId"];
-                  meal.sellerId = meals[index]["sellerId"];
-                  meal.sellerName = meals[index]["sellerName"];
+                  Meal meal = Meal.fromJson(mealSnapshot.data.data, id: meals[index].mealId);
                   return GestureDetector(
                     onTap: () => pushNewScreen(context,
-                        screen: DetalhesQuentinhaScreen(marmita: meal, tagM: tagM),
+                        screen: DetalhesQuentinhaScreen(marmita: meal, seller: meals[index].seller, tagM: tagM),
                         withNavBar: false,
                         pageTransitionAnimation: PageTransitionAnimation.cupertino),
                     child: Card(
