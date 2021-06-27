@@ -37,18 +37,28 @@ class GridHorizontal extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8)),
                 child: Column(
                   children: <Widget>[
-                    Flexible(
-                      flex: 3,
-                      child: orders[index].quentinhas[0].quentinha.picture !=
-                              null
-                          ? FadeInImage.assetNetwork(
-                              placeholder:
-                                  'assets/imgs/quentinha_placeholder.png',
-                              image:
-                                  orders[index].quentinhas[0].quentinha.picture,
-                            )
-                          : Image.asset(
-                              'assets/imgs/quentinha_placeholder.png'),
+                    Expanded(
+                      flex: orders.length > 6 ? 3 : 4,
+                      child: Container(
+                        constraints: BoxConstraints(minWidth: 0.5.wp),
+                        child: orders[index].quentinhas[0].quentinha.picture !=
+                                null
+                            ? FadeInImage.assetNetwork(
+                                placeholder:
+                                    'assets/imgs/quentinha_placeholder.png',
+                                image: orders[index]
+                                    .quentinhas[0]
+                                    .quentinha
+                                    .picture,
+                                fit: orders.length > 6
+                                    ? BoxFit.fitWidth
+                                    : BoxFit.fitWidth,
+                              )
+                            : Image.asset(
+                                'assets/imgs/quentinha_placeholder.png',
+                                fit: BoxFit.fitHeight,
+                              ),
+                      ),
                     ),
                     Expanded(
                       flex: 2,
@@ -61,22 +71,30 @@ class GridHorizontal extends StatelessWidget {
                           children: <Widget>[
                             Flexible(
                               flex: 1,
-                              child: AutoSizeText(
-                                orders[index].quentinhas[0].quentinha.name,
-                                textAlign: TextAlign.center,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.montserrat(
-                                  fontSize: orders.length > 6 ? 22.nsp : 30.nsp,
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 5),
+                                child: AutoSizeText(
+                                  orders[index].quentinhas[0].quentinha.name,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.montserrat(
+                                    fontSize:
+                                        orders.length > 6 ? 25.nsp : 30.nsp,
+                                  ),
                                 ),
                               ),
                             ),
                             Flexible(
                               flex: 1,
-                              child: Text(
-                                'R\$${orders[index].quentinhas[0].quentinha.price}',
-                                style: GoogleFonts.montserrat(
-                                  fontSize: orders.length > 6 ? 22.nsp : 36.nsp,
+                              child: Container(
+                                margin: EdgeInsets.symmetric(vertical: 2),
+                                child: Text(
+                                  'R\$${orders[index].quentinhas[0].quentinha.price}',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize:
+                                        orders.length > 6 ? 25.nsp : 28.nsp,
+                                  ),
                                 ),
                               ),
                             ),
@@ -88,6 +106,8 @@ class GridHorizontal extends StatelessWidget {
                 ),
               ),
             ),
-        staggeredTileBuilder: (index) => StaggeredTile.count(1, 1));
+        staggeredTileBuilder: (index) => orders.length > 6
+            ? StaggeredTile.count(1, 1.2)
+            : StaggeredTile.count(1, 1.2));
   }
 }
