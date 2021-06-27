@@ -39,10 +39,16 @@ class GridHorizontal extends StatelessWidget {
                   children: <Widget>[
                     Flexible(
                       flex: 3,
-                      child: FadeInImage.assetNetwork(
-                        placeholder: 'assets/imgs/quentinha_placeholder.png',
-                        image: orders[index].quentinhas[0].quentinha.picture,
-                      ),
+                      child: orders[index].quentinhas[0].quentinha.picture !=
+                              null
+                          ? FadeInImage.assetNetwork(
+                              placeholder:
+                                  'assets/imgs/quentinha_placeholder.png',
+                              image:
+                                  orders[index].quentinhas[0].quentinha.picture,
+                            )
+                          : Image.asset(
+                              'assets/imgs/quentinha_placeholder.png'),
                     ),
                     Expanded(
                       flex: 2,

@@ -117,7 +117,7 @@ class _ManageOrderState extends State<ManageOrder> {
                     child: TextFormField(
                       controller: _mealDescription,
                       style: GoogleFonts.montserrat(
-                        fontSize: 38.nsp,
+                        fontSize: 35.nsp,
                         fontWeight: FontWeight.w500,
                         color: Theme.of(context).accentColor,
                       ),

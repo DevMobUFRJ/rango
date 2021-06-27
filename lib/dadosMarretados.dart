@@ -22,6 +22,8 @@ final List<Client> clients = [
 final List<MealInOrder> quentinhasQtd = [
   MealInOrder(quentinha: quentinhas[0], quantidade: 1),
   MealInOrder(quentinha: quentinhas[1], quantidade: 1),
+  MealInOrder(quentinha: quentinhas[2], quantidade: 2),
+  MealInOrder(quentinha: quentinhas[3], quantidade: 3),
 ];
 
 final List<Meal> quentinhas = [
@@ -39,6 +41,18 @@ final List<Meal> quentinhas = [
       price: 10,
       picture:
           "https://img.itdg.com.br/tdg/images/recipes/000/000/876/324587/324587_original.jpg?mode=crop&width=710&height=400",
+      sellerId: '1',
+      sellerName: 'Quentinha Top'),
+  Meal(
+      name: "Purê com carne moída",
+      description:
+          'Purê com bastante carne moída acompanhado de arroz e feijão',
+      price: 8,
+      sellerId: '1',
+      sellerName: 'Quentinha Top'),
+  Meal(
+      name: "Frango a parmegiana",
+      price: 8,
       sellerId: '1',
       sellerName: 'Quentinha Top'),
 ];
@@ -121,6 +135,24 @@ final List<Order> pedidosConcluidos = [
 ];
 
 final List<Order> pedidos = [
+  Order(
+    cliente: clients[0],
+    quentinhas: [quentinhasQtd[3]],
+    reservada: false,
+    vendida: false,
+    orderId: 1,
+    valorTotal:
+        quentinhasQtd[0].quentinha.price + quentinhasQtd[1].quentinha.price,
+  ),
+  Order(
+    cliente: clients[0],
+    quentinhas: [quentinhasQtd[2]],
+    reservada: false,
+    vendida: false,
+    orderId: 1,
+    valorTotal:
+        quentinhasQtd[0].quentinha.price + quentinhasQtd[1].quentinha.price,
+  ),
   Order(
     cliente: clients[0],
     quentinhas: [quentinhasQtd[0], quentinhasQtd[1]],

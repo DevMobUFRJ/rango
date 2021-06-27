@@ -78,43 +78,65 @@ class _MealsHistoryState extends State<MealsHistory> {
                                   ),
                                   withNavBar: false,
                                 ),
-                                child: Card(
-                                  semanticContainer: true,
-                                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8)),
-                                  child: Column(
-                                    children: <Widget>[
-                                      FadeInImage.assetNetwork(
-                                        placeholder:
-                                            'assets/imgs/quentinha_placeholder.png',
-                                        image: widget.orders[index]
-                                            .quentinhas[0].quentinha.picture,
-                                        fit: BoxFit.fitWidth,
-                                      ),
-                                      Container(
-                                        padding:
-                                            EdgeInsets.symmetric(vertical: 5),
-                                        child: Column(
-                                          children: <Widget>[
-                                            AutoSizeText(
-                                              widget.orders[index].quentinhas[0]
-                                                  .quentinha.name,
-                                              textAlign: TextAlign.center,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: GoogleFonts.montserrat(
-                                                  fontSize: 24.nsp),
-                                            ),
-                                            AutoSizeText(
-                                              'R\$${widget.orders[index].quentinhas[0].quentinha.price}',
-                                              style: GoogleFonts.montserrat(
-                                                  fontSize: 24.nsp),
-                                            ),
-                                          ],
+                                child: Container(
+                                  child: Card(
+                                    semanticContainer: true,
+                                    clipBehavior: Clip.antiAlias,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8)),
+                                    child: Column(
+                                      children: <Widget>[
+                                        Container(
+                                          constraints: BoxConstraints(
+                                              maxHeight: 100, minWidth: 0.5.wp),
+                                          child: widget
+                                                      .orders[index]
+                                                      .quentinhas[0]
+                                                      .quentinha
+                                                      .picture !=
+                                                  null
+                                              ? FadeInImage.assetNetwork(
+                                                  placeholder:
+                                                      'assets/imgs/quentinha_placeholder.png',
+                                                  image: widget
+                                                      .orders[index]
+                                                      .quentinhas[0]
+                                                      .quentinha
+                                                      .picture,
+                                                  fit: BoxFit.fitWidth,
+                                                )
+                                              : Image.asset(
+                                                  'assets/imgs/quentinha_placeholder.png',
+                                                  fit: BoxFit.fitHeight,
+                                                ),
                                         ),
-                                      ),
-                                    ],
+                                        Container(
+                                          padding:
+                                              EdgeInsets.symmetric(vertical: 5),
+                                          child: Column(
+                                            children: <Widget>[
+                                              AutoSizeText(
+                                                widget
+                                                    .orders[index]
+                                                    .quentinhas[0]
+                                                    .quentinha
+                                                    .name,
+                                                textAlign: TextAlign.center,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: GoogleFonts.montserrat(
+                                                    fontSize: 24.nsp),
+                                              ),
+                                              AutoSizeText(
+                                                'R\$${widget.orders[index].quentinhas[0].quentinha.price}',
+                                                style: GoogleFonts.montserrat(
+                                                    fontSize: 24.nsp),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),

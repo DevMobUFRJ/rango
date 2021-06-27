@@ -11,7 +11,7 @@ class Meal {
   final int quantidadeDisponivel;
 
   Meal({
-    @required this.description,
+    this.description,
     this.featured,
     @required this.name,
     this.picture,
