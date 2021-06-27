@@ -68,6 +68,60 @@ final List<Order> pedidosConcluidos = [
         quentinhasQtd[0].quentinha.price + quentinhasQtd[1].quentinha.price,
   ),
   Order(
+    cliente: clients[0],
+    quentinhas: [quentinhasQtd[0], quentinhasQtd[1]],
+    reservada: true,
+    vendida: true,
+    orderId: 1,
+    valorTotal:
+        quentinhasQtd[0].quentinha.price + quentinhasQtd[1].quentinha.price,
+  ),
+  Order(
+    cliente: clients[0],
+    quentinhas: [quentinhasQtd[0], quentinhasQtd[1]],
+    reservada: true,
+    vendida: true,
+    orderId: 1,
+    valorTotal:
+        quentinhasQtd[0].quentinha.price + quentinhasQtd[1].quentinha.price,
+  ),
+  Order(
+    cliente: clients[0],
+    quentinhas: [quentinhasQtd[0], quentinhasQtd[1]],
+    reservada: true,
+    vendida: true,
+    orderId: 1,
+    valorTotal:
+        quentinhasQtd[0].quentinha.price + quentinhasQtd[1].quentinha.price,
+  ),
+  Order(
+    cliente: clients[0],
+    quentinhas: [quentinhasQtd[0], quentinhasQtd[1]],
+    reservada: true,
+    vendida: true,
+    orderId: 1,
+    valorTotal:
+        quentinhasQtd[0].quentinha.price + quentinhasQtd[1].quentinha.price,
+  ),
+  Order(
+    cliente: clients[0],
+    quentinhas: [quentinhasQtd[0], quentinhasQtd[1]],
+    reservada: true,
+    vendida: true,
+    orderId: 1,
+    valorTotal:
+        quentinhasQtd[0].quentinha.price + quentinhasQtd[1].quentinha.price,
+  ),
+  Order(
+    cliente: clients[0],
+    quentinhas: [quentinhasQtd[0], quentinhasQtd[1]],
+    reservada: true,
+    vendida: true,
+    orderId: 1,
+    valorTotal:
+        quentinhasQtd[0].quentinha.price + quentinhasQtd[1].quentinha.price,
+  ),
+  Order(
     cliente: clients[1],
     quentinhas: [quentinhasQtd[0], quentinhasQtd[1]],
     reservada: true,

@@ -191,7 +191,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
                     ],
                   ),
                   Flexible(
-                    flex: 4,
+                    flex: pedidos.length > 6 ? 4 : 2,
                     child: Container(
                       child: Column(
                         children: [
@@ -209,13 +209,15 @@ class _AddMealScreenState extends State<AddMealScreen> {
                             ),
                           ),
                           Expanded(
-                            flex: pedidos.length > 6 ? 5 : 2,
-                            child: GridHorizontal(
-                              orders: pedidos,
+                            flex: pedidos.length > 6 ? 5 : 1,
+                            child: Container(
+                              child: GridHorizontal(
+                                orders: pedidos,
+                              ),
                             ),
                           ),
                           Flexible(
-                            flex: 1,
+                            flex: 0,
                             child: Container(
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -301,7 +303,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
                             child: Container(
                               child: ListView.builder(
                                 padding: EdgeInsets.all(0),
-                                itemCount: pedidos.length,
+                                itemCount: pedidosConcluidos.length,
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
                                 itemBuilder: (ctx, index) => Row(
@@ -314,7 +316,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
                                       child: GestureDetector(
                                         onTap: () => {},
                                         child: AutoSizeText(
-                                          pedidos[index]
+                                          pedidosConcluidos[index]
                                               .quentinhas[0]
                                               .quentinha
                                               .name,
