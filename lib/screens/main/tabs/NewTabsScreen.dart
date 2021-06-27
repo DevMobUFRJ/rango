@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rango/models/contact.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/models/user_notification_settings.dart';
 import 'package:rango/screens/SplashScreen.dart';
@@ -32,8 +33,13 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
       seller = new Seller(
         email: userData?.data['email']?.toString(),
         picture: userData?.data['picture']?.toString(),
+        description: userData?.data['description'].toString(),
+        payments: userData?.data['paymentMethods'].toString(),
         name: userData.data['name'].toString(),
-        // phone: userData?.data['phone']?.toString(),
+        contact: new Contact(
+          phone: userData?.data['contact']['phone']?.toString(),
+          name: userData?.data['contact']['name']?.toString(),
+        ),
         notificationSettings: userData.data['notificationSettings'] != null
             ? UserNotificationSettings(
                 discounts: userData.data['notifications']['discounts'],

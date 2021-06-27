@@ -65,7 +65,6 @@ class _AuthFormState extends State<AuthForm> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
     return LayoutBuilder(
       builder: (ctx, constraint) => SingleChildScrollView(
         child: ConstrainedBox(

@@ -12,13 +12,15 @@ class Seller {
   final LatLng location;
   final String logo;
   final String name;
+  final String description;
+  final String address;
+  final String payments;
   final String picture;
   final Shift shift;
   final List<Order> pedidos;
   final List<Meal> currentMeals;
   final List<Meal> meals;
   final String email;
-  final String phone;
   final UserNotificationSettings notificationSettings;
 
   Seller({
@@ -30,10 +32,12 @@ class Seller {
     this.meals,
     this.pedidos,
     @required this.name,
+    this.description,
+    this.address,
+    this.payments,
     this.picture,
     this.shift,
     this.email,
-    this.phone,
     this.notificationSettings,
   });
 }

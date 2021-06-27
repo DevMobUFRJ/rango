@@ -16,20 +16,22 @@ class CustomTextFormField extends StatefulWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
   final Function(String) onChanged;
+  final num numberOfLines;
 
   CustomTextFormField({
     @required this.labelText,
     this.textInputAction,
     this.onFieldSubmitted,
     @required this.key,
-    @required this.validator,
+    this.validator,
     this.onSaved,
     this.keyboardType,
-    @required this.errorText,
+    this.errorText,
     this.isPassword = false,
     this.controller,
     this.focusNode,
     this.onChanged,
+    this.numberOfLines = 1,
   });
 
   @override
@@ -41,25 +43,24 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
-    return Column(
-      children: <Widget>[
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: EdgeInsets.only(left: 0.05.wp, bottom: 0.01.hp),
-            child: Text(
-              widget.labelText,
-              style: TextStyle(
-                fontSize: 38.nsp,
-                color: Theme.of(context).accentColor,
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        children: <Widget>[
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: EdgeInsets.only(left: 0.05.wp, bottom: 0.01.hp),
+              child: Text(
+                widget.labelText,
+                style: TextStyle(
+                  fontSize: 38.nsp,
+                  color: Theme.of(context).accentColor,
+                ),
               ),
             ),
           ),
-        ),
-        Flexible(
-          flex: 1,
-          child: Material(
+          Material(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
@@ -73,6 +74,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               validator: widget.validator,
               onSaved: widget.onSaved,
               onChanged: widget.onChanged,
+              minLines: 1,
+              maxLines: widget.numberOfLines,
               obscureText: widget.isPassword != null && !widget.isPassword
                   ? false
                   : !_showPassword,
@@ -98,9 +101,9 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               keyboardType: widget.keyboardType,
             ),
           ),
-        ),
-        if (widget.errorText != null) ErrorMessageText(widget.errorText),
-      ],
+          if (widget.errorText != null) ErrorMessageText(widget.errorText),
+        ],
+      ),
     );
   }
 }
