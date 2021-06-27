@@ -124,6 +124,7 @@ class _OrderContainerState extends State<OrderContainer> {
                             ),
                             child: AutoSizeText(
                               widget.pedido.cliente.name,
+                              overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.montserrat(
                                 textStyle: TextStyle(
                                   color: Colors.white,
