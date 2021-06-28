@@ -83,7 +83,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         Navigator.of(context).pop();
         //TODO: trocar senha e tratar erros
       } catch (error) {
-        Scaffold.of(context).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(error.toString()),
           ),
@@ -221,7 +221,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     disabledColor: Colors.grey,
                                     onPressed: _loading
                                         ? () => {
-                                              Scaffold.of(context).showSnackBar(
+                                              ScaffoldMessenger.of(context).showSnackBar(
                                                   SnackBar(
                                                       content: Text(
                                                           'Carregando, aguarde.')))

@@ -1,29 +1,67 @@
+import 'dart:convert';
+
+import 'package:rango/models/address.dart';
 import 'package:rango/models/contact.dart';
+import 'package:rango/models/location.dart';
 import 'package:rango/models/meals.dart';
 import 'package:rango/models/shift.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/foundation.dart';
 
 class Seller {
-  final bool active;
+  final String id;
   final Contact contact;
-  final LatLng location;
-  final String logo;
-  final String name;
-  final String picture;
   final Shift shift;
-  final List<Meal> currentMeals;
-  final List<Meal> meals;
+  final String name;
+  final bool active;
+  final bool canReservate;
+  final String logo;
+  final Location location;
+  final Address address;
+  final String picture;
+  final String description;
+  final String paymentMethods;
+  Map<String, CurrentMeal> currentMeals;
+  List<Meal> meals;
 
   Seller({
-    @required this.active,
+    this.id,
     this.contact,
-    @required this.currentMeals,
-    @required this.location,
-    this.logo,
-    @required this.meals,
-    @required this.name,
-    this.picture,
     @required this.shift,
+    @required this.name,
+    @required this.active,
+    @required this.canReservate,
+    this.logo,
+    @required this.location,
+    this.address,
+    this.picture,
+    this.description,
+    this.paymentMethods,
+    this.meals,
+    this.currentMeals,
   });
+
+  Seller.fromJson(Map<String, dynamic> json, {String id})
+      : id = id,
+        contact = Contact.fromJson(json['contact']),
+        shift = Shift.fromJson(json['shift']),
+        name = json['name'],
+        active = json['active'],
+        canReservate = json['canReservate'],
+        logo = json['logo'],
+        location = json['location'] == null? null: Location.fromJson(json['location']),
+        address = json['address'] == null? null: Address.fromJson(json['address']),
+        picture = json['picture'],
+        description = json['description'],
+        paymentMethods = json['paymentMethods'],
+        currentMeals = buildCurrentMeals(json['currentMeals']),
+        meals = [];
+
+  Map<String, dynamic> toJson() => {
+    'name': name,
+  };
+}
+
+Map<String, CurrentMeal> buildCurrentMeals(Map<String, dynamic> json) {
+  Map<String, CurrentMeal> newMap = json.map((key, value) => MapEntry(key, CurrentMeal.fromJson(value)));
+  return newMap;
 }

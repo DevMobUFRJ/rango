@@ -84,7 +84,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
           setState(() => _pickedImage = pickedImageFile);
         }
       } catch (error) {
-        Scaffold.of(context).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content:
                 Text('Ocorreu um erro ao escolher a foto, tente novmanete'),

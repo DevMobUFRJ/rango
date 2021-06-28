@@ -30,12 +30,29 @@ class _AuthScreenState extends State<AuthScreen> {
     try {
       setState(() => _isLoading = true);
       if (_isLogin) {
-        authResult = await _auth.signInWithEmailAndPassword(
-            email: email, password: password);
+        try {
+          authResult = await _auth.signInWithEmailAndPassword(
+              email: email, password: password);
+        } on PlatformException catch (error)  {
+          setState(() => _isLoading = false);
+          print(error.message);
+          ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
+            content: Text("Senha incorreta"),
+            backgroundColor: Theme.of(context).errorColor,
+          ));
+        } catch (error) {
+          setState(() => _isLoading = false);
+          print(error);
+        }
+
       } else {
         setState(() => _isLoading = true);
-        authResult = await _auth.createUserWithEmailAndPassword(
-            email: email, password: password);
+        authResult = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+        FirebaseUser user = await _auth.currentUser();
+        UserUpdateInfo updateInfo = UserUpdateInfo();
+        updateInfo.displayName = name;
+        user.updateProfile(updateInfo);
+
         String url;
         if (image != null) {
           final ref = FirebaseStorage.instance
@@ -61,7 +78,7 @@ class _AuthScreenState extends State<AuthScreen> {
       if (error.message != null) {
         message = error.message;
       }
-      Scaffold.of(ctx).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
         content: Text(message),
         backgroundColor: Theme.of(context).errorColor,
       ));
