@@ -46,6 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: FutureBuilder(
                     future: Repository.instance.getUserLocation(),
                     builder: (context, AsyncSnapshot<Position> locationSnapshot) {
+                      // TODO (Gabriel): Melhorar esse indicator?
                       if (!locationSnapshot.hasData) {
                         return Center(child: CircularProgressIndicator());
                       }
@@ -56,6 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       return Consumer<RangeChangeNotifier>(
                         builder: (context, shouldChange, child) {
                           return FutureBuilder(
+                            // TODO (Gabriel): Melhorar esse indicator?
                             future: Repository.instance.getSellerRange(),
                             builder: (context, AsyncSnapshot<double> rangeSnapshot) {
                               if (!rangeSnapshot.hasData) {
@@ -68,6 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               return StreamBuilder(
                                   stream: Repository.instance.getNearbySellersStream(locationSnapshot.data, rangeSnapshot.data, queryByActive: false, queryByTime: false),
                                   builder: (context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
+                                    // TODO (Gabriel): Melhorar esse indicator?
                                     if (!snapshot.hasData) {
                                       return CircularProgressIndicator();
                                     }
@@ -176,6 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return StreamBuilder(
         stream: Repository.instance.getClientStream(clientId),
         builder: (context, AsyncSnapshot<DocumentSnapshot> clientSnapshot) {
+          // TODO (Gabriel): Trocar esse indicator por alguns placeholders
           if (!clientSnapshot.hasData) {
             return CircularProgressIndicator();
           }
@@ -209,6 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return StreamBuilder(
         stream: Repository.instance.getOrdersFromClient(clientId, limit: 10),
         builder: (context, AsyncSnapshot<QuerySnapshot> orderSnapshot) {
+          // TODO (Gabriel): Trocar esse indicator por alguns placeholders
           if (!orderSnapshot.hasData) {
             return CircularProgressIndicator();
           }

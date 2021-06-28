@@ -150,5 +150,5 @@ class Repository {
     prefs.setDouble('seller_range', range);
   }
 
-  static Repository get instance => Repository(); // TODO Necessario?
+  static Repository get instance => Repository();
 }

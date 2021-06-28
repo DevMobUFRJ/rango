@@ -14,6 +14,84 @@ import 'package:rango/utils/string_formatters.dart';
 class OrderHistoryScreen extends StatelessWidget {
   OrderHistoryScreen();
 
+  Widget build(BuildContext context) {
+    ScreenUtil.init(context, width: 750, height: 1334);
+    return Scaffold(
+        appBar: AppBar(
+          title: AutoSizeText(
+              'Histórico',
+              style: GoogleFonts.montserrat(
+                  color: Theme.of(context).accentColor, fontSize: 40.nsp)
+          ),
+        ),
+        body: Container(
+          height: 1.hp - 56,
+          child: FutureBuilder(
+            future: Repository.instance.getCurrentUser(),
+            builder: (context, AsyncSnapshot<FirebaseUser> authSnapshot) {
+              // TODO (Gabriel): Trocar esse indicator por placeholders?
+              if (!authSnapshot.hasData) {
+                return CircularProgressIndicator();
+              }
+              if (authSnapshot.hasError) {
+                return Text(authSnapshot.error.toString());
+              }
+
+              return StreamBuilder(
+                stream: Repository.instance.getOrdersFromClient(authSnapshot.data.uid),
+                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                  // TODO (Gabriel): Trocar esse indicator por placeholders?
+                  if (!snapshot.hasData) {
+                    return CircularProgressIndicator();
+                  }
+                  if (snapshot.hasError) {
+                    return Text(snapshot.error.toString());
+                  }
+
+                  return ListView.builder(
+                    itemCount: snapshot.data.documents.length,
+                    itemBuilder: (context, index) {
+                      Order order = Order.fromJson(snapshot.data.documents[index].data);
+                      return Card(
+                        child: ListTile(
+                          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              GestureDetector(
+                                onTap: () => pushNewScreen(
+                                  context,
+                                  withNavBar: false,
+                                  screen: SellerProfile(order.sellerId, order.sellerName),
+                                  pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                                ),
+                                child: Text(order.sellerName),
+                              ),
+                              SizedBox(height: 10),
+                              buildOrderStatus(order),
+                              SizedBox(height: 10),
+                              Text('${order.quantity} x ${order.mealName}'),
+                              SizedBox(height: 10),
+                              Text('Total: ${intToCurrency(order.price*order.quantity)}'),
+                              SizedBox(height: 10),
+                            ],
+                          ),
+                          trailing: buildTrailing(context, order, snapshot.data.documents[index].documentID),
+                          subtitle: order.requestedAt != null
+                              ? Text('${order.requestedAt?.toDate()?.day}/${order.requestedAt?.toDate()?.month}/${order.requestedAt?.toDate()?.year}')
+                              : null,
+                        ),
+                      );
+                    },
+                  );
+                },
+              );
+            },
+          )
+        )
+    );
+  }
+
   Widget buildTrailing(context, Order order, String orderUid) {
     if (order.status != 'sold' && order.status != 'canceled') {
       return IconButton(
@@ -65,81 +143,6 @@ class OrderHistoryScreen extends StatelessWidget {
           child: Text(text),
         )
       ],
-    );
-  }
-
-  Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
-    return Scaffold(
-        appBar: AppBar(
-          title: AutoSizeText(
-              'Histórico',
-              style: GoogleFonts.montserrat(
-                  color: Theme.of(context).accentColor, fontSize: 40.nsp)
-          ),
-        ),
-        body: Container(
-          child: FutureBuilder(
-            future: Repository.instance.getCurrentUser(),
-            builder: (context, AsyncSnapshot<FirebaseUser> authSnapshot) {
-              if (!authSnapshot.hasData) {
-                return CircularProgressIndicator();
-              }
-              if (authSnapshot.hasError) {
-                return Text(authSnapshot.error.toString());
-              }
-
-              return StreamBuilder(
-                stream: Repository.instance.getOrdersFromClient(authSnapshot.data.uid),
-                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (!snapshot.hasData) {
-                    return CircularProgressIndicator();
-                  }
-                  if (snapshot.hasError) {
-                    return Text(snapshot.error.toString());
-                  }
-
-                  return ListView.builder(
-                    itemCount: snapshot.data.documents.length,
-                    itemBuilder: (context, index) {
-                      Order order = Order.fromJson(snapshot.data.documents[index].data);
-                      return Card(
-                        child: ListTile(
-                          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                          title: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              GestureDetector(
-                                onTap: () => pushNewScreen(
-                                  context,
-                                  withNavBar: false,
-                                  screen: SellerProfile(order.sellerId, order.sellerName),
-                                  pageTransitionAnimation: PageTransitionAnimation.cupertino,
-                                ),
-                                child: Text(order.sellerName),
-                              ),
-                              SizedBox(height: 10),
-                              buildOrderStatus(order),
-                              SizedBox(height: 10),
-                              Text('${order.quantity} x ${order.mealName}'),
-                              SizedBox(height: 10),
-                              Text('Total: ${intToCurrency(order.price*order.quantity)}'),
-                              SizedBox(height: 10),
-                            ],
-                          ),
-                          trailing: buildTrailing(context, order, snapshot.data.documents[index].documentID),
-                          subtitle: order.requestedAt != null
-                              ? Text('${order.requestedAt?.toDate()?.day}/${order.requestedAt?.toDate()?.month}/${order.requestedAt?.toDate()?.year}')
-                              : null,
-                        ),
-                      );
-                    },
-                  );
-                },
-              );
-            },
-          )
-        )
     );
   }
 

@@ -44,15 +44,22 @@ class ListaHorizontal extends StatelessWidget {
           child: ListView.builder(
             itemCount: meals.length,
             scrollDirection: Axis.horizontal,
-            shrinkWrap: true,
+            shrinkWrap: false,
             itemBuilder: (ctx, index) => StreamBuilder(
                 stream: Repository.instance.getMealFromSeller(meals[index].mealId, meals[index].seller.id),
                 builder: (context, AsyncSnapshot<DocumentSnapshot> mealSnapshot) {
+                  // TODO (Gabriel): Trocar esse indicator por um placeholder
                   if (!mealSnapshot.hasData) {
-                    return Center(child: CircularProgressIndicator());
+                    return Container(
+                      width: 0.4.wp, // Importante ter o mesmo width do Widget final, se não fica parecendo que tá travando quando scrolla
+                      child: Center(child: CircularProgressIndicator()),
+                    );
                   }
                   if (mealSnapshot.hasError) {
-                    return Text(mealSnapshot.error.toString());
+                    return Container(
+                      width: 0.4.wp,
+                      child: Text(mealSnapshot.error.toString()),
+                    );
                   }
 
                   Meal meal = Meal.fromJson(mealSnapshot.data.data, id: meals[index].mealId);

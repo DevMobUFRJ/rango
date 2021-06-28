@@ -36,7 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
         padding: EdgeInsets.only(left: 0.1.wp, right: 0.1.wp),
-        height: MediaQuery.of(context).size.height - kToolbarHeight - 86,
+        height: 1.hp - 56,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -167,6 +167,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: StreamBuilder(
                     stream: Repository.instance.getClientStream(widget.usuario.id),
                     builder: (context, AsyncSnapshot<DocumentSnapshot> clientSnapshot) {
+                      // TODO (Gabriel): Trocar esse indicator por placeholders?
                       if (!clientSnapshot.hasData) {
                         return CircularProgressIndicator();
                       }
@@ -184,6 +185,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           itemBuilder: (ctx, index) => StreamBuilder(
                               stream: Repository.instance.getSeller(favoriteSellers[index]),
                               builder: (context, AsyncSnapshot<DocumentSnapshot> sellerSnapshot) {
+                                // TODO (Gabriel): Trocar esse indicator por um placeholder
                                 if (!sellerSnapshot.hasData) {
                                   return Center(child: CircularProgressIndicator());
                                 }

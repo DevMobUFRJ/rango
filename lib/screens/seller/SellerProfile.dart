@@ -44,9 +44,14 @@ class _SellerProfileState extends State<SellerProfile> {
       body: StreamBuilder(
         stream: Repository.instance.getSeller(widget.sellerId),
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          // TODO (Gabriel): Melhorar esse indicator
           if (!snapshot.hasData) {
             return CircularProgressIndicator();
           }
+          if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
+          }
+
           Seller seller = Seller.fromJson(snapshot.data.data, id: snapshot.data.documentID);
           var currentMeals = seller.currentMeals;
           List<MealRequest> allCurrentMeals = currentMeals.entries.map((meal) {
@@ -171,7 +176,8 @@ class _SellerProfileState extends State<SellerProfile> {
         return StreamBuilder(
             stream: Repository.instance.getClientStream(authSnapshot.data.uid),
             builder: (context, AsyncSnapshot<DocumentSnapshot> clientSnapshot) {
-              if (!clientSnapshot.hasData || clientSnapshot.hasError) {
+              // TODO Acho que nesse caso não precisa de indicator, se estiver carregando mostra a estrela vazia
+              if (!clientSnapshot.hasData) {
                 return Padding(
                   padding: EdgeInsets.only(
                     right: 20,
@@ -181,6 +187,12 @@ class _SellerProfileState extends State<SellerProfile> {
                     size: 48.nsp,
                   ),
                 );
+              }
+
+              // TODO Se der erro, não mostrar a estrela pro usuário não poder clicar
+              // TODO Deletar esses comentários caso concordar
+              if (clientSnapshot.hasError) {
+                return SizedBox();
               }
 
               var isFavorite = clientSnapshot.data.data['favoriteSellers'].contains(widget.sellerId);

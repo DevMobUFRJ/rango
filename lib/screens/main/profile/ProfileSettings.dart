@@ -217,6 +217,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
               Container(
                 margin: EdgeInsets.symmetric(vertical: 0.01.hp),
                 width: 0.6.wp,
+                // TODO Mudar isso para um slider?
                 child: TextField(
                   controller: _rangeController,
                   keyboardType: TextInputType.number,
