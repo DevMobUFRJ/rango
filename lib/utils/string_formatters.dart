@@ -9,11 +9,11 @@ String intToCurrency(int number) {
 
 String distanceInKM(Seller seller, Position userLocation) {
   var distance = Geolocator.distanceBetween(
-      seller.location.geopoint.latitude,
-      seller.location.geopoint.longitude,
-      userLocation.latitude,
-      userLocation.longitude
-  )/1000;
+          seller.location.geopoint.latitude,
+          seller.location.geopoint.longitude,
+          userLocation.latitude,
+          userLocation.longitude) /
+      1000;
 
   return distance.toStringAsFixed(1).replaceAll('.', ',') + ' km';
 }

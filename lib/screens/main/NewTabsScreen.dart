@@ -6,8 +6,8 @@ import 'package:rango/models/client.dart';
 import 'package:rango/models/user_notification_settings.dart';
 import 'package:rango/resources/rangeChangeNotifier.dart';
 import 'package:rango/screens/SplashScreen.dart';
-import 'file:///C:/Repositorios/github.com/rango/lib/screens/main/tabs/OrderHistory.dart';
 import 'package:rango/screens/main/tabs/HomeScreen.dart';
+import 'package:rango/screens/main/tabs/OrderHistory.dart';
 import 'package:rango/screens/main/tabs/ProfileScreen.dart';
 import 'package:rango/screens/main/tabs/SearchScreen.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
@@ -105,6 +105,6 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
                     inactiveColor: Theme.of(context).primaryColor),
               ],
             ),
-    );
+          );
   }
 }
