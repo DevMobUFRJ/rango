@@ -24,7 +24,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final yellow = Color(0xFFF9B152);
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
@@ -170,6 +169,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Repository.instance.getClientStream(widget.usuario.id),
                   builder: (context,
                       AsyncSnapshot<DocumentSnapshot> clientSnapshot) {
+                    if (clientSnapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return Container(
+                        height: 0.4.hp,
+                        alignment: Alignment.center,
+                        child: SizedBox(
+                          height: 50,
+                          width: 50,
+                          child: CircularProgressIndicator(
+                            color: Theme.of(context).accentColor,
+                          ),
+                        ),
+                      );
+                    }
                     if (clientSnapshot.data.data['favoriteSellers'] == null) {
                       return Container(
                         margin: EdgeInsets.symmetric(
