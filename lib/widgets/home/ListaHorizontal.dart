@@ -24,7 +24,6 @@ class ListaHorizontal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
