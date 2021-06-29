@@ -209,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         height: 0.7.wp - 56,
                                         alignment: Alignment.center,
                                         child: AutoSizeText(
-                                          'Use o aplicativo e faça reservas para receber sugestões de quentinhas!',
+                                          'Sem sugestões ou vendedores próximos. Aumente o alcance ou faça pedidos para receber sugestões!',
                                           style: GoogleFonts.montserrat(
                                             fontSize: 45.nsp,
                                             color:
@@ -251,7 +251,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                           _buildSellers(
                                               sellerList,
                                               locationSnapshot,
-                                              widget.usuario.id)
+                                              widget.usuario.id),
+                                        if (sellerList.isEmpty)
+                                          Container(
+                                            margin: EdgeInsets.symmetric(
+                                              horizontal: 15,
+                                              vertical: 10,
+                                            ),
+                                            child: AutoSizeText(
+                                              'Aumente o alcance para visualizar vendedores!',
+                                              style: GoogleFonts.montserrat(
+                                                fontSize: 45.nsp,
+                                                color: Theme.of(context)
+                                                    .accentColor,
+                                              ),
+                                            ),
+                                          ),
                                       ],
                                     );
                                   },
@@ -308,47 +323,51 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildSellers(List<Seller> sellerList,
       AsyncSnapshot<Position> locationSnapshot, String clientId) {
     return StreamBuilder(
-        stream: Repository.instance.getClientStream(clientId),
-        builder: (context, AsyncSnapshot<DocumentSnapshot> clientSnapshot) {
-          // TODO (Gabriel): Trocar esse indicator por alguns placeholders
-          if (!clientSnapshot.hasData ||
-              clientSnapshot.connectionState == ConnectionState.waiting) {
-            return Container(
-              height: 0.5.hp,
-              alignment: Alignment.center,
-              child: SizedBox(
-                height: 50,
-                width: 50,
-                child: CircularProgressIndicator(
-                  color: Theme.of(context).accentColor,
-                ),
+      stream: Repository.instance.getClientStream(clientId),
+      builder: (context, AsyncSnapshot<DocumentSnapshot> clientSnapshot) {
+        if (!clientSnapshot.hasData ||
+            clientSnapshot.connectionState == ConnectionState.waiting) {
+          return Container(
+            height: 0.5.hp,
+            alignment: Alignment.center,
+            child: SizedBox(
+              height: 50,
+              width: 50,
+              child: CircularProgressIndicator(
+                color: Theme.of(context).accentColor,
               ),
-            );
-          }
-          if (clientSnapshot.hasError) {
-            return Container(
-              height: 0.6.hp - 56,
-              alignment: Alignment.center,
-              child: AutoSizeText(
-                clientSnapshot.error.toString(),
-                style: GoogleFonts.montserrat(
-                    fontSize: 45.nsp, color: Theme.of(context).accentColor),
-              ),
-            );
-          }
-
-          // Ordena por sellers favoritos
-          var favorites = clientSnapshot.data.data['favoriteSellers'];
-          sellerList.sort((a, b) =>
-              favorites.indexOf(b.id).compareTo(favorites.indexOf(a.id)));
-
-          return SellerGridVertical(
-            tagM: Random().nextDouble(),
-            title: 'Vendedores',
-            sellers: sellerList,
-            userLocation: locationSnapshot.data,
+            ),
           );
-        });
+        }
+        if (clientSnapshot.hasError) {
+          return Container(
+            height: 0.6.hp - 56,
+            alignment: Alignment.center,
+            child: AutoSizeText(
+              clientSnapshot.error.toString(),
+              style: GoogleFonts.montserrat(
+                  fontSize: 45.nsp, color: Theme.of(context).accentColor),
+            ),
+          );
+        }
+
+        // Ordena por sellers favoritos
+        var favorites = clientSnapshot.data.data['favoriteSellers'];
+        if (favorites != null) {
+          sellerList.sort(
+            (a, b) =>
+                favorites.indexOf(b.id).compareTo(favorites.indexOf(a.id)),
+          );
+        }
+
+        return SellerGridVertical(
+          tagM: Random().nextDouble(),
+          title: 'Vendedores',
+          sellers: sellerList,
+          userLocation: locationSnapshot.data,
+        );
+      },
+    );
   }
 
   Widget _buildSuggestions(List<MealRequest> meals) {
@@ -363,6 +382,19 @@ class _HomeScreenState extends State<HomeScreen> {
     return StreamBuilder(
         stream: Repository.instance.getOrdersFromClient(clientId, limit: 10),
         builder: (context, AsyncSnapshot<QuerySnapshot> orderSnapshot) {
+          if (orderSnapshot.connectionState == ConnectionState.waiting) {
+            return Container(
+              height: 0.5.hp,
+              alignment: Alignment.center,
+              child: SizedBox(
+                height: 50,
+                width: 50,
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).accentColor,
+                ),
+              ),
+            );
+          }
           if (orderSnapshot.data.documents.isEmpty) {
             return Container();
           }
