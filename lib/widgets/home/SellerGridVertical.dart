@@ -5,10 +5,8 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
-import 'package:rango/models/meals.dart';
 import 'package:flutter/foundation.dart';
 import 'package:rango/models/seller.dart';
-import 'package:rango/screens/reserva/DetalhesQuentinhaScreen.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
 import 'package:rango/utils/string_formatters.dart';
 
@@ -22,7 +20,7 @@ class SellerGridVertical extends StatelessWidget {
     @required this.tagM,
     @required this.title,
     @required this.sellers,
-    @required this.userLocation
+    @required this.userLocation,
   });
 
   @override
@@ -44,39 +42,45 @@ class SellerGridVertical extends StatelessWidget {
         Container(
           padding: EdgeInsets.symmetric(horizontal: 0.02.hp),
           width: double.infinity,
-          child: GridView.builder(
+          child: StaggeredGridView.countBuilder(
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(), // Desativa o scroll separado e mantem somente o da tela principal
+            crossAxisCount: 2,
+            physics:
+                NeverScrollableScrollPhysics(), // Desativa o scroll separado e mantem somente o da tela principal
             itemCount: sellers.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10
-            ),
+            staggeredTileBuilder: (index) => StaggeredTile.count(1, 1),
             itemBuilder: (ctx, index) => GestureDetector(
-              onTap: () => pushNewScreen(context,
-                  withNavBar: false,
-                  screen: SellerProfile(sellers[index].id, sellers[index].name),
-                  pageTransitionAnimation: PageTransitionAnimation.cupertino),
-              child: Container(
-                child: Card(
-                  semanticContainer: true,
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
-                  child: Column(
-                    children: <Widget>[
-                      Hero(
+              onTap: () => pushNewScreen(
+                context,
+                withNavBar: false,
+                screen: SellerProfile(sellers[index].id, sellers[index].name),
+                pageTransitionAnimation: PageTransitionAnimation.cupertino,
+              ),
+              child: Card(
+                semanticContainer: true,
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 2,
+                      child: Hero(
                         tag: sellers[index].hashCode * tagM,
-                        child: FadeInImage.assetNetwork(
-                          // FIXME Esse Widget tá gerando um overflow
-                          // TODO (Gabriel): Melhorar esse placeholder
-                          placeholder: 'assets/imgs/quentinha_placeholder.png',
-                          image: sellers[index].logo,
-                          fit: BoxFit.fitWidth,
+                        child: Container(
+                          constraints: BoxConstraints(minWidth: 0.5.wp),
+                          child: FadeInImage.assetNetwork(
+                            placeholder:
+                                'assets/imgs/quentinha_placeholder.png',
+                            image: sellers[index].logo,
+                            fit: BoxFit.fitWidth,
+                          ),
                         ),
                       ),
-                      Container(
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Container(
                         padding: EdgeInsets.symmetric(vertical: 4),
                         child: Column(
                           children: <Widget>[
@@ -93,8 +97,8 @@ class SellerGridVertical extends StatelessWidget {
                           ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
