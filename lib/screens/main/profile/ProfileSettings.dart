@@ -33,7 +33,8 @@ class _ProfileSettingsState extends State<ProfileSettings> {
 
   @override
   void initState() {
-    _rangeController = TextEditingController(text: widget.sellerRange.toString());
+    _rangeController =
+        TextEditingController(text: widget.sellerRange.toString());
 
     setState(() {
       _attValue = widget.user.notificationSettings != null &&
@@ -120,201 +121,198 @@ class _ProfileSettingsState extends State<ProfileSettings> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
     const orange = Color(0xFFFC744F);
     const green = Color(0xFF609B90);
     return Scaffold(
-      appBar: AppBar(
-        title: AutoSizeText(
-          'Configurações',
-          style: GoogleFonts.montserrat(
-            color: Theme.of(context).accentColor,
-            fontSize: 38.nsp,
+        appBar: AppBar(
+          title: AutoSizeText(
+            'Configurações',
+            style: GoogleFonts.montserrat(
+              color: Theme.of(context).accentColor,
+              fontSize: 38.nsp,
+            ),
           ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.only(top: 0.02.hp),
-          margin: EdgeInsets.symmetric(horizontal: 0.08.wp),
-          child: Column(
-            children: [
-              Container(
-                padding: EdgeInsets.only(right: 0.09.wp),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    AutoSizeText(
-                      'Notificações',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        color: orange,
-                        fontSize: 38.nsp,
+        body: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.only(top: 0.02.hp),
+            margin: EdgeInsets.symmetric(horizontal: 0.08.wp),
+            child: Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.only(right: 0.09.wp),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      AutoSizeText(
+                        'Notificações',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          color: orange,
+                          fontSize: 38.nsp,
+                        ),
                       ),
-                    ),
-                    Switch(
-                      value: _switchValue,
-                      activeColor: Color(0xFF609B90),
-                      onChanged: (value) => setState(() {
-                        _switchValue = value;
-                        if (value == false) {
-                          _attValue = false;
-                          _reservaValue = false;
-                          _newMessagesValue = false;
-                          _promotionsValue = false;
-                        }
-                      }),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.only(left: 0.02.wp),
-                child: Column(
-                  children: [
-                    Container(
-                      height: 0.07.hp,
-                      child: CustomCheckBox(
-                        changeValue: (value) => setState(() => _attValue = value),
-                        text: 'Atualização dos vendedores favoritos',
-                        value: _attValue,
-                        isActive: _switchValue,
+                      Switch(
+                        value: _switchValue,
+                        activeColor: Color(0xFF609B90),
+                        onChanged: (value) => setState(() {
+                          _switchValue = value;
+                          if (value == false) {
+                            _attValue = false;
+                            _reservaValue = false;
+                            _newMessagesValue = false;
+                            _promotionsValue = false;
+                          }
+                        }),
                       ),
-                    ),
-                    Container(
-                      height: 0.07.hp,
-                      child: CustomCheckBox(
-                        changeValue: (value) =>
-                            setState(() => _reservaValue = value),
-                        text: 'Reserva confirmada',
-                        value: _reservaValue,
-                        isActive: _switchValue,
-                      ),
-                    ),
-                    Container(
-                      height: 0.07.hp,
-                      child: CustomCheckBox(
-                        changeValue: (value) =>
-                            setState(() => _newMessagesValue = value),
-                        text: 'Novas mensagens',
-                        value: _newMessagesValue,
-                        isActive: _switchValue,
-                      ),
-                    ),
-                    Container(
-                      height: 0.07.hp,
-                      child: CustomCheckBox(
-                        changeValue: (value) =>
-                            setState(() => _promotionsValue = value),
-                        text: 'Promoções',
-                        value: _promotionsValue,
-                        isActive: _switchValue,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 0.01.hp),
-                width: 0.6.wp,
-                // TODO Mudar isso para um slider?
-                child: TextField(
-                  controller: _rangeController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                      focusColor: orange,
-                      fillColor: orange,
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: orange
-                          )
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: orange
-                          )
-                      ),
-                      labelStyle: TextStyle(color: orange),
-                      labelText: 'Raio de busca (km)',
-                      hintText: 'Raio de busca',
-                      suffixText: 'km'
+                    ],
                   ),
                 ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 0.01.hp),
-                width: 0.6.wp,
-                child: RaisedButton(
-                  padding:
-                  EdgeInsets.symmetric(vertical: 0.01.hp, horizontal: 0.1.wp),
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  onPressed: () => _saveSettings(context),
-                  child: AutoSizeText(
-                    'Confirmar',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 36.nsp,
-                    ),
+                Container(
+                  padding: EdgeInsets.only(left: 0.02.wp),
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 0.07.hp,
+                        child: CustomCheckBox(
+                          changeValue: (value) =>
+                              setState(() => _attValue = value),
+                          text: 'Atualização dos vendedores favoritos',
+                          value: _attValue,
+                          isActive: _switchValue,
+                        ),
+                      ),
+                      Container(
+                        height: 0.07.hp,
+                        child: CustomCheckBox(
+                          changeValue: (value) =>
+                              setState(() => _reservaValue = value),
+                          text: 'Reserva confirmada',
+                          value: _reservaValue,
+                          isActive: _switchValue,
+                        ),
+                      ),
+                      Container(
+                        height: 0.07.hp,
+                        child: CustomCheckBox(
+                          changeValue: (value) =>
+                              setState(() => _newMessagesValue = value),
+                          text: 'Novas mensagens',
+                          value: _newMessagesValue,
+                          isActive: _switchValue,
+                        ),
+                      ),
+                      Container(
+                        height: 0.07.hp,
+                        child: CustomCheckBox(
+                          changeValue: (value) =>
+                              setState(() => _promotionsValue = value),
+                          text: 'Promoções',
+                          value: _promotionsValue,
+                          isActive: _switchValue,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 0.02.hp),
-                child: GestureDetector(
-                  onTap: () => pushNewScreen(
-                    context,
-                    screen: AboutScreen(),
-                    withNavBar: true,
-                    pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 0.01.hp),
+                  width: 0.6.wp,
+                  // TODO Mudar isso para um slider?
+                  child: TextField(
+                    controller: _rangeController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                        focusColor: orange,
+                        fillColor: orange,
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: orange)),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: orange)),
+                        labelStyle: TextStyle(color: orange),
+                        labelText: 'Raio de busca (km)',
+                        hintText: 'Raio de busca',
+                        suffixText: 'km'),
                   ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 0.01.hp),
+                  width: 0.6.wp,
+                  child: RaisedButton(
+                    padding: EdgeInsets.symmetric(
+                        vertical: 0.01.hp, horizontal: 0.1.wp),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    onPressed: () => _saveSettings(context),
                     child: AutoSizeText(
-                      'Sobre',
+                      'Confirmar',
                       style: GoogleFonts.montserrat(
                         fontSize: 36.nsp,
-                        decoration: TextDecoration.underline,
-                        color: green,
                       ),
                     ),
                   ),
                 ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 0.02.hp),
-                child: GestureDetector(
-                  onTap: _logout,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: AutoSizeText(
-                      'Sair',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 36.nsp,
-                        decoration: TextDecoration.underline,
-                        color: green,
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 0.02.hp),
+                  child: GestureDetector(
+                    onTap: () => pushNewScreen(
+                      context,
+                      screen: AboutScreen(),
+                      withNavBar: true,
+                      pageTransitionAnimation:
+                          PageTransitionAnimation.cupertino,
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: AutoSizeText(
+                        'Sobre',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 36.nsp,
+                          decoration: TextDecoration.underline,
+                          color: green,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              )
-            ],
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 0.02.hp),
+                  child: GestureDetector(
+                    onTap: _logout,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: AutoSizeText(
+                        'Sair',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 36.nsp,
+                          decoration: TextDecoration.underline,
+                          color: green,
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
-        ),
-      )
-    );
+        ));
   }
-  
+
   void _saveSettings(context) async {
     try {
-      await Repository.instance.setSellerRange(double.parse(_rangeController.text.replaceAll(',', '.')));
+      await Repository.instance.setSellerRange(
+          double.parse(_rangeController.text.replaceAll(',', '.')));
       Provider.of<RangeChangeNotifier>(context, listen: false).triggerRefresh();
       FocusScope.of(context).unfocus();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20),
-          child: Text("Configurações salvas com sucesso."),
+          child: Text(
+            "Configurações salvas com sucesso.",
+            textAlign: TextAlign.center,
+          ),
         ),
       ));
     } catch (e) {

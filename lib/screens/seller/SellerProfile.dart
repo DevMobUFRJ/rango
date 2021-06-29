@@ -28,133 +28,126 @@ class _SellerProfileState extends State<SellerProfile> {
     ScreenUtil.init(context, width: 750, height: 1334);
     final yellow = Color(0xFFF9B152);
     return Scaffold(
-      appBar: AppBar(
-        title: AutoSizeText(
-          widget.sellerName,
-          maxLines: 1,
-          style: GoogleFonts.montserrat(
-            color: Theme.of(context).accentColor,
-            fontSize: 35.nsp,
+        appBar: AppBar(
+          title: AutoSizeText(
+            widget.sellerName,
+            maxLines: 1,
+            style: GoogleFonts.montserrat(
+              color: Theme.of(context).accentColor,
+              fontSize: 35.nsp,
+            ),
           ),
+          actions: [_buildFavoriteButton()],
         ),
-        actions: [
-          _buildFavoriteButton()
-        ],
-      ),
-      body: StreamBuilder(
-        stream: Repository.instance.getSeller(widget.sellerId),
-        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          // TODO (Gabriel): Melhorar esse indicator
-          if (!snapshot.hasData) {
-            return CircularProgressIndicator();
-          }
-          if (snapshot.hasError) {
-            return Text(snapshot.error.toString());
-          }
+        body: StreamBuilder(
+            stream: Repository.instance.getSeller(widget.sellerId),
+            builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+              // TODO (Gabriel): Melhorar esse indicator
+              if (!snapshot.hasData) {
+                return CircularProgressIndicator();
+              }
+              if (snapshot.hasError) {
+                return Text(snapshot.error.toString());
+              }
 
-          Seller seller = Seller.fromJson(snapshot.data.data, id: snapshot.data.documentID);
-          var currentMeals = seller.currentMeals;
-          List<MealRequest> allCurrentMeals = currentMeals.entries.map((meal) {
-            return MealRequest(
-                mealId: meal.key,
-                seller: seller
-            );
-          }).toList();
+              Seller seller = Seller.fromJson(snapshot.data.data,
+                  id: snapshot.data.documentID);
+              var currentMeals = seller.currentMeals;
+              List<MealRequest> allCurrentMeals =
+                  currentMeals.entries.map((meal) {
+                return MealRequest(mealId: meal.key, seller: seller);
+              }).toList();
 
-          return Column(
-            children: [
-              Container(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(left: 80.w, bottom: 40.h),
-                      height: 210.h,
-                      width: 240.w,
-                      decoration: BoxDecoration(
-                        borderRadius:
-                        BorderRadius.circular(ScreenUtil().setSp(30)),
-                        color: yellow,
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 20),
-                      child: CircleAvatar(
-                        backgroundColor: Theme.of(context).accentColor,
-                        backgroundImage: seller.picture != null
-                            ? NetworkImage(seller.picture)
-                            : null,
-                        radius: 130.w,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 20.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              return Column(
                 children: [
-                  Icon(Icons.phone, size: 38.nsp),
                   Container(
-                    width: 170.w,
-                    child: AutoSizeText(
-                      seller.contact.phone,
-                      maxLines: 1,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.only(left: 80.w, bottom: 40.h),
+                          height: 210.h,
+                          width: 240.w,
+                          decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.circular(ScreenUtil().setSp(30)),
+                            color: yellow,
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 20),
+                          child: CircleAvatar(
+                            backgroundColor: Theme.of(context).accentColor,
+                            backgroundImage: seller.picture != null
+                                ? NetworkImage(seller.picture)
+                                : null,
+                            radius: 130.w,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.phone, size: 38.nsp),
+                      Container(
+                        width: 170.w,
+                        child: AutoSizeText(
+                          seller.contact.phone,
+                          maxLines: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20.h),
+                  ListaHorizontal(
+                    title: 'Quentinhas disponíveis',
+                    tagM: Random().nextDouble(),
+                    meals: allCurrentMeals,
+                  ),
+                  SizedBox(height: 40.h),
+                  ElevatedButton.icon(
+                    icon: Icon(Icons.chat, size: 38.nsp),
+                    onPressed: () => pushNewScreen(
+                      context,
+                      withNavBar: false,
+                      screen: ChatScreen(seller),
+                      pageTransitionAnimation:
+                          PageTransitionAnimation.cupertino,
+                    ),
+                    label: Container(
+                      width: 0.5.wp,
+                      child: AutoSizeText(
+                        'Chat com o vendedor',
+                        maxLines: 1,
+                        style: GoogleFonts.montserrat(
+                          fontSize: 38.nsp,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+                  ElevatedButton.icon(
+                    icon: Icon(Icons.map, size: 38.nsp),
+                    onPressed: () {},
+                    label: Container(
+                      width: 0.35.wp,
+                      child: AutoSizeText(
+                        'Ver localização',
+                        maxLines: 1,
+                        style: GoogleFonts.montserrat(
+                          fontSize: 38.nsp,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ),
                 ],
-              ),
-              SizedBox(height: 20.h),
-              ListaHorizontal(
-                title: 'Quentinhas disponíveis',
-                tagM: Random().nextDouble(),
-                meals: allCurrentMeals,
-              ),
-              SizedBox(height: 40.h),
-              RaisedButton.icon(
-                icon: Icon(Icons.chat, size: 38.nsp),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                onPressed: () => pushNewScreen(
-                  context,
-                  withNavBar: false,
-                  screen: ChatScreen(seller),
-                  pageTransitionAnimation:
-                  PageTransitionAnimation.cupertino,
-                ),
-                label: Container(
-                  width: 0.5.wp,
-                  child: AutoSizeText(
-                    'Chat com o vendedor',
-                    maxLines: 1,
-                    style: GoogleFonts.montserrat(),
-                  ),
-                ),
-              ),
-              SizedBox(height: 10.h),
-              RaisedButton.icon(
-                icon: Icon(Icons.map, size: 38.nsp),
-                padding: EdgeInsets.symmetric(
-                    vertical: 0.005.hp, horizontal: 0.03.wp),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                onPressed: () {},
-                label: Container(
-                  width: 0.35.wp,
-                  child: AutoSizeText(
-                    'Ver localização',
-                    maxLines: 1,
-                    style: GoogleFonts.montserrat(),
-                  ),
-                ),
-              ),
-            ],
-          );
-        }
-      )
-    );
+              );
+            }));
   }
 
   _buildFavoriteButton() {
@@ -195,7 +188,8 @@ class _SellerProfileState extends State<SellerProfile> {
                 return SizedBox();
               }
 
-              var isFavorite = clientSnapshot.data.data['favoriteSellers'].contains(widget.sellerId);
+              var isFavorite = clientSnapshot.data.data['favoriteSellers']
+                  .contains(widget.sellerId);
               return Padding(
                 padding: EdgeInsets.only(
                   right: 20,
@@ -203,9 +197,11 @@ class _SellerProfileState extends State<SellerProfile> {
                 child: GestureDetector(
                   onTap: () async {
                     if (isFavorite) {
-                      Repository.instance.removeSellerFromClientFavorites(clientSnapshot.data.documentID, widget.sellerId);
+                      Repository.instance.removeSellerFromClientFavorites(
+                          clientSnapshot.data.documentID, widget.sellerId);
                     } else {
-                      Repository.instance.addSellerToClientFavorites(clientSnapshot.data.documentID, widget.sellerId);
+                      Repository.instance.addSellerToClientFavorites(
+                          clientSnapshot.data.documentID, widget.sellerId);
                     }
                   },
                   child: Icon(
@@ -214,8 +210,7 @@ class _SellerProfileState extends State<SellerProfile> {
                   ),
                 ),
               );
-            }
-        );
+            });
       },
     );
   }

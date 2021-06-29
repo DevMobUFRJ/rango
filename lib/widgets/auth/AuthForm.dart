@@ -215,18 +215,8 @@ class _AuthFormState extends State<AuthForm> {
                             flex: 1,
                             child: SizedBox(
                               width: 0.7.wp,
-                              child: RaisedButton(
-                                padding:
-                                    EdgeInsets.symmetric(vertical: 0.02.wp),
-                                disabledColor: Colors.grey,
-                                onPressed: widget._isLoading
-                                    ? () => {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(SnackBar(
-                                                  content: Text(
-                                                      'Carregando, aguarde.')))
-                                        }
-                                    : _submit,
+                              child: ElevatedButton(
+                                onPressed: widget._isLoading ? null : _submit,
                                 child: widget._isLoading
                                     ? SizedBox(
                                         child: CircularProgressIndicator(
@@ -238,11 +228,15 @@ class _AuthFormState extends State<AuthForm> {
                                         height: 30.w,
                                         width: 30.w,
                                       )
-                                    : Text(
-                                        'Continuar',
-                                        style: GoogleFonts.montserrat(
-                                            color: Colors.white,
-                                            fontSize: 36.nsp),
+                                    : Container(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 0.02.wp),
+                                        child: Text(
+                                          'Continuar',
+                                          style: GoogleFonts.montserrat(
+                                              color: Colors.white,
+                                              fontSize: 36.nsp),
+                                        ),
                                       ),
                               ),
                             ),

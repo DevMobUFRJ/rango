@@ -113,16 +113,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             ),
             Flexible(
               flex: 1,
-              child: RaisedButton(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 0.1.wp,
-                  vertical: 0.01.hp,
-                ),
+              child: ElevatedButton(
                 onPressed: () => _submit(context),
-                child: AutoSizeText(
-                  'Confirmar',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 38.nsp,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 0.1.wp,
+                    vertical: 0.01.hp,
+                  ),
+                  child: AutoSizeText(
+                    'Confirmar',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 38.nsp,
+                    ),
                   ),
                 ),
               ),
