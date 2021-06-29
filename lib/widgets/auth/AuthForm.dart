@@ -199,7 +199,7 @@ class _AuthFormState extends State<AuthForm> {
                           if (widget._isLogin)
                             Expanded(
                               flex: 1,
-                              child: FlatButton(
+                              child: TextButton(
                                 onPressed: () => Navigator.of(context)
                                     .pushNamed(ForgotPasswordScreen.routeName),
                                 child: Text(
@@ -221,8 +221,8 @@ class _AuthFormState extends State<AuthForm> {
                                 disabledColor: Colors.grey,
                                 onPressed: widget._isLoading
                                     ? () => {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                              SnackBar(
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
                                                   content: Text(
                                                       'Carregando, aguarde.')))
                                         }
