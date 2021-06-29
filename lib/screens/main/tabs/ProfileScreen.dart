@@ -115,13 +115,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     GestureDetector(
                       onTap: () async {
-                        var sellerRange = await Repository.instance.getSellerRange();
+                        var sellerRange =
+                            await Repository.instance.getSellerRange();
                         return pushNewScreen(
                           context,
                           withNavBar: false,
                           screen: ProfileSettings(widget.usuario, sellerRange),
                           pageTransitionAnimation:
-                          PageTransitionAnimation.cupertino,
+                              PageTransitionAnimation.cupertino,
                         );
                       },
                       child: Icon(
@@ -165,79 +166,107 @@ class _ProfileScreenState extends State<ProfileScreen> {
               flex: 7,
               child: Container(
                 child: StreamBuilder(
-                    stream: Repository.instance.getClientStream(widget.usuario.id),
-                    builder: (context, AsyncSnapshot<DocumentSnapshot> clientSnapshot) {
-                      // TODO (Gabriel): Trocar esse indicator por placeholders?
-                      if (!clientSnapshot.hasData) {
-                        return CircularProgressIndicator();
-                      }
-                      if (clientSnapshot.hasError) {
-                        return Text(clientSnapshot.error.toString());
-                      }
-
-                      final favoriteSellers = List<String>.from(clientSnapshot.data.data['favoriteSellers']);
-
-                      // Um belo exemplo de list view! A busca pelo seller só acontece quando o elemento pode aparecer na tela.
-                      // Usa-se um StreamBuilder para aproveitar a cache do firestore
-                      return ListView.separated(
-                          separatorBuilder: (context, index) => SizedBox(height: 0.01.hp),
-                          itemCount: favoriteSellers.length,
-                          itemBuilder: (ctx, index) => StreamBuilder(
-                              stream: Repository.instance.getSeller(favoriteSellers[index]),
-                              builder: (context, AsyncSnapshot<DocumentSnapshot> sellerSnapshot) {
-                                // TODO (Gabriel): Trocar esse indicator por um placeholder
-                                if (!sellerSnapshot.hasData) {
-                                  return Center(child: CircularProgressIndicator());
-                                }
-                                if (sellerSnapshot.hasError) {
-                                  return Text(sellerSnapshot.error.toString());
-                                }
-
-                                Seller seller = Seller.fromJson(sellerSnapshot.data.data, id: sellerSnapshot.data.documentID);
-
-                                return GestureDetector(
-                                  onTap: () => pushNewScreen(
-                                    context,
-                                    withNavBar: false,
-                                    screen: SellerProfile(seller.id, seller.name),
-                                    pageTransitionAnimation:
-                                    PageTransitionAnimation.cupertino,
-                                  ),
-                                  child: Container(
-                                    height: 120.h,
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 0.01.hp, horizontal: 0.05.wp),
-                                    decoration: BoxDecoration(
-                                        color: Theme.of(context).accentColor,
-                                        borderRadius:
-                                        BorderRadius.circular(ScreenUtil().setSp(22))),
-                                    child: Row(
-                                      children: [
-                                        CircleAvatar(
-                                          backgroundImage:
-                                          NetworkImage(seller.picture),
-                                          radius: ScreenUtil().setSp(50),
-                                        ),
-                                        SizedBox(width: 0.03.wp),
-                                        AutoSizeText(
-                                          seller.name,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.montserrat(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w300,
-                                            decoration: TextDecoration.underline,
-                                            fontSize: 32.nsp,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              }
-                          )
+                  stream:
+                      Repository.instance.getClientStream(widget.usuario.id),
+                  builder: (context,
+                      AsyncSnapshot<DocumentSnapshot> clientSnapshot) {
+                    if (clientSnapshot.data.data['favoriteSellers'] == null) {
+                      return Container(
+                        margin: EdgeInsets.symmetric(
+                            horizontal: 0.03.wp, vertical: 15),
+                        child: AutoSizeText(
+                          'Você ainda não marcou vendedores como favoritos.',
+                          style: GoogleFonts.montserrat(
+                            color: yellow,
+                            fontSize: 45.nsp,
+                          ),
+                        ),
                       );
                     }
-                )
+                    if (clientSnapshot.hasError) {
+                      return Container(
+                        margin: EdgeInsets.symmetric(
+                            horizontal: 0.03.wp, vertical: 15),
+                        child: AutoSizeText(
+                          clientSnapshot.error.toString(),
+                          style: GoogleFonts.montserrat(
+                            color: yellow,
+                            fontSize: 45.nsp,
+                          ),
+                        ),
+                      );
+                    }
+                    final favoriteSellers = List<String>.from(
+                        clientSnapshot.data.data['favoriteSellers']);
+
+                    // Um belo exemplo de list view! A busca pelo seller só acontece quando o elemento pode aparecer na tela.
+                    // Usa-se um StreamBuilder para aproveitar a cache do firestore
+                    return ListView.separated(
+                      separatorBuilder: (context, index) =>
+                          SizedBox(height: 0.01.hp),
+                      itemCount: favoriteSellers.length,
+                      itemBuilder: (ctx, index) => StreamBuilder(
+                        stream: Repository.instance
+                            .getSeller(favoriteSellers[index]),
+                        builder: (context,
+                            AsyncSnapshot<DocumentSnapshot> sellerSnapshot) {
+                          // TODO (Gabriel): Trocar esse indicator por um placeholder
+                          if (!sellerSnapshot.hasData) {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                          if (sellerSnapshot.hasError) {
+                            return Text(sellerSnapshot.error.toString());
+                          }
+
+                          Seller seller = Seller.fromJson(
+                              sellerSnapshot.data.data,
+                              id: sellerSnapshot.data.documentID);
+
+                          return GestureDetector(
+                            onTap: () => pushNewScreen(
+                              context,
+                              withNavBar: false,
+                              screen: SellerProfile(seller.id, seller.name),
+                              pageTransitionAnimation:
+                                  PageTransitionAnimation.cupertino,
+                            ),
+                            child: Container(
+                              height: 120.h,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 0.01.hp, horizontal: 0.05.wp),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).accentColor,
+                                borderRadius: BorderRadius.circular(
+                                  ScreenUtil().setSp(22),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    backgroundImage:
+                                        NetworkImage(seller.picture),
+                                    radius: ScreenUtil().setSp(50),
+                                  ),
+                                  SizedBox(width: 0.03.wp),
+                                  AutoSizeText(
+                                    seller.name,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.montserrat(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w300,
+                                      decoration: TextDecoration.underline,
+                                      fontSize: 32.nsp,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ],
