@@ -28,114 +28,245 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
-        height: 1.hp - 56,
-        child: RefreshIndicator(
-          onRefresh: () {
-            setState(() {});
-            return Future.value();
-          },
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                _buildHeader(),
-                Container(
-                  child: FutureBuilder(
-                    future: Repository.instance.getUserLocation(),
-                    builder: (context, AsyncSnapshot<Position> locationSnapshot) {
-                      // TODO (Gabriel): Melhorar esse indicator?
-                      if (!locationSnapshot.hasData) {
-                        return Center(child: CircularProgressIndicator());
-                      }
-                      if (locationSnapshot.hasError) {
-                        return Text(locationSnapshot.error.toString());
-                      }
+          height: 1.hp - 56,
+          child: RefreshIndicator(
+            onRefresh: () {
+              setState(() {});
+              return Future.value();
+            },
+            child: SingleChildScrollView(
+              child: Container(
+                child: Column(
+                  children: [
+                    _buildHeader(),
+                    FutureBuilder(
+                      future: Repository.instance.getUserLocation(),
+                      builder: (
+                        context,
+                        AsyncSnapshot<Position> locationSnapshot,
+                      ) {
+                        if (!locationSnapshot.hasData ||
+                            locationSnapshot.connectionState ==
+                                ConnectionState.waiting) {
+                          return Container(
+                            height: 0.5.hp,
+                            alignment: Alignment.center,
+                            child: SizedBox(
+                              height: 50,
+                              width: 50,
+                              child: CircularProgressIndicator(
+                                color: Theme.of(context).accentColor,
+                              ),
+                            ),
+                          );
+                        }
 
-                      return Consumer<RangeChangeNotifier>(
-                        builder: (context, shouldChange, child) {
-                          return FutureBuilder(
-                            // TODO (Gabriel): Melhorar esse indicator?
-                            future: Repository.instance.getSellerRange(),
-                            builder: (context, AsyncSnapshot<double> rangeSnapshot) {
-                              if (!rangeSnapshot.hasData) {
-                                return Center(child: CircularProgressIndicator());
-                              }
-                              if (rangeSnapshot.hasError) {
-                                return Text(rangeSnapshot.error.toString());
-                              }
+                        if (locationSnapshot.hasError) {
+                          return Container(
+                            height: 0.6.hp - 56,
+                            alignment: Alignment.center,
+                            child: AutoSizeText(
+                              locationSnapshot.error.toString(),
+                              style: GoogleFonts.montserrat(
+                                  fontSize: 45.nsp,
+                                  color: Theme.of(context).accentColor),
+                            ),
+                          );
+                        }
 
-                              return StreamBuilder(
-                                  stream: Repository.instance.getNearbySellersStream(locationSnapshot.data, rangeSnapshot.data, queryByActive: false, queryByTime: false),
-                                  builder: (context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
-                                    // TODO (Gabriel): Melhorar esse indicator?
-                                    if (!snapshot.hasData) {
-                                      return CircularProgressIndicator();
+                        return Consumer<RangeChangeNotifier>(
+                          builder: (context, shouldChange, child) {
+                            return FutureBuilder(
+                              future: Repository.instance.getSellerRange(),
+                              builder: (
+                                context,
+                                AsyncSnapshot<double> rangeSnapshot,
+                              ) {
+                                if (!rangeSnapshot.hasData ||
+                                    rangeSnapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                  return Container(
+                                    height: 0.5.hp,
+                                    alignment: Alignment.center,
+                                    child: SizedBox(
+                                      height: 50,
+                                      width: 50,
+                                      child: CircularProgressIndicator(
+                                        color: Theme.of(context).accentColor,
+                                      ),
+                                    ),
+                                  );
+                                }
+                                if (rangeSnapshot.hasError) {
+                                  return Container(
+                                    height: 0.6.hp - 56,
+                                    alignment: Alignment.center,
+                                    child: AutoSizeText(
+                                      rangeSnapshot.error.toString(),
+                                      style: GoogleFonts.montserrat(
+                                          fontSize: 45.nsp,
+                                          color: Theme.of(context).accentColor),
+                                    ),
+                                  );
+                                }
+
+                                return StreamBuilder(
+                                  stream: Repository.instance
+                                      .getNearbySellersStream(
+                                    locationSnapshot.data,
+                                    rangeSnapshot.data,
+                                    queryByActive: false,
+                                    queryByTime: false,
+                                  ),
+                                  builder: (
+                                    context,
+                                    AsyncSnapshot<List<DocumentSnapshot>>
+                                        snapshot,
+                                  ) {
+                                    if (!snapshot.hasData ||
+                                        snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                      return Container(
+                                        height: 0.5.hp,
+                                        alignment: Alignment.center,
+                                        child: SizedBox(
+                                          height: 50,
+                                          width: 50,
+                                          child: CircularProgressIndicator(
+                                            color:
+                                                Theme.of(context).accentColor,
+                                          ),
+                                        ),
+                                      );
                                     }
                                     if (snapshot.hasError) {
-                                      return Text(snapshot.error.toString());
+                                      return Container(
+                                        height: 0.6.hp - 56,
+                                        alignment: Alignment.center,
+                                        child: AutoSizeText(
+                                          snapshot.error.toString(),
+                                          style: GoogleFonts.montserrat(
+                                              fontSize: 45.nsp,
+                                              color: Theme.of(context)
+                                                  .accentColor),
+                                        ),
+                                      );
                                     }
 
                                     List<MealRequest> allMealsRequests = [];
-                                    List<MealRequest> filteredMealsRequests = [];
+                                    List<MealRequest> filteredMealsRequests =
+                                        [];
 
                                     List<Seller> sellerList = [];
                                     snapshot.data.forEach((sellerDoc) {
-                                      Seller seller = Seller.fromJson(sellerDoc.data, id: sellerDoc.documentID);
+                                      Seller seller = Seller.fromJson(
+                                        sellerDoc.data,
+                                        id: sellerDoc.documentID,
+                                      );
                                       sellerList.add(seller);
                                       //print("${seller.data["name"]} is from cache: ${seller.metadata.isFromCache}");
                                       var filterByFeatured = false;
                                       var mealsLimit = 0;
                                       var currentMeals = seller.currentMeals;
 
-                                      var sellerAll = currentMeals.entries.map((meal) {
+                                      var sellerAll =
+                                          currentMeals.entries.map((meal) {
                                         return MealRequest(
-                                            mealId: meal.key,
-                                            seller: seller
-                                        );
+                                            mealId: meal.key, seller: seller);
                                       }).toList();
                                       allMealsRequests.addAll(sellerAll);
 
                                       if (filterByFeatured) {
-                                        currentMeals.removeWhere((mealId, details) => !details.featured);
+                                        currentMeals.removeWhere(
+                                            (mealId, details) =>
+                                                !details.featured);
                                       }
-                                      var sellerFiltered = currentMeals.entries.map((meal) {
+                                      var sellerFiltered =
+                                          currentMeals.entries.map((meal) {
                                         return MealRequest(
-                                            mealId: meal.key,
-                                            seller: seller
-                                        );
+                                            mealId: meal.key, seller: seller);
                                       }).toList();
                                       if (mealsLimit > 0) {
-                                        sellerFiltered = sellerFiltered.take(mealsLimit).toList();
+                                        sellerFiltered = sellerFiltered
+                                            .take(mealsLimit)
+                                            .toList();
                                       }
-                                      filteredMealsRequests.addAll(sellerFiltered);
+                                      filteredMealsRequests
+                                          .addAll(sellerFiltered);
                                     });
+
+                                    if (allMealsRequests.isEmpty &&
+                                        filteredMealsRequests.isEmpty &&
+                                        sellerList.isEmpty)
+                                      return Container(
+                                        margin: EdgeInsets.symmetric(
+                                          horizontal: 15,
+                                          vertical: 10,
+                                        ),
+                                        height: 0.7.wp - 56,
+                                        alignment: Alignment.center,
+                                        child: AutoSizeText(
+                                          'Use o aplicativo e faça reservas para receber sugestões de quentinhas!',
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 45.nsp,
+                                            color:
+                                                Theme.of(context).accentColor,
+                                          ),
+                                        ),
+                                      );
 
                                     return Column(
                                       children: [
-                                        _buildOrderAgain(allMealsRequests, widget.usuario.id),
+                                        if (allMealsRequests.isNotEmpty)
+                                          _buildOrderAgain(
+                                            allMealsRequests,
+                                            widget.usuario.id,
+                                          ),
                                         SizedBox(height: 0.02.hp),
-                                        _buildSuggestions(filteredMealsRequests),
+                                        if (filteredMealsRequests.isNotEmpty)
+                                          _buildSuggestions(
+                                            filteredMealsRequests,
+                                          ),
+                                        if (allMealsRequests.isEmpty &&
+                                            filteredMealsRequests.isEmpty)
+                                          Container(
+                                            margin: EdgeInsets.symmetric(
+                                              horizontal: 15,
+                                              vertical: 10,
+                                            ),
+                                            child: AutoSizeText(
+                                              'Use o aplicativo e faça reservas para receber sugestões de quentinhas!',
+                                              style: GoogleFonts.montserrat(
+                                                fontSize: 45.nsp,
+                                                color: Theme.of(context)
+                                                    .accentColor,
+                                              ),
+                                            ),
+                                          ),
                                         SizedBox(height: 0.02.hp),
-                                        _buildSellers(sellerList, locationSnapshot, widget.usuario.id)
+                                        if (sellerList.isNotEmpty)
+                                          _buildSellers(
+                                              sellerList,
+                                              locationSnapshot,
+                                              widget.usuario.id)
                                       ],
                                     );
-                                  }
-                              );
-                            },
-                          );
-                        },
-                      );
-                    },
-                  ),
+                                  },
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        )
-      ),
+          )),
     );
   }
 
@@ -163,33 +294,53 @@ class _HomeScreenState extends State<HomeScreen> {
                     maxLines: 2,
                     textAlign: TextAlign.start,
                     style: GoogleFonts.montserratTextTheme(
-                        Theme.of(context).textTheme)
+                            Theme.of(context).textTheme)
                         .headline1,
                   ),
                 ),
                 SizedBox(height: 0.06.hp),
               ],
-            )
-        ),
+            )),
       ],
     );
   }
 
-  Widget _buildSellers(List<Seller> sellerList, AsyncSnapshot<Position> locationSnapshot, String clientId) {
+  Widget _buildSellers(List<Seller> sellerList,
+      AsyncSnapshot<Position> locationSnapshot, String clientId) {
     return StreamBuilder(
         stream: Repository.instance.getClientStream(clientId),
         builder: (context, AsyncSnapshot<DocumentSnapshot> clientSnapshot) {
           // TODO (Gabriel): Trocar esse indicator por alguns placeholders
-          if (!clientSnapshot.hasData) {
-            return CircularProgressIndicator();
+          if (!clientSnapshot.hasData ||
+              clientSnapshot.connectionState == ConnectionState.waiting) {
+            return Container(
+              height: 0.5.hp,
+              alignment: Alignment.center,
+              child: SizedBox(
+                height: 50,
+                width: 50,
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).accentColor,
+                ),
+              ),
+            );
           }
           if (clientSnapshot.hasError) {
-            return Text(clientSnapshot.error.toString());
+            return Container(
+              height: 0.6.hp - 56,
+              alignment: Alignment.center,
+              child: AutoSizeText(
+                clientSnapshot.error.toString(),
+                style: GoogleFonts.montserrat(
+                    fontSize: 45.nsp, color: Theme.of(context).accentColor),
+              ),
+            );
           }
 
           // Ordena por sellers favoritos
           var favorites = clientSnapshot.data.data['favoriteSellers'];
-          sellerList.sort((a, b) => favorites.indexOf(b.id).compareTo(favorites.indexOf(a.id)));
+          sellerList.sort((a, b) =>
+              favorites.indexOf(b.id).compareTo(favorites.indexOf(a.id)));
 
           return SellerGridVertical(
             tagM: Random().nextDouble(),
@@ -197,8 +348,7 @@ class _HomeScreenState extends State<HomeScreen> {
             sellers: sellerList,
             userLocation: locationSnapshot.data,
           );
-        }
-    );
+        });
   }
 
   Widget _buildSuggestions(List<MealRequest> meals) {
@@ -213,15 +363,25 @@ class _HomeScreenState extends State<HomeScreen> {
     return StreamBuilder(
         stream: Repository.instance.getOrdersFromClient(clientId, limit: 10),
         builder: (context, AsyncSnapshot<QuerySnapshot> orderSnapshot) {
-          // TODO (Gabriel): Trocar esse indicator por alguns placeholders
-          if (!orderSnapshot.hasData) {
-            return CircularProgressIndicator();
+          if (orderSnapshot.data.documents.isEmpty) {
+            return Container();
           }
           if (orderSnapshot.hasError) {
-            return Text(orderSnapshot.error.toString());
+            return Container(
+              height: 0.6.hp - 56,
+              alignment: Alignment.center,
+              child: AutoSizeText(
+                orderSnapshot.error.toString(),
+                style: GoogleFonts.montserrat(
+                    fontSize: 45.nsp, color: Theme.of(context).accentColor),
+              ),
+            );
           }
 
-          var mealIds = orderSnapshot.data.documents.map((order) => order.data["mealId"]).toSet().toList();
+          var mealIds = orderSnapshot.data.documents
+              .map((order) => order.data["mealId"])
+              .toSet()
+              .toList();
           meals.removeWhere((meal) => !mealIds.contains(meal.mealId));
 
           return Column(
@@ -233,7 +393,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           );
-        }
-    );
+        });
   }
 }
