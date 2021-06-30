@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/models/message.dart';
 
 class NewMessage extends StatefulWidget {
-  Function addNewMessage;
-
+  final Function addNewMessage;
   NewMessage(this.addNewMessage);
 
   @override
@@ -22,7 +19,13 @@ class _NewMessageState extends State<NewMessage> {
       text: _controller.text.trim(),
       sender: 'client',
     ));
-    setState(() => _controller.clear());
+    setState(
+      () => {
+        _enteredMessage = '',
+        _controller.clear(),
+      },
+    );
+    //TODO implementação do chat
     // final user = await FirebaseAuth.instance.currentUser();
     // final userData =
     //     await Firestore.instance.collection('users').document(user.uid).get();
@@ -39,24 +42,20 @@ class _NewMessageState extends State<NewMessage> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
     return Container(
       margin: EdgeInsets.only(top: 8),
       padding: EdgeInsets.all(8),
+      color: Colors.white,
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           Expanded(
+            flex: 4,
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.grey,
-                      offset: Offset(0.0, 0.1),
-                      blurRadius: 1)
-                ],
               ),
               child: TextField(
                 keyboardType: TextInputType.multiline,
@@ -70,10 +69,17 @@ class _NewMessageState extends State<NewMessage> {
               ),
             ),
           ),
-          IconButton(
-            color: Theme.of(context).accentColor,
-            icon: Icon(Icons.send, size: 58.nsp),
-            onPressed: _enteredMessage.trim().isEmpty ? null : _sendMessage,
+          Flexible(
+            flex: 1,
+            child: Container(
+              width: 45,
+              height: 45,
+              child: IconButton(
+                color: Theme.of(context).accentColor,
+                icon: Icon(Icons.send, size: 58.nsp),
+                onPressed: _enteredMessage.trim().isEmpty ? null : _sendMessage,
+              ),
+            ),
           ),
         ],
       ),
