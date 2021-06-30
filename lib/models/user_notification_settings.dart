@@ -10,4 +10,10 @@ class UserNotificationSettings {
     this.messages = false,
     this.reservations = false,
   });
+
+  UserNotificationSettings.fromJson(Map<String, dynamic> json)
+      : discounts = json['discounts'],
+        favoriteSellers = json['favoriteSellers'],
+        messages = json['messages'],
+        reservations = json['reservations'];
 }

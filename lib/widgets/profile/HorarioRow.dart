@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:rango/models/dayShift.dart';
+import 'package:rango/models/shift.dart';
 
 class HorarioRow extends StatefulWidget {
   final String day;
-  final DayShift horarioDia;
+  final Weekday horarioDia;
   final void Function(bool value) switchOpen;
   final void Function(TimeOfDay hour) changeOpeningHour;
   final void Function(TimeOfDay hour) changeClosingHour;
@@ -83,7 +83,8 @@ class _HorarioRowState extends State<HorarioRow> {
                     errorStyle: GoogleFonts.montserrat(fontSize: 22.nsp),
                     border: InputBorder.none,
                     hintText: widget.horarioDia.open
-                        ? widget.horarioDia.openingTime
+                    //TODO Adicionar :
+                        ? widget.horarioDia.openingTime.toString()
                         : null,
                   ),
                 ),
@@ -124,7 +125,8 @@ class _HorarioRowState extends State<HorarioRow> {
                     errorStyle: GoogleFonts.montserrat(fontSize: 22.nsp),
                     border: InputBorder.none,
                     hintText: widget.horarioDia.open
-                        ? widget.horarioDia.closingTime
+                    //TODO Adicionar :
+                        ? widget.horarioDia.closingTime.toString()
                         : null,
                   ),
                 ),

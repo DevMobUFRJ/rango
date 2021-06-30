@@ -9,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/contact.dart';
 import 'package:rango/models/seller.dart';
+import 'package:rango/resources/repository.dart';
 import 'package:rango/widgets/auth/CustomTextFormField.dart';
 import 'package:rango/widgets/pickers/UserImagePicker.dart';
 
@@ -51,7 +52,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _name = new TextEditingController(text: widget.user.name);
       _description = new TextEditingController(text: widget.user.description);
       _tel = new TextEditingController(text: widget.user.contact.phone);
-      _payments = new TextEditingController(text: widget.user.payments);
+      _payments = new TextEditingController(text: widget.user.paymentMethods);
     });
     super.initState();
   }
@@ -80,7 +81,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             _description.text != widget.user.description) {
           dataToUpdate['description'] = _description.text;
         }
-        if (_payments.text != null && _payments.text != widget.user.payments) {
+        if (_payments.text != null && _payments.text != widget.user.paymentMethods) {
           dataToUpdate['paymentMethods'] = _payments.text;
         }
         if (_userImageFile != null) {
@@ -94,11 +95,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           dataToUpdate['picture'] = url;
         }
         if (dataToUpdate.length > 0) {
-          final firebaseUser = await FirebaseAuth.instance.currentUser();
-          await Firestore.instance
-              .collection('sellers')
-              .document(firebaseUser.uid)
-              .updateData(dataToUpdate);
+          final firebaseUser = await Repository.instance.getCurrentUser();
+          await Repository.instance.updateSeller(firebaseUser.uid, dataToUpdate);
         }
         setState(() => _loading = false);
         Navigator.of(context).pop();

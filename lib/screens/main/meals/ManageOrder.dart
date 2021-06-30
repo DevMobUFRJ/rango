@@ -1,16 +1,16 @@
-import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rango/models/meals.dart';
 import 'package:rango/models/order.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/widgets/pickers/MealImagePicker.dart';
 
 class ManageOrder extends StatefulWidget {
-  final Order order;
+  final Meal meal;
 
   ManageOrder({
-    this.order,
+    this.meal,
   });
 
   @override
@@ -24,16 +24,15 @@ class _ManageOrderState extends State<ManageOrder> {
     TextEditingController _mealValue;
     TextEditingController _mealDescription;
     TextEditingController _mealQuantity;
-    if (widget.order != null) {
+    if (widget.meal != null) {
       _mealName = TextEditingController(
-          text: widget.order.quentinhas[0].quentinha.name);
+          text: widget.meal.name);
       _mealValue = TextEditingController(
-          text: widget.order.quentinhas[0].quentinha.price.toString());
+          text: widget.meal.price.toString());
       _mealDescription = TextEditingController(
-          text: widget.order.quentinhas[0].quentinha.description);
+          text: widget.meal.description);
       _mealQuantity = TextEditingController(
-          text: widget.order.quentinhas[0].quentinha.quantidadeDisponivel
-              .toString());
+          text: widget.meal.quantity.toString());
     } else {
       _mealName = TextEditingController();
       _mealValue = TextEditingController();
@@ -43,7 +42,7 @@ class _ManageOrderState extends State<ManageOrder> {
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
-          widget.order != null ? "Edite a quentinha" : "E aí, o que tem hoje?",
+          widget.meal != null ? "Edite a quentinha" : "E aí, o que tem hoje?",
           maxLines: 1,
           style: GoogleFonts.montserrat(
             color: Theme.of(context).accentColor,
@@ -58,9 +57,9 @@ class _ManageOrderState extends State<ManageOrder> {
             child: Column(
               children: [
                 MealImagePicker(
-                  image: widget.order != null &&
-                          widget.order.quentinhas[0].quentinha.picture != null
-                      ? widget.order.quentinhas[0].quentinha.picture
+                  image: widget.meal != null &&
+                          widget.meal.picture != null
+                      ? widget.meal.picture
                       : null,
                   editText: "Clique para editar",
                 ),

@@ -1,43 +1,73 @@
+import 'dart:convert';
+
+import 'package:rango/models/address.dart';
 import 'package:rango/models/contact.dart';
+import 'package:rango/models/location.dart';
 import 'package:rango/models/meals.dart';
-import 'package:rango/models/order.dart';
 import 'package:rango/models/shift.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:rango/models/user_notification_settings.dart';
 
 class Seller {
-  final bool active;
+  final String id;
   final Contact contact;
-  final LatLng location;
-  final String logo;
-  final String name;
-  final String description;
-  final String address;
-  final String payments;
-  final String picture;
   final Shift shift;
-  final List<Order> pedidos;
-  final List<Meal> currentMeals;
-  final List<Meal> meals;
-  final String email;
+  final String name;
+  final bool active;
+  final bool canReservate;
+  final String logo;
+  final Location location;
+  final Address address;
+  final String picture;
+  final String description;
+  final String paymentMethods;
+  Map<String, CurrentMeal> currentMeals;
+  List<Meal> meals;
   final UserNotificationSettings notificationSettings;
 
   Seller({
-    this.active,
+    this.id,
     this.contact,
-    this.currentMeals,
-    this.location,
-    this.logo,
-    this.meals,
-    this.pedidos,
+    @required this.shift,
     @required this.name,
-    this.description,
+    @required this.active,
+    @required this.canReservate,
+    this.logo,
+    @required this.location,
     this.address,
-    this.payments,
     this.picture,
-    this.shift,
-    this.email,
+    this.description,
+    this.paymentMethods,
+    this.meals,
+    this.currentMeals,
     this.notificationSettings,
   });
+
+  Seller.fromJson(Map<String, dynamic> json, {String id})
+      : id = id,
+        contact = Contact.fromJson(json['contact']),
+        shift = Shift.fromJson(json['shift']),
+        name = json['name'],
+        active = json['active'],
+        canReservate = json['canReservate'],
+        logo = json['logo'],
+        location = json['location'] == null? null: Location.fromJson(json['location']),
+        address = json['address'] == null? null: Address.fromJson(json['address']),
+        picture = json['picture'],
+        description = json['description'],
+        paymentMethods = json['paymentMethods'],
+        currentMeals = buildCurrentMeals(json['currentMeals']),
+        notificationSettings = json['notificationSettings'] == null
+            ? null
+            : UserNotificationSettings.fromJson(json['notificationSettings']),
+        meals = [];
+
+  Map<String, dynamic> toJson() => {
+    'name': name,
+  };
+}
+
+Map<String, CurrentMeal> buildCurrentMeals(Map<String, dynamic> json) {
+  Map<String, CurrentMeal> newMap = json.map((key, value) => MapEntry(key, CurrentMeal.fromJson(value)));
+  return newMap;
 }

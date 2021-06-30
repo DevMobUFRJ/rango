@@ -52,6 +52,8 @@ final List<Meal> quentinhas = [
       sellerName: 'Quentinha Top'),
   Meal(
       name: "Frango a parmegiana",
+      description:
+      'Purê com bastante carne moída acompanhado de arroz e feijão',
       price: 8,
       sellerId: '1',
       sellerName: 'Quentinha Top'),

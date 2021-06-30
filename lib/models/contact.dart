@@ -9,4 +9,8 @@ class Contact {
     this.name,
     @required this.phone,
   });
+
+  Contact.fromJson(Map<String, dynamic> json)
+      : name = json['name'],
+        phone = json['phone'];
 }

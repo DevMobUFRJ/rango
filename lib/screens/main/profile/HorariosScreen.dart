@@ -2,7 +2,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:rango/models/dayShift.dart';
 import 'package:rango/models/shift.dart';
 import 'package:intl/intl.dart';
 import 'package:rango/widgets/profile/HorarioRow.dart';
@@ -14,24 +13,23 @@ class HorariosScreen extends StatefulWidget {
 
 class _HorariosScreenState extends State<HorariosScreen> {
   Shift _horariosFuncionamento = Shift(
-    friday: DayShift(open: true, openingTime: '10:00', closingTime: '18:00'),
-    monday: DayShift(open: true, openingTime: '10:00', closingTime: '18:00'),
-    saturday: DayShift(open: false),
-    sunday: DayShift(open: false),
-    thursday: DayShift(open: true, openingTime: '12:00', closingTime: '18:00'),
-    tuesday: DayShift(open: true, openingTime: '10:00', closingTime: '18:00'),
-    wednesday: DayShift(open: true, openingTime: '12:00', closingTime: '18:00'),
+    friday: Weekday(open: true, openingTime: 1000, closingTime: 1800),
+    monday: Weekday(open: true, openingTime: 1000, closingTime: 1800),
+    saturday: Weekday(open: false),
+    sunday: Weekday(open: false),
+    thursday: Weekday(open: true, openingTime: 1200, closingTime: 1800),
+    tuesday: Weekday(open: true, openingTime: 1000, closingTime: 1800),
+    wednesday: Weekday(open: true, openingTime: 1200, closingTime: 1800),
   );
   final _formKey = GlobalKey<FormState>();
 
-  String _handleSelectedSchedule(TimeOfDay initialHorario) {
+  int _handleSelectedSchedule(TimeOfDay initialHorario) {
     String stringHorario = initialHorario.format(context);
     if (stringHorario.contains('AM') || stringHorario.contains("PM")) {
-      return DateFormat("HH:mm")
-          .format(DateFormat("hh:mm a").parse(stringHorario));
-    } else {
-      return stringHorario;
+      stringHorario = DateFormat("HH:mm").format(DateFormat("hh:mm a").parse(stringHorario));
     }
+    return int.parse(stringHorario.replaceAll(':', ''));
+    //TODO Chamar firebase
   }
 
   @override

@@ -8,8 +8,8 @@ import 'package:rango/screens/main/home/ClientProfile.dart';
 
 class OrderContainer extends StatefulWidget {
   final Order pedido;
-  final void Function({bool value}) reservadoOnChange;
-  final void Function({bool value}) vendidoOnChange;
+  final void Function({String value}) reservadoOnChange;
+  final void Function({String value}) vendidoOnChange;
 
   OrderContainer(
     this.pedido,
@@ -98,7 +98,7 @@ class _OrderContainerState extends State<OrderContainer> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
-              color: widget.pedido.vendida ? Colors.grey : Color(0xFFF9B152),
+              color: widget.pedido.status == 'sold' ? Colors.grey : Color(0xFFF9B152),
               child: ConstrainedBox(
                 constraints: new BoxConstraints(
                   minHeight: 0.12.hp,
@@ -119,11 +119,12 @@ class _OrderContainerState extends State<OrderContainer> {
                           GestureDetector(
                             onTap: () => pushNewScreen(
                               context,
-                              screen: ClientProfile(widget.pedido.cliente),
+                              //TODO Mudar pra pegar o client pelo id
+                              screen: ClientProfile(widget.pedido.clientId),
                               withNavBar: false,
                             ),
                             child: AutoSizeText(
-                              widget.pedido.cliente.name,
+                              widget.pedido.clientName,
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.montserrat(
                                 textStyle: TextStyle(
@@ -135,23 +136,18 @@ class _OrderContainerState extends State<OrderContainer> {
                               ),
                             ),
                           ),
-                          ListView.builder(
-                            shrinkWrap: true,
-                            padding: EdgeInsets.all(0),
-                            itemCount: widget.pedido.quentinhas.length,
-                            itemBuilder: (ctx, index) => AutoSizeText(
-                              '${widget.pedido.quentinhas[index].quantidade}x ${widget.pedido.quentinhas[index].quentinha.name}',
-                              style: GoogleFonts.montserrat(
-                                textStyle: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 26.nsp,
-                                ),
+                          AutoSizeText(
+                            '${widget.pedido.quantity}x ${widget.pedido.mealName}',
+                            style: GoogleFonts.montserrat(
+                              textStyle: TextStyle(
+                                color: Colors.white,
+                                fontSize: 26.nsp,
                               ),
                             ),
                           ),
                           SizedBox(height: 2),
                           AutoSizeText(
-                            'Valor total: R\$${widget.pedido.valorTotal}',
+                            'Valor total: R\$${widget.pedido.quantity * widget.pedido.price}',
                             style: GoogleFonts.montserrat(
                               textStyle: TextStyle(
                                 color: Colors.white,
@@ -179,15 +175,15 @@ class _OrderContainerState extends State<OrderContainer> {
                                   height: 24,
                                   width: 24,
                                   child: Checkbox(
-                                    checkColor: widget.pedido.vendida
+                                    checkColor: widget.pedido.status == 'reserved'
                                         ? Colors.grey
                                         : Color(0xFFF9B152),
                                     activeColor: Colors.white,
-                                    value: widget.pedido.reservada,
-                                    onChanged: (valor) => widget.pedido.vendida
+                                    value: widget.pedido.status == 'reserved',
+                                    onChanged: (valor) => widget.pedido.status == 'sold'
                                         ? null
                                         : widget.reservadoOnChange(
-                                            value: valor),
+                                            value: valor? 'reserved': 'requested'),
                                   ),
                                 ),
                               ),
@@ -209,13 +205,13 @@ class _OrderContainerState extends State<OrderContainer> {
                                   height: 24,
                                   width: 24,
                                   child: Checkbox(
-                                    checkColor: widget.pedido.vendida
+                                    checkColor: widget.pedido.status == 'sold'
                                         ? Colors.grey
                                         : Color(0xFFF9B152),
                                     activeColor: Colors.white,
-                                    value: widget.pedido.vendida,
+                                    value: widget.pedido.status == 'sold',
                                     onChanged: (valor) =>
-                                        widget.vendidoOnChange(value: valor),
+                                        widget.vendidoOnChange(value: valor? 'sold': 'reserved'),
                                   ),
                                 ),
                               ),

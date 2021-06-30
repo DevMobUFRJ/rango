@@ -1,10 +1,13 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/dadosMarretados.dart';
+import 'package:rango/models/order.dart';
 import 'package:rango/models/seller.dart';
+import 'package:rango/resources/repository.dart';
 import 'package:rango/widgets/home/OrderContainer.dart';
 
 class OrdersHistory extends StatefulWidget {
@@ -18,7 +21,6 @@ class OrdersHistory extends StatefulWidget {
 }
 
 class _OrdersHistoryState extends State<OrdersHistory> {
-  var orders = pedidosConcluidos;
   final GlobalKey<AnimatedListState> _listKey = GlobalKey();
 
   @override
@@ -59,8 +61,39 @@ class _OrdersHistoryState extends State<OrdersHistory> {
                       ),
                     ),
                   ),
-                  orders.length == 0
-                      ? Flexible(
+                  StreamBuilder(
+                    stream: Repository.instance.getOrdersFromSeller(widget.usuario.id),
+                    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (!snapshot.hasData ||
+                          snapshot.connectionState == ConnectionState.waiting) {
+                        return Container(
+                          height: 0.5.hp,
+                          alignment: Alignment.center,
+                          child: SizedBox(
+                            height: 50,
+                            width: 50,
+                            child: CircularProgressIndicator(
+                              color: Theme.of(context).accentColor,
+                            ),
+                          ),
+                        );
+                      }
+
+                      if (snapshot.hasError) {
+                        return Container(
+                          height: 0.6.hp - 56,
+                          alignment: Alignment.center,
+                          child: AutoSizeText(
+                            snapshot.error.toString(),
+                            style: GoogleFonts.montserrat(
+                                fontSize: 45.nsp,
+                                color: Theme.of(context).accentColor),
+                          ),
+                        );
+                      }
+
+                      if (snapshot.data.documents.isEmpty) {
+                        return Flexible(
                           flex: 1,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -76,28 +109,30 @@ class _OrdersHistoryState extends State<OrdersHistory> {
                               ),
                             ],
                           ),
-                        )
-                      : Flexible(
-                          flex: 1,
-                          child: Container(
-                            child: AnimatedList(
-                              key: _listKey,
-                              initialItemCount: orders.length,
-                              itemBuilder: (ctx, index, animation) =>
-                                  OrderContainer(
-                                orders[index],
-                                ({bool value}) {
-                                  setState(
-                                      () => orders[index].reservada = value);
+                        );
+                      }
+
+                      return Flexible(
+                        flex: 1,
+                        child: Container(
+                          child: AnimatedList(
+                            key: _listKey,
+                            initialItemCount: snapshot.data.documents.length,
+                            itemBuilder: (ctx, index, animation) {
+                              Order order = Order.fromJson(snapshot.data.documents[index].data);
+                              return OrderContainer(
+                                order,
+                                ({String value}) {
+                                  setState(() => order.status = value);
+                                  //TODO Atualizar no firebase
                                 },
-                                ({bool value}) {
+                                ({String value}) {
                                   var removedItem;
-                                  setState(
-                                    () => {
-                                      orders[index].vendida = value,
-                                      removedItem = orders.removeAt(index),
-                                    },
-                                  );
+                                  setState(() => {
+                                    order.status = value,
+                                    //TODO Atualizar no firebase
+                                    removedItem = snapshot.data.documents.removeAt(index),
+                                  });
                                   _listKey.currentState.removeItem(
                                     index,
                                     (context, animation) => SlideTransition(
@@ -109,16 +144,19 @@ class _OrdersHistoryState extends State<OrdersHistory> {
                                       ),
                                       child: OrderContainer(
                                         removedItem,
-                                        ({bool value}) => {},
-                                        ({bool value}) => {},
+                                        ({String value}) => {},
+                                        ({String value}) => {},
                                       ),
                                     ),
                                   );
                                 },
-                              ),
-                            ),
+                              );
+                            }
                           ),
                         ),
+                      );
+                    }
+                  ),
                 ],
               ),
             ),
