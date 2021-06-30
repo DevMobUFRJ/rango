@@ -74,7 +74,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
           borderRadius: BorderRadius.circular(20),
         ),
         actions: [
-          FlatButton(
+          TextButton(
             onPressed: () {
               Navigator.of(ctx).pop();
               FirebaseAuth.instance.signOut();
@@ -88,7 +88,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
               ),
             ),
           ),
-          FlatButton(
+          TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
             child: Text(
               'Cancelar',

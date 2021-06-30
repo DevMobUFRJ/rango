@@ -39,7 +39,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
               content: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  FlatButton(
+                  TextButton(
                     onPressed: () {
                       pickImgFromGallery = true;
                       Navigator.of(ctx).pop();
@@ -52,7 +52,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
                       ),
                     ),
                   ),
-                  FlatButton(
+                  TextButton(
                     onPressed: () {
                       pickImgFromGallery = false;
                       Navigator.of(ctx).pop();
