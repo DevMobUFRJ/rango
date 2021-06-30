@@ -28,7 +28,6 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String price = intToCurrency(marmita.price);
-    ScreenUtil.init(context, width: 750, height: 1334);
     if (price.length == 6 && price.contains(',')) price = '${price}0';
     return Scaffold(
       appBar: AppBar(
@@ -42,68 +41,78 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
           child: AutoSizeText(
             seller.name,
             style: GoogleFonts.montserrat(
-                color: Theme.of(context).accentColor, fontSize: 40.nsp),
+              color: Theme.of(context).accentColor,
+              fontSize: 40.nsp,
+              decoration: TextDecoration.underline,
+            ),
           ),
         ),
       ),
-      body: Container(
-          padding: EdgeInsets.symmetric(horizontal: 0.1.hp),
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                flex: 3,
-                child: Card(
-                  margin: EdgeInsets.only(top: 10),
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Container(
-                    constraints: BoxConstraints(
-                      maxHeight: 0.4.hp,
-                      maxWidth: 0.8.wp,
-                    ),
-                    child: Hero(
-                      tag: marmita.hashCode * tagM,
-                      child: FadeInImage.assetNetwork(
-                        placeholder: 'assets/imgs/quentinha_placeholder.png',
-                        image: marmita.picture,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            flex: 0,
+            child: Card(
+              margin: EdgeInsets.only(top: 10),
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Container(
+                constraints: BoxConstraints(
+                  maxHeight: 0.4.hp,
+                  maxWidth: 0.8.wp,
+                ),
+                child: Hero(
+                  tag: marmita.hashCode * tagM,
+                  child: FadeInImage.assetNetwork(
+                    placeholder: 'assets/imgs/quentinha_placeholder.png',
+                    image: marmita.picture,
                   ),
                 ),
               ),
-              Flexible(
-                flex: 3,
-                child: Container(
-                  margin: EdgeInsets.symmetric(vertical: 25),
-                  padding: EdgeInsets.symmetric(horizontal: 3),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Flexible(
-                        flex: 1,
-                        child: Container(
-                          height: 50.h,
-                          child: Align(
-                            alignment: Alignment.topLeft,
-                            child: AutoSizeText(
-                              marmita.name,
-                              maxLines: 1,
-                              style: GoogleFonts.montserratTextTheme(
-                                      Theme.of(context).textTheme)
-                                  .headline2
-                                  .copyWith(fontWeight: FontWeight.bold),
-                            ),
-                          ),
+            ),
+          ),
+          Flexible(
+            flex: 0,
+            child: Container(
+              margin: EdgeInsets.symmetric(vertical: 25, horizontal: 0.1.wp),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Flexible(
+                    flex: 0,
+                    child: Container(
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: AutoSizeText(
+                          marmita.name,
+                          maxLines: 1,
+                          style: GoogleFonts.montserratTextTheme(
+                                  Theme.of(context).textTheme)
+                              .headline2
+                              .copyWith(fontWeight: FontWeight.bold),
                         ),
                       ),
-                      Flexible(
-                        flex: 2,
-                        child: Container(
-                          height: 120.h,
-                          child: Align(
+                    ),
+                  ),
+                  Flexible(
+                    flex: 0,
+                    child: Container(
+                      margin: EdgeInsets.symmetric(vertical: 10),
+                      child: Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: AutoSizeText(
+                              'Descrição:',
+                              maxLines: 4,
+                              style: GoogleFonts.montserratTextTheme(
+                                      Theme.of(context).textTheme)
+                                  .headline2,
+                            ),
+                          ),
+                          Align(
                             alignment: Alignment.topLeft,
                             child: AutoSizeText(
                               marmita.description,
@@ -113,31 +122,32 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                                   .headline2,
                             ),
                           ),
-                        ),
+                        ],
                       ),
-                      Flexible(
-                        flex: 1,
-                        child: Container(
-                          height: 40.h,
-                          child: Align(
-                            alignment: Alignment.topLeft,
-                            child: AutoSizeText(
-                              price,
-                              style: GoogleFonts.montserratTextTheme(
-                                      Theme.of(context).textTheme)
-                                  .headline2
-                                  .copyWith(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                  Flexible(
+                    flex: 1,
+                    child: Container(
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: AutoSizeText(
+                          price,
+                          style: GoogleFonts.montserratTextTheme(
+                                  Theme.of(context).textTheme)
+                              .headline2
+                              .copyWith(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              _buildReservate(context)
-            ],
-          )),
+            ),
+          ),
+          _buildReservate(context)
+        ],
+      ),
     );
   }
 
@@ -166,11 +176,15 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
       return Flexible(
         flex: 3,
         child: Container(
-            width: 0.6.wp,
-            child: Text(
-              "Esse vendedor não está trabalhando com reservas, mas você ainda pode ver o cardápio do momento.",
-              textAlign: TextAlign.center,
-            )),
+          width: 0.6.wp,
+          child: AutoSizeText(
+            "Esse vendedor não está trabalhando com reservas, mas você ainda pode ver o cardápio do momento.",
+            textAlign: TextAlign.center,
+            style: GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
+                .headline2
+                .copyWith(fontWeight: FontWeight.bold, fontSize: 32.nsp),
+          ),
+        ),
       );
     }
   }
