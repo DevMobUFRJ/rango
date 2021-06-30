@@ -47,8 +47,12 @@ class _AuthScreenState extends State<AuthScreen> {
 
       } else {
         setState(() => _isLoading = true);
-        authResult = await _auth.createUserWithEmailAndPassword(
-            email: email, password: password);
+        authResult = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+        FirebaseUser user = await _auth.currentUser();
+        UserUpdateInfo updateInfo = UserUpdateInfo();
+        updateInfo.displayName = name;
+        user.updateProfile(updateInfo);
+
         String url;
         if (image != null) {
           final ref = FirebaseStorage.instance

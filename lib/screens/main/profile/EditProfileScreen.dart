@@ -215,18 +215,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     horizontal: 0.05.wp, vertical: 0.01.hp),
                                 child: SizedBox(
                                   width: 0.7.wp,
-                                  child: RaisedButton(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 0.01.hp),
-                                    disabledColor: Colors.grey,
-                                    onPressed: _loading
-                                        ? () => {
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                  SnackBar(
-                                                      content: Text(
-                                                          'Carregando, aguarde.')))
-                                            }
-                                        : () => _submit(ctx),
+                                  child: ElevatedButton(
+                                    onPressed:
+                                        _loading ? null : () => _submit(ctx),
                                     child: _loading
                                         ? SizedBox(
                                             child: CircularProgressIndicator(
@@ -238,11 +229,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             height: 30.w,
                                             width: 30.w,
                                           )
-                                        : AutoSizeText(
-                                            'Continuar',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 38.nsp,
+                                        : Container(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 0.01.hp),
+                                            child: AutoSizeText(
+                                              'Continuar',
+                                              style: GoogleFonts.montserrat(
+                                                color: Colors.white,
+                                                fontSize: 38.nsp,
+                                              ),
                                             ),
                                           ),
                                   ),

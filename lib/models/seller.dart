@@ -1,75 +1,60 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
+
+import 'package:rango/models/address.dart';
 import 'package:rango/models/contact.dart';
+import 'package:rango/models/location.dart';
 import 'package:rango/models/meals.dart';
 import 'package:rango/models/shift.dart';
 import 'package:flutter/foundation.dart';
 
-class Location {
-  final String geohash;
-  final GeoPoint geopoint;
-
-  Location({
-    this.geohash,
-    this.geopoint
-  });
-
-  Location.fromJson(Map<String, dynamic> json)
-      : geohash = json['geohash'],
-        geopoint = json['geopoint'];
-}
-
 class Seller {
+  final String id;
   final Contact contact;
   final Shift shift;
   final String name;
   final bool active;
+  final bool canReservate;
   final String logo;
   final Location location;
+  final Address address;
   final String picture;
-  List<Meal> currentMeals;
+  final String description;
+  final String paymentMethods;
+  Map<String, CurrentMeal> currentMeals;
   List<Meal> meals;
 
   Seller({
+    this.id,
     this.contact,
     @required this.shift,
     @required this.name,
     @required this.active,
+    @required this.canReservate,
     this.logo,
     @required this.location,
+    this.address,
     this.picture,
+    this.description,
+    this.paymentMethods,
     this.meals,
     this.currentMeals,
   });
 
-  Seller.fromJson(Map<String, dynamic> json)
-      : contact = Contact.fromJson(json['contact']),
+  Seller.fromJson(Map<String, dynamic> json, {String id})
+      : id = id,
+        contact = Contact.fromJson(json['contact']),
         shift = Shift.fromJson(json['shift']),
         name = json['name'],
         active = json['active'],
+        canReservate = json['canReservate'],
         logo = json['logo'],
-        location = Location.fromJson(json['location']),
+        location = json['location'] == null? null: Location.fromJson(json['location']),
+        address = json['address'] == null? null: Address.fromJson(json['address']),
         picture = json['picture'],
-        //currentMeals = (json['currentMeals'] as List).map((i) => Meal.fromJson(i)).toList(),
-        currentMeals = [],
+        description = json['description'],
+        paymentMethods = json['paymentMethods'],
+        currentMeals = buildCurrentMeals(json['currentMeals']),
         meals = [];
-
-  /*
-  factory Seller.fromJson(Map<String, dynamic> json){
-    print(json['meals']);
-    return Seller(
-        contact: Contact.fromJson(json['contact']),
-        shift: Shift.fromJson(json['shift']),
-        name: json['name'],
-        active: json['active'],
-        logo: json['logo'],
-        location: Location.fromJson(json['location']),
-        picture: json['picture'],
-        meals: [],
-        currentMeals: []
-    );
-  }
-
-   */
 
   Map<String, dynamic> toJson() => {
     'name': name,
@@ -83,4 +68,9 @@ class Seller {
     'friday': shift.friday,
     'saturday': shift.saturday
   };
+}
+
+Map<String, CurrentMeal> buildCurrentMeals(Map<String, dynamic> json) {
+  Map<String, CurrentMeal> newMap = json.map((key, value) => MapEntry(key, CurrentMeal.fromJson(value)));
+  return newMap;
 }

@@ -1,6 +1,18 @@
 import 'package:flutter/material.dart';
 
+class CurrentMeal {
+  final bool featured;
+
+  CurrentMeal({
+    this.featured
+  });
+
+  CurrentMeal.fromJson(Map<String, dynamic> json):
+      featured = json['featured'];
+}
+
 class Meal {
+  String id;
   final String description;
   final bool featured;
   final String name;
@@ -8,8 +20,10 @@ class Meal {
   final int price;
   String sellerName;
   String sellerId;
+  int quantity;
 
   Meal({
+    this.id,
     @required this.description,
     this.featured,
     @required this.name,
@@ -17,14 +31,17 @@ class Meal {
     @required this.price,
     @required this.sellerId,
     @required this.sellerName,
+    this.quantity
   });
 
-  Meal.fromJson(Map<String, dynamic> json)
-      : name = json['name'],
+  Meal.fromJson(Map<String, dynamic> json, {String id})
+      : id = id,
+        name = json['name'],
         description = json['description'],
         featured = json['featured'],
         picture = json['picture'],
         price = json['price'],
         sellerName = json['sellerName'],
+        quantity = json['quantity'],
         sellerId = json['sellerId'];
 }

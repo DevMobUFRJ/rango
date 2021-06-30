@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/screens/auth/ForgotPasswordScreen.dart';
 import 'package:rango/widgets/auth/CustomTextFormField.dart';
 import 'package:rango/widgets/pickers/UserImagePicker.dart';
@@ -200,7 +199,7 @@ class _AuthFormState extends State<AuthForm> {
                           if (widget._isLogin)
                             Expanded(
                               flex: 1,
-                              child: FlatButton(
+                              child: TextButton(
                                 onPressed: () => Navigator.of(context)
                                     .pushNamed(ForgotPasswordScreen.routeName),
                                 child: Text(
@@ -216,18 +215,8 @@ class _AuthFormState extends State<AuthForm> {
                             flex: 1,
                             child: SizedBox(
                               width: 0.7.wp,
-                              child: RaisedButton(
-                                padding:
-                                    EdgeInsets.symmetric(vertical: 0.02.wp),
-                                disabledColor: Colors.grey,
-                                onPressed: widget._isLoading
-                                    ? () => {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                              SnackBar(
-                                                  content: Text(
-                                                      'Carregando, aguarde.')))
-                                        }
-                                    : _submit,
+                              child: ElevatedButton(
+                                onPressed: widget._isLoading ? null : _submit,
                                 child: widget._isLoading
                                     ? SizedBox(
                                         child: CircularProgressIndicator(
@@ -239,11 +228,15 @@ class _AuthFormState extends State<AuthForm> {
                                         height: 30.w,
                                         width: 30.w,
                                       )
-                                    : Text(
-                                        'Continuar',
-                                        style: GoogleFonts.montserrat(
-                                            color: Colors.white,
-                                            fontSize: 36.nsp),
+                                    : Container(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 0.02.wp),
+                                        child: Text(
+                                          'Continuar',
+                                          style: GoogleFonts.montserrat(
+                                              color: Colors.white,
+                                              fontSize: 36.nsp),
+                                        ),
                                       ),
                               ),
                             ),

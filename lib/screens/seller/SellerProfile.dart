@@ -1,17 +1,16 @@
 import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
-import 'package:rango/dadosMarretados.dart';
-import 'package:rango/models/contact.dart';
-import 'package:rango/models/meals.dart';
+import 'package:rango/models/meal_request.dart';
 import 'package:rango/models/seller.dart';
-import 'package:rango/models/shift.dart';
+import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/seller/ChatScreen.dart';
 import 'package:rango/widgets/home/ListaHorizontal.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart' show DocumentSnapshot;
 
 class SellerProfile extends StatefulWidget {
   final String sellerName;
@@ -24,165 +23,42 @@ class SellerProfile extends StatefulWidget {
 }
 
 class _SellerProfileState extends State<SellerProfile> {
-  bool isFavorite = false;
-  bool loading = true;
-  Seller seller;
-
-  @override
-  void initState() {
-    setState(() {
-      seller = Seller(
-        active: true,
-        contact: Contact(name: "Maria", phone: "21994087257"),
-        currentMeals: [
-          Meal(
-            sellerId: "1",
-            sellerName: "Quentinha Legal",
-            name: "Estrogonofe de frango",
-            description:
-            "Estrogonofe de frango muito gostoso, preparado no dia anterior com ingredientes frescos.",
-            price: 1250,
-            picture:
-            "https://img.itdg.com.br/tdg/images/recipes/000/174/031/173715/173715_original.jpg?mode=crop&width=710&height=400",
-          ),
-        ],
-        meals: [
-          Meal(
-            sellerId: "1",
-            sellerName: "Quentinha Legal",
-            name: "Estrogonofe de frango",
-            description:
-            "Estrogonofe de frango muito gostoso, preparado no dia anterior com ingredientes frescos.",
-            price: 1250,
-            picture:
-            "https://img.itdg.com.br/tdg/images/recipes/000/174/031/173715/173715_original.jpg?mode=crop&width=710&height=400",
-          ),
-          Meal(
-            sellerId: "1",
-            sellerName: "Quentinha Legal",
-            description: "Macarrão com farofa, pra quem gosta.",
-            name: "Macarrão",
-            price: 11,
-            picture: "https://pbs.twimg.com/media/EW-lGN6XgAECoF8.png:large",
-          ),
-        ],
-        location: Location(
-            geohash: "askjfhakjsf",
-            geopoint: GeoPoint(-20, -40)
-        ),
-        logo:
-        "https://s2.glbimg.com/U2ZXq3JIRKvJMXDLPNuhB1hdqTw=/i.glbimg.com/og/ig/infoglobo1/f/original/2018/08/10/quentinha.jpg",
-        name: "Quentinha Legal",
-        picture:
-        "https://ogimg.infoglobo.com.br/in/22875948-611-fa5/FT1086A/384/x77867105_CI-Rio-de-Janeiro-RJ-10-07-2018Febre-das-Quentinhas-Varios-bairros-do-RJ-encontram-se-pe.jpg.pagespeed.ic.rfkyARw5WX.jpg",
-        shift: Shift(
-          friday: (
-              Weekday(
-                  openingTime: 800,
-                  closingTime: 1600,
-                  open: true
-              )
-          ),
-          monday: Weekday(
-              openingTime: 800,
-              closingTime: 1600,
-              open: true
-          ),
-          saturday: Weekday(
-              openingTime: 800,
-              closingTime: 1600,
-              open: true
-          ),
-          sunday: Weekday(
-              openingTime: 800,
-              closingTime: 1600,
-              open: true
-          ),
-          thursday: Weekday(
-              openingTime: 800,
-              closingTime: 1600,
-              open: true
-          ),
-          tuesday: Weekday(
-              openingTime: 800,
-              closingTime: 1600,
-              open: true
-          ),
-          wednesday: Weekday(
-              openingTime: 800,
-              closingTime: 1600,
-              open: true
-          ),
-        ),
-      );
-      loading = false;
-    });
-    super.initState();
-  }
-
-  final _database = Firestore.instance;
-  void _fetch() async {
-    try {
-      print("Start seller fetch: ${widget.sellerId}");
-      var doc = await _database.collection("sellers").document(widget.sellerId).get();
-      Seller tempSeller = Seller.fromJson(doc.data);
-
-      var a = await _database.collection("sellers").document(widget.sellerId).collection("currentMeals").getDocuments();
-      var currentMeals = a.documents;
-      for(var i=0; i < currentMeals.length; i++){
-        tempSeller.currentMeals.add(Meal.fromJson(currentMeals[i].data));
-      }
-
-      var b = await _database.collection("sellers").document(widget.sellerId).collection("meals").getDocuments();
-      var meals = b.documents;
-      for(var i=0; i < meals.length; i++){
-        tempSeller.meals.add(Meal.fromJson(meals[i].data));
-      }
-      print("${tempSeller.meals.length} meals found");
-
-      setState(() {
-        seller = tempSeller;
-      });
-    } catch(e) {
-      print(e);
-    }
-    loading = false;
-  }
-
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 750, height: 1334);
-    _fetch();
     final yellow = Color(0xFFF9B152);
     return Scaffold(
-      appBar: AppBar(
-        title: AutoSizeText(
-          seller.name,
-          maxLines: 1,
-          style: GoogleFonts.montserrat(
-            color: Theme.of(context).accentColor,
-            fontSize: 35.nsp,
+        appBar: AppBar(
+          title: AutoSizeText(
+            widget.sellerName,
+            maxLines: 1,
+            style: GoogleFonts.montserrat(
+              color: Theme.of(context).accentColor,
+              fontSize: 35.nsp,
+            ),
           ),
+          actions: [_buildFavoriteButton()],
         ),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(
-              right: 20,
-            ),
-            child: GestureDetector(
-              onTap: () => setState(() => isFavorite = !isFavorite),
-              child: Icon(
-                isFavorite ? Icons.star : Icons.star_border,
-                size: 48.nsp,
-              ),
-            ),
-          )
-        ],
-      ),
-      body: loading
-          ? CircularProgressIndicator()
-          : Center(
-              child: Column(
+        body: StreamBuilder(
+            stream: Repository.instance.getSeller(widget.sellerId),
+            builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+              // TODO (Gabriel): Melhorar esse indicator
+              if (!snapshot.hasData) {
+                return CircularProgressIndicator();
+              }
+              if (snapshot.hasError) {
+                return Text(snapshot.error.toString());
+              }
+
+              Seller seller = Seller.fromJson(snapshot.data.data,
+                  id: snapshot.data.documentID);
+              var currentMeals = seller.currentMeals;
+              List<MealRequest> allCurrentMeals =
+                  currentMeals.entries.map((meal) {
+                return MealRequest(mealId: meal.key, seller: seller);
+              }).toList();
+
+              return Column(
                 children: [
                   Container(
                     child: Stack(
@@ -229,18 +105,15 @@ class _SellerProfileState extends State<SellerProfile> {
                   ListaHorizontal(
                     title: 'Quentinhas disponíveis',
                     tagM: Random().nextDouble(),
-                    meals: seller.meals,
+                    meals: allCurrentMeals,
                   ),
                   SizedBox(height: 40.h),
-                  RaisedButton.icon(
+                  ElevatedButton.icon(
                     icon: Icon(Icons.chat, size: 38.nsp),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
                     onPressed: () => pushNewScreen(
                       context,
-                      screen: ChatScreen(seller),
                       withNavBar: false,
+                      screen: ChatScreen(seller),
                       pageTransitionAnimation:
                           PageTransitionAnimation.cupertino,
                     ),
@@ -249,31 +122,96 @@ class _SellerProfileState extends State<SellerProfile> {
                       child: AutoSizeText(
                         'Chat com o vendedor',
                         maxLines: 1,
-                        style: GoogleFonts.montserrat(),
+                        style: GoogleFonts.montserrat(
+                          fontSize: 38.nsp,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
                   SizedBox(height: 10.h),
-                  RaisedButton.icon(
+                  ElevatedButton.icon(
                     icon: Icon(Icons.map, size: 38.nsp),
-                    padding: EdgeInsets.symmetric(
-                        vertical: 0.005.hp, horizontal: 0.03.wp),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
                     onPressed: () {},
                     label: Container(
                       width: 0.35.wp,
                       child: AutoSizeText(
                         'Ver localização',
                         maxLines: 1,
-                        style: GoogleFonts.montserrat(),
+                        style: GoogleFonts.montserrat(
+                          fontSize: 38.nsp,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
                 ],
-              ),
+              );
+            }));
+  }
+
+  _buildFavoriteButton() {
+    return FutureBuilder(
+      future: Repository.instance.getCurrentUser(),
+      builder: (context, AsyncSnapshot<FirebaseUser> authSnapshot) {
+        if (!authSnapshot.hasData || authSnapshot.hasError) {
+          return Padding(
+            padding: EdgeInsets.only(
+              right: 20,
             ),
+            child: Icon(
+              Icons.star_border,
+              size: 48.nsp,
+            ),
+          );
+        }
+
+        return StreamBuilder(
+            stream: Repository.instance.getClientStream(authSnapshot.data.uid),
+            builder: (context, AsyncSnapshot<DocumentSnapshot> clientSnapshot) {
+              // TODO Acho que nesse caso não precisa de indicator, se estiver carregando mostra a estrela vazia
+              if (!clientSnapshot.hasData) {
+                return Padding(
+                  padding: EdgeInsets.only(
+                    right: 20,
+                  ),
+                  child: Icon(
+                    Icons.star_border,
+                    size: 48.nsp,
+                  ),
+                );
+              }
+
+              // TODO Se der erro, não mostrar a estrela pro usuário não poder clicar
+              // TODO Deletar esses comentários caso concordar
+              if (clientSnapshot.hasError) {
+                return SizedBox();
+              }
+
+              var isFavorite = clientSnapshot.data.data['favoriteSellers']
+                  .contains(widget.sellerId);
+              return Padding(
+                padding: EdgeInsets.only(
+                  right: 20,
+                ),
+                child: GestureDetector(
+                  onTap: () async {
+                    if (isFavorite) {
+                      Repository.instance.removeSellerFromClientFavorites(
+                          clientSnapshot.data.documentID, widget.sellerId);
+                    } else {
+                      Repository.instance.addSellerToClientFavorites(
+                          clientSnapshot.data.documentID, widget.sellerId);
+                    }
+                  },
+                  child: Icon(
+                    isFavorite == true ? Icons.star : Icons.star_border,
+                    size: 48.nsp,
+                  ),
+                ),
+              );
+            });
+      },
     );
   }
 }
