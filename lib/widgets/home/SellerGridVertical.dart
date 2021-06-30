@@ -47,7 +47,7 @@ class SellerGridVertical extends StatelessWidget {
             physics:
                 NeverScrollableScrollPhysics(), // Desativa o scroll separado e mantem somente o da tela principal
             itemCount: sellers.length,
-            staggeredTileBuilder: (index) => StaggeredTile.count(1, 1),
+            staggeredTileBuilder: (index) => StaggeredTile.fit(1),
             itemBuilder: (ctx, index) => GestureDetector(
               onTap: () => pushNewScreen(
                 context,
@@ -55,49 +55,51 @@ class SellerGridVertical extends StatelessWidget {
                 screen: SellerProfile(sellers[index].id, sellers[index].name),
                 pageTransitionAnimation: PageTransitionAnimation.cupertino,
               ),
-              child: Card(
-                semanticContainer: true,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 2,
-                      child: Hero(
-                        tag: sellers[index].hashCode * tagM,
+              child: Container(
+                constraints: BoxConstraints(maxHeight: 0.33.hp),
+                child: Card(
+                  semanticContainer: true,
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                  child: Column(
+                    children: <Widget>[
+                      Expanded(
+                        flex: 2,
                         child: Container(
-                          constraints: BoxConstraints(minWidth: 0.5.wp),
-                          child: FadeInImage.assetNetwork(
-                            placeholder:
-                                'assets/imgs/quentinha_placeholder.png',
-                            image: sellers[index].logo,
-                            fit: BoxFit.fitWidth,
+                          child: Hero(
+                            tag: sellers[index].hashCode * tagM,
+                            child: FadeInImage.assetNetwork(
+                              placeholder:
+                                  'assets/imgs/quentinha_placeholder.png',
+                              image: sellers[index].logo,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 4),
-                        child: Column(
-                          children: <Widget>[
-                            AutoSizeText(
-                              sellers[index].name,
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.montserrat(fontSize: 28.nsp),
-                            ),
-                            SizedBox(height: 4),
-                            AutoSizeText(
-                              distanceInKM(sellers[index], userLocation),
-                              style: GoogleFonts.montserrat(fontSize: 28.nsp),
-                            ),
-                          ],
+                      Flexible(
+                        flex: 0,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 4),
+                          child: Column(
+                            children: <Widget>[
+                              AutoSizeText(
+                                sellers[index].name,
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.montserrat(fontSize: 28.nsp),
+                              ),
+                              SizedBox(height: 4),
+                              AutoSizeText(
+                                distanceInKM(sellers[index], userLocation),
+                                style: GoogleFonts.montserrat(fontSize: 28.nsp),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
