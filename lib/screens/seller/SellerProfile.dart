@@ -186,7 +186,7 @@ class _SellerProfileState extends State<SellerProfile> {
               if (clientSnapshot.hasError) {
                 return SizedBox();
               }
-              var isFavorite;
+              var isFavorite = false;
               if (clientSnapshot.data.data['favoriteSellers'] != null) {
                 isFavorite = clientSnapshot.data.data['favoriteSellers']
                     .contains(widget.sellerId);
