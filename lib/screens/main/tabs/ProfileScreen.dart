@@ -183,7 +183,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       );
                     }
-                    if (clientSnapshot.data.data['favoriteSellers'] == null) {
+                    if (clientSnapshot.data.data['favoriteSellers'] == null ||
+                        clientSnapshot.data.data['favoriteSellers'].length ==
+                            0) {
                       return Container(
                         margin: EdgeInsets.symmetric(
                             horizontal: 0.03.wp, vertical: 15),
