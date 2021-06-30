@@ -25,7 +25,6 @@ class SellerProfile extends StatefulWidget {
 class _SellerProfileState extends State<SellerProfile> {
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
     final yellow = Color(0xFFF9B152);
     return Scaffold(
         appBar: AppBar(
@@ -34,7 +33,7 @@ class _SellerProfileState extends State<SellerProfile> {
             maxLines: 1,
             style: GoogleFonts.montserrat(
               color: Theme.of(context).accentColor,
-              fontSize: 35.nsp,
+              fontSize: 38.nsp,
             ),
           ),
           actions: [_buildFavoriteButton()],
@@ -187,9 +186,11 @@ class _SellerProfileState extends State<SellerProfile> {
               if (clientSnapshot.hasError) {
                 return SizedBox();
               }
-
-              var isFavorite = clientSnapshot.data.data['favoriteSellers']
-                  .contains(widget.sellerId);
+              var isFavorite;
+              if (clientSnapshot.data.data['favoriteSellers'] != null) {
+                isFavorite = clientSnapshot.data.data['favoriteSellers']
+                    .contains(widget.sellerId);
+              }
               return Padding(
                 padding: EdgeInsets.only(
                   right: 20,
