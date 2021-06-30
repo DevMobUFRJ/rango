@@ -58,94 +58,108 @@ class _SellerProfileState extends State<SellerProfile> {
 
           return Column(
             children: [
-              Container(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(left: 80.w, bottom: 40.h),
-                      height: 210.h,
-                      width: 240.w,
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.circular(ScreenUtil().setSp(30)),
-                        color: yellow,
+              Flexible(
+                flex: 2,
+                child: Container(
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(left: 80.w, bottom: 40.h),
+                        height: 210.h,
+                        width: 240.w,
+                        decoration: BoxDecoration(
+                          borderRadius:
+                              BorderRadius.circular(ScreenUtil().setSp(30)),
+                          color: yellow,
+                        ),
                       ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 20),
-                      child: CircleAvatar(
-                        backgroundColor: Theme.of(context).accentColor,
-                        backgroundImage: seller.logo != null
-                            ? NetworkImage(seller.logo)
-                            : null,
-                        radius: 130.w,
+                      Container(
+                        margin: EdgeInsets.only(top: 20),
+                        child: CircleAvatar(
+                          backgroundColor: Theme.of(context).accentColor,
+                          backgroundImage: seller.logo != null
+                              ? NetworkImage(seller.logo)
+                              : null,
+                          radius: 130.w,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-              SizedBox(height: 20.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.phone,
-                    size: 32.nsp,
+              Flexible(
+                flex: 0,
+                child: Container(
+                  margin: EdgeInsets.symmetric(vertical: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.phone, size: 32.nsp),
+                      GestureDetector(
+                        onTap: () {},
+                        child: AutoSizeText(
+                          seller.contact.phone,
+                          maxLines: 1,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 30.nsp,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  GestureDetector(
-                    onTap: () {},
+                ),
+              ),
+              Flexible(
+                flex: 0,
+                child: Container(
+                  margin: EdgeInsets.only(bottom: 10),
+                  child: ListaHorizontal(
+                    title: 'Quentinhas disponíveis',
+                    tagM: Random().nextDouble(),
+                    meals: allCurrentMeals,
+                  ),
+                ),
+              ),
+              Flexible(
+                flex: 1,
+                child: ElevatedButton.icon(
+                  icon: Icon(Icons.chat, size: 38.nsp),
+                  onPressed: () => pushNewScreen(
+                    context,
+                    withNavBar: false,
+                    screen: ChatScreen(seller),
+                    pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                  ),
+                  label: Container(
+                    width: 0.5.wp,
                     child: AutoSizeText(
-                      seller.contact.phone,
+                      'Chat com o vendedor',
                       maxLines: 1,
                       style: GoogleFonts.montserrat(
-                        fontSize: 30.nsp,
-                        decoration: TextDecoration.underline,
+                        fontSize: 38.nsp,
                       ),
+                      textAlign: TextAlign.center,
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20.h),
-              ListaHorizontal(
-                title: 'Quentinhas disponíveis',
-                tagM: Random().nextDouble(),
-                meals: allCurrentMeals,
-              ),
-              SizedBox(height: 40.h),
-              ElevatedButton.icon(
-                icon: Icon(Icons.chat, size: 38.nsp),
-                onPressed: () => pushNewScreen(
-                  context,
-                  withNavBar: false,
-                  screen: ChatScreen(seller),
-                  pageTransitionAnimation: PageTransitionAnimation.cupertino,
-                ),
-                label: Container(
-                  width: 0.5.wp,
-                  child: AutoSizeText(
-                    'Chat com o vendedor',
-                    maxLines: 1,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 38.nsp,
-                    ),
-                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
-              SizedBox(height: 10.h),
-              ElevatedButton.icon(
-                icon: Icon(Icons.map, size: 38.nsp),
-                onPressed: () {},
-                label: Container(
-                  width: 0.35.wp,
-                  child: AutoSizeText(
-                    'Ver localização',
-                    maxLines: 1,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 38.nsp,
+              Flexible(
+                flex: 1,
+                child: ElevatedButton.icon(
+                  icon: Icon(Icons.map, size: 38.nsp),
+                  onPressed: () {},
+                  label: Container(
+                    width: 0.35.wp,
+                    child: AutoSizeText(
+                      'Ver localização',
+                      maxLines: 1,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 38.nsp,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
