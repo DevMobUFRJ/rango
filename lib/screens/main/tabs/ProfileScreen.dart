@@ -148,7 +148,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       maxLines: 1,
                       style: GoogleFonts.montserrat(
                         color: yellow,
-                        fontSize: 30.nsp,
+                        fontSize: 35.nsp,
                       ),
                     ),
                     SizedBox(width: 2),
