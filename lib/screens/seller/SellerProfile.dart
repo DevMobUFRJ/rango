@@ -27,126 +27,133 @@ class _SellerProfileState extends State<SellerProfile> {
   Widget build(BuildContext context) {
     final yellow = Color(0xFFF9B152);
     return Scaffold(
-        appBar: AppBar(
-          title: AutoSizeText(
-            widget.sellerName,
-            maxLines: 1,
-            style: GoogleFonts.montserrat(
-              color: Theme.of(context).accentColor,
-              fontSize: 38.nsp,
-            ),
+      appBar: AppBar(
+        title: AutoSizeText(
+          widget.sellerName,
+          maxLines: 1,
+          style: GoogleFonts.montserrat(
+            color: Theme.of(context).accentColor,
+            fontSize: 38.nsp,
           ),
-          actions: [_buildFavoriteButton()],
         ),
-        body: StreamBuilder(
-            stream: Repository.instance.getSeller(widget.sellerId),
-            builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-              // TODO (Gabriel): Melhorar esse indicator
-              if (!snapshot.hasData) {
-                return CircularProgressIndicator();
-              }
-              if (snapshot.hasError) {
-                return Text(snapshot.error.toString());
-              }
+        actions: [_buildFavoriteButton()],
+      ),
+      body: StreamBuilder(
+        stream: Repository.instance.getSeller(widget.sellerId),
+        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          // TODO (Gabriel): Melhorar esse indicator
+          if (!snapshot.hasData) {
+            return CircularProgressIndicator();
+          }
+          if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
+          }
 
-              Seller seller = Seller.fromJson(snapshot.data.data,
-                  id: snapshot.data.documentID);
-              var currentMeals = seller.currentMeals;
-              List<MealRequest> allCurrentMeals =
-                  currentMeals.entries.map((meal) {
-                return MealRequest(mealId: meal.key, seller: seller);
-              }).toList();
+          Seller seller =
+              Seller.fromJson(snapshot.data.data, id: snapshot.data.documentID);
+          var currentMeals = seller.currentMeals;
+          List<MealRequest> allCurrentMeals = currentMeals.entries.map((meal) {
+            return MealRequest(mealId: meal.key, seller: seller);
+          }).toList();
 
-              return Column(
+          return Column(
+            children: [
+              Container(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(left: 80.w, bottom: 40.h),
+                      height: 210.h,
+                      width: 240.w,
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            BorderRadius.circular(ScreenUtil().setSp(30)),
+                        color: yellow,
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 20),
+                      child: CircleAvatar(
+                        backgroundColor: Theme.of(context).accentColor,
+                        backgroundImage: seller.logo != null
+                            ? NetworkImage(seller.logo)
+                            : null,
+                        radius: 130.w,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.only(left: 80.w, bottom: 40.h),
-                          height: 210.h,
-                          width: 240.w,
-                          decoration: BoxDecoration(
-                            borderRadius:
-                                BorderRadius.circular(ScreenUtil().setSp(30)),
-                            color: yellow,
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 20),
-                          child: CircleAvatar(
-                            backgroundColor: Theme.of(context).accentColor,
-                            backgroundImage: seller.logo != null
-                                ? NetworkImage(seller.logo)
-                                : null,
-                            radius: 130.w,
-                          ),
-                        ),
-                      ],
-                    ),
+                  Icon(
+                    Icons.phone,
+                    size: 32.nsp,
                   ),
-                  SizedBox(height: 20.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.phone, size: 38.nsp),
-                      Container(
-                        width: 170.w,
-                        child: AutoSizeText(
-                          seller.contact.phone,
-                          maxLines: 1,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20.h),
-                  ListaHorizontal(
-                    title: 'Quentinhas disponíveis',
-                    tagM: Random().nextDouble(),
-                    meals: allCurrentMeals,
-                  ),
-                  SizedBox(height: 40.h),
-                  ElevatedButton.icon(
-                    icon: Icon(Icons.chat, size: 38.nsp),
-                    onPressed: () => pushNewScreen(
-                      context,
-                      withNavBar: false,
-                      screen: ChatScreen(seller),
-                      pageTransitionAnimation:
-                          PageTransitionAnimation.cupertino,
-                    ),
-                    label: Container(
-                      width: 0.5.wp,
-                      child: AutoSizeText(
-                        'Chat com o vendedor',
-                        maxLines: 1,
-                        style: GoogleFonts.montserrat(
-                          fontSize: 38.nsp,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10.h),
-                  ElevatedButton.icon(
-                    icon: Icon(Icons.map, size: 38.nsp),
-                    onPressed: () {},
-                    label: Container(
-                      width: 0.35.wp,
-                      child: AutoSizeText(
-                        'Ver localização',
-                        maxLines: 1,
-                        style: GoogleFonts.montserrat(
-                          fontSize: 38.nsp,
-                        ),
-                        textAlign: TextAlign.center,
+                  GestureDetector(
+                    onTap: () {},
+                    child: AutoSizeText(
+                      seller.contact.phone,
+                      maxLines: 1,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 30.nsp,
+                        decoration: TextDecoration.underline,
                       ),
                     ),
                   ),
                 ],
-              );
-            }));
+              ),
+              SizedBox(height: 20.h),
+              ListaHorizontal(
+                title: 'Quentinhas disponíveis',
+                tagM: Random().nextDouble(),
+                meals: allCurrentMeals,
+              ),
+              SizedBox(height: 40.h),
+              ElevatedButton.icon(
+                icon: Icon(Icons.chat, size: 38.nsp),
+                onPressed: () => pushNewScreen(
+                  context,
+                  withNavBar: false,
+                  screen: ChatScreen(seller),
+                  pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                ),
+                label: Container(
+                  width: 0.5.wp,
+                  child: AutoSizeText(
+                    'Chat com o vendedor',
+                    maxLines: 1,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 38.nsp,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+              SizedBox(height: 10.h),
+              ElevatedButton.icon(
+                icon: Icon(Icons.map, size: 38.nsp),
+                onPressed: () {},
+                label: Container(
+                  width: 0.35.wp,
+                  child: AutoSizeText(
+                    'Ver localização',
+                    maxLines: 1,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 38.nsp,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
   }
 
   _buildFavoriteButton() {
