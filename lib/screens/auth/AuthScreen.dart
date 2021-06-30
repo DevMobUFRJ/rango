@@ -37,7 +37,10 @@ class _AuthScreenState extends State<AuthScreen> {
           setState(() => _isLoading = false);
           ScaffoldMessenger.of(ctx).showSnackBar(
             SnackBar(
-              content: Text("Senha incorreta"),
+              content: Text(
+                "Senha incorreta",
+                textAlign: TextAlign.center,
+              ),
               backgroundColor: Theme.of(context).errorColor,
             ),
           );
@@ -83,7 +86,10 @@ class _AuthScreenState extends State<AuthScreen> {
       }
       ScaffoldMessenger.of(ctx).showSnackBar(
         SnackBar(
-          content: Text(message),
+          content: Text(
+            message,
+            textAlign: TextAlign.center,
+          ),
           backgroundColor: Theme.of(context).errorColor,
         ),
       );

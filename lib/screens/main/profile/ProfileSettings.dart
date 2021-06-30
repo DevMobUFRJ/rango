@@ -223,33 +223,37 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                     controller: _rangeController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
-                        focusColor: orange,
-                        fillColor: orange,
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: orange)),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: orange)),
-                        labelStyle: TextStyle(color: orange),
-                        labelText: 'Raio de busca (km)',
-                        hintText: 'Raio de busca',
-                        suffixText: 'km'),
+                      focusColor: orange,
+                      fillColor: orange,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: orange),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: orange),
+                      ),
+                      labelStyle: GoogleFonts.montserrat(
+                        color: orange,
+                        fontSize: 35.nsp,
+                      ),
+                      labelText: 'Raio de busca (km)',
+                      hintText: 'Raio de busca',
+                      suffixText: 'km',
+                    ),
                   ),
                 ),
                 Container(
                   margin: EdgeInsets.symmetric(vertical: 0.01.hp),
                   width: 0.6.wp,
-                  child: RaisedButton(
-                    padding: EdgeInsets.symmetric(
-                        vertical: 0.01.hp, horizontal: 0.1.wp),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
+                  child: ElevatedButton(
                     onPressed: () => _saveSettings(context),
-                    child: AutoSizeText(
-                      'Confirmar',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 36.nsp,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 0.01.hp, horizontal: 0.1.wp),
+                      child: AutoSizeText(
+                        'Confirmar',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 36.nsp,
+                        ),
                       ),
                     ),
                   ),

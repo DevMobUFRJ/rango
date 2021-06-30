@@ -30,7 +30,11 @@ class Repository {
   }
 
   Stream<DocumentSnapshot> getMealFromSeller(String mealUid, String sellerUid) {
-    return sellersRef.document(sellerUid).collection("meals").document(mealUid).snapshots();
+    return sellersRef
+        .document(sellerUid)
+        .collection("meals")
+        .document(mealUid)
+        .snapshots();
   }
 
   Future<DocumentSnapshot> getSellerFuture(String uid) {
@@ -51,39 +55,55 @@ class Repository {
 
   Stream<QuerySnapshot> getFavoriteSellers(List<String> favorites) {
     // Essa query whereIn tem o limite de 10 items
-    return sellersRef.where(FieldPath.documentId, whereIn: favorites).snapshots();
+    return sellersRef
+        .where(FieldPath.documentId, whereIn: favorites)
+        .snapshots();
   }
 
   Future<void> addSellerToClientFavorites(String clientId, String sellerId) {
-    return clientsRef.document(clientId).updateData({'favoriteSellers': FieldValue.arrayUnion([sellerId])});
+    return clientsRef.document(clientId).updateData({
+      'favoriteSellers': FieldValue.arrayUnion([sellerId])
+    });
   }
 
-  Future<void> removeSellerFromClientFavorites(String clientId, String sellerId) {
-    return clientsRef.document(clientId).updateData({'favoriteSellers': FieldValue.arrayRemove([sellerId])});
+  Future<void> removeSellerFromClientFavorites(
+      String clientId, String sellerId) {
+    return clientsRef.document(clientId).updateData({
+      'favoriteSellers': FieldValue.arrayRemove([sellerId])
+    });
   }
 
   Future<DocumentReference> addOrder(Order order) async {
-    var mealDoc = await sellersRef.document(order.sellerId).collection('meals').document(order.mealId).get();
+    var mealDoc = await sellersRef
+        .document(order.sellerId)
+        .collection('meals')
+        .document(order.mealId)
+        .get();
     Meal meal = Meal.fromJson(mealDoc.data);
     if (meal.quantity < order.quantity) {
-      throw('Não há quentinhas suficientes para o seu pedido. Quantidade disponível: ${meal.quantity}.');
+      throw ('Não há quentinhas suficientes para o seu pedido. Quantidade disponível: ${meal.quantity}.');
     }
     return ordersRef.add(order.toJson());
   }
 
   Future<void> cancelOrder(String orderUid) async {
-    return ordersRef.document(orderUid).updateData(
-        {
-          'status': 'canceled',
-          'canceledAt': Timestamp.now()
-        });
+    return ordersRef
+        .document(orderUid)
+        .updateData({'status': 'canceled', 'canceledAt': Timestamp.now()});
   }
-  
+
   Stream<QuerySnapshot> getOrdersFromClient(String clientId, {int limit}) {
     if (limit != null && limit > 0) {
-      return ordersRef.where('clientId', isEqualTo: clientId).orderBy('requestedAt', descending: true).limit(limit).snapshots();
+      return ordersRef
+          .where('clientId', isEqualTo: clientId)
+          .orderBy('requestedAt', descending: true)
+          .limit(limit)
+          .snapshots();
     }
-    return ordersRef.where('clientId', isEqualTo: clientId).orderBy('requestedAt', descending: true).snapshots();
+    return ordersRef
+        .where('clientId', isEqualTo: clientId)
+        .orderBy('requestedAt', descending: true)
+        .snapshots();
   }
 
   Future<Position> getUserLocation() {
@@ -92,43 +112,57 @@ class Repository {
   }
 
   bool isInTimeRange(DocumentSnapshot seller, String weekday, int time) {
-    return seller.data["shift"][weekday]["openingTime"] <= time && seller.data["shift"][weekday]["closingTime"] >= time;
+    return seller.data["shift"][weekday]["openingTime"] <= time &&
+        seller.data["shift"][weekday]["closingTime"] >= time;
   }
 
-  Stream<List<DocumentSnapshot>> filterTimeRange(Stream<List<DocumentSnapshot>> stream) {
+  Stream<List<DocumentSnapshot>> filterTimeRange(
+      Stream<List<DocumentSnapshot>> stream) {
     DateTime currentTime = DateTime.now();
-    int formattedTime = int.parse(currentTime.hour.toString() + currentTime.minute.toString());
+    int formattedTime =
+        int.parse(currentTime.hour.toString() + currentTime.minute.toString());
     String weekday = weekdayMap[currentTime.weekday];
-    return stream.map((documents) => documents.where((seller) => isInTimeRange(seller, weekday, formattedTime)).map((i) => i).toList());
+    return stream.map((documents) => documents
+        .where((seller) => isInTimeRange(seller, weekday, formattedTime))
+        .map((i) => i)
+        .toList());
   }
 
-  Stream<List<DocumentSnapshot>> getNearbySellersStream(Position userLocation, double radius, {bool queryByActive = false, bool queryByTime = false}) {
+  Stream<List<DocumentSnapshot>> getNearbySellersStream(
+      Position userLocation, double radius,
+      {bool queryByActive = false, bool queryByTime = false}) {
     // Stream para pegar os vendedores próximos
-    GeoFirePoint center = geo.point(latitude: userLocation.latitude, longitude: userLocation.longitude);
+    GeoFirePoint center = geo.point(
+        latitude: userLocation.latitude, longitude: userLocation.longitude);
 
     DateTime currentTime = DateTime.now();
     String weekday = weekdayMap[currentTime.weekday];
 
     var queryRef = sellersRef.where("active");
     if (queryByActive) queryRef = queryRef.where("active", isEqualTo: true);
-    if (queryByTime) queryRef = queryRef.where("shift.$weekday.open", isEqualTo: true);
+    if (queryByTime)
+      queryRef = queryRef.where("shift.$weekday.open", isEqualTo: true);
 
     if (queryByTime) {
-      return filterTimeRange(geo.collection(collectionRef: queryRef).within(center: center, radius: radius, field: "location", strictMode: true));
+      return filterTimeRange(geo.collection(collectionRef: queryRef).within(
+          center: center, radius: radius, field: "location", strictMode: true));
     } else {
-      return geo.collection(collectionRef: queryRef).within(center: center, radius: radius, field: "location", strictMode: true);
+      return geo.collection(collectionRef: queryRef).within(
+          center: center, radius: radius, field: "location", strictMode: true);
     }
   }
 
-  Stream<List<QuerySnapshot>> getCurrentMealsStream(List<DocumentSnapshot> sellerList, {bool queryByFeatured = false, int limit = -1}) {
+  Stream<List<QuerySnapshot>> getCurrentMealsStream(
+      List<DocumentSnapshot> sellerList,
+      {bool queryByFeatured = false,
+      int limit = -1}) {
     List<Stream<QuerySnapshot>> streams = [];
 
     for (var i = 0; i < sellerList.length; i++) {
-      // Iterar todos os vendedores
       var seller = sellerList[i];
-
       var queryRef = seller.reference.collection("currentMeals").where("name");
-      if (queryByFeatured == true) queryRef = queryRef.where("featured", isEqualTo: true);
+      if (queryByFeatured == true)
+        queryRef = queryRef.where("featured", isEqualTo: true);
       if (limit != -1) queryRef = queryRef.limit(limit);
 
       streams.add(queryRef.snapshots());

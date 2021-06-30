@@ -38,19 +38,18 @@ class LoginScreen extends StatelessWidget {
                       child: Container(
                         margin: EdgeInsets.only(bottom: 20),
                         width: double.infinity,
-                        child: RaisedButton(
-                          padding: EdgeInsets.symmetric(vertical: 0.015.hp),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
+                        child: ElevatedButton(
                           onPressed: () => Navigator.of(context)
                               .pushNamed(AuthScreen.routeName, arguments: true),
-                          child: Text(
-                            'Login',
-                            style: GoogleFonts.montserratTextTheme(
-                                    Theme.of(context).textTheme)
-                                .button
-                                .copyWith(fontSize: 38.nsp),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 0.015.hp),
+                            child: AutoSizeText(
+                              'Login',
+                              style: GoogleFonts.montserratTextTheme(
+                                      Theme.of(context).textTheme)
+                                  .button
+                                  .copyWith(fontSize: 38.nsp),
+                            ),
                           ),
                         ),
                       ),

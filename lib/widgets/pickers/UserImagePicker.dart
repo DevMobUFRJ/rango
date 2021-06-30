@@ -87,8 +87,10 @@ class _UserImagePickerState extends State<UserImagePicker> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: Theme.of(context).errorColor,
-            content:
-                Text('Ocorreu um erro ao escolher a foto, tente novamente'),
+            content: Text(
+              'Ocorreu um erro ao escolher a foto, tente novamente',
+              textAlign: TextAlign.center,
+            ),
           ),
         );
       }

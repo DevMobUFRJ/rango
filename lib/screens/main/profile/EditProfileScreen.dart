@@ -81,11 +81,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         }
         setState(() => _loading = false);
         Navigator.of(context).pop();
-        //TODO: trocar senha e tratar erros
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(error.toString()),
+            backgroundColor: Theme.of(context).errorColor,
+            content: Text(
+              error.toString(),
+              textAlign: TextAlign.center,
+            ),
           ),
         );
         setState(() => _loading = false);
