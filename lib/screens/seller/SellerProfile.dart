@@ -77,8 +77,8 @@ class _SellerProfileState extends State<SellerProfile> {
                           margin: EdgeInsets.only(top: 20),
                           child: CircleAvatar(
                             backgroundColor: Theme.of(context).accentColor,
-                            backgroundImage: seller.picture != null
-                                ? NetworkImage(seller.picture)
+                            backgroundImage: seller.logo != null
+                                ? NetworkImage(seller.logo)
                                 : null,
                             radius: 130.w,
                           ),
