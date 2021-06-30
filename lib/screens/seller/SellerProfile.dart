@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
@@ -10,6 +11,8 @@ import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/seller/ChatScreen.dart';
 import 'package:rango/widgets/home/ListaHorizontal.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart' show DocumentSnapshot;
 
 class SellerProfile extends StatefulWidget {
@@ -92,19 +95,86 @@ class _SellerProfileState extends State<SellerProfile> {
                 flex: 0,
                 child: Container(
                   margin: EdgeInsets.symmetric(vertical: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  child: Column(
                     children: [
-                      Icon(Icons.phone, size: 32.nsp),
-                      GestureDetector(
-                        onTap: () {},
-                        child: AutoSizeText(
-                          seller.contact.phone,
-                          maxLines: 1,
-                          style: GoogleFonts.montserrat(
-                            fontSize: 30.nsp,
-                            decoration: TextDecoration.underline,
+                      Container(
+                        margin: EdgeInsets.only(bottom: 5),
+                        child: GestureDetector(
+                          onTap: () => {
+                            Clipboard.setData(
+                              ClipboardData(text: seller.contact.phone),
+                            ),
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: Theme.of(context).accentColor,
+                                content: AutoSizeText(
+                                  'Número copiado para área de transferência',
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.montserrat(),
+                                ),
+                                duration: Duration(seconds: 2),
+                              ),
+                            )
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(right: 1),
+                                child: Icon(Icons.phone, size: 32.nsp),
+                              ),
+                              AutoSizeText(
+                                seller.contact.phone,
+                                maxLines: 1,
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 30.nsp,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ],
                           ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          try {
+                            final Uri whatsAppUrl = Uri(
+                              scheme: 'http',
+                              path:
+                                  "wa.me/+55${seller.contact.phone.replaceAll('(', '').replaceAll(')', '')}",
+                            );
+                            launch(whatsAppUrl.toString());
+                          } catch (error) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'WhatsApp não instalado',
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.montserrat(),
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            AutoSizeText(
+                              'Abrir no WhatsApp',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 30.nsp,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(left: 2),
+                              child: FaIcon(
+                                FontAwesomeIcons.whatsapp,
+                                size: 36.nsp,
+                                color: Colors.green,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
