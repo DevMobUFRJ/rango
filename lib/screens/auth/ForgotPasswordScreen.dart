@@ -33,7 +33,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   'Email enviado',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.montserrat(
-                      color: Colors.white, fontSize: 28.nsp),
+                    color: Colors.white,
+                    fontSize: 28.nsp,
+                  ),
                 ),
               ),
             )

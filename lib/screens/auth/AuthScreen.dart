@@ -33,21 +33,22 @@ class _AuthScreenState extends State<AuthScreen> {
         try {
           authResult = await _auth.signInWithEmailAndPassword(
               email: email, password: password);
-        } on PlatformException catch (error)  {
+        } on PlatformException catch (_) {
           setState(() => _isLoading = false);
-          print(error.message);
-          ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
-            content: Text("Senha incorreta"),
-            backgroundColor: Theme.of(context).errorColor,
-          ));
+          ScaffoldMessenger.of(ctx).showSnackBar(
+            SnackBar(
+              content: Text("Senha incorreta"),
+              backgroundColor: Theme.of(context).errorColor,
+            ),
+          );
         } catch (error) {
           setState(() => _isLoading = false);
           print(error);
         }
-
       } else {
         setState(() => _isLoading = true);
-        authResult = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+        authResult = await _auth.createUserWithEmailAndPassword(
+            email: email, password: password);
         FirebaseUser user = await _auth.currentUser();
         UserUpdateInfo updateInfo = UserUpdateInfo();
         updateInfo.displayName = name;
@@ -65,11 +66,13 @@ class _AuthScreenState extends State<AuthScreen> {
         await Firestore.instance
             .collection('clients')
             .document(authResult.user.uid)
-            .setData({
-          'name': name,
-          'email': email,
-          'picture': url != null ? url : null,
-        });
+            .setData(
+          {
+            'name': name,
+            'email': email,
+            'picture': url != null ? url : null,
+          },
+        );
       }
       setState(() => _isLoading = false);
       Navigator.of(context).pop();
@@ -78,10 +81,12 @@ class _AuthScreenState extends State<AuthScreen> {
       if (error.message != null) {
         message = error.message;
       }
-      ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
-        content: Text(message),
-        backgroundColor: Theme.of(context).errorColor,
-      ));
+      ScaffoldMessenger.of(ctx).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
+      );
       setState(() => _isLoading = false);
     } catch (error) {
       setState(() => _isLoading = false);
@@ -92,9 +97,11 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     final bool isLogin = ModalRoute.of(context).settings.arguments;
-    setState(() {
-      _isLogin = isLogin;
-    });
+    setState(
+      () {
+        _isLogin = isLogin;
+      },
+    );
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[200],

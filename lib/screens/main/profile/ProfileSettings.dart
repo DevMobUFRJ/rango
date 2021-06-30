@@ -306,15 +306,18 @@ class _ProfileSettingsState extends State<ProfileSettings> {
           double.parse(_rangeController.text.replaceAll(',', '.')));
       Provider.of<RangeChangeNotifier>(context, listen: false).triggerRefresh();
       FocusScope.of(context).unfocus();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          child: Text(
-            "Configurações salvas com sucesso.",
-            textAlign: TextAlign.center,
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Theme.of(context).accentColor,
+          content: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              "Configurações salvas com sucesso.",
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
-      ));
+      );
     } catch (e) {
       print(e);
     }

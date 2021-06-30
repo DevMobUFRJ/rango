@@ -207,94 +207,100 @@ class OrderHistoryScreen extends StatelessWidget {
 
   void _showCancelDialog(context, order, orderUid) async {
     await showDialog(
-        context: context,
-        builder: (BuildContext ctx) {
-          return AlertDialog(
-            insetPadding: EdgeInsets.symmetric(horizontal: 0.1.wp),
-            backgroundColor: Color(0xFFF9B152),
-            actionsPadding: EdgeInsets.all(10),
-            contentPadding: EdgeInsets.only(
-              top: 20,
-              left: 24,
-              right: 24,
-              bottom: 0,
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          insetPadding: EdgeInsets.symmetric(horizontal: 0.1.wp),
+          backgroundColor: Color(0xFFF9B152),
+          actionsPadding: EdgeInsets.all(10),
+          contentPadding: EdgeInsets.only(
+            top: 20,
+            left: 24,
+            right: 24,
+            bottom: 0,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Text(
+            'Cancelar Reserva',
+            style: GoogleFonts.montserrat(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 38.ssp,
             ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            title: Text(
-              'Cancelar Reserva',
-              style: GoogleFonts.montserrat(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 38.ssp,
-              ),
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Tem certeza?',
-                  style: GoogleFonts.montserrat(
-                    color: Colors.white,
-                    fontSize: 28.nsp,
-                  ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Tem certeza?',
+                style: GoogleFonts.montserrat(
+                  color: Colors.white,
+                  fontSize: 28.nsp,
                 ),
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    FlatButton(
-                      onPressed: () {
-                        Navigator.of(ctx).pop();
-                      },
-                      child: Text(
-                        'Não',
-                        style: GoogleFonts.montserrat(
-                          decoration: TextDecoration.underline,
-                          color: Colors.white,
-                          fontSize: 34.nsp,
-                        ),
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                    },
+                    child: Text(
+                      'Não',
+                      style: GoogleFonts.montserrat(
+                        decoration: TextDecoration.underline,
+                        color: Colors.white,
+                        fontSize: 34.nsp,
                       ),
                     ),
-                    FlatButton(
-                      onPressed: () async {
-                        try {
-                          await Repository.instance.cancelOrder(orderUid);
-                          Navigator.of(ctx).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      try {
+                        await Repository.instance.cancelOrder(orderUid);
+                        Navigator.of(ctx).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: Theme.of(ctx).accentColor,
                             content: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 20),
-                              child: Text("Reserva cancelada com sucesso."),
+                              child: Text("Reserva cancelada com sucesso.",
+                                  textAlign: TextAlign.center),
                             ),
-                          ));
-                        } catch (e) {
-                          print(e);
-                          Navigator.of(ctx).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          ),
+                        );
+                      } catch (e) {
+                        Navigator.of(ctx).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
                             padding: EdgeInsets.only(bottom: 60),
                             content: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 20),
                               child: Text(e.toString()),
                             ),
                             backgroundColor: Theme.of(context).errorColor,
-                          ));
-                        }
-                      },
-                      child: Text(
-                        'Sim',
-                        style: GoogleFonts.montserrat(
-                          decoration: TextDecoration.underline,
-                          color: Colors.white,
-                          fontSize: 34.nsp,
-                        ),
+                          ),
+                        );
+                      }
+                    },
+                    child: Text(
+                      'Sim',
+                      style: GoogleFonts.montserrat(
+                        decoration: TextDecoration.underline,
+                        color: Colors.white,
+                        fontSize: 34.nsp,
                       ),
                     ),
-                  ],
-                )
-              ],
-            ),
-          );
-        });
+                  ),
+                ],
+              )
+            ],
+          ),
+        );
+      },
+    );
   }
 }

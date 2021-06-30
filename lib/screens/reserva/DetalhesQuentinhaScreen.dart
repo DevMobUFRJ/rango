@@ -191,10 +191,11 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
 
   void _showOrderDialog(context, maxQuantity) async {
     await showDialog(
-        context: context,
-        builder: (BuildContext ctx) {
-          int _quantity = 1;
-          return StatefulBuilder(builder: (dialogContext, setState) {
+      context: context,
+      builder: (BuildContext ctx) {
+        int _quantity = 1;
+        return StatefulBuilder(
+          builder: (dialogContext, setState) {
             return AlertDialog(
               insetPadding: EdgeInsets.symmetric(horizontal: 0.1.wp),
               backgroundColor: Color(0xFFF9B152),
@@ -213,14 +214,15 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                 style: GoogleFonts.montserrat(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
-                  fontSize: 38.ssp,
+                  fontSize: 42.ssp,
                 ),
+                textAlign: TextAlign.center,
               ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Quantos deseja reservar?',
+                    'Quantas deseja reservar?',
                     style: GoogleFonts.montserrat(
                       color: Colors.white,
                       fontSize: 28.nsp,
@@ -243,7 +245,12 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                           child: Icon(Icons.remove, color: Colors.black),
                           backgroundColor: Colors.white,
                         ),
-                        Text('$_quantity', style: TextStyle(fontSize: 80.nsp)),
+                        Text(
+                          '$_quantity',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 80.nsp,
+                          ),
+                        ),
                         FloatingActionButton(
                           onPressed: () {
                             setState(() {
@@ -264,7 +271,7 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                 ],
               ),
               actions: [
-                FlatButton(
+                TextButton(
                   onPressed: () {
                     Navigator.of(ctx).pop();
                   },
@@ -277,7 +284,7 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                FlatButton(
+                TextButton(
                   child: Text(
                     'Confirmar',
                     style: GoogleFonts.montserrat(
@@ -291,26 +298,32 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                         await Repository.instance.getCurrentUser();
 
                     Order order = Order(
-                        clientId: user.uid,
-                        clientName: user.displayName,
-                        sellerId: seller.id,
-                        sellerName: seller.name,
-                        mealId: marmita.id,
-                        mealName: marmita.name,
-                        price: marmita.price,
-                        quantity: _quantity,
-                        requestedAt: Timestamp.now(),
-                        status: "requested");
+                      clientId: user.uid,
+                      clientName: user.displayName,
+                      sellerId: seller.id,
+                      sellerName: seller.name,
+                      mealId: marmita.id,
+                      mealName: marmita.name,
+                      price: marmita.price,
+                      quantity: _quantity,
+                      requestedAt: Timestamp.now(),
+                      status: "requested",
+                    );
                     try {
                       await Repository.instance.addOrder(order);
                       Navigator.of(ctx).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: Text("Reserva feita com sucesso.",
-                              textAlign: TextAlign.center),
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Theme.of(ctx).accentColor,
+                          content: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              "Reserva feita com sucesso.",
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
-                      ));
+                      );
 
                       pushNewScreen(
                         context,
@@ -320,22 +333,27 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                             PageTransitionAnimation.cupertino,
                       );
                     } catch (e) {
-                      print(e);
                       Navigator.of(ctx).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child:
-                              Text(e.toString(), textAlign: TextAlign.center),
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              e.toString(),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          backgroundColor: Theme.of(context).errorColor,
                         ),
-                        backgroundColor: Theme.of(context).errorColor,
-                      ));
+                      );
                     }
                   },
                 ),
               ],
             );
-          });
-        });
+          },
+        );
+      },
+    );
   }
 }
