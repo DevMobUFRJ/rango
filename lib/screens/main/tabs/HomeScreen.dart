@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart' hide openAppSettings;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/client.dart';
@@ -10,11 +10,13 @@ import 'package:rango/models/meal_request.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/rangeChangeNotifier.dart';
 import 'package:rango/resources/repository.dart';
+import 'package:rango/widgets/home/HomeHeader.dart';
 import 'package:rango/widgets/home/ListaHorizontal.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rango/widgets/home/SellerGridVertical.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:rango/widgets/home/SellersList.dart';
 
 class HomeScreen extends StatefulWidget {
   final Client usuario;
@@ -68,56 +70,14 @@ class _HomeScreenState extends State<HomeScreen> {
             return Future.value();
           },
           child: _locationPermissionStatus == null
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _buildHeader(),
-                    Container(
-                      height: 0.5.hp,
-                      alignment: Alignment.center,
-                      child: SizedBox(
-                        height: 50,
-                        width: 50,
-                        child: CircularProgressIndicator(
-                          color: Theme.of(context).accentColor,
-                        ),
-                      ),
-                    )
-                  ],
-                )
+              ? _buildLoadingSpinnerScene()
               : !_locationPermissionStatus
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        _buildHeader(),
-                        SizedBox(height: 0.1.hp),
-                        AutoSizeText(
-                          'É necessário dar permissão de localização para utilizar o aplicativo',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.montserrat(
-                            fontSize: 45.nsp,
-                            color: Theme.of(context).accentColor,
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.symmetric(vertical: 10),
-                          child: ElevatedButton(
-                            onPressed: () => requestForPermission(),
-                            child: AutoSizeText(
-                              'Dar permissão',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 35.nsp,
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    )
+                  ? _buildRequestForPermissionWidget()
                   : SingleChildScrollView(
                       child: Container(
                         child: Column(
                           children: [
-                            _buildHeader(),
+                            HomeHeader(widget.usuario.name.split(" ")[0]),
                             FutureBuilder(
                               future: Repository.instance.getUserLocation(),
                               builder: (
@@ -126,17 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ) {
                                 if (locationSnapshot.connectionState ==
                                     ConnectionState.waiting) {
-                                  return Container(
-                                    height: 0.5.hp,
-                                    alignment: Alignment.center,
-                                    child: SizedBox(
-                                      height: 50,
-                                      width: 50,
-                                      child: CircularProgressIndicator(
-                                        color: Theme.of(context).accentColor,
-                                      ),
-                                    ),
-                                  );
+                                  return _buildLoadingSpinner();
                                 }
 
                                 if (locationSnapshot.hasError) {
@@ -171,21 +121,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         context,
                                         AsyncSnapshot<double> rangeSnapshot,
                                       ) {
-                                        if (!rangeSnapshot.hasData ||
-                                            rangeSnapshot.connectionState ==
-                                                ConnectionState.waiting) {
-                                          return Container(
-                                            height: 0.5.hp,
-                                            alignment: Alignment.center,
-                                            child: SizedBox(
-                                              height: 50,
-                                              width: 50,
-                                              child: CircularProgressIndicator(
-                                                color: Theme.of(context)
-                                                    .accentColor,
-                                              ),
-                                            ),
-                                          );
+                                        if (rangeSnapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return _buildLoadingSpinner();
                                         }
                                         if (rangeSnapshot.hasError) {
                                           return Container(
@@ -215,22 +153,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     List<DocumentSnapshot>>
                                                 snapshot,
                                           ) {
-                                            if (!snapshot.hasData ||
-                                                snapshot.connectionState ==
-                                                    ConnectionState.waiting) {
-                                              return Container(
-                                                height: 0.5.hp,
-                                                alignment: Alignment.center,
-                                                child: SizedBox(
-                                                  height: 50,
-                                                  width: 50,
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                    color: Theme.of(context)
-                                                        .accentColor,
-                                                  ),
-                                                ),
-                                              );
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return _buildLoadingSpinner();
                                             }
                                             if (snapshot.hasError) {
                                               return Container(
@@ -252,48 +177,52 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 filteredMealsRequests = [];
 
                                             List<Seller> sellerList = [];
-                                            snapshot.data.forEach((sellerDoc) {
-                                              Seller seller = Seller.fromJson(
-                                                sellerDoc.data,
-                                                id: sellerDoc.documentID,
-                                              );
-                                              sellerList.add(seller);
-                                              //print("${seller.data["name"]} is from cache: ${seller.metadata.isFromCache}");
-                                              var filterByFeatured = false;
-                                              var mealsLimit = 0;
-                                              var currentMeals =
-                                                  seller.currentMeals;
+                                            snapshot.data.forEach(
+                                              (sellerDoc) {
+                                                Seller seller = Seller.fromJson(
+                                                  sellerDoc.data,
+                                                  id: sellerDoc.documentID,
+                                                );
+                                                sellerList.add(seller);
+                                                var filterByFeatured = false;
+                                                var mealsLimit = 0;
+                                                var currentMeals =
+                                                    seller.currentMeals;
 
-                                              var sellerAll = currentMeals
-                                                  .entries
-                                                  .map((meal) {
-                                                return MealRequest(
-                                                    mealId: meal.key,
-                                                    seller: seller);
-                                              }).toList();
-                                              allMealsRequests
-                                                  .addAll(sellerAll);
+                                                var sellerAll =
+                                                    currentMeals.entries.map(
+                                                  (meal) {
+                                                    return MealRequest(
+                                                        mealId: meal.key,
+                                                        seller: seller);
+                                                  },
+                                                ).toList();
+                                                allMealsRequests
+                                                    .addAll(sellerAll);
 
-                                              if (filterByFeatured) {
-                                                currentMeals.removeWhere(
-                                                    (mealId, details) =>
-                                                        !details.featured);
-                                              }
-                                              var sellerFiltered = currentMeals
-                                                  .entries
-                                                  .map((meal) {
-                                                return MealRequest(
-                                                    mealId: meal.key,
-                                                    seller: seller);
-                                              }).toList();
-                                              if (mealsLimit > 0) {
-                                                sellerFiltered = sellerFiltered
-                                                    .take(mealsLimit)
-                                                    .toList();
-                                              }
-                                              filteredMealsRequests
-                                                  .addAll(sellerFiltered);
-                                            });
+                                                if (filterByFeatured) {
+                                                  currentMeals.removeWhere(
+                                                      (mealId, details) =>
+                                                          !details.featured);
+                                                }
+                                                var sellerFiltered =
+                                                    currentMeals.entries.map(
+                                                  (meal) {
+                                                    return MealRequest(
+                                                        mealId: meal.key,
+                                                        seller: seller);
+                                                  },
+                                                ).toList();
+                                                if (mealsLimit > 0) {
+                                                  sellerFiltered =
+                                                      sellerFiltered
+                                                          .take(mealsLimit)
+                                                          .toList();
+                                                }
+                                                filteredMealsRequests
+                                                    .addAll(sellerFiltered);
+                                              },
+                                            );
 
                                             if (allMealsRequests.isEmpty &&
                                                 filteredMealsRequests.isEmpty &&
@@ -349,7 +278,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ),
                                                 SizedBox(height: 0.02.hp),
                                                 if (sellerList.isNotEmpty)
-                                                  _buildSellers(
+                                                  SellersList(
                                                       sellerList,
                                                       locationSnapshot,
                                                       widget.usuario.id),
@@ -389,89 +318,67 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildHeader() {
-    final String assetName = 'assets/imgs/curva_principal.svg';
-    return Stack(
+  Widget _buildLoadingSpinner() {
+    return Container(
+      height: 0.5.hp,
+      alignment: Alignment.center,
+      child: SizedBox(
+        height: 50,
+        width: 50,
+        child: CircularProgressIndicator(
+          color: Theme.of(context).accentColor,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingSpinnerScene() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SvgPicture.asset(
-          assetName,
-          semanticsLabel: 'curvaHome',
-          width: 1.wp,
-        ),
+        HomeHeader(widget.usuario.name.split(" ")[0]),
         Container(
-          margin: EdgeInsets.only(top: 0.03.hp),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 0.01.hp),
-              Container(
-                width: 0.7.wp,
-                padding: EdgeInsets.symmetric(
-                    horizontal: 0.04.wp, vertical: 0.01.hp),
-                child: AutoSizeText(
-                  'Olá, ${widget.usuario.name.split(" ")[0]}!\nBateu a fome?',
-                  maxLines: 2,
-                  textAlign: TextAlign.start,
-                  style: GoogleFonts.montserratTextTheme(
-                          Theme.of(context).textTheme)
-                      .headline1,
-                ),
-              ),
-              SizedBox(height: 0.06.hp),
-            ],
+          height: 0.5.hp,
+          alignment: Alignment.center,
+          child: SizedBox(
+            height: 50,
+            width: 50,
+            child: CircularProgressIndicator(
+              color: Theme.of(context).accentColor,
+            ),
           ),
-        ),
+        )
       ],
     );
   }
 
-  Widget _buildSellers(List<Seller> sellerList,
-      AsyncSnapshot<Position> locationSnapshot, String clientId) {
-    return StreamBuilder(
-      stream: Repository.instance.getClientStream(clientId),
-      builder: (context, AsyncSnapshot<DocumentSnapshot> clientSnapshot) {
-        if (!clientSnapshot.hasData ||
-            clientSnapshot.connectionState == ConnectionState.waiting) {
-          return Container(
-            height: 0.5.hp,
-            alignment: Alignment.center,
-            child: SizedBox(
-              height: 50,
-              width: 50,
-              child: CircularProgressIndicator(
-                color: Theme.of(context).accentColor,
+  Widget _buildRequestForPermissionWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        HomeHeader(widget.usuario.name.split(" ")[0]),
+        SizedBox(height: 0.1.hp),
+        AutoSizeText(
+          'É necessário dar permissão de localização para utilizar o aplicativo',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.montserrat(
+            fontSize: 45.nsp,
+            color: Theme.of(context).accentColor,
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.symmetric(vertical: 10),
+          child: ElevatedButton(
+            onPressed: () => requestForPermission(),
+            child: AutoSizeText(
+              'Dar permissão',
+              style: GoogleFonts.montserrat(
+                fontSize: 35.nsp,
               ),
             ),
-          );
-        }
-        if (clientSnapshot.hasError) {
-          return Container(
-            height: 0.6.hp - 56,
-            alignment: Alignment.center,
-            child: AutoSizeText(
-              clientSnapshot.error.toString(),
-              style: GoogleFonts.montserrat(
-                  fontSize: 45.nsp, color: Theme.of(context).accentColor),
-            ),
-          );
-        }
-
-        // Ordena por sellers favoritos
-        var favorites = clientSnapshot.data.data['favoriteSellers'];
-        if (favorites != null) {
-          sellerList.sort(
-            (a, b) =>
-                favorites.indexOf(b.id).compareTo(favorites.indexOf(a.id)),
-          );
-        }
-
-        return SellerGridVertical(
-          tagM: Random().nextDouble(),
-          title: 'Vendedores',
-          sellers: sellerList,
-          userLocation: locationSnapshot.data,
-        );
-      },
+          ),
+        )
+      ],
     );
   }
 
@@ -485,51 +392,54 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildOrderAgain(List<MealRequest> meals, String clientId) {
     return StreamBuilder(
-        stream: Repository.instance.getOrdersFromClient(clientId, limit: 10),
-        builder: (context, AsyncSnapshot<QuerySnapshot> orderSnapshot) {
-          if (orderSnapshot.connectionState == ConnectionState.waiting) {
-            return Container(
-              height: 0.5.hp,
-              alignment: Alignment.center,
-              child: SizedBox(
-                height: 50,
-                width: 50,
-                child: CircularProgressIndicator(
-                  color: Theme.of(context).accentColor,
-                ),
+      stream: Repository.instance.getOrdersFromClient(clientId, limit: 10),
+      builder: (context, AsyncSnapshot<QuerySnapshot> orderSnapshot) {
+        if (orderSnapshot.connectionState == ConnectionState.waiting) {
+          return Container(
+            height: 0.5.hp,
+            alignment: Alignment.center,
+            child: SizedBox(
+              height: 50,
+              width: 50,
+              child: CircularProgressIndicator(
+                color: Theme.of(context).accentColor,
               ),
-            );
-          }
-          if (orderSnapshot.data.documents.isEmpty) {
-            return Container();
-          }
-          if (orderSnapshot.hasError) {
-            return Container(
-              height: 0.6.hp - 56,
-              alignment: Alignment.center,
-              child: AutoSizeText(
-                orderSnapshot.error.toString(),
-                style: GoogleFonts.montserrat(
-                    fontSize: 45.nsp, color: Theme.of(context).accentColor),
-              ),
-            );
-          }
-
-          var mealIds = orderSnapshot.data.documents
-              .map((order) => order.data["mealId"])
-              .toSet()
-              .toList();
-          meals.removeWhere((meal) => !mealIds.contains(meal.mealId));
-
-          return Column(
-            children: [
-              ListaHorizontal(
-                title: 'Peça Novamente',
-                tagM: Random().nextDouble(),
-                meals: meals,
-              ),
-            ],
+            ),
           );
-        });
+        }
+        if (orderSnapshot.data.documents.isEmpty) {
+          return Container();
+        }
+        if (orderSnapshot.hasError) {
+          return Container(
+            height: 0.6.hp - 56,
+            alignment: Alignment.center,
+            child: AutoSizeText(
+              orderSnapshot.error.toString(),
+              style: GoogleFonts.montserrat(
+                  fontSize: 45.nsp, color: Theme.of(context).accentColor),
+            ),
+          );
+        }
+
+        var mealIds = orderSnapshot.data.documents
+            .map((order) => order.data["mealId"])
+            .toSet()
+            .toList();
+        meals.removeWhere(
+          (meal) => !mealIds.contains(meal.mealId),
+        );
+
+        return Column(
+          children: [
+            ListaHorizontal(
+              title: 'Peça Novamente',
+              tagM: Random().nextDouble(),
+              meals: meals,
+            ),
+          ],
+        );
+      },
+    );
   }
 }
