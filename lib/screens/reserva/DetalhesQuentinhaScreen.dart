@@ -87,11 +87,15 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                         alignment: Alignment.topLeft,
                         child: AutoSizeText(
                           marmita.name,
-                          maxLines: 1,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.montserratTextTheme(
                                   Theme.of(context).textTheme)
                               .headline2
-                              .copyWith(fontWeight: FontWeight.bold),
+                              .copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 38.nsp,
+                              ),
                         ),
                       ),
                     ),
@@ -109,7 +113,11 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                               maxLines: 4,
                               style: GoogleFonts.montserratTextTheme(
                                       Theme.of(context).textTheme)
-                                  .headline2,
+                                  .headline2
+                                  .copyWith(
+                                fontWeight: FontWeight.bold,
+                                    fontSize: 35.nsp,
+                                  ),
                             ),
                           ),
                           Align(
@@ -119,7 +127,10 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                               maxLines: 4,
                               style: GoogleFonts.montserratTextTheme(
                                       Theme.of(context).textTheme)
-                                  .headline2,
+                                  .headline2
+                                  .copyWith(
+                                    fontSize: 35.nsp,
+                                  ),
                             ),
                           ),
                         ],
