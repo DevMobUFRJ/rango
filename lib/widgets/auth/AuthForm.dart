@@ -36,26 +36,33 @@ class _AuthFormState extends State<AuthForm> {
   String _nameErrorMessage;
   String _passwordErrorMessage;
   String _confirmPasswordErrorMessage;
+
+  final _focusNodeName = FocusNode();
+  final _focusNodePass = FocusNode();
   final _focusNodeConfirmPass = FocusNode();
 
   void _pickedImage(File image) => _userImageFile = image;
 
   void _submit() {
-    final isValid = _formKey.currentState.validate();
-    FocusScope.of(context).unfocus();
-    if (isValid &&
-        _emailErrorMessage == null &&
-        _nameErrorMessage == null &&
-        _passwordErrorMessage == null &&
-        _confirmPasswordErrorMessage == null) {
-      _formKey.currentState.save();
-      widget.submitForm(
-        email: _email.trim(),
-        name: _name.trim(),
-        password: _password.trim(),
-        ctx: context,
-        image: _userImageFile,
-      );
+    try {
+      final isValid = _formKey.currentState.validate();
+      FocusScope.of(context).unfocus();
+      if (isValid &&
+          _emailErrorMessage == null &&
+          _nameErrorMessage == null &&
+          _passwordErrorMessage == null &&
+          _confirmPasswordErrorMessage == null) {
+        _formKey.currentState.save();
+        widget.submitForm(
+          email: _email.trim(),
+          name: _name.trim(),
+          password: _password.trim(),
+          ctx: context,
+          image: _userImageFile,
+        );
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -112,8 +119,10 @@ class _AuthFormState extends State<AuthForm> {
                               },
                               onSaved: (value) => _email = value,
                               keyboardType: TextInputType.emailAddress,
-                              onFieldSubmitted: (_) =>
-                                  FocusScope.of(context).nextFocus(),
+                              onFieldSubmitted: (_) => !widget._isLogin
+                                  ? FocusScope.of(context)
+                                      .requestFocus(_focusNodeName)
+                                  : FocusScope.of(context).nextFocus(),
                               textInputAction: TextInputAction.next,
                               errorText: _emailErrorMessage,
                             ),
@@ -123,6 +132,7 @@ class _AuthFormState extends State<AuthForm> {
                               flex: 2,
                               child: CustomTextFormField(
                                 labelText: 'Nome',
+                                focusNode: _focusNodeName,
                                 errorText: _nameErrorMessage,
                                 key: ValueKey('name'),
                                 onSaved: (value) => _name = value,
@@ -138,8 +148,8 @@ class _AuthFormState extends State<AuthForm> {
                                   }
                                   return null;
                                 },
-                                onFieldSubmitted: (_) =>
-                                    FocusScope.of(context).nextFocus(),
+                                onFieldSubmitted: (_) => FocusScope.of(context)
+                                    .requestFocus(_focusNodePass),
                                 textInputAction: TextInputAction.next,
                               ),
                             ),
@@ -147,6 +157,7 @@ class _AuthFormState extends State<AuthForm> {
                             flex: 2,
                             child: CustomTextFormField(
                               labelText: 'Senha:',
+                              focusNode: _focusNodePass,
                               key: ValueKey('password'),
                               controller: _pass,
                               validator: (value) {
