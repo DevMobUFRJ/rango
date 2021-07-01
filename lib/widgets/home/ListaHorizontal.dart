@@ -45,76 +45,102 @@ class ListaHorizontal extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             shrinkWrap: false,
             itemBuilder: (ctx, index) => StreamBuilder(
-                stream: Repository.instance.getMealFromSeller(meals[index].mealId, meals[index].seller.id),
-                builder: (context, AsyncSnapshot<DocumentSnapshot> mealSnapshot) {
-                  // TODO (Gabriel): Trocar esse indicator por um placeholder
-                  if (!mealSnapshot.hasData) {
-                    return Container(
-                      width: 0.4.wp, // Importante ter o mesmo width do Widget final, se não fica parecendo que tá travando quando scrolla
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                  }
-                  if (mealSnapshot.hasError) {
-                    return Container(
-                      width: 0.4.wp,
-                      child: Text(mealSnapshot.error.toString()),
-                    );
-                  }
-
-                  Meal meal = Meal.fromJson(mealSnapshot.data.data, id: meals[index].mealId);
-                  return GestureDetector(
-                    onTap: () => pushNewScreen(context,
-                        screen: DetalhesQuentinhaScreen(marmita: meal, seller: meals[index].seller, tagM: tagM),
-                        withNavBar: false,
-                        pageTransitionAnimation: PageTransitionAnimation.cupertino),
+              stream: Repository.instance.getMealFromSeller(
+                meals[index].mealId,
+                meals[index].seller.id,
+              ),
+              builder: (context, AsyncSnapshot<DocumentSnapshot> mealSnapshot) {
+                if (mealSnapshot.connectionState == ConnectionState.waiting) {
+                  return Container(
+                    width: 0.4.wp,
                     child: Card(
-                      semanticContainer: true,
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          Hero(
-                            tag: meal.hashCode * tagM,
-                            child: FadeInImage.assetNetwork(
-                              placeholder: 'assets/imgs/quentinha_placeholder.png',
-                              image: meal.picture,
-                              fit: BoxFit.cover,
-                              height: 150.h,
-                              width: 0.4.wp,
-                            ),
-                          ),
-                          Container(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              children: <Widget>[
-                                Container(
-                                  width: 0.35.wp,
-                                  child: Text(
-                                    meal.name,
-                                    textAlign: TextAlign.center,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                    style: GoogleFonts.montserrat(fontSize: 28.ssp),
-                                  ),
-                                ),
-                                Container(
-                                  width: 0.35.wp,
-                                  child: AutoSizeText(
-                                    intToCurrency(meal.price),
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.montserrat(fontSize: 28.ssp),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).accentColor,
+                        ),
                       ),
                     ),
                   );
                 }
+                if (mealSnapshot.hasError) {
+                  return Container(
+                    width: 0.4.wp,
+                    child: Card(
+                      child: Center(
+                        child: AutoSizeText(
+                          mealSnapshot.error.toString(),
+                          style: GoogleFonts.montserrat(
+                            fontSize: 45.nsp,
+                            color: Theme.of(context).accentColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+
+                Meal meal = Meal.fromJson(mealSnapshot.data.data,
+                    id: meals[index].mealId);
+                return GestureDetector(
+                  onTap: () => pushNewScreen(context,
+                      screen: DetalhesQuentinhaScreen(
+                          marmita: meal,
+                          seller: meals[index].seller,
+                          tagM: tagM),
+                      withNavBar: false,
+                      pageTransitionAnimation:
+                          PageTransitionAnimation.cupertino),
+                  child: Card(
+                    semanticContainer: true,
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        Hero(
+                          tag: meal.hashCode * tagM,
+                          child: FadeInImage.assetNetwork(
+                            placeholder:
+                                'assets/imgs/quentinha_placeholder.png',
+                            image: meal.picture,
+                            fit: BoxFit.cover,
+                            height: 150.h,
+                            width: 0.4.wp,
+                          ),
+                        ),
+                        Container(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              Container(
+                                width: 0.35.wp,
+                                child: Text(
+                                  meal.name,
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                  style:
+                                      GoogleFonts.montserrat(fontSize: 28.ssp),
+                                ),
+                              ),
+                              Container(
+                                width: 0.35.wp,
+                                child: AutoSizeText(
+                                  intToCurrency(meal.price),
+                                  textAlign: TextAlign.center,
+                                  style:
+                                      GoogleFonts.montserrat(fontSize: 28.ssp),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         )

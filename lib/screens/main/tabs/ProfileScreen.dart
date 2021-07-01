@@ -223,14 +223,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       itemBuilder: (ctx, index) => StreamBuilder(
                         stream: Repository.instance
                             .getSeller(favoriteSellers[index]),
-                        builder: (context,
-                            AsyncSnapshot<DocumentSnapshot> sellerSnapshot) {
-                          // TODO (Gabriel): Trocar esse indicator por um placeholder
-                          if (!sellerSnapshot.hasData) {
-                            return Center(child: CircularProgressIndicator());
+                        builder: (
+                          context,
+                          AsyncSnapshot<DocumentSnapshot> sellerSnapshot,
+                        ) {
+                          if (sellerSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Container(
+                              height: 0.3.hp,
+                              alignment: Alignment.center,
+                              child: SizedBox(
+                                height: 40,
+                                width: 40,
+                                child: CircularProgressIndicator(
+                                  color: Theme.of(context).accentColor,
+                                ),
+                              ),
+                            );
                           }
                           if (sellerSnapshot.hasError) {
-                            return Text(sellerSnapshot.error.toString());
+                            return Container(
+                              height: 0.4.hp - 56,
+                              alignment: Alignment.center,
+                              child: AutoSizeText(
+                                sellerSnapshot.error.toString(),
+                                style: GoogleFonts.montserrat(
+                                    fontSize: 45.nsp,
+                                    color: Theme.of(context).accentColor),
+                              ),
+                            );
                           }
 
                           Seller seller = Seller.fromJson(
