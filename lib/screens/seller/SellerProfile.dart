@@ -44,12 +44,29 @@ class _SellerProfileState extends State<SellerProfile> {
       body: StreamBuilder(
         stream: Repository.instance.getSeller(widget.sellerId),
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          // TODO (Gabriel): Melhorar esse indicator
-          if (!snapshot.hasData) {
-            return CircularProgressIndicator();
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Container(
+              height: 0.5.hp,
+              alignment: Alignment.center,
+              child: SizedBox(
+                height: 50,
+                width: 50,
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).accentColor,
+                ),
+              ),
+            );
           }
           if (snapshot.hasError) {
-            return Text(snapshot.error.toString());
+            return Container(
+              height: 0.6.hp - 56,
+              alignment: Alignment.center,
+              child: AutoSizeText(
+                snapshot.error.toString(),
+                style: GoogleFonts.montserrat(
+                    fontSize: 45.nsp, color: Theme.of(context).accentColor),
+              ),
+            );
           }
 
           Seller seller =
@@ -259,7 +276,6 @@ class _SellerProfileState extends State<SellerProfile> {
         return StreamBuilder(
             stream: Repository.instance.getClientStream(authSnapshot.data.uid),
             builder: (context, AsyncSnapshot<DocumentSnapshot> clientSnapshot) {
-              // TODO Acho que nesse caso não precisa de indicator, se estiver carregando mostra a estrela vazia
               if (!clientSnapshot.hasData) {
                 return Padding(
                   padding: EdgeInsets.only(
@@ -272,8 +288,6 @@ class _SellerProfileState extends State<SellerProfile> {
                 );
               }
 
-              // TODO Se der erro, não mostrar a estrela pro usuário não poder clicar
-              // TODO Deletar esses comentários caso concordar
               if (clientSnapshot.hasError) {
                 return SizedBox();
               }
