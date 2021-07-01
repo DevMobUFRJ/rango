@@ -20,36 +20,19 @@ class NewTabsScreen extends StatefulWidget {
 class _NewTabsScreenState extends State<NewTabsScreen> {
   @override
   void initState() {
-    _getUser();
+    _getUserId();
     super.initState();
   }
 
-  Client client;
-  bool _loading = true;
+  String userId;
+  bool loading = true;
 
-  Future<void> _getUser() async {
+  Future<void> _getUserId() async {
     final user = await FirebaseAuth.instance.currentUser();
-    final userData =
-        await Firestore.instance.collection("clients").document(user.uid).get();
-    setState(() {
-      client = new Client(
-        id: user.uid,
-        email: userData?.data['email']?.toString(),
-        picture: userData?.data['picture']?.toString(),
-        name: userData.data['name'].toString(),
-        phone: userData?.data['phone']?.toString(),
-        notificationSettings: userData.data['notificationSettings'] != null
-            ? UserNotificationSettings(
-                discounts: userData.data['notifications']['discounts'],
-                favoriteSellers: userData.data['notifications']
-                    ['favoriteSellers'],
-                messages: userData.data['notifications']['messages'],
-                reservations: userData.data['notifications']['reservations'],
-              )
-            : null,
-      );
-      _loading = false;
-    });
+    setState(() => {
+          loading = false,
+          userId = user.uid,
+        });
   }
 
   @override
@@ -57,51 +40,83 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
     PersistentTabController _controller;
     _controller = PersistentTabController(initialIndex: 0);
 
-    return _loading
+    return loading
         ? SplashScreen()
-        : PersistentTabView(
-            controller: _controller,
-            navBarStyle: NavBarStyle.style6,
-            confineInSafeArea: true,
-            backgroundColor: Theme.of(context).backgroundColor,
-            handleAndroidBackButtonPress: true,
-            resizeToAvoidBottomInset: true,
-            stateManagement: true,
-            hideNavigationBarWhenKeyboardShows: true,
-            popAllScreensOnTapOfSelectedTab: true,
-            itemAnimationProperties: ItemAnimationProperties(
-              duration: Duration(milliseconds: 200),
-              curve: Curves.ease,
-            ),
-            screenTransitionAnimation: ScreenTransitionAnimation(
-              animateTabTransition: true,
-              curve: Curves.easeIn,
-              duration: Duration(milliseconds: 180),
-            ),
-            screens: <Widget>[
-              HomeScreen(client),
-              SearchScreen(client),
-              OrderHistoryScreen(),
-              ProfileScreen(client),
-            ],
-            items: [
-              PersistentBottomNavBarItem(
-                  icon: Icon(Icons.home, size: 40),
-                  activeColor: Color(0xFF609B90),
-                  inactiveColor: Theme.of(context).primaryColor),
-              PersistentBottomNavBarItem(
-                  icon: Icon(Icons.local_dining, size: 40),
-                  activeColor: Color(0xFF609B90),
-                  inactiveColor: Theme.of(context).primaryColor),
-              PersistentBottomNavBarItem(
-                  icon: Icon(Icons.history, size: 40),
-                  activeColor: Color(0xFF609B90),
-                  inactiveColor: Theme.of(context).primaryColor),
-              PersistentBottomNavBarItem(
-                  icon: Icon(Icons.person, size: 40),
-                  activeColor: Color(0xFF609B90),
-                  inactiveColor: Theme.of(context).primaryColor),
-            ],
+        : StreamBuilder(
+            stream: Firestore.instance
+                .collection('clients')
+                .document(userId)
+                .snapshots(),
+            builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting ||
+                  !snapshot.hasData ||
+                  snapshot.data.data == null ||
+                  !snapshot.data.data.containsKey('email')) {
+                return CircularProgressIndicator();
+              }
+              Client client = new Client(
+                id: userId,
+                email: snapshot?.data['email']?.toString(),
+                picture: snapshot?.data['picture']?.toString(),
+                name: snapshot.data['name'].toString(),
+                phone: snapshot?.data['phone']?.toString(),
+                notificationSettings: snapshot.data['notificationSettings'] !=
+                        null
+                    ? UserNotificationSettings(
+                        discounts: snapshot.data['notifications']['discounts'],
+                        favoriteSellers: snapshot.data['notifications']
+                            ['favoriteSellers'],
+                        messages: snapshot.data['notifications']['messages'],
+                        reservations: snapshot.data['notifications']
+                            ['reservations'],
+                      )
+                    : null,
+              );
+              return PersistentTabView(
+                controller: _controller,
+                navBarStyle: NavBarStyle.style6,
+                confineInSafeArea: true,
+                backgroundColor: Theme.of(context).backgroundColor,
+                handleAndroidBackButtonPress: true,
+                resizeToAvoidBottomInset: true,
+                stateManagement: true,
+                hideNavigationBarWhenKeyboardShows: true,
+                popAllScreensOnTapOfSelectedTab: true,
+                itemAnimationProperties: ItemAnimationProperties(
+                  duration: Duration(milliseconds: 200),
+                  curve: Curves.ease,
+                ),
+                screenTransitionAnimation: ScreenTransitionAnimation(
+                  animateTabTransition: true,
+                  curve: Curves.easeIn,
+                  duration: Duration(milliseconds: 180),
+                ),
+                screens: <Widget>[
+                  HomeScreen(client),
+                  SearchScreen(client),
+                  OrderHistoryScreen(),
+                  ProfileScreen(client),
+                ],
+                items: [
+                  PersistentBottomNavBarItem(
+                      icon: Icon(Icons.home, size: 40),
+                      activeColor: Color(0xFF609B90),
+                      inactiveColor: Theme.of(context).primaryColor),
+                  PersistentBottomNavBarItem(
+                      icon: Icon(Icons.local_dining, size: 40),
+                      activeColor: Color(0xFF609B90),
+                      inactiveColor: Theme.of(context).primaryColor),
+                  PersistentBottomNavBarItem(
+                      icon: Icon(Icons.history, size: 40),
+                      activeColor: Color(0xFF609B90),
+                      inactiveColor: Theme.of(context).primaryColor),
+                  PersistentBottomNavBarItem(
+                      icon: Icon(Icons.person, size: 40),
+                      activeColor: Color(0xFF609B90),
+                      inactiveColor: Theme.of(context).primaryColor),
+                ],
+              );
+            },
           );
   }
 }
