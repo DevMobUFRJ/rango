@@ -39,7 +39,6 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
     return Column(
       children: <Widget>[
         Align(
@@ -81,11 +80,14 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                     : EdgeInsets.only(left: 15),
                 suffixIcon: widget.isPassword != null && widget.isPassword
                     ? IconButton(
-                        icon: Icon(!_showPassword
-                            ? Icons.visibility_off
-                            : Icons.visibility),
+                        icon: Icon(
+                          !_showPassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: Theme.of(context).accentColor,
+                        ),
                         onPressed: () =>
-                            setState(() => _showPassword = !_showPassword),
+                            {setState(() => _showPassword = !_showPassword)},
                       )
                     : null,
               ),
