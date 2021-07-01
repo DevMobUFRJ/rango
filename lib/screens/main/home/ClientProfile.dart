@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
-import 'package:rango/dadosMarretados.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/screens/main/home/ChatScreen.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -12,9 +11,9 @@ import 'package:rango/widgets/user/UserPicture.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ClientProfile extends StatefulWidget {
-  final Client client;
+  final String clientId;
 
-  ClientProfile(this.client);
+  ClientProfile(this.clientId);
 
   @override
   _ClientProfileState createState() => _ClientProfileState();
@@ -24,16 +23,6 @@ class _ClientProfileState extends State<ClientProfile> {
   bool isFavorite = false;
   bool loading = true;
   Client client;
-
-  @override
-  void initState() {
-    setState(() {
-      client =
-          clients.firstWhere((element) => element.name == widget.client.name);
-      loading = false;
-    });
-    super.initState();
-  }
 
   String encodeQueryParameters(Map<String, String> params) {
     return params.entries
@@ -46,6 +35,7 @@ class _ClientProfileState extends State<ClientProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        //TODO Pegar client pelo id
         title: AutoSizeText(
           client.name,
           maxLines: 1,

@@ -23,7 +23,7 @@ class OrderContainer extends StatefulWidget {
 
 class _OrderContainerState extends State<OrderContainer> {
   void _cancelOrder() {
-    final String cancelText = !widget.pedido.vendida
+    final String cancelText = widget.pedido.status != 'sold'
         ? 'Deseja realmente cancelar esta reserva?'
         : 'Deseja apagar esse pedido permanentemente do histórico?';
     showDialog(

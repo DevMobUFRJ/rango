@@ -31,15 +31,17 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
         await Firestore.instance.collection("sellers").document(user.uid).get();
     setState(() {
       seller = new Seller(
-        email: userData?.data['email']?.toString(),
+        //TODOemail: userData?.data['email']?.toString(),
         picture: userData?.data['picture']?.toString(),
         description: userData?.data['description'].toString(),
-        payments: userData?.data['paymentMethods'].toString(),
+        paymentMethods: userData?.data['paymentMethods'].toString(),
         name: userData.data['name'].toString(),
         contact: new Contact(
           phone: userData?.data['contact']['phone']?.toString(),
           name: userData?.data['contact']['name']?.toString(),
         ),
+        canReservate: userData?.data['canReservate'],
+        active: userData?.data['active'],
         notificationSettings: userData.data['notificationSettings'] != null
             ? UserNotificationSettings(
                 discounts: userData.data['notifications']['discounts'],

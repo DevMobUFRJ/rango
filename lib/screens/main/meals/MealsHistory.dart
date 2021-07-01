@@ -1,17 +1,19 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
-import 'package:rango/models/order.dart';
+import 'package:rango/models/meals.dart';
+import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/main/meals/ManageOrder.dart';
 
 class MealsHistory extends StatefulWidget {
-  final List<Order> orders;
-  //TODO MUdar esse order para meal??
+  // Essa tela possui todas as meals
+  final String sellerId;
 
-  MealsHistory({@required this.orders});
+  MealsHistory({@required this.sellerId});
 
   @override
   _MealsHistoryState createState() => _MealsHistoryState();
@@ -20,15 +22,6 @@ class MealsHistory extends StatefulWidget {
 class _MealsHistoryState extends State<MealsHistory> {
   List<bool> ordersCheckedValue;
   bool _hasAnySelected;
-
-  @override
-  void initState() {
-    setState(() {
-      ordersCheckedValue = List.filled(widget.orders.length, false);
-      _hasAnySelected = false;
-    });
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,19 +36,58 @@ class _MealsHistoryState extends State<MealsHistory> {
           ),
         ),
       ),
-      body: ordersCheckedValue == null || ordersCheckedValue.length == 0
-          ? Container(
+      //TODO Adicionar stream para pegar meals
+      body: StreamBuilder(
+        stream: Repository.instance.getSellerMeals(widget.sellerId),
+        builder: (context, AsyncSnapshot<QuerySnapshot> mealsSnapshot) {
+          if (!mealsSnapshot.hasData ||
+              mealsSnapshot.connectionState == ConnectionState.waiting) {
+            return Container(
+              height: 0.5.hp,
+              alignment: Alignment.center,
+              child: SizedBox(
+                height: 50,
+                width: 50,
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).accentColor,
+                ),
+              ),
+            );
+          }
+
+          if (mealsSnapshot.hasError) {
+            return Container(
+              height: 0.6.hp - 56,
+              alignment: Alignment.center,
+              child: AutoSizeText(
+                mealsSnapshot.error.toString(),
+                style: GoogleFonts.montserrat(
+                    fontSize: 45.nsp,
+                    color: Theme.of(context).accentColor),
+              ),
+            );
+          }
+
+          if (mealsSnapshot.data.documents.isEmpty) {
+            return Container(
               alignment: Alignment.center,
               margin: EdgeInsets.symmetric(horizontal: 0.1.wp),
               child: AutoSizeText(
-                  "Sem histórico de quentinhas! Reservas já finalizadas aparecerão aqui.",
+                  "Sem quentinhas criadas! Comece a criar seu cardápio na tela anterior.",
                   style: GoogleFonts.montserrat(
                     color: Theme.of(context).accentColor,
                     fontWeight: FontWeight.w400,
                     fontSize: 52.nsp,
                   )),
-            )
-          : Container(
+            );
+          } else {
+            //TODO Mudar isso?
+            setState(() {
+              ordersCheckedValue = List.filled(mealsSnapshot.data.documents.length, false);
+              _hasAnySelected = false;
+            });
+
+            return Container(
               child: Column(
                 children: [
                   Expanded(
@@ -65,102 +97,91 @@ class _MealsHistoryState extends State<MealsHistory> {
                         scrollDirection: Axis.vertical,
                         crossAxisCount: 2,
                         shrinkWrap: true,
-                        itemCount: widget.orders.length,
+                        itemCount: mealsSnapshot.data.documents.length,
                         staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-                        itemBuilder: (ctx, index) => Container(
-                          child: Stack(
-                            alignment: Alignment.topRight,
-                            children: [
-                              GestureDetector(
-                                onTap: () => pushNewScreen(
-                                  context,
-                                  screen: ManageOrder(
-                                    order: widget.orders[index],
+                        itemBuilder: (ctx, index) {
+                          Meal meal = Meal.fromJson(mealsSnapshot.data.documents[index].data);
+
+                          return Container(
+                            child: Stack(
+                              alignment: Alignment.topRight,
+                              children: [
+                                GestureDetector(
+                                  onTap: () => pushNewScreen(
+                                    context,
+                                    screen: ManageOrder(
+                                      meal: meal,
+                                    ),
+                                    withNavBar: false,
                                   ),
-                                  withNavBar: false,
-                                ),
-                                child: Container(
-                                  child: Card(
-                                    semanticContainer: true,
-                                    clipBehavior: Clip.antiAlias,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8)),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Container(
-                                          constraints: BoxConstraints(
-                                              maxHeight: 100, minWidth: 0.5.wp),
-                                          child: widget
-                                                      .orders[index]
-                                                      .quentinhas[0]
-                                                      .quentinha
-                                                      .picture !=
-                                                  null
-                                              ? FadeInImage.assetNetwork(
-                                                  placeholder:
-                                                      'assets/imgs/quentinha_placeholder.png',
-                                                  image: widget
-                                                      .orders[index]
-                                                      .quentinhas[0]
-                                                      .quentinha
-                                                      .picture,
-                                                  fit: BoxFit.fitWidth,
-                                                )
-                                              : Image.asset(
-                                                  'assets/imgs/quentinha_placeholder.png',
-                                                  fit: BoxFit.fitHeight,
-                                                ),
-                                        ),
-                                        Container(
-                                          padding:
-                                              EdgeInsets.symmetric(vertical: 5),
-                                          child: Column(
-                                            children: <Widget>[
-                                              AutoSizeText(
-                                                widget
-                                                    .orders[index]
-                                                    .quentinhas[0]
-                                                    .quentinha
-                                                    .name,
-                                                textAlign: TextAlign.center,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: GoogleFonts.montserrat(
-                                                    fontSize: 24.nsp),
-                                              ),
-                                              AutoSizeText(
-                                                'R\$${widget.orders[index].quentinhas[0].quentinha.price}',
-                                                style: GoogleFonts.montserrat(
-                                                    fontSize: 24.nsp),
-                                              ),
-                                            ],
+                                  child: Container(
+                                    child: Card(
+                                      semanticContainer: true,
+                                      clipBehavior: Clip.antiAlias,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8)),
+                                      child: Column(
+                                        children: <Widget>[
+                                          Container(
+                                            constraints: BoxConstraints(
+                                                maxHeight: 100, minWidth: 0.5.wp),
+                                            child: meal.picture != null
+                                                ? FadeInImage.assetNetwork(
+                                                    placeholder: 'assets/imgs/quentinha_placeholder.png',
+                                                    image: meal.picture,
+                                                    fit: BoxFit.fitWidth,
+                                                  )
+                                                : Image.asset(
+                                                    'assets/imgs/quentinha_placeholder.png',
+                                                    fit: BoxFit.fitHeight,
+                                                  ),
                                           ),
-                                        ),
-                                      ],
+                                          Container(
+                                            padding:
+                                            EdgeInsets.symmetric(vertical: 5),
+                                            child: Column(
+                                              children: <Widget>[
+                                                AutoSizeText(
+                                                  meal.name,
+                                                  textAlign: TextAlign.center,
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: GoogleFonts.montserrat(
+                                                      fontSize: 24.nsp),
+                                                ),
+                                                AutoSizeText(
+                                                  'R\$${meal.price}',
+                                                  style: GoogleFonts.montserrat(
+                                                      fontSize: 24.nsp),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              Theme(
-                                data: ThemeData(
-                                  unselectedWidgetColor:
-                                      Theme.of(context).accentColor,
+                                Theme(
+                                  data: ThemeData(
+                                    unselectedWidgetColor: Theme.of(context).accentColor,
+                                  ),
+                                  child: Checkbox(
+                                    activeColor: Theme.of(context).accentColor,
+                                    value: ordersCheckedValue[index],
+                                    onChanged: (value) => setState(() => {
+                                      ordersCheckedValue[index] = value,
+                                      if (!ordersCheckedValue.contains(true))
+                                        {_hasAnySelected = false}
+                                      else
+                                        {_hasAnySelected = true}
+                                    }),
+                                  ),
                                 ),
-                                child: Checkbox(
-                                  activeColor: Theme.of(context).accentColor,
-                                  value: ordersCheckedValue[index],
-                                  onChanged: (value) => setState(() => {
-                                        ordersCheckedValue[index] = value,
-                                        if (!ordersCheckedValue.contains(true))
-                                          {_hasAnySelected = false}
-                                        else
-                                          {_hasAnySelected = true}
-                                      }),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),
@@ -177,13 +198,14 @@ class _MealsHistoryState extends State<MealsHistory> {
                             margin: EdgeInsets.only(right: 5),
                             child: ElevatedButton(
                               child: AutoSizeText(
+                                //TODO Adicionar lógica do firebase, adicionando os mealIds selecionados aos currentMeals
                                 "Adicionar",
                                 style: GoogleFonts.montserrat(
                                     color: Colors.white, fontSize: 36.nsp),
                               ),
                               onPressed: ordersCheckedValue == null ||
-                                      ordersCheckedValue.length == 0 ||
-                                      _hasAnySelected == false
+                                  ordersCheckedValue.length == 0 ||
+                                  _hasAnySelected == false
                                   ? null
                                   : () => {},
                             ),
@@ -195,8 +217,8 @@ class _MealsHistoryState extends State<MealsHistory> {
                                   color: Colors.white, fontSize: 36.nsp),
                             ),
                             onPressed: ordersCheckedValue == null ||
-                                    ordersCheckedValue.length == 0 ||
-                                    _hasAnySelected == false
+                                ordersCheckedValue.length == 0 ||
+                                _hasAnySelected == false
                                 ? null
                                 : () => {},
                           ),
@@ -206,7 +228,10 @@ class _MealsHistoryState extends State<MealsHistory> {
                   ),
                 ],
               ),
-            ),
+            );
+          }
+        },
+      )
     );
   }
 }

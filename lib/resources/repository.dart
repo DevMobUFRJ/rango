@@ -45,8 +45,8 @@ class Repository {
     return clientsRef.document(uid).snapshots();
   }
 
-  Stream<QuerySnapshot> getSellerCurrentMeals(String uid) {
-    return sellersRef.document(uid).collection('currentMeals').snapshots();
+  Stream<QuerySnapshot> getSellerMeals(String uid) {
+    return sellersRef.document(uid).collection('meals').snapshots();
   }
 
   Stream<QuerySnapshot> getFavoriteSellers(List<String> favorites) {
