@@ -3,7 +3,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:geolocator/geolocator.dart' hide openAppSettings;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/models/meal_request.dart';
@@ -14,6 +14,7 @@ import 'package:rango/widgets/home/ListaHorizontal.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rango/widgets/home/SellerGridVertical.dart';
 import 'package:provider/provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class HomeScreen extends StatefulWidget {
   final Client usuario;
@@ -26,6 +27,36 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool _locationPermissionStatus;
+
+  void requestForPermission() async {
+    if (await Permission.location.request().isGranted) {
+      setState(() {
+        _locationPermissionStatus = true;
+      });
+    } else  {
+      print('oi');
+      openAppSettings();
+    }
+  }
+
+  void checkForPermission() async {
+    if (await Permission.location.isGranted) {
+      setState(() {
+        _locationPermissionStatus = true;
+      });
+    } else
+      setState(() {
+        _locationPermissionStatus = false;
+      });
+  }
+
+  @override
+  initState() {
+    checkForPermission();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,9 +79,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         context,
                         AsyncSnapshot<Position> locationSnapshot,
                       ) {
-                        if (!locationSnapshot.hasData ||
-                            locationSnapshot.connectionState ==
-                                ConnectionState.waiting) {
+                        if (locationSnapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return Container(
                             height: 0.5.hp,
                             alignment: Alignment.center,
@@ -65,14 +95,37 @@ class _HomeScreenState extends State<HomeScreen> {
                         }
 
                         if (locationSnapshot.hasError) {
+                          var textoError = _locationPermissionStatus == false
+                              ? "Você precisa dar permissão de localização para ver sugestões e vendedores"
+                              : locationSnapshot.error.toString();
                           return Container(
                             height: 0.6.hp - 56,
-                            alignment: Alignment.center,
-                            child: AutoSizeText(
-                              locationSnapshot.error.toString(),
-                              style: GoogleFonts.montserrat(
-                                  fontSize: 45.nsp,
-                                  color: Theme.of(context).accentColor),
+                            margin: EdgeInsets.symmetric(horizontal: 10),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                AutoSizeText(
+                                  textoError,
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 45.nsp,
+                                    color: Theme.of(context).accentColor,
+                                  ),
+                                ),
+                                if (_locationPermissionStatus == false)
+                                  Container(
+                                    margin: EdgeInsets.symmetric(vertical: 10),
+                                    child: ElevatedButton(
+                                      onPressed: () => requestForPermission(),
+                                      child: AutoSizeText(
+                                        'Dar permissão',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: 35.nsp,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                              ],
                             ),
                           );
                         }

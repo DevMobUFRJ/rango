@@ -8,7 +8,6 @@ import 'package:rango/screens/auth/ForgotPasswordScreen.dart';
 import 'package:rango/screens/auth/LoginScreen.dart';
 import 'package:rango/screens/main/NewTabsScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:rango/screens/reserva/DetalhesQuentinhaScreen.dart';
 
 void main() {
   runApp(MyApp());
