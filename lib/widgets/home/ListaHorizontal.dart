@@ -179,7 +179,7 @@ class ListaHorizontal extends StatelessWidget {
                         Flexible(
                           flex: 1,
                           child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 2),
+                            padding: EdgeInsets.symmetric(horizontal: 1),
                             width: 0.45.wp,
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
@@ -192,9 +192,9 @@ class ListaHorizontal extends StatelessWidget {
                                     textAlign: TextAlign.center,
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 28.ssp,
-                                    ),
+                                    minFontSize: 15,
+                                    maxFontSize: 15,
+                                    style: GoogleFonts.montserrat(),
                                   ),
                                 ),
                                 Flexible(
@@ -202,8 +202,9 @@ class ListaHorizontal extends StatelessWidget {
                                   child: AutoSizeText(
                                     intToCurrency(meal.price),
                                     textAlign: TextAlign.center,
+                                    minFontSize: 15,
                                     style: GoogleFonts.montserrat(
-                                      fontSize: 32.ssp,
+                                      fontSize: 18,
                                     ),
                                   ),
                                 ),
