@@ -10,6 +10,7 @@ import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/reserva/DetalhesQuentinhaScreen.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/utils/string_formatters.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ListaHorizontal extends StatelessWidget {
   final String title;
@@ -50,14 +51,73 @@ class ListaHorizontal extends StatelessWidget {
                 meals[index].seller.id,
               ),
               builder: (context, AsyncSnapshot<DocumentSnapshot> mealSnapshot) {
-                if (mealSnapshot.connectionState == ConnectionState.waiting) {
+                if (true) {
                   return Container(
-                    width: 0.4.wp,
+                    height: 0.2.hp,
+                    width: 0.45.wp,
                     child: Card(
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: Theme.of(context).accentColor,
-                        ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Flexible(
+                            flex: 2,
+                            child: Stack(
+                              children: [
+                                Shimmer.fromColors(
+                                  baseColor: Colors.grey[300],
+                                  highlightColor: Colors.white,
+                                  child: Container(
+                                    color: Colors.white,
+                                    child: SizedBox(
+                                      height: 0.12.hp,
+                                      width: 0.45.wp,
+                                    ),
+                                  ),
+                                ),
+                                Center(
+                                  child: Icon(
+                                    Icons.local_dining,
+                                    size: 55,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Flexible(
+                            flex: 1,
+                            child: Container(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Shimmer.fromColors(
+                                    baseColor: Colors.grey[300],
+                                    highlightColor: Colors.white,
+                                    child: Container(
+                                      color: Colors.grey[300],
+                                      child: SizedBox(
+                                        width: 0.3.wp,
+                                        height: 0.02.hp,
+                                      ),
+                                    ),
+                                  ),
+                                  Shimmer.fromColors(
+                                    baseColor: Colors.grey[300],
+                                    highlightColor: Colors.white,
+                                    child: Container(
+                                      margin: EdgeInsets.only(top: 6),
+                                      color: Colors.grey[300],
+                                      child: SizedBox(
+                                        width: 0.1.wp,
+                                        height: 0.02.hp,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   );

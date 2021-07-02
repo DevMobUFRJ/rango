@@ -103,7 +103,7 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
                       activeColor: Color(0xFF609B90),
                       inactiveColor: Theme.of(context).primaryColor),
                   PersistentBottomNavBarItem(
-                      icon: Icon(Icons.local_dining, size: 40),
+                      icon: Icon(Icons.location_on, size: 40),
                       activeColor: Color(0xFF609B90),
                       inactiveColor: Theme.of(context).primaryColor),
                   PersistentBottomNavBarItem(
