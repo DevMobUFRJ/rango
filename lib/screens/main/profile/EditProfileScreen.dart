@@ -23,18 +23,23 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   String _telefoneErrorMessage;
+  String _nameErrorMessage;
   String _passwordErrorMessage;
   String _confirmPasswordErrorMessage;
+
+  TextEditingController _name = TextEditingController();
   TextEditingController _pass = TextEditingController();
   TextEditingController _confirmPass = TextEditingController();
-  TextEditingController _tel;
+  TextEditingController _phone = TextEditingController();
 
-  String _phone;
   String _password;
   String _userImage;
   String _confirmPassword;
   File _userImageFile;
   bool _loading = false;
+
+  final _focusNodeTel = FocusNode();
+  final _focusNodePass = FocusNode();
   final _focusNodeConfirmPass = FocusNode();
 
   void _pickedImage(File image) => _userImageFile = image;
@@ -42,8 +47,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     setState(() {
-      widget.user.phone != null ? _phone = widget.user.phone : null;
-      _tel = new TextEditingController(text: widget.user.phone);
+      if (widget.user.phone != null) {
+        _phone.text = widget.user.phone;
+      }
+      if (widget.user.name != null) {
+        _name.text = widget.user.name;
+      }
     });
     super.initState();
   }
@@ -54,13 +63,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (isValid &&
         _telefoneErrorMessage == null &&
         _passwordErrorMessage == null &&
+        _nameErrorMessage == null &&
         _confirmPasswordErrorMessage == null) {
       _formKey.currentState.save();
       setState(() => _loading = true);
       try {
         Map<String, String> dataToUpdate = {};
-        if (_phone != null && _phone != widget.user.phone) {
-          dataToUpdate['phone'] = _phone;
+        if (_phone != null && _phone.text != widget.user.phone) {
+          dataToUpdate['phone'] = _phone.text;
+        }
+        if (_name != null && _name.text != widget.user.name) {
+          dataToUpdate['name'] = _name.text;
         }
         if (_userImageFile != null) {
           final user = await FirebaseAuth.instance.currentUser();
@@ -99,7 +112,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
@@ -113,94 +125,95 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
       body: LayoutBuilder(
         builder: (ctx, constraint) => SingleChildScrollView(
-          child: Container(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: 0.8.hp),
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Flexible(
-                      flex: 1,
-                      child: GestureDetector(
-                        onTap: () {},
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            UserImagePicker(
-                              _pickedImage,
-                              image: widget.user.picture,
-                              editText: 'Editar',
-                            ),
-                          ],
-                        ),
+          physics: ClampingScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: 1.hp),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Flexible(
+                    flex: 1,
+                    child: GestureDetector(
+                      onTap: () {},
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          UserImagePicker(
+                            _pickedImage,
+                            image: widget.user.picture,
+                            editText: 'Editar',
+                          ),
+                        ],
                       ),
                     ),
-                    SizedBox(height: 0.02.hp),
-                    Expanded(
-                      flex: 3,
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Flexible(
-                              flex: 2,
-                              child: CustomTextFormField(
-                                labelText: 'Telefone:',
-                                key: ValueKey('phone'),
-                                controller: _tel,
-                                validator: (String value) {
-                                  if (value.trim() != '' &&
-                                      value.trim().length != 11) {
-                                    setState(() => _telefoneErrorMessage =
-                                        'Telefone precisa ter 11 números');
-                                  }
-                                  return null;
-                                },
-                                errorText: _telefoneErrorMessage,
-                                keyboardType: TextInputType.number,
-                                textInputAction: TextInputAction.next,
-                                onSaved: (value) => _phone = value,
-                                onFieldSubmitted: (_) =>
-                                    FocusScope.of(context).nextFocus(),
-                              ),
+                  ),
+                  SizedBox(height: 0.02.hp),
+                  Expanded(
+                    flex: 3,
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(
+                            flex: 2,
+                            child: CustomTextFormField(
+                              labelText: 'Nome:',
+                              key: ValueKey('name'),
+                              controller: _name,
+                              validator: (String value) {
+                                if (value.trim() == '') {
+                                  setState(() => _nameErrorMessage =
+                                      'Nome não pode ser vaizo');
+                                }
+                                return null;
+                              },
+                              errorText: _nameErrorMessage,
+                              textInputAction: TextInputAction.next,
+                              onSaved: (value) => _name.text = value,
+                              onFieldSubmitted: (_) => FocusScope.of(context)
+                                  .requestFocus(_focusNodeTel),
                             ),
-                            Flexible(
-                              flex: 2,
-                              child: Container(
-                                child: CustomTextFormField(
-                                  labelText: 'Senha:',
-                                  controller: _pass,
-                                  isPassword: true,
-                                  onFieldSubmitted: (_) =>
-                                      FocusScope.of(context)
-                                          .requestFocus(_focusNodeConfirmPass),
-                                  onSaved: (value) => _password = value,
-                                  textInputAction: TextInputAction.next,
-                                  key: ValueKey('password'),
-                                  validator: (String value) {
-                                    if (value != '' && value.length < 7) {
-                                      setState(() => _passwordErrorMessage =
-                                          'Senha precisa ter pelo menos 7 caracteres');
-                                    }
-                                    return null;
-                                  },
-                                  errorText: _passwordErrorMessage,
-                                ),
-                              ),
+                          ),
+                          Flexible(
+                            flex: 2,
+                            child: CustomTextFormField(
+                              labelText: 'Telefone:',
+                              focusNode: _focusNodeTel,
+                              key: ValueKey('phone'),
+                              controller: _phone,
+                              validator: (String value) {
+                                if (value.trim() != '' &&
+                                    value.trim().length != 11) {
+                                  setState(() => _telefoneErrorMessage =
+                                      'Telefone precisa ter 11 números');
+                                }
+                                return null;
+                              },
+                              errorText: _telefoneErrorMessage,
+                              keyboardType: TextInputType.number,
+                              textInputAction: TextInputAction.next,
+                              onSaved: (value) => _phone.text = value,
+                              onFieldSubmitted: (_) => FocusScope.of(context)
+                                  .requestFocus(_focusNodePass),
                             ),
-                            Flexible(
-                              flex: 2,
+                          ),
+                          Flexible(
+                            flex: 2,
+                            child: Container(
                               child: CustomTextFormField(
-                                labelText: 'Confimar Senha:',
-                                focusNode: _focusNodeConfirmPass,
-                                controller: _confirmPass,
+                                focusNode: _focusNodePass,
+                                labelText: 'Senha:',
+                                controller: _pass,
                                 isPassword: true,
+                                onFieldSubmitted: (_) => FocusScope.of(context)
+                                    .requestFocus(_focusNodeConfirmPass),
                                 onSaved: (value) => _password = value,
-                                key: ValueKey('confirmPassword'),
+                                textInputAction: TextInputAction.next,
+                                key: ValueKey('password'),
                                 validator: (String value) {
                                   if (value != '' && value.length < 7) {
                                     setState(() => _passwordErrorMessage =
@@ -211,48 +224,62 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 errorText: _passwordErrorMessage,
                               ),
                             ),
-                            Flexible(
-                              flex: 1,
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 0.05.wp, vertical: 0.01.hp),
-                                child: SizedBox(
-                                  width: 0.7.wp,
-                                  child: ElevatedButton(
-                                    onPressed:
-                                        _loading ? null : () => _submit(ctx),
-                                    child: _loading
-                                        ? SizedBox(
-                                            child: CircularProgressIndicator(
-                                              valueColor:
-                                                  new AlwaysStoppedAnimation<
-                                                      Color>(Colors.white),
-                                              strokeWidth: 3.0,
-                                            ),
-                                            height: 30.w,
-                                            width: 30.w,
-                                          )
-                                        : Container(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 0.01.hp),
-                                            child: AutoSizeText(
-                                              'Continuar',
-                                              style: GoogleFonts.montserrat(
-                                                color: Colors.white,
-                                                fontSize: 38.nsp,
-                                              ),
-                                            ),
+                          ),
+                          Flexible(
+                            flex: 2,
+                            child: CustomTextFormField(
+                              labelText: 'Confimar Senha:',
+                              focusNode: _focusNodeConfirmPass,
+                              controller: _confirmPass,
+                              isPassword: true,
+                              onSaved: (value) => _password = value,
+                              key: ValueKey('confirmPassword'),
+                              validator: (String value) {
+                                if (value != '' && value.length < 7) {
+                                  setState(() => _passwordErrorMessage =
+                                      'Senha precisa ter pelo menos 7 caracteres');
+                                }
+                                return null;
+                              },
+                              errorText: _passwordErrorMessage,
+                            ),
+                          ),
+                          Flexible(
+                            flex: 1,
+                            child: Container(
+                              margin: EdgeInsets.only(top: 10),
+                              child: ElevatedButton(
+                                onPressed: _loading ? null : () => _submit(ctx),
+                                child: _loading
+                                    ? SizedBox(
+                                        child: CircularProgressIndicator(
+                                          valueColor:
+                                              new AlwaysStoppedAnimation<Color>(
+                                                  Colors.white),
+                                          strokeWidth: 3.0,
+                                        ),
+                                        height: 30.w,
+                                        width: 30.w,
+                                      )
+                                    : Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 8.0),
+                                        child: AutoSizeText(
+                                          'Continuar',
+                                          style: GoogleFonts.montserrat(
+                                            color: Colors.white,
+                                            fontSize: 38.nsp,
                                           ),
-                                  ),
-                                ),
+                                        ),
+                                      ),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
