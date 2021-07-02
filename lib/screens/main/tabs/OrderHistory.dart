@@ -222,13 +222,13 @@ class OrderHistoryScreen extends StatelessWidget {
       context: context,
       builder: (BuildContext ctx) {
         return AlertDialog(
-          insetPadding: EdgeInsets.symmetric(horizontal: 0.1.wp),
+          insetPadding: EdgeInsets.symmetric(horizontal: 0.2.wp),
           backgroundColor: Color(0xFFF9B152),
-          actionsPadding: EdgeInsets.all(10),
+          actionsPadding: EdgeInsets.all(0),
           contentPadding: EdgeInsets.only(
-            top: 20,
-            left: 24,
-            right: 24,
+            top: 10,
+            left: 0,
+            right: 0,
             bottom: 0,
           ),
           shape: RoundedRectangleBorder(
@@ -239,7 +239,7 @@ class OrderHistoryScreen extends StatelessWidget {
             style: GoogleFonts.montserrat(
               color: Colors.white,
               fontWeight: FontWeight.bold,
-              fontSize: 38.ssp,
+              fontSize: 32.ssp,
             ),
           ),
           content: Column(
@@ -254,21 +254,8 @@ class OrderHistoryScreen extends StatelessWidget {
               ),
               Row(
                 mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(ctx).pop();
-                    },
-                    child: Text(
-                      'Não',
-                      style: GoogleFonts.montserrat(
-                        decoration: TextDecoration.underline,
-                        color: Colors.white,
-                        fontSize: 34.nsp,
-                      ),
-                    ),
-                  ),
                   TextButton(
                     onPressed: () async {
                       try {
@@ -305,6 +292,19 @@ class OrderHistoryScreen extends StatelessWidget {
                     },
                     child: Text(
                       'Sim',
+                      style: GoogleFonts.montserrat(
+                        decoration: TextDecoration.underline,
+                        color: Colors.white,
+                        fontSize: 34.nsp,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                    },
+                    child: Text(
+                      'Não',
                       style: GoogleFonts.montserrat(
                         decoration: TextDecoration.underline,
                         color: Colors.white,
