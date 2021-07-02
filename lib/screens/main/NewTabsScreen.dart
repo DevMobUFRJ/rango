@@ -52,7 +52,7 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
                   !snapshot.hasData ||
                   snapshot.data.data == null ||
                   !snapshot.data.data.containsKey('email')) {
-                return CircularProgressIndicator();
+                return SplashScreen();
               }
               Client client = new Client(
                 id: userId,
