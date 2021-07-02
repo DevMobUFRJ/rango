@@ -77,11 +77,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             Flexible(
-              flex: 1,
+              flex: 2,
               child: Container(
                 margin: EdgeInsets.symmetric(vertical: 0.01.hp),
                 child: AutoSizeText(
                   widget.usuario.name,
+                  maxLines: 2,
                   style: GoogleFonts.montserrat(
                     color: Theme.of(context).accentColor,
                     fontWeight: FontWeight.w500,
