@@ -38,6 +38,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           _locationPermissionStatus = true;
         });
       } else if (await Permission.location.isPermanentlyDenied) {
+        openAppSettings();
       } else {
         if (Platform.isIOS) {
           openAppSettings();
