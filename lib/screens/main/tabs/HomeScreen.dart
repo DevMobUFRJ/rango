@@ -1,19 +1,19 @@
 import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart' hide openAppSettings;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/models/meal_request.dart';
 import 'package:rango/models/seller.dart';
+import 'dart:io';
 import 'package:rango/resources/rangeChangeNotifier.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/widgets/home/HomeHeader.dart';
 import 'package:rango/widgets/home/ListaHorizontal.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:rango/widgets/home/SellerGridVertical.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rango/widgets/home/SellersList.dart';
@@ -28,17 +28,27 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool _locationPermissionStatus;
 
   void requestForPermission() async {
-    if (await Permission.location.request().isGranted) {
-      setState(() {
-        _locationPermissionStatus = true;
-      });
-    } else {
-      openAppSettings();
-    }
+    try {
+      if (await Permission.location.request().isGranted) {
+        setState(() {
+          _locationPermissionStatus = true;
+        });
+      } else if (await Permission.location.isPermanentlyDenied) {
+      } else {
+        if (Platform.isIOS) {
+          openAppSettings();
+        }
+        print(await Permission.location.status);
+      }
+    } on PlatformException catch (error) {
+      if (error.code == 'ERROR_ALREADY_REQUESTING_PERMISSIONS') {
+        openAppSettings();
+      }
+    } catch (e) {}
   }
 
   void checkForPermission() async {
@@ -53,9 +63,23 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && !_locationPermissionStatus) {
+      requestForPermission();
+    }
+  }
+
+  @override
   initState() {
     checkForPermission();
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
