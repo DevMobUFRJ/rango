@@ -232,8 +232,8 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                     ),
                     Slider(
                       value: _rangeValue,
-                      min: 0,
-                      max: 500,
+                      min: 1,
+                      max: 50,
                       onChanged: (value) => setState(
                         () => _rangeValue = value.round().toDouble(),
                       ),
