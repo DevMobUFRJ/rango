@@ -31,10 +31,12 @@ class _AuthScreenState extends State<AuthScreen> {
       setState(() => _isLoading = true);
       if (_isLogin) {
         try {
-          var vendedores =
-              await Firestore.instance.collection('sellers').getDocuments();
-          var isSeller = vendedores.documents
-              .any((element) => element.data['email'] == email);
+          var sellers = await Firestore.instance
+              .collection('sellers')
+              .where('email', isEqualTo: email)
+              .limit(1)
+              .getDocuments();
+          bool isSeller = sellers.documents.isNotEmpty;
           if (!isSeller) {
             authResult = await _auth.signInWithEmailAndPassword(
                 email: email, password: password);
