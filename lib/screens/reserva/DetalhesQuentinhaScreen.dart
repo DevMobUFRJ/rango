@@ -115,7 +115,7 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                                       Theme.of(context).textTheme)
                                   .headline2
                                   .copyWith(
-                                fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.bold,
                                     fontSize: 35.nsp,
                                   ),
                             ),
@@ -344,6 +344,7 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                             PageTransitionAnimation.cupertino,
                       );
                     } catch (e) {
+                      print('chegou nesse');
                       Navigator.of(ctx).pop();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(

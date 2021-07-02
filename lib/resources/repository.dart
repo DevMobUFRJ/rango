@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/models/meals.dart';
 import 'package:rango/models/order.dart';
@@ -73,17 +74,21 @@ class Repository {
     });
   }
 
-  Future<DocumentReference> addOrder(Order order) async {
-    var mealDoc = await sellersRef
-        .document(order.sellerId)
-        .collection('meals')
-        .document(order.mealId)
-        .get();
-    Meal meal = Meal.fromJson(mealDoc.data);
-    if (meal.quantity < order.quantity) {
-      throw ('Não há quentinhas suficientes para o seu pedido. Quantidade disponível: ${meal.quantity}.');
-    }
-    return ordersRef.add(order.toJson());
+  Future<void> addOrder(Order order) async {
+    try {
+      var mealDoc = await sellersRef
+          .document(order.sellerId)
+          .collection('meals')
+          .document(order.mealId)
+          .get(source: Source.server);
+      Meal meal = Meal.fromJson(mealDoc.data);
+      if (meal.quantity < order.quantity) {
+        throw ('Não há quentinhas suficientes para o seu pedido. Quantidade disponível: ${meal.quantity}.');
+      }
+      return ordersRef.add(order.toJson());
+    } on PlatformException catch (e) {
+      throw e;
+    } catch (e) {}
   }
 
   Future<void> cancelOrder(String orderUid) async {
