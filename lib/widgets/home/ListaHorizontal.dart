@@ -38,7 +38,7 @@ class ListaHorizontal extends StatelessWidget {
           ),
         ),
         Container(
-          height: 250.h,
+          constraints: BoxConstraints(maxHeight: 0.2.hp),
           width: double.infinity,
           child: ListView.builder(
             itemCount: meals.length,
@@ -79,17 +79,21 @@ class ListaHorizontal extends StatelessWidget {
                   );
                 }
 
-                Meal meal = Meal.fromJson(mealSnapshot.data.data,
-                    id: meals[index].mealId);
+                Meal meal = Meal.fromJson(
+                  mealSnapshot.data.data,
+                  id: meals[index].mealId,
+                );
                 return GestureDetector(
-                  onTap: () => pushNewScreen(context,
-                      screen: DetalhesQuentinhaScreen(
-                          marmita: meal,
-                          seller: meals[index].seller,
-                          tagM: tagM),
-                      withNavBar: false,
-                      pageTransitionAnimation:
-                          PageTransitionAnimation.cupertino),
+                  onTap: () => pushNewScreen(
+                    context,
+                    screen: DetalhesQuentinhaScreen(
+                      marmita: meal,
+                      seller: meals[index].seller,
+                      tagM: tagM,
+                    ),
+                    withNavBar: false,
+                    pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                  ),
                   child: Card(
                     semanticContainer: true,
                     clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -98,42 +102,53 @@ class ListaHorizontal extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       children: <Widget>[
-                        Hero(
-                          tag: meal.hashCode * tagM,
-                          child: FadeInImage.assetNetwork(
-                            placeholder:
-                                'assets/imgs/quentinha_placeholder.png',
-                            image: meal.picture,
-                            fit: BoxFit.cover,
-                            height: 150.h,
-                            width: 0.4.wp,
+                        Flexible(
+                          flex: 0,
+                          child: Hero(
+                            tag: meal.hashCode * tagM,
+                            child: FadeInImage.assetNetwork(
+                              placeholder:
+                                  'assets/imgs/quentinha_placeholder.png',
+                              image: meal.picture,
+                              fit: BoxFit.cover,
+                              height: 150.h,
+                              width: 0.45.wp,
+                            ),
                           ),
                         ),
-                        Container(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            children: <Widget>[
-                              Container(
-                                width: 0.35.wp,
-                                child: Text(
-                                  meal.name,
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                  style:
-                                      GoogleFonts.montserrat(fontSize: 28.ssp),
+                        Flexible(
+                          flex: 1,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 2),
+                            width: 0.45.wp,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Flexible(
+                                  flex: 2,
+                                  child: AutoSizeText(
+                                    meal.name,
+                                    textAlign: TextAlign.center,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 28.ssp,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              Container(
-                                width: 0.35.wp,
-                                child: AutoSizeText(
-                                  intToCurrency(meal.price),
-                                  textAlign: TextAlign.center,
-                                  style:
-                                      GoogleFonts.montserrat(fontSize: 28.ssp),
+                                Flexible(
+                                  flex: 1,
+                                  child: AutoSizeText(
+                                    intToCurrency(meal.price),
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 32.ssp,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ],
