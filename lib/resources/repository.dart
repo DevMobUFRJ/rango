@@ -93,6 +93,7 @@ class Repository {
     return ordersRef.where('sellerId', isEqualTo: sellerId).orderBy('requestedAt', descending: true).snapshots();
   }
 
+  //TODO Query pelo dia
   Stream<QuerySnapshot> getOpenOrdersFromSeller(String sellerId, {int limit}) {
     if (limit != null && limit > 0) {
       return ordersRef.where('sellerId', isEqualTo: sellerId).where('status', whereIn: ['requested', 'reserved']).orderBy('requestedAt', descending: true).limit(limit).snapshots();

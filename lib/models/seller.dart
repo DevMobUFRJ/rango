@@ -10,6 +10,7 @@ import 'package:rango/models/user_notification_settings.dart';
 
 class Seller {
   final String id;
+  final String email;
   final Contact contact;
   final Shift shift;
   final String name;
@@ -27,6 +28,7 @@ class Seller {
 
   Seller({
     this.id,
+    this.email,
     this.contact,
     this.shift,
     @required this.name,
@@ -45,6 +47,7 @@ class Seller {
 
   Seller.fromJson(Map<String, dynamic> json, {String id})
       : id = id,
+        email = json['email'],
         contact = Contact.fromJson(json['contact']),
         shift = Shift.fromJson(json['shift']),
         name = json['name'],

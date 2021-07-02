@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart' show Timestamp;
 import 'package:flutter/foundation.dart';
 
 class Order {
+  final String id;
   final String clientId;
   final String clientName;
   final String sellerId;
@@ -17,6 +18,7 @@ class Order {
   final Timestamp canceledAt;
 
   Order({
+    this.id,
     @required this.clientId,
     @required this.clientName,
     @required this.sellerId,
@@ -32,8 +34,9 @@ class Order {
     this.canceledAt
   });
 
-  Order.fromJson(Map<String, dynamic> json)
-      : clientId = json['clientId'],
+  Order.fromJson(Map<String, dynamic> json, {String id})
+      : id = id,
+        clientId = json['clientId'],
         clientName = json['clientName'],
         sellerId = json['sellerId'],
         sellerName = json['sellerName'],

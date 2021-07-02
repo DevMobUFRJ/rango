@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/order.dart';
 import 'package:rango/screens/main/home/ClientProfile.dart';
+import 'package:rango/utils/string_formatters.dart';
 
 class OrderContainer extends StatefulWidget {
   final Order pedido;
@@ -147,7 +148,7 @@ class _OrderContainerState extends State<OrderContainer> {
                           ),
                           SizedBox(height: 2),
                           AutoSizeText(
-                            'Valor total: R\$${widget.pedido.quantity * widget.pedido.price}',
+                            'Valor total: ${intToCurrency(widget.pedido.quantity * widget.pedido.price)}',
                             style: GoogleFonts.montserrat(
                               textStyle: TextStyle(
                                 color: Colors.white,
@@ -175,11 +176,12 @@ class _OrderContainerState extends State<OrderContainer> {
                                   height: 24,
                                   width: 24,
                                   child: Checkbox(
-                                    checkColor: widget.pedido.status == 'reserved'
+                                    checkColor: widget.pedido.status == 'sold'
                                         ? Colors.grey
                                         : Color(0xFFF9B152),
                                     activeColor: Colors.white,
-                                    value: widget.pedido.status == 'reserved',
+                                    value: widget.pedido.status == 'reserved' || widget.pedido.status == 'sold',
+                                    //TODO chamar firebase com widget.pedido.id
                                     onChanged: (valor) => widget.pedido.status == 'sold'
                                         ? null
                                         : widget.reservadoOnChange(
@@ -210,6 +212,7 @@ class _OrderContainerState extends State<OrderContainer> {
                                         : Color(0xFFF9B152),
                                     activeColor: Colors.white,
                                     value: widget.pedido.status == 'sold',
+                                    //TODO chamar firebase com widget.pedido.id
                                     onChanged: (valor) =>
                                         widget.vendidoOnChange(value: valor? 'sold': 'reserved'),
                                   ),
