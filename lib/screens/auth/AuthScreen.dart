@@ -31,14 +31,48 @@ class _AuthScreenState extends State<AuthScreen> {
       setState(() => _isLoading = true);
       if (_isLogin) {
         try {
-          authResult = await _auth.signInWithEmailAndPassword(
-              email: email, password: password);
-        } on PlatformException catch (_) {
+          var vendedores =
+              await Firestore.instance.collection('sellers').getDocuments();
+          var isSeller = vendedores.documents
+              .any((element) => element.data['email'] == email);
+          if (!isSeller) {
+            authResult = await _auth.signInWithEmailAndPassword(
+                email: email, password: password);
+            Navigator.of(context).pop();
+          } else {
+            ScaffoldMessenger.of(ctx).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Você tentou entrar com uma conta de vendedor! Use o app do vendedor para isso.',
+                  textAlign: TextAlign.center,
+                ),
+                backgroundColor: Theme.of(context).errorColor,
+              ),
+            );
+          }
+        } on PlatformException catch (error) {
+          String errorText;
+          switch (error.code) {
+            case 'ERROR_TOO_MANY_REQUESTS':
+              errorText =
+                  'Acesso a conta bloqueado, tente mais tarde ou resete sua senha.';
+              break;
+            case 'ERROR_WRONG_PASSWORD':
+              errorText = 'Senha incorreta';
+              break;
+            case 'ERROR_USER_NOT_FOUND':
+              errorText = 'Usuário não encontrado';
+              break;
+            default:
+              errorText = 'Ocorreu um erro, tente novamente.';
+              break;
+          }
+          print(error);
           setState(() => _isLoading = false);
           ScaffoldMessenger.of(ctx).showSnackBar(
             SnackBar(
               content: Text(
-                "Senha incorreta",
+                errorText,
                 textAlign: TextAlign.center,
               ),
               backgroundColor: Theme.of(context).errorColor,
@@ -76,9 +110,9 @@ class _AuthScreenState extends State<AuthScreen> {
             'picture': url != null ? url : null,
           },
         );
+        Navigator.of(context).pop();
       }
       setState(() => _isLoading = false);
-      Navigator.of(context).pop();
     } on PlatformException catch (error) {
       var message = 'Ocorreu um erro';
       if (error.message != null) {
