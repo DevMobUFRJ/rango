@@ -76,9 +76,9 @@ class _ProfileSettingsState extends State<ProfileSettings> {
         ),
         actions: [
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.of(ctx).pop();
-              FirebaseAuth.instance.signOut();
+              await FirebaseAuth.instance.signOut();
               Navigator.of(ctx).pop();
             },
             child: Text(
