@@ -108,10 +108,25 @@ class _SellerProfileState extends State<SellerProfile> {
                   ),
                 ),
               ),
+              if (seller.description != null)
+                Flexible(
+                  flex: 0,
+                  child: Container(
+                    margin: EdgeInsets.only(top: 8),
+                    constraints: BoxConstraints(maxWidth: 0.8.wp),
+                    child: AutoSizeText(
+                      seller.description,
+                      textAlign: TextAlign.center,
+                      maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.montserrat(fontSize: 30.nsp),
+                    ),
+                  ),
+                ),
               Flexible(
                 flex: 0,
                 child: Container(
-                  margin: EdgeInsets.symmetric(vertical: 15),
+                  margin: EdgeInsets.symmetric(vertical: 5),
                   child: Column(
                     children: [
                       Container(
