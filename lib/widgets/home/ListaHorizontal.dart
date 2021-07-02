@@ -51,7 +51,7 @@ class ListaHorizontal extends StatelessWidget {
                 meals[index].seller.id,
               ),
               builder: (context, AsyncSnapshot<DocumentSnapshot> mealSnapshot) {
-                if (true) {
+                if (mealSnapshot.connectionState == ConnectionState.waiting) {
                   return Container(
                     height: 0.2.hp,
                     width: 0.45.wp,

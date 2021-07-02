@@ -344,7 +344,6 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                             PageTransitionAnimation.cupertino,
                       );
                     } catch (e) {
-                      print('chegou nesse');
                       Navigator.of(ctx).pop();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
