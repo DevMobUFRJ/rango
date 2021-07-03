@@ -30,32 +30,45 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool _locationPermissionStatus;
+  bool _locationPermissionLoading = false;
 
   void requestForPermission() async {
     try {
-      if (await Permission.location.request().isGranted) {
+      setState(() => _locationPermissionLoading = true);
+      bool locationPermission =
+          await Permission.locationWhenInUse.request().isGranted;
+      bool locationWhenUsePermission =
+          await Permission.location.request().isGranted;
+      if (locationPermission || locationWhenUsePermission) {
         setState(() {
           _locationPermissionStatus = true;
+          _locationPermissionLoading = false;
         });
       } else if (await Permission.location.isPermanentlyDenied) {
         openAppSettings();
-      } else {
+        setState(() => _locationPermissionLoading = false);
+      } else if (await Permission.location.status.isDenied ||
+          await Permission.locationWhenInUse.status.isDenied) {
         if (Platform.isIOS) {
           openAppSettings();
+          setState(() => _locationPermissionLoading = false);
         }
         print(await Permission.location.status);
       }
     } on PlatformException catch (error) {
       if (error.code == 'ERROR_ALREADY_REQUESTING_PERMISSIONS') {
-        openAppSettings();
+        setState(() => _locationPermissionLoading = false);
       }
-    } catch (e) {}
+    } catch (e) {
+      setState(() => _locationPermissionLoading = false);
+    }
   }
 
   void checkForPermission() async {
     if (await Permission.location.isGranted) {
       setState(() {
         _locationPermissionStatus = true;
+        _locationPermissionLoading = false;
       });
     } else
       setState(() {
@@ -66,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed && !_locationPermissionStatus) {
-      requestForPermission();
+      checkForPermission();
     }
   }
 
@@ -394,13 +407,25 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         Container(
           margin: EdgeInsets.symmetric(vertical: 10),
           child: ElevatedButton(
-            onPressed: () => requestForPermission(),
-            child: AutoSizeText(
-              'Dar permissão',
-              style: GoogleFonts.montserrat(
-                fontSize: 35.nsp,
-              ),
-            ),
+            onPressed: _locationPermissionLoading
+                ? null
+                : () => requestForPermission(),
+            child: _locationPermissionLoading
+                ? Container(
+                    margin: EdgeInsets.symmetric(horizontal: 40),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                    width: 18,
+                    height: 18,
+                  )
+                : AutoSizeText(
+                    'Dar permissão',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 35.nsp,
+                    ),
+                  ),
           ),
         )
       ],
