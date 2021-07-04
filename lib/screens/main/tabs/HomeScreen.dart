@@ -52,8 +52,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         if (Platform.isIOS) {
           openAppSettings();
           setState(() => _locationPermissionLoading = false);
+        } else {
+          setState(() => {
+                _locationPermissionStatus = false,
+                _locationPermissionLoading = false
+              });
         }
-        print(await Permission.location.status);
       }
     } on PlatformException catch (error) {
       if (error.code == 'ERROR_ALREADY_REQUESTING_PERMISSIONS') {
