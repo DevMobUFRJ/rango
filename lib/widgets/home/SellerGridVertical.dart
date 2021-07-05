@@ -42,6 +42,7 @@ class SellerGridVertical extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 0.02.hp),
           width: double.infinity,
           child: StaggeredGridView.countBuilder(
+            padding: EdgeInsets.all(0),
             shrinkWrap: true,
             crossAxisCount: 2,
             physics:
