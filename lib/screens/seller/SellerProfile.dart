@@ -25,6 +25,86 @@ class SellerProfile extends StatefulWidget {
   _SellerProfileState createState() => _SellerProfileState();
 }
 
+void _showShiftDialog(Seller seller, BuildContext context) async {
+  await showDialog(
+    context: context,
+    builder: (BuildContext ctx) => AlertDialog(
+      title: Text('Horários de funcionamento',
+          style: GoogleFonts.montserrat(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 38.ssp,
+          )),
+      content: Text(_retrieveSellerShift(seller),
+          style: GoogleFonts.montserrat(
+            color: Colors.white,
+            fontSize: 28.nsp,
+          )),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(ctx).pop(),
+          child: Text(
+            'Fechar',
+            style: GoogleFonts.montserrat(
+              decoration: TextDecoration.underline,
+              color: Colors.white,
+              fontSize: 34.nsp,
+            ),
+          ),
+        )
+      ],
+      backgroundColor: Color(0xFFF9B152),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      insetPadding: EdgeInsets.symmetric(horizontal: 0.1.wp),
+    ),
+  );
+}
+
+String _formatOpeningAndClosingTime(String openingTime, String closingTime) {
+  String openingTimePadded = openingTime.padLeft(4, '0');
+  String closingTimePadded = closingTime.padLeft(4, '0');
+  String openingTimeFormatted =
+      '${openingTimePadded.substring(0, 2)}:${openingTimePadded.substring(2, openingTimePadded.length)}';
+  String closingTimeFormatted =
+      '${closingTimePadded.substring(0, 2)}:${closingTimePadded.substring(2, closingTimePadded.length)}';
+  return '$openingTimeFormatted - $closingTimeFormatted';
+}
+
+String _retrieveSellerShift(Seller seller) {
+  String shift = '';
+  if (seller.shift.monday.open) {
+    shift =
+        'Domingo: ${_formatOpeningAndClosingTime(seller.shift.monday.openingTime.toString(), seller.shift.monday.closingTime.toString())}';
+  }
+  if (seller.shift.sunday.open) {
+    shift +=
+        '\nSegunda: ${_formatOpeningAndClosingTime(seller.shift.sunday.openingTime.toString(), seller.shift.sunday.closingTime.toString())}';
+  }
+  if (seller.shift.tuesday.open) {
+    shift +=
+        '\nTerça: ${_formatOpeningAndClosingTime(seller.shift.tuesday.openingTime.toString(), seller.shift.tuesday.closingTime.toString())}';
+  }
+  if (seller.shift.wednesday.open) {
+    shift +=
+        '\nQuarta: ${_formatOpeningAndClosingTime(seller.shift.wednesday.openingTime.toString(), seller.shift.wednesday.closingTime.toString())}';
+  }
+  if (seller.shift.thursday.open) {
+    shift +=
+        '\nQuinta: ${_formatOpeningAndClosingTime(seller.shift.thursday.openingTime.toString(), seller.shift.thursday.closingTime.toString())}';
+  }
+  if (seller.shift.friday.open) {
+    shift +=
+        '\nSexta: ${_formatOpeningAndClosingTime(seller.shift.friday.openingTime.toString(), seller.shift.friday.closingTime.toString())}';
+  }
+  if (seller.shift.saturday.open) {
+    shift +=
+        '\nSábado: ${_formatOpeningAndClosingTime(seller.shift.saturday.openingTime.toString(), seller.shift.saturday.closingTime.toString())}';
+  }
+  return shift;
+}
+
 class _SellerProfileState extends State<SellerProfile> {
   @override
   Widget build(BuildContext context) {
@@ -113,13 +193,45 @@ class _SellerProfileState extends State<SellerProfile> {
                   flex: 0,
                   child: Container(
                     margin: EdgeInsets.only(top: 8),
-                    constraints: BoxConstraints(maxWidth: 0.8.wp),
+                    constraints: BoxConstraints(maxWidth: 0.7.wp),
                     child: AutoSizeText(
                       seller.description,
                       textAlign: TextAlign.center,
                       maxLines: 4,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.montserrat(fontSize: 30.nsp),
+                    ),
+                  ),
+                ),
+              if (seller.shift != null)
+                Flexible(
+                  flex: 0,
+                  child: GestureDetector(
+                    onTap: () => _showShiftDialog(
+                      seller,
+                      context,
+                    ),
+                    child: Container(
+                      margin: EdgeInsets.only(top: 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Horário de funcionamento',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 30.nsp,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.clock,
+                              size: 30.nsp,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
