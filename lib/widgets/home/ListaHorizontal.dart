@@ -39,7 +39,7 @@ class ListaHorizontal extends StatelessWidget {
           ),
         ),
         Container(
-          constraints: BoxConstraints(maxHeight: 0.2.hp),
+          constraints: BoxConstraints(maxHeight: 280.h),
           width: double.infinity,
           child: ListView.builder(
             itemCount: meals.length,
@@ -171,7 +171,7 @@ class ListaHorizontal extends StatelessWidget {
                                   'assets/imgs/quentinha_placeholder.png',
                               image: meal.picture,
                               fit: BoxFit.cover,
-                              height: 150.h,
+                              height: 170.h,
                               width: 0.45.wp,
                             ),
                           ),
@@ -179,6 +179,7 @@ class ListaHorizontal extends StatelessWidget {
                         Flexible(
                           flex: 1,
                           child: Container(
+                            constraints: BoxConstraints(maxHeight: 100.h),
                             padding: EdgeInsets.symmetric(horizontal: 1),
                             width: 0.45.wp,
                             child: Column(
