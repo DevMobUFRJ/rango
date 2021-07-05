@@ -69,8 +69,7 @@ class SellerGridVertical extends StatelessWidget {
                         flex: 2,
                         child: Container(
                           child: FadeInImage.assetNetwork(
-                            placeholder:
-                                'assets/imgs/quentinha_placeholder.png',
+                            placeholder: 'assets/imgs/user_placeholder.png',
                             image: sellers[index].logo,
                             fit: BoxFit.cover,
                           ),
