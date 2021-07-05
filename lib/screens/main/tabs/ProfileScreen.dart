@@ -10,6 +10,7 @@ import 'package:rango/screens/main/profile/EditProfileScreen.dart';
 import 'package:rango/screens/main/profile/ProfileSettings.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:rango/widgets/user/UserPicture.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Client usuario;
@@ -41,40 +42,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Flexible(
-              flex: 4,
-              child: Container(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: <Widget>[
-                    FittedBox(
-                      fit: BoxFit.cover,
-                      child: Container(
-                        margin: EdgeInsets.only(left: 80.w, bottom: 50.h),
-                        height: 230.h,
-                        width: 260.w,
-                        decoration: BoxDecoration(
-                          borderRadius:
-                              BorderRadius.circular(ScreenUtil().setSp(30)),
-                          color: yellow,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 20),
-                      child: FittedBox(
-                        fit: BoxFit.cover,
-                        child: CircleAvatar(
-                          backgroundColor: Theme.of(context).accentColor,
-                          backgroundImage: widget.usuario.picture != null
-                              ? NetworkImage(widget.usuario.picture)
-                              : null,
-                          radius: 150.w,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              flex: 0,
+              child: UserPicture(widget.usuario.picture),
             ),
             Flexible(
               flex: 2,
@@ -221,6 +190,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       separatorBuilder: (context, index) =>
                           SizedBox(height: 0.01.hp),
                       itemCount: favoriteSellers.length,
+                      physics: ClampingScrollPhysics(),
                       itemBuilder: (ctx, index) => StreamBuilder(
                         stream: Repository.instance
                             .getSeller(favoriteSellers[index]),

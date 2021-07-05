@@ -12,6 +12,7 @@ import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/seller/ChatScreen.dart';
 import 'package:rango/widgets/home/ListaHorizontal.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:rango/widgets/user/UserPicture.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart' show DocumentSnapshot;
 
@@ -160,33 +161,7 @@ class _SellerProfileState extends State<SellerProfile> {
             children: [
               Flexible(
                 flex: 2,
-                child: Container(
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.only(left: 80.w, bottom: 40.h),
-                        height: 210.h,
-                        width: 240.w,
-                        decoration: BoxDecoration(
-                          borderRadius:
-                              BorderRadius.circular(ScreenUtil().setSp(30)),
-                          color: yellow,
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 20),
-                        child: CircleAvatar(
-                          backgroundColor: Theme.of(context).accentColor,
-                          backgroundImage: seller.logo != null
-                              ? NetworkImage(seller.logo)
-                              : null,
-                          radius: 130.w,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                child: UserPicture(seller.logo),
               ),
               if (seller.description != null)
                 Flexible(
