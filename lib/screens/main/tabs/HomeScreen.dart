@@ -116,243 +116,234 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               : !_locationPermissionStatus
                   ? _buildRequestForPermissionWidget()
                   : SingleChildScrollView(
-                      child: Container(
-                        child: Column(
-                          children: [
-                            HomeHeader(widget.usuario.name.split(" ")[0]),
-                            FutureBuilder(
-                              future: Repository.instance.getUserLocation(),
-                              builder: (
-                                context,
-                                AsyncSnapshot<Position> locationSnapshot,
-                              ) {
-                                if (locationSnapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return _buildLoadingSpinner();
-                                }
+                      physics: ClampingScrollPhysics(),
+                      child: Column(
+                        children: [
+                          HomeHeader(widget.usuario.name.split(" ")[0]),
+                          FutureBuilder(
+                            future: Repository.instance.getUserLocation(),
+                            builder: (
+                              context,
+                              AsyncSnapshot<Position> locationSnapshot,
+                            ) {
+                              if (locationSnapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return _buildLoadingSpinner();
+                              }
 
-                                if (locationSnapshot.hasError) {
-                                  return Container(
-                                    height: 0.6.hp - 56,
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 10),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        AutoSizeText(
-                                          locationSnapshot.error,
-                                          textAlign: TextAlign.center,
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 45.nsp,
-                                            color:
-                                                Theme.of(context).accentColor,
-                                          ),
+                              if (locationSnapshot.hasError) {
+                                return Container(
+                                  height: 0.6.hp - 56,
+                                  margin: EdgeInsets.symmetric(horizontal: 10),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      AutoSizeText(
+                                        locationSnapshot.error,
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: 45.nsp,
+                                          color: Theme.of(context).accentColor,
                                         ),
-                                      ],
-                                    ),
-                                  );
-                                }
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
 
-                                return Consumer<RangeChangeNotifier>(
-                                  builder: (context, shouldChange, child) {
-                                    return FutureBuilder(
-                                      future:
-                                          Repository.instance.getSellerRange(),
-                                      builder: (
-                                        context,
-                                        AsyncSnapshot<double> rangeSnapshot,
-                                      ) {
-                                        if (rangeSnapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return _buildLoadingSpinner();
-                                        }
-                                        if (rangeSnapshot.hasError) {
-                                          return Container(
-                                            height: 0.6.hp - 56,
-                                            alignment: Alignment.center,
-                                            child: AutoSizeText(
-                                              rangeSnapshot.error.toString(),
-                                              style: GoogleFonts.montserrat(
-                                                  fontSize: 45.nsp,
-                                                  color: Theme.of(context)
-                                                      .accentColor),
-                                            ),
-                                          );
-                                        }
-
-                                        return StreamBuilder(
-                                          stream: Repository.instance
-                                              .getNearbySellersStream(
-                                            locationSnapshot.data,
-                                            rangeSnapshot.data,
-                                            queryByActive: true,
-                                            queryByTime: true,
+                              return Consumer<RangeChangeNotifier>(
+                                builder: (context, shouldChange, child) {
+                                  return FutureBuilder(
+                                    future:
+                                        Repository.instance.getSellerRange(),
+                                    builder: (
+                                      context,
+                                      AsyncSnapshot<double> rangeSnapshot,
+                                    ) {
+                                      if (rangeSnapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return _buildLoadingSpinner();
+                                      }
+                                      if (rangeSnapshot.hasError) {
+                                        return Container(
+                                          height: 0.6.hp - 56,
+                                          alignment: Alignment.center,
+                                          child: AutoSizeText(
+                                            rangeSnapshot.error.toString(),
+                                            style: GoogleFonts.montserrat(
+                                                fontSize: 45.nsp,
+                                                color: Theme.of(context)
+                                                    .accentColor),
                                           ),
-                                          builder: (
-                                            context,
-                                            AsyncSnapshot<
-                                                    List<DocumentSnapshot>>
-                                                snapshot,
-                                          ) {
-                                            if (snapshot.connectionState ==
-                                                ConnectionState.waiting) {
-                                              return _buildLoadingSpinner();
-                                            }
-                                            if (snapshot.hasError) {
-                                              return Container(
-                                                height: 0.6.hp - 56,
-                                                alignment: Alignment.center,
-                                                child: AutoSizeText(
-                                                  snapshot.error.toString(),
-                                                  style: GoogleFonts.montserrat(
-                                                      fontSize: 45.nsp,
-                                                      color: Theme.of(context)
-                                                          .accentColor),
-                                                ),
-                                              );
-                                            }
+                                        );
+                                      }
 
-                                            List<MealRequest> allMealsRequests =
-                                                [];
-                                            List<MealRequest>
-                                                filteredMealsRequests = [];
-
-                                            List<Seller> sellerList = [];
-                                            snapshot.data.forEach(
-                                              (sellerDoc) {
-                                                Seller seller = Seller.fromJson(
-                                                  sellerDoc.data,
-                                                  id: sellerDoc.documentID,
-                                                );
-                                                sellerList.add(seller);
-                                                var filterByFeatured = false;
-                                                var mealsLimit = 0;
-                                                var currentMeals =
-                                                    seller.currentMeals;
-
-                                                var sellerAll =
-                                                    currentMeals.entries.map(
-                                                  (meal) {
-                                                    return MealRequest(
-                                                        mealId: meal.key,
-                                                        seller: seller);
-                                                  },
-                                                ).toList();
-                                                allMealsRequests
-                                                    .addAll(sellerAll);
-
-                                                if (filterByFeatured) {
-                                                  currentMeals.removeWhere(
-                                                      (mealId, details) =>
-                                                          !details.featured);
-                                                }
-                                                var sellerFiltered =
-                                                    currentMeals.entries.map(
-                                                  (meal) {
-                                                    return MealRequest(
-                                                        mealId: meal.key,
-                                                        seller: seller);
-                                                  },
-                                                ).toList();
-                                                if (mealsLimit > 0) {
-                                                  sellerFiltered =
-                                                      sellerFiltered
-                                                          .take(mealsLimit)
-                                                          .toList();
-                                                }
-                                                filteredMealsRequests
-                                                    .addAll(sellerFiltered);
-                                              },
-                                            );
-
-                                            if (allMealsRequests.isEmpty &&
-                                                filteredMealsRequests.isEmpty &&
-                                                sellerList.isEmpty)
-                                              return Container(
-                                                margin: EdgeInsets.symmetric(
-                                                  horizontal: 15,
-                                                  vertical: 10,
-                                                ),
-                                                height: 0.7.wp - 56,
-                                                alignment: Alignment.center,
-                                                child: AutoSizeText(
-                                                  'Sem sugestões ou vendedores próximos. Aumente o alcance ou faça pedidos para receber sugestões!',
-                                                  style: GoogleFonts.montserrat(
+                                      return StreamBuilder(
+                                        stream: Repository.instance
+                                            .getNearbySellersStream(
+                                          locationSnapshot.data,
+                                          rangeSnapshot.data,
+                                          queryByActive: true,
+                                          queryByTime: true,
+                                        ),
+                                        builder: (
+                                          context,
+                                          AsyncSnapshot<List<DocumentSnapshot>>
+                                              snapshot,
+                                        ) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return _buildLoadingSpinner();
+                                          }
+                                          if (snapshot.hasError) {
+                                            return Container(
+                                              height: 0.6.hp - 56,
+                                              alignment: Alignment.center,
+                                              child: AutoSizeText(
+                                                snapshot.error.toString(),
+                                                style: GoogleFonts.montserrat(
                                                     fontSize: 45.nsp,
                                                     color: Theme.of(context)
-                                                        .accentColor,
+                                                        .accentColor),
+                                              ),
+                                            );
+                                          }
+
+                                          List<MealRequest> allMealsRequests =
+                                              [];
+                                          List<MealRequest>
+                                              filteredMealsRequests = [];
+
+                                          List<Seller> sellerList = [];
+                                          snapshot.data.forEach(
+                                            (sellerDoc) {
+                                              Seller seller = Seller.fromJson(
+                                                sellerDoc.data,
+                                                id: sellerDoc.documentID,
+                                              );
+                                              sellerList.add(seller);
+                                              var filterByFeatured = false;
+                                              var mealsLimit = 0;
+                                              var currentMeals =
+                                                  seller.currentMeals;
+
+                                              var sellerAll =
+                                                  currentMeals.entries.map(
+                                                (meal) {
+                                                  return MealRequest(
+                                                      mealId: meal.key,
+                                                      seller: seller);
+                                                },
+                                              ).toList();
+                                              allMealsRequests
+                                                  .addAll(sellerAll);
+
+                                              if (filterByFeatured) {
+                                                currentMeals.removeWhere(
+                                                    (mealId, details) =>
+                                                        !details.featured);
+                                              }
+                                              var sellerFiltered =
+                                                  currentMeals.entries.map(
+                                                (meal) {
+                                                  return MealRequest(
+                                                      mealId: meal.key,
+                                                      seller: seller);
+                                                },
+                                              ).toList();
+                                              if (mealsLimit > 0) {
+                                                sellerFiltered = sellerFiltered
+                                                    .take(mealsLimit)
+                                                    .toList();
+                                              }
+                                              filteredMealsRequests
+                                                  .addAll(sellerFiltered);
+                                            },
+                                          );
+
+                                          if (allMealsRequests.isEmpty &&
+                                              filteredMealsRequests.isEmpty &&
+                                              sellerList.isEmpty)
+                                            return Container(
+                                              margin: EdgeInsets.symmetric(
+                                                horizontal: 15,
+                                                vertical: 10,
+                                              ),
+                                              height: 0.7.wp - 56,
+                                              alignment: Alignment.center,
+                                              child: AutoSizeText(
+                                                'Sem sugestões ou vendedores próximos abertos.Você pode aumentar o alcance ou fazer pedidos para receber sugestões!',
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize: 45.nsp,
+                                                  color: Theme.of(context)
+                                                      .accentColor,
+                                                ),
+                                              ),
+                                            );
+
+                                          return Column(
+                                            children: [
+                                              if (allMealsRequests.isNotEmpty)
+                                                _buildOrderAgain(
+                                                  allMealsRequests,
+                                                  widget.usuario.id,
+                                                ),
+                                              SizedBox(height: 0.02.hp),
+                                              if (filteredMealsRequests
+                                                  .isNotEmpty)
+                                                _buildSuggestions(
+                                                  filteredMealsRequests,
+                                                ),
+                                              if (allMealsRequests.isEmpty &&
+                                                  filteredMealsRequests.isEmpty)
+                                                Container(
+                                                  margin: EdgeInsets.symmetric(
+                                                    horizontal: 15,
+                                                    vertical: 10,
+                                                  ),
+                                                  child: AutoSizeText(
+                                                    'Use o aplicativo e faça reservas para receber sugestões de quentinhas!',
+                                                    style:
+                                                        GoogleFonts.montserrat(
+                                                      fontSize: 45.nsp,
+                                                      color: Theme.of(context)
+                                                          .accentColor,
+                                                    ),
                                                   ),
                                                 ),
-                                              );
-
-                                            return Column(
-                                              children: [
-                                                if (allMealsRequests.isNotEmpty)
-                                                  _buildOrderAgain(
-                                                    allMealsRequests,
-                                                    widget.usuario.id,
+                                              SizedBox(height: 0.02.hp),
+                                              if (sellerList.isNotEmpty)
+                                                SellersList(
+                                                    sellerList,
+                                                    locationSnapshot,
+                                                    widget.usuario.id),
+                                              if (sellerList.isEmpty)
+                                                Container(
+                                                  margin: EdgeInsets.symmetric(
+                                                    horizontal: 15,
+                                                    vertical: 10,
                                                   ),
-                                                SizedBox(height: 0.02.hp),
-                                                if (filteredMealsRequests
-                                                    .isNotEmpty)
-                                                  _buildSuggestions(
-                                                    filteredMealsRequests,
-                                                  ),
-                                                if (allMealsRequests.isEmpty &&
-                                                    filteredMealsRequests
-                                                        .isEmpty)
-                                                  Container(
-                                                    margin:
-                                                        EdgeInsets.symmetric(
-                                                      horizontal: 15,
-                                                      vertical: 10,
-                                                    ),
-                                                    child: AutoSizeText(
-                                                      'Use o aplicativo e faça reservas para receber sugestões de quentinhas!',
-                                                      style: GoogleFonts
-                                                          .montserrat(
-                                                        fontSize: 45.nsp,
-                                                        color: Theme.of(context)
-                                                            .accentColor,
-                                                      ),
+                                                  child: AutoSizeText(
+                                                    'Aumente o alcance para visualizar vendedores!',
+                                                    style:
+                                                        GoogleFonts.montserrat(
+                                                      fontSize: 45.nsp,
+                                                      color: Theme.of(context)
+                                                          .accentColor,
                                                     ),
                                                   ),
-                                                SizedBox(height: 0.02.hp),
-                                                if (sellerList.isNotEmpty)
-                                                  SellersList(
-                                                      sellerList,
-                                                      locationSnapshot,
-                                                      widget.usuario.id),
-                                                if (sellerList.isEmpty)
-                                                  Container(
-                                                    margin:
-                                                        EdgeInsets.symmetric(
-                                                      horizontal: 15,
-                                                      vertical: 10,
-                                                    ),
-                                                    child: AutoSizeText(
-                                                      'Aumente o alcance para visualizar vendedores!',
-                                                      style: GoogleFonts
-                                                          .montserrat(
-                                                        fontSize: 45.nsp,
-                                                        color: Theme.of(context)
-                                                            .accentColor,
-                                                      ),
-                                                    ),
-                                                  ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      },
-                                    );
-                                  },
-                                );
-                              },
-                            ),
-                          ],
-                        ),
+                                                ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ],
                       ),
                     ),
         ),
