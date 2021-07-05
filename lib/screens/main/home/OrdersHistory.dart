@@ -11,8 +11,9 @@ import 'package:rango/widgets/home/OrderContainer.dart';
 
 class OrdersHistory extends StatefulWidget {
   final Seller usuario;
+  List <DocumentSnapshot> closedOrders;
 
-  OrdersHistory(this.usuario);
+  OrdersHistory(this.usuario, this.closedOrders);
   static const String name = 'OrdersHistory';
 
   @override
@@ -60,102 +61,41 @@ class _OrdersHistoryState extends State<OrdersHistory> {
                       ),
                     ),
                   ),
-                  StreamBuilder(
-                    stream: Repository.instance.getOrdersFromSeller(widget.usuario.id),
-                    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (!snapshot.hasData ||
-                          snapshot.connectionState == ConnectionState.waiting) {
-                        return Container(
-                          height: 0.5.hp,
-                          alignment: Alignment.center,
-                          child: SizedBox(
-                            height: 50,
-                            width: 50,
-                            child: CircularProgressIndicator(
-                              color: Theme.of(context).accentColor,
-                            ),
-                          ),
-                        );
-                      }
-
-                      if (snapshot.hasError) {
-                        return Container(
-                          height: 0.6.hp - 56,
-                          alignment: Alignment.center,
-                          child: AutoSizeText(
-                            snapshot.error.toString(),
+                  if (widget.closedOrders.isEmpty) ...{
+                    Flexible(
+                      flex: 1,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AutoSizeText(
+                            'Você ainda não possui pedidos finalizados!',
                             style: GoogleFonts.montserrat(
-                                fontSize: 45.nsp,
-                                color: Theme.of(context).accentColor),
+                              color: Theme
+                                  .of(context)
+                                  .accentColor,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 52.nsp,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                        );
-                      }
-
-                      if (snapshot.data.documents.isEmpty) {
-                        return Flexible(
-                          flex: 1,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              AutoSizeText(
-                                'Você ainda não possui pedidos finalizados!',
-                                style: GoogleFonts.montserrat(
-                                  color: Theme.of(context).accentColor,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 52.nsp,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-
-                      return Flexible(
-                        flex: 1,
-                        child: Container(
-                          child: AnimatedList(
+                        ],
+                      ),
+                    )
+                  } else ...{
+                    Flexible(
+                      flex: 1,
+                      child: Container(
+                        child: AnimatedList(
                             key: _listKey,
-                            initialItemCount: snapshot.data.documents.length,
+                            initialItemCount: widget.closedOrders.length,
                             itemBuilder: (ctx, index, animation) {
-                              Order order = Order.fromJson(snapshot.data.documents[index].data);
-                              return OrderContainer(
-                                order,
-                                ({String value}) {
-                                  setState(() => order.status = value);
-                                  //TODO Atualizar no firebase
-                                },
-                                ({String value}) {
-                                  var removedItem;
-                                  setState(() => {
-                                    order.status = value,
-                                    //TODO Atualizar no firebase
-                                    removedItem = snapshot.data.documents.removeAt(index),
-                                  });
-                                  _listKey.currentState.removeItem(
-                                    index,
-                                    (context, animation) => SlideTransition(
-                                      position: animation.drive(
-                                        Tween<Offset>(
-                                          begin: Offset(1, 0),
-                                          end: Offset.zero,
-                                        ),
-                                      ),
-                                      child: OrderContainer(
-                                        removedItem,
-                                        ({String value}) => {},
-                                        ({String value}) => {},
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
+                              Order order = Order.fromJson(widget.closedOrders[index].data);
+                              return OrderContainer(order);
                             }
-                          ),
                         ),
-                      );
-                    }
-                  ),
+                      ),
+                    )
+                  }
                 ],
               ),
             ),

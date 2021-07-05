@@ -23,7 +23,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final GlobalKey<AnimatedListState> _listKey = GlobalKey();
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
   final String assetName = 'assets/imgs/curva_principal.svg';
   @override
   Widget build(BuildContext context) {
@@ -65,8 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return StreamBuilder(
               stream: Repository.instance.getClosedOrdersFromSeller(widget.usuario.id),
               builder: (context, AsyncSnapshot<QuerySnapshot> closedOrdersSnapshot) {
-                if (!closedOrdersSnapshot.hasData ||
-                    closedOrdersSnapshot.connectionState == ConnectionState.waiting) {
+                if (!closedOrdersSnapshot.hasData) {
                   return Container(
                     height: 0.5.hp,
                     alignment: Alignment.center,
@@ -96,12 +95,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (openOrdersSnapshot.data.documents.isEmpty && closedOrdersSnapshot.data.documents.isEmpty) {
                   return NoOrdersWidget(assetName: assetName, widget: widget);
                 }
-
-                List<DocumentSnapshot> allOrders = openOrdersSnapshot.data.documents + closedOrdersSnapshot.data.documents;
                 
                 return Column(
                   children: [
-                    _buildHeader(assetName),
+                    _buildHeader(assetName, closedOrdersSnapshot.data.documents),
                     Container(
                       margin: EdgeInsets.only(
                         left: 0.1.wp,
@@ -112,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Container(
                             child: closedOrdersSnapshot.data.documents.isEmpty && openOrdersSnapshot.data.documents.isEmpty
-                                ? Text('')
+                                ? SizedBox()
                                 : AutoSizeText(
                               "Pedidos do dia",
                               style: GoogleFonts.montserrat(
@@ -145,43 +142,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                               )
-                            : AnimatedList(
+                            : ListView.builder(
                                 physics: ClampingScrollPhysics(),
                                 key: _listKey,
-                                initialItemCount: allOrders.length,
-                                itemBuilder: (ctx, index, animation) {
-                                  Order order = Order.fromJson(allOrders[index].data, id: allOrders[index].documentID);
-                                  return OrderContainer(
-                                    order,
-                                    ({String value}) {
-                                      // TODO Atualizar no firebase
-                                      setState(() => order.status = value);
-                                    },
-                                    ({String value}) {
-                                      var removedItem;
-                                      setState(() => {
-                                        order.status = value,
-                                        //TODO Atualizar no firebase
-                                        removedItem = openOrdersSnapshot.data.documents.removeAt(index),
-                                      });
-                                      _listKey.currentState.removeItem(
-                                        index,
-                                            (context, animation) => SlideTransition(
-                                          position: animation.drive(
-                                            Tween<Offset>(
-                                              begin: Offset(1, 0),
-                                              end: Offset.zero,
-                                            ),
-                                          ),
-                                          child: OrderContainer(
-                                            removedItem,
-                                              ({String value}) => {},
-                                              ({String value}) => {},
-                                          ),
-                                        ),
-                                      );
-                                    },
+                                itemCount: openOrdersSnapshot.data.documents.length,
+                                itemBuilder: (ctx, index) {
+                                  Order order = Order.fromJson(
+                                      openOrdersSnapshot.data.documents[index].data,
+                                      id: openOrdersSnapshot.data.documents[index].documentID
                                   );
+                                  return OrderContainer(order);
                                 },
                             ),
                       ),
@@ -196,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildHeader(String assetName) {
+  Widget _buildHeader(String assetName, List<DocumentSnapshot> closedOrders) {
     return Stack(
       children: <Widget>[
         SvgPicture.asset(
@@ -240,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: GestureDetector(
                       onTap: () => pushNewScreen(
                         context,
-                        screen: OrdersHistory(widget.usuario),
+                        screen: OrdersHistory(widget.usuario, closedOrders),
                         withNavBar: false,
                       ),
                       child: Icon(

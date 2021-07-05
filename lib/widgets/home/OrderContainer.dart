@@ -4,18 +4,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/order.dart';
+import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/main/home/ClientProfile.dart';
 import 'package:rango/utils/string_formatters.dart';
 
 class OrderContainer extends StatefulWidget {
   final Order pedido;
-  final void Function({String value}) reservadoOnChange;
-  final void Function({String value}) vendidoOnChange;
 
   OrderContainer(
     this.pedido,
-    this.reservadoOnChange,
-    this.vendidoOnChange,
   );
 
   @override
@@ -181,11 +178,9 @@ class _OrderContainerState extends State<OrderContainer> {
                                         : Color(0xFFF9B152),
                                     activeColor: Colors.white,
                                     value: widget.pedido.status == 'reserved' || widget.pedido.status == 'sold',
-                                    //TODO chamar firebase com widget.pedido.id
-                                    onChanged: (valor) => widget.pedido.status == 'sold'
-                                        ? null
-                                        : widget.reservadoOnChange(
-                                            value: valor? 'reserved': 'requested'),
+                                    onChanged: (reserved) {
+                                      if (reserved) Repository.instance.reserveOrder(widget.pedido.id);
+                                    },
                                   ),
                                 ),
                               ),
@@ -212,9 +207,9 @@ class _OrderContainerState extends State<OrderContainer> {
                                         : Color(0xFFF9B152),
                                     activeColor: Colors.white,
                                     value: widget.pedido.status == 'sold',
-                                    //TODO chamar firebase com widget.pedido.id
-                                    onChanged: (valor) =>
-                                        widget.vendidoOnChange(value: valor? 'sold': 'reserved'),
+                                    onChanged: (sold) {
+                                      if (sold) Repository.instance.sellOrder(widget.pedido.id);
+                                    },
                                   ),
                                 ),
                               ),

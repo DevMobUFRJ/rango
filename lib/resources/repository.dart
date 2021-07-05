@@ -71,6 +71,22 @@ class Repository {
     return ordersRef.add(order.toJson());
   }
 
+  Future<void> reserveOrder(String orderUid) async {
+    return ordersRef.document(orderUid).updateData(
+        {
+          'status': 'reserved',
+          'reservedAt': Timestamp.now()
+        });
+  }
+
+  Future<void> sellOrder(String orderUid) async {
+    return ordersRef.document(orderUid).updateData(
+        {
+          'status': 'sold',
+          'soldAt': Timestamp.now()
+        });
+  }
+
   Future<void> cancelOrder(String orderUid) async {
     return ordersRef.document(orderUid).updateData(
         {
@@ -96,9 +112,9 @@ class Repository {
   //TODO Query pelo dia
   Stream<QuerySnapshot> getOpenOrdersFromSeller(String sellerId, {int limit}) {
     if (limit != null && limit > 0) {
-      return ordersRef.where('sellerId', isEqualTo: sellerId).where('status', whereIn: ['requested', 'reserved']).orderBy('requestedAt', descending: true).limit(limit).snapshots();
+      return ordersRef.where('sellerId', isEqualTo: sellerId).where('status', whereIn: ['requested', 'reserved']).orderBy('requestedAt').limit(limit).snapshots();
     }
-    return ordersRef.where('sellerId', isEqualTo: sellerId).where('status', whereIn: ['requested', 'reserved']).orderBy('requestedAt', descending: true).snapshots();
+    return ordersRef.where('sellerId', isEqualTo: sellerId).where('status', whereIn: ['requested', 'reserved']).orderBy('requestedAt').snapshots();
   }
 
   Stream<QuerySnapshot> getClosedOrdersFromSeller(String sellerId, {int limit}) {
