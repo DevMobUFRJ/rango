@@ -186,8 +186,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                               .getNearbySellersStream(
                                             locationSnapshot.data,
                                             rangeSnapshot.data,
-                                            queryByActive: false,
-                                            queryByTime: false,
+                                            queryByActive: true,
+                                            queryByTime: true,
                                           ),
                                           builder: (
                                             context,
