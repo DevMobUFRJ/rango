@@ -225,7 +225,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             );
                           }
-                          var sellerSnapshotdata = clientSnapshot.data.data()
+                          var sellerSnapshotdata = sellerSnapshot.data.data()
                               as Map<String, dynamic>;
                           Seller seller = Seller.fromJson(
                             sellerSnapshotdata,
