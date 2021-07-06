@@ -9,6 +9,8 @@ import 'package:flutter/foundation.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
 import 'package:rango/utils/string_formatters.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class SellerGridVertical extends StatelessWidget {
   final double tagM;
@@ -68,10 +70,28 @@ class SellerGridVertical extends StatelessWidget {
                       Expanded(
                         flex: 2,
                         child: Container(
-                          child: FadeInImage.assetNetwork(
-                            placeholder: 'assets/imgs/user_placeholder.png',
-                            image: sellers[index].logo,
-                            fit: BoxFit.cover,
+                          child: Stack(
+                            children: [
+                              Shimmer.fromColors(
+                                baseColor: Colors.grey[300],
+                                highlightColor: Colors.white,
+                                child: Container(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Center(
+                                child: Icon(
+                                  Icons.store,
+                                  size: 75,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              FadeInImage.memoryNetwork(
+                                placeholder: kTransparentImage,
+                                image: sellers[index].logo,
+                                fit: BoxFit.cover,
+                              ),
+                            ],
                           ),
                         ),
                       ),
