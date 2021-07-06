@@ -11,6 +11,7 @@ import 'package:rango/screens/reserva/DetalhesQuentinhaScreen.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/utils/string_formatters.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class ListaHorizontal extends StatelessWidget {
   final String title;
@@ -166,13 +167,35 @@ class ListaHorizontal extends StatelessWidget {
                           flex: 0,
                           child: Hero(
                             tag: meal.hashCode * tagM,
-                            child: FadeInImage.assetNetwork(
-                              placeholder:
-                                  'assets/imgs/quentinha_placeholder.png',
-                              image: meal.picture,
-                              fit: BoxFit.cover,
-                              height: 170.h,
-                              width: 0.45.wp,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Shimmer.fromColors(
+                                  baseColor: Colors.grey[300],
+                                  highlightColor: Colors.white,
+                                  child: Container(
+                                    color: Colors.white,
+                                    child: SizedBox(
+                                      height: 170.h,
+                                      width: 0.45.wp,
+                                    ),
+                                  ),
+                                ),
+                                Center(
+                                  child: Icon(
+                                    Icons.local_dining,
+                                    size: 55,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                FadeInImage.memoryNetwork(
+                                  placeholder: kTransparentImage,
+                                  image: meal.picture,
+                                  fit: BoxFit.cover,
+                                  height: 170.h,
+                                  width: 0.45.wp,
+                                ),
+                              ],
                             ),
                           ),
                         ),
