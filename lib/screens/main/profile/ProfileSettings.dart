@@ -123,7 +123,6 @@ class _ProfileSettingsState extends State<ProfileSettings> {
 
   @override
   Widget build(BuildContext context) {
-    const orange = Color(0xFFFC744F);
     const green = Color(0xFF609B90);
     return Scaffold(
       appBar: AppBar(
@@ -150,13 +149,13 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                       'Notificações',
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                        color: orange,
+                        color: Theme.of(context).accentColor,
                         fontSize: 38.nsp,
                       ),
                     ),
                     Switch(
                       value: _switchValue,
-                      activeColor: Color(0xFF609B90),
+                      activeColor: Theme.of(context).accentColor,
                       onChanged: (value) => setState(() {
                         _switchValue = value;
                         if (value == false) {
