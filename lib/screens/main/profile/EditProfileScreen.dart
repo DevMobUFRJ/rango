@@ -32,9 +32,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   TextEditingController _confirmPass = TextEditingController();
   TextEditingController _phone = TextEditingController();
 
-  String _password;
-  String _userImage;
-  String _confirmPassword;
   File _userImageFile;
   bool _loading = false;
 
@@ -65,6 +62,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         _passwordErrorMessage == null &&
         _nameErrorMessage == null &&
         _confirmPasswordErrorMessage == null) {
+      bool changeHasMade = false;
       _formKey.currentState.save();
       setState(() => _loading = true);
       try {
@@ -85,12 +83,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           final url = await ref.getDownloadURL();
           dataToUpdate['picture'] = url;
         }
+        final firebaseUser = await FirebaseAuth.instance.currentUser();
         if (dataToUpdate.length > 0) {
-          final firebaseUser = await FirebaseAuth.instance.currentUser();
           await Firestore.instance
               .collection('clients')
               .document(firebaseUser.uid)
               .updateData({...dataToUpdate});
+          changeHasMade = true;
+        }
+        if (_pass.text.length > 0) {
+          await firebaseUser.updatePassword(_pass.text);
+          changeHasMade = true;
+        }
+        if (changeHasMade) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              duration: Duration(seconds: 1),
+              backgroundColor: Theme.of(context).accentColor,
+              content: Text(
+                'Mudanças realizadas',
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
         }
         setState(() => _loading = false);
         Navigator.of(context).pop();
@@ -168,6 +183,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 if (value.trim() == '') {
                                   setState(() => _nameErrorMessage =
                                       'Nome não pode ser vaizo');
+                                } else {
+                                  setState(() => _nameErrorMessage = null);
                                 }
                                 return null;
                               },
@@ -190,6 +207,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     value.trim().length != 11) {
                                   setState(() => _telefoneErrorMessage =
                                       'Telefone precisa ter 11 números');
+                                } else {
+                                  setState(() => _telefoneErrorMessage = null);
                                 }
                                 return null;
                               },
@@ -211,13 +230,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 isPassword: true,
                                 onFieldSubmitted: (_) => FocusScope.of(context)
                                     .requestFocus(_focusNodeConfirmPass),
-                                onSaved: (value) => _password = value,
+                                onSaved: (value) => _pass.text = value,
                                 textInputAction: TextInputAction.next,
                                 key: ValueKey('password'),
                                 validator: (String value) {
                                   if (value != '' && value.length < 7) {
                                     setState(() => _passwordErrorMessage =
                                         'Senha precisa ter pelo menos 7 caracteres');
+                                  } else {
+                                    setState(
+                                        () => _passwordErrorMessage = null);
                                   }
                                   return null;
                                 },
@@ -232,21 +254,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               focusNode: _focusNodeConfirmPass,
                               controller: _confirmPass,
                               isPassword: true,
-                              onSaved: (value) => _password = value,
+                              onSaved: (value) => _confirmPass.text = value,
                               key: ValueKey('confirmPassword'),
                               validator: (String value) {
                                 if (value != '' && value.length < 7) {
-                                  setState(() => _passwordErrorMessage =
+                                  setState(() => _confirmPasswordErrorMessage =
                                       'Senha precisa ter pelo menos 7 caracteres');
+                                } else if (value != '' && value != _pass.text) {
+                                  setState(() => _confirmPasswordErrorMessage =
+                                      'Senhas estão diferentes');
+                                } else {
+                                  setState(() =>
+                                      _confirmPasswordErrorMessage = null);
                                 }
                                 return null;
                               },
-                              errorText: _passwordErrorMessage,
+                              errorText: _confirmPasswordErrorMessage,
                             ),
                           ),
                           Flexible(
                             flex: 1,
                             child: Container(
+                              width: 0.4.wp,
                               margin: EdgeInsets.only(top: 10),
                               child: ElevatedButton(
                                 onPressed: _loading ? null : () => _submit(ctx),
@@ -255,21 +284,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         child: CircularProgressIndicator(
                                           valueColor:
                                               new AlwaysStoppedAnimation<Color>(
-                                                  Colors.white),
+                                            Colors.white,
+                                          ),
                                           strokeWidth: 3.0,
                                         ),
                                         height: 30.w,
                                         width: 30.w,
                                       )
-                                    : Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 8.0),
-                                        child: AutoSizeText(
-                                          'Continuar',
-                                          style: GoogleFonts.montserrat(
-                                            color: Colors.white,
-                                            fontSize: 38.nsp,
-                                          ),
+                                    : AutoSizeText(
+                                        'Continuar',
+                                        style: GoogleFonts.montserrat(
+                                          color: Colors.white,
+                                          fontSize: 38.nsp,
                                         ),
                                       ),
                               ),
