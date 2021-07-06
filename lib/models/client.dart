@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:rango/models/seller.dart';
 import 'package:rango/models/user_notification_settings.dart';
 import 'package:flutter/foundation.dart';
 

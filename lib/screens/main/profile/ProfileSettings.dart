@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:provider/provider.dart';
 import 'package:rango/models/client.dart';
+import 'package:rango/models/user_notification_settings.dart';
 import 'package:rango/resources/rangeChangeNotifier.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/main/profile/AboutScreen.dart';
@@ -24,35 +26,39 @@ class ProfileSettings extends StatefulWidget {
 }
 
 class _ProfileSettingsState extends State<ProfileSettings> {
-  bool _switchValue = false;
-  bool _attValue = false;
-  bool _reservaValue = false;
-  bool _newMessagesValue = false;
-  bool _promotionsValue = false;
+  bool _switchValue;
+  bool _attValue;
+  bool _reservaValue;
+  bool _newMessagesValue;
+  bool _promotionsValue;
   double _rangeValue;
 
   @override
   void initState() {
     _rangeValue = widget.sellerRange;
-
     setState(
       () {
-        _attValue = widget.user.notificationSettings != null &&
-                widget.user.notificationSettings.favoriteSellers != null
-            ? widget.user.notificationSettings.favoriteSellers
-            : false;
-        _reservaValue = widget.user.notificationSettings != null &&
-                widget.user.notificationSettings.reservations != null
-            ? widget.user.notificationSettings.reservations
-            : false;
-        _newMessagesValue = widget.user.notificationSettings != null &&
-                widget.user.notificationSettings.messages != null
-            ? widget.user.notificationSettings.messages
-            : false;
-        _promotionsValue = widget.user.notificationSettings != null &&
-                widget.user.notificationSettings.discounts != null
-            ? widget.user.notificationSettings.discounts
-            : false;
+        if (widget.user.notificationSettings == null) {
+          _switchValue = false;
+          _attValue = false;
+          _reservaValue = false;
+          _newMessagesValue = false;
+          _promotionsValue = false;
+        } else {
+          _switchValue = true;
+          _attValue = widget.user.notificationSettings.favoriteSellers != null
+              ? widget.user.notificationSettings.favoriteSellers
+              : false;
+          _reservaValue = widget.user.notificationSettings.reservations != null
+              ? widget.user.notificationSettings.reservations
+              : false;
+          _newMessagesValue = widget.user.notificationSettings.messages != null
+              ? widget.user.notificationSettings.messages
+              : false;
+          _promotionsValue = widget.user.notificationSettings.discounts != null
+              ? widget.user.notificationSettings.discounts
+              : false;
+        }
       },
     );
     super.initState();
@@ -322,6 +328,29 @@ class _ProfileSettingsState extends State<ProfileSettings> {
       );
       Provider.of<RangeChangeNotifier>(context, listen: false).triggerRefresh();
       FocusScope.of(context).unfocus();
+      Map<String, dynamic> dataToUpdate = {};
+      if (_switchValue = false) {
+        Map<String, dynamic> notifications = {};
+        notifications['discounts'] = false;
+        notifications['favoriteSellers'] = false;
+        notifications['messages'] = false;
+        notifications['reservations'] = false;
+        dataToUpdate['notifications'] = notifications;
+      } else {
+        Map<String, dynamic> notifications = {};
+        notifications['discounts'] = _promotionsValue;
+        notifications['favoriteSellers'] = _attValue;
+        notifications['messages'] = _newMessagesValue;
+        notifications['reservations'] = _reservaValue;
+        dataToUpdate['notifications'] = notifications;
+      }
+      final firebaseUser = await FirebaseAuth.instance.currentUser();
+      if (dataToUpdate.length > 0) {
+        await Firestore.instance
+            .collection('clients')
+            .document(firebaseUser.uid)
+            .updateData(dataToUpdate);
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Theme.of(context).accentColor,
@@ -335,6 +364,15 @@ class _ProfileSettingsState extends State<ProfileSettings> {
         ),
       );
     } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e.toString(),
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
+      );
       print(e);
     }
   }

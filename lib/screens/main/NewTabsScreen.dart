@@ -60,8 +60,7 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
                 picture: snapshot?.data['picture']?.toString(),
                 name: snapshot.data['name'].toString(),
                 phone: snapshot?.data['phone']?.toString(),
-                notificationSettings: snapshot.data['notificationSettings'] !=
-                        null
+                notificationSettings: snapshot.data['notifications'] != null
                     ? UserNotificationSettings(
                         discounts: snapshot.data['notifications']['discounts'],
                         favoriteSellers: snapshot.data['notifications']
