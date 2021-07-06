@@ -98,7 +98,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         if (changeHasMade) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              duration: Duration(seconds: 1),
+              duration: Duration(seconds: 2),
               backgroundColor: Theme.of(context).accentColor,
               content: Text(
                 'Mudanças realizadas',
@@ -106,9 +106,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
             ),
           );
+          Navigator.of(context).pop();
         }
-        setState(() => _loading = false);
-        Navigator.of(context).pop();
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
