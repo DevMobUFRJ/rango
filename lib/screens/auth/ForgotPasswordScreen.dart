@@ -15,11 +15,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldMessengerState>();
 
+  bool _loading = false;
+
   TextEditingController _email = TextEditingController();
 
   String _emailErrorMessage;
 
   Future<void> _submit(BuildContext ctx) async {
+    setState(() => _loading = true);
     final isValid = _formKey.currentState.validate();
     FocusScope.of(ctx).unfocus();
     if (isValid && _emailErrorMessage == null) {
@@ -30,6 +33,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         ScaffoldMessenger.of(context)
             .showSnackBar(
               SnackBar(
+                duration: Duration(seconds: 2),
                 backgroundColor: Theme.of(ctx).accentColor,
                 content: Text(
                   'Email enviado',
@@ -75,69 +79,86 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 0.1.wp),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Flexible(
               flex: 1,
-              child: Text(
-                "RANGO",
-                style: GoogleFonts.montserrat(
-                  fontSize: 80.nsp,
-                  color: Theme.of(context).accentColor,
-                ),
-              ),
-            ),
-            Flexible(
-              flex: 1,
-              child: AutoSizeText(
-                "Preencha o campo abaixo para receber o email de recuperação de senha",
-                style: GoogleFonts.montserrat(
-                  fontSize: 30.nsp,
-                  color: Theme.of(context).accentColor,
-                ),
-              ),
-            ),
-            Flexible(
-              flex: 1,
-              child: Form(
-                key: _formKey,
-                child: CustomTextFormField(
-                  labelText: 'Email',
-                  key: ValueKey('email'),
-                  validator: (value) {
-                    if (value.isEmpty || !value.contains('@')) {
-                      setState(() {
-                        _emailErrorMessage = 'Coloque um email válido';
-                      });
-                    } else {
-                      setState(() {
-                        _emailErrorMessage = null;
-                      });
-                    }
-                    return null;
-                  },
-                  onSaved: (value) => _email.text = value,
-                  keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.done,
-                  errorText: _emailErrorMessage,
-                ),
-              ),
-            ),
-            Flexible(
-              flex: 1,
-              child: ElevatedButton(
-                onPressed: () => _submit(context),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 0.1.wp,
-                    vertical: 0.01.hp,
+              child: Container(
+                margin: EdgeInsets.only(top: 50, bottom: 20),
+                child: Text(
+                  "RANGO",
+                  style: GoogleFonts.montserrat(
+                    fontSize: 80.nsp,
+                    color: Theme.of(context).accentColor,
                   ),
-                  child: AutoSizeText(
-                    'Confirmar',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 38.nsp,
-                    ),
+                ),
+              ),
+            ),
+            Flexible(
+              flex: 1,
+              child: Container(
+                margin: EdgeInsets.only(bottom: 20),
+                child: AutoSizeText(
+                  "Preencha abaixo para receber o email de recuperação de senha",
+                  style: GoogleFonts.montserrat(
+                    fontSize: 30.nsp,
+                    color: Theme.of(context).accentColor,
                   ),
+                ),
+              ),
+            ),
+            Flexible(
+              flex: 0,
+              child: Container(
+                margin: EdgeInsets.only(bottom: 20),
+                child: Form(
+                  key: _formKey,
+                  child: CustomTextFormField(
+                    labelText: 'Email',
+                    key: ValueKey('email'),
+                    validator: (value) {
+                      if (value.isEmpty || !value.contains('@')) {
+                        setState(() {
+                          _emailErrorMessage = 'Coloque um email válido';
+                        });
+                      } else {
+                        setState(() {
+                          _emailErrorMessage = null;
+                        });
+                      }
+                      return null;
+                    },
+                    onSaved: (value) => _email.text = value,
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.done,
+                    errorText: _emailErrorMessage,
+                    onFieldSubmitted: (_) => _submit(context),
+                  ),
+                ),
+              ),
+            ),
+            Flexible(
+              flex: 1,
+              child: Container(
+                width: 0.4.wp,
+                child: ElevatedButton(
+                  onPressed: _loading ? null : () => _submit(context),
+                  child: _loading
+                      ? SizedBox(
+                          child: CircularProgressIndicator(
+                            valueColor: new AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
+                            strokeWidth: 3.0,
+                          ),
+                          height: 30.w,
+                          width: 30.w,
+                        )
+                      : AutoSizeText(
+                          'Confirmar',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 38.nsp,
+                          ),
+                        ),
                 ),
               ),
             ),

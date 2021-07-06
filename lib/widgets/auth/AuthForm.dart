@@ -190,7 +190,7 @@ class _AuthFormState extends State<AuthForm> {
                               onFieldSubmitted: !widget._isLogin
                                   ? (_) => FocusScope.of(context)
                                       .requestFocus(_focusNodeConfirmPass)
-                                  : null,
+                                  : (_) => _submit(),
                             ),
                           ),
                           if (!widget._isLogin)
@@ -218,6 +218,7 @@ class _AuthFormState extends State<AuthForm> {
                                 onSaved: (value) =>
                                     {setState(() => _confirmPass.text = value)},
                                 isPassword: true,
+                                onFieldSubmitted: (_) => _submit(),
                               ),
                             ),
                           if (widget._isLogin)
