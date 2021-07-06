@@ -66,7 +66,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _formKey.currentState.save();
       setState(() => _loading = true);
       try {
-        Map<String, String> dataToUpdate = {};
+        Map<String, dynamic> dataToUpdate = {};
         if (_phone != null && _phone.text != widget.user.phone) {
           dataToUpdate['phone'] = _phone.text;
         }
@@ -88,7 +88,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           await Firestore.instance
               .collection('clients')
               .document(firebaseUser.uid)
-              .updateData({...dataToUpdate});
+              .updateData(dataToUpdate);
           changeHasMade = true;
         }
         if (_pass.text.length > 0) {
