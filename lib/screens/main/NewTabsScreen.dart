@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rango/main.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/models/user_notification_settings.dart';
 import 'package:rango/screens/SplashScreen.dart';
@@ -10,39 +11,63 @@ import 'package:rango/screens/main/tabs/OrderHistory.dart';
 import 'package:rango/screens/main/tabs/ProfileScreen.dart';
 import 'package:rango/screens/main/tabs/SearchScreen.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NewTabsScreen extends StatefulWidget {
   @override
   _NewTabsScreenState createState() => _NewTabsScreenState();
 }
 
+Future<void> _showNotification(Map<String, dynamic> message) async {
+  const AndroidNotificationDetails androidPlatformChannelSpecifics =
+      AndroidNotificationDetails(
+    '1',
+    'teste',
+    'descr',
+    importance: Importance.max,
+    priority: Priority.high,
+    ticker: 'ticker',
+  );
+  print(message);
+  const NotificationDetails platformChannelSpecifics =
+      NotificationDetails(android: androidPlatformChannelSpecifics);
+  await flutterLocalNotificationsPlugin.show(
+    0,
+    message['title'],
+    message['description'],
+    platformChannelSpecifics,
+    payload: 'item x',
+  );
+}
+
+Future<void> _teste(RemoteMessage message) async {
+  print(message);
+  _showNotification(message.data);
+}
+
 class _NewTabsScreenState extends State<NewTabsScreen> {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   Future<void> _registerOnFirebase() async {
-    await _firebaseMessaging.subscribeToTopic('all');
-    await _firebaseMessaging
-        .getToken()
-        .then((token) => debugPrint('Token: $token'));
-    _firebaseMessaging.configure(
-      onMessage: (message) async {
-        print(message);
-      },
-    );
+    await FirebaseMessaging.instance.subscribeToTopic('all');
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('otario');
+      print(message.data);
+      _showNotification(message.data);
+    });
+    FirebaseMessaging.onBackgroundMessage(_teste);
   }
 
   @override
   void initState() {
     _getUserId();
     _registerOnFirebase();
-
     super.initState();
   }
 
   String userId;
   bool loading = true;
 
-  Future<void> _getUserId() async {
-    final user = await FirebaseAuth.instance.currentUser();
+  void _getUserId() {
+    final user = FirebaseAuth.instance.currentUser;
     setState(() => {
           loading = false,
           userId = user.uid,
@@ -57,15 +82,15 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
     return loading
         ? SplashScreen()
         : StreamBuilder(
-            stream: Firestore.instance
+            stream: FirebaseFirestore.instance
                 .collection('clients')
-                .document(userId)
+                .doc(userId)
                 .snapshots(),
             builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting ||
                   !snapshot.hasData ||
-                  snapshot.data.data == null ||
-                  !snapshot.data.data.containsKey('email')) {
+                  snapshot.data.data == null) {
+                //      !snapshot.data.data containsKey('email')
                 return SplashScreen();
               }
               Client client = new Client(

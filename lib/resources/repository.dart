@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
-import 'package:rango/models/client.dart';
 import 'package:rango/models/meals.dart';
 import 'package:rango/models/order.dart';
 import 'package:geolocator/geolocator.dart';
@@ -20,38 +19,38 @@ const weekdayMap = {
 };
 
 class Repository {
-  final sellersRef = Firestore.instance.collection('sellers');
-  final clientsRef = Firestore.instance.collection('clients');
-  final ordersRef = Firestore.instance.collection('orders');
+  final sellersRef = FirebaseFirestore.instance.collection('sellers');
+  final clientsRef = FirebaseFirestore.instance.collection('clients');
+  final ordersRef = FirebaseFirestore.instance.collection('orders');
   final geo = Geoflutterfire();
   final auth = FirebaseAuth.instance;
 
   Stream<DocumentSnapshot> getSeller(String uid) {
-    return sellersRef.document(uid).snapshots();
+    return sellersRef.doc(uid).snapshots();
   }
 
   Stream<DocumentSnapshot> getMealFromSeller(String mealUid, String sellerUid) {
     return sellersRef
-        .document(sellerUid)
+        .doc(sellerUid)
         .collection("meals")
-        .document(mealUid)
+        .doc(mealUid)
         .snapshots();
   }
 
   Future<DocumentSnapshot> getSellerFuture(String uid) {
-    return sellersRef.document(uid).get();
+    return sellersRef.doc(uid).get();
   }
 
-  Future<FirebaseUser> getCurrentUser() {
-    return auth.currentUser();
+  User getCurrentUser() {
+    return auth.currentUser;
   }
 
   Stream<DocumentSnapshot> getClientStream(String uid) {
-    return clientsRef.document(uid).snapshots();
+    return clientsRef.doc(uid).snapshots();
   }
 
   Stream<QuerySnapshot> getSellerCurrentMeals(String uid) {
-    return sellersRef.document(uid).collection('currentMeals').snapshots();
+    return sellersRef.doc(uid).collection('currentMeals').snapshots();
   }
 
   Stream<QuerySnapshot> getFavoriteSellers(List<String> favorites) {
@@ -62,14 +61,14 @@ class Repository {
   }
 
   Future<void> addSellerToClientFavorites(String clientId, String sellerId) {
-    return clientsRef.document(clientId).updateData({
+    return clientsRef.doc(clientId).update({
       'favoriteSellers': FieldValue.arrayUnion([sellerId])
     });
   }
 
   Future<void> removeSellerFromClientFavorites(
       String clientId, String sellerId) {
-    return clientsRef.document(clientId).updateData({
+    return clientsRef.doc(clientId).update({
       'favoriteSellers': FieldValue.arrayRemove([sellerId])
     });
   }
@@ -77,11 +76,11 @@ class Repository {
   Future<void> addOrder(Order order) async {
     try {
       var mealDoc = await sellersRef
-          .document(order.sellerId)
+          .doc(order.sellerId)
           .collection('meals')
-          .document(order.mealId)
-          .get(source: Source.server);
-      Meal meal = Meal.fromJson(mealDoc.data);
+          .doc(order.mealId)
+          .get(GetOptions(source: Source.server));
+      Meal meal = Meal.fromJson(mealDoc.data());
       if (meal.quantity < order.quantity) {
         throw ('Não há quentinhas suficientes para o seu pedido. Quantidade disponível: ${meal.quantity}.');
       }
@@ -93,8 +92,8 @@ class Repository {
 
   Future<void> cancelOrder(String orderUid) async {
     return ordersRef
-        .document(orderUid)
-        .updateData({'status': 'canceled', 'canceledAt': Timestamp.now()});
+        .doc(orderUid)
+        .update({'status': 'canceled', 'canceledAt': Timestamp.now()});
   }
 
   Stream<QuerySnapshot> getOrdersFromClient(String clientId, {int limit}) {
@@ -117,8 +116,9 @@ class Repository {
   }
 
   bool isInTimeRange(DocumentSnapshot seller, String weekday, int time) {
-    return seller.data["shift"][weekday]["openingTime"] <= time &&
-        seller.data["shift"][weekday]["closingTime"] >= time;
+    var sellerData = seller.data() as Map<String, dynamic>;
+    return sellerData["shift"][weekday]["openingTime"] <= time &&
+        sellerData["shift"][weekday]["closingTime"] >= time;
   }
 
   Stream<List<DocumentSnapshot>> filterTimeRange(

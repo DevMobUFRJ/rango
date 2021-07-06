@@ -109,7 +109,6 @@ String _retrieveSellerShift(Seller seller) {
 class _SellerProfileState extends State<SellerProfile> {
   @override
   Widget build(BuildContext context) {
-    final yellow = Color(0xFFF9B152);
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
@@ -150,8 +149,10 @@ class _SellerProfileState extends State<SellerProfile> {
             );
           }
 
-          Seller seller =
-              Seller.fromJson(snapshot.data.data, id: snapshot.data.documentID);
+          Seller seller = Seller.fromJson(
+            snapshot.data.data(),
+            id: snapshot.data.id,
+          );
           var currentMeals = seller.currentMeals;
           List<MealRequest> allCurrentMeals = currentMeals.entries.map((meal) {
             return MealRequest(mealId: meal.key, seller: seller);
@@ -360,9 +361,9 @@ class _SellerProfileState extends State<SellerProfile> {
   }
 
   _buildFavoriteButton() {
-    return FutureBuilder(
-      future: Repository.instance.getCurrentUser(),
-      builder: (context, AsyncSnapshot<FirebaseUser> authSnapshot) {
+    return StreamBuilder(
+      stream: FirebaseAuth.instance.userChanges(),
+      builder: (context, AsyncSnapshot<User> authSnapshot) {
         if (!authSnapshot.hasData || authSnapshot.hasError) {
           return Padding(
             padding: EdgeInsets.only(
@@ -394,8 +395,10 @@ class _SellerProfileState extends State<SellerProfile> {
                 return SizedBox();
               }
               var isFavorite = false;
-              if (clientSnapshot.data.data['favoriteSellers'] != null) {
-                isFavorite = clientSnapshot.data.data['favoriteSellers']
+              var clientSnapshotdata =
+                  clientSnapshot.data.data() as Map<String, dynamic>;
+              if (clientSnapshotdata['favoriteSellers'] != null) {
+                isFavorite = clientSnapshotdata['favoriteSellers']
                     .contains(widget.sellerId);
               }
               return Padding(
@@ -406,10 +409,10 @@ class _SellerProfileState extends State<SellerProfile> {
                   onTap: () async {
                     if (isFavorite) {
                       Repository.instance.removeSellerFromClientFavorites(
-                          clientSnapshot.data.documentID, widget.sellerId);
+                          clientSnapshot.data.id, widget.sellerId);
                     } else {
                       Repository.instance.addSellerToClientFavorites(
-                          clientSnapshot.data.documentID, widget.sellerId);
+                          clientSnapshot.data.id, widget.sellerId);
                     }
                   },
                   child: Icon(

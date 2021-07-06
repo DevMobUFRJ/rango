@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:rango/models/address.dart';
 import 'package:rango/models/contact.dart';
 import 'package:rango/models/location.dart';
@@ -48,8 +46,11 @@ class Seller {
         active = json['active'],
         canReservate = json['canReservate'],
         logo = json['logo'],
-        location = json['location'] == null? null: Location.fromJson(json['location']),
-        address = json['address'] == null? null: Address.fromJson(json['address']),
+        location = json['location'] == null
+            ? null
+            : Location.fromJson(json['location']),
+        address =
+            json['address'] == null ? null : Address.fromJson(json['address']),
         picture = json['picture'],
         description = json['description'],
         paymentMethods = json['paymentMethods'],
@@ -57,11 +58,12 @@ class Seller {
         meals = [];
 
   Map<String, dynamic> toJson() => {
-    'name': name,
-  };
+        'name': name,
+      };
 }
 
 Map<String, CurrentMeal> buildCurrentMeals(Map<String, dynamic> json) {
-  Map<String, CurrentMeal> newMap = json.map((key, value) => MapEntry(key, CurrentMeal.fromJson(value)));
+  Map<String, CurrentMeal> newMap =
+      json.map((key, value) => MapEntry(key, CurrentMeal.fromJson(value)));
   return newMap;
 }

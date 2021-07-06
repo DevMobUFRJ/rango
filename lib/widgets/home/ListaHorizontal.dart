@@ -139,9 +139,10 @@ class ListaHorizontal extends StatelessWidget {
                     ),
                   );
                 }
-
+                var mealSnapshotData =
+                    mealSnapshot.data.data() as Map<String, dynamic>;
                 Meal meal = Meal.fromJson(
-                  mealSnapshot.data.data,
+                  mealSnapshotData,
                   id: meals[index].mealId,
                 );
                 return GestureDetector(

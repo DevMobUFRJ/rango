@@ -3,7 +3,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:geolocator/geolocator.dart' hide openAppSettings;
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/models/meal_request.dart';
@@ -218,8 +218,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                           snapshot.data.forEach(
                                             (sellerDoc) {
                                               Seller seller = Seller.fromJson(
-                                                sellerDoc.data,
-                                                id: sellerDoc.documentID,
+                                                sellerDoc.data(),
+                                                id: sellerDoc.id,
                                               );
                                               sellerList.add(seller);
                                               var filterByFeatured = false;
@@ -452,7 +452,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             ),
           );
         }
-        if (orderSnapshot.data.documents.isEmpty) {
+        if (orderSnapshot.data.docs.isEmpty) {
           return Container();
         }
         if (orderSnapshot.hasError) {
@@ -467,8 +467,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           );
         }
 
-        var mealIds = orderSnapshot.data.documents
-            .map((order) => order.data["mealId"])
+        var mealIds = orderSnapshot.data.docs
+            .map((order) => order.get("mealId"))
             .toSet()
             .toList();
         meals.removeWhere(

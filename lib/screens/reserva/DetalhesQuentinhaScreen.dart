@@ -1,6 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart' show FirebaseUser;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
@@ -305,8 +305,7 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () async {
-                    final FirebaseUser user =
-                        await Repository.instance.getCurrentUser();
+                    final User user = Repository.instance.getCurrentUser();
 
                     Order order = Order(
                       clientId: user.uid,

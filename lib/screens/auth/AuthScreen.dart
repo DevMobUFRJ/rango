@@ -25,18 +25,18 @@ class _AuthScreenState extends State<AuthScreen> {
     String password,
     BuildContext ctx,
   }) async {
-    AuthResult authResult;
+    UserCredential authResult;
 
     try {
       setState(() => _isLoading = true);
       if (_isLogin) {
         try {
-          var sellers = await Firestore.instance
+          var sellers = await FirebaseFirestore.instance
               .collection('sellers')
               .where('email', isEqualTo: email)
               .limit(1)
-              .getDocuments();
-          bool isSeller = sellers.documents.isNotEmpty;
+              .get();
+          bool isSeller = sellers.docs.isNotEmpty;
           if (!isSeller) {
             authResult = await _auth.signInWithEmailAndPassword(
                 email: email, password: password);
@@ -88,10 +88,8 @@ class _AuthScreenState extends State<AuthScreen> {
         setState(() => _isLoading = true);
         authResult = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
-        FirebaseUser user = await _auth.currentUser();
-        UserUpdateInfo updateInfo = UserUpdateInfo();
-        updateInfo.displayName = name;
-        user.updateProfile(updateInfo);
+        User user = _auth.currentUser;
+        user.updateDisplayName(name);
 
         String url;
         if (image != null) {
@@ -99,13 +97,13 @@ class _AuthScreenState extends State<AuthScreen> {
               .ref()
               .child('user_image')
               .child(authResult.user.uid + '.jpg');
-          await ref.putFile(image).onComplete;
+          await ref.putFile(image).whenComplete(() => null);
           url = await ref.getDownloadURL();
         }
-        await Firestore.instance
+        await FirebaseFirestore.instance
             .collection('clients')
-            .document(authResult.user.uid)
-            .setData(
+            .doc(authResult.user.uid)
+            .set(
           {
             'name': name,
             'email': email,

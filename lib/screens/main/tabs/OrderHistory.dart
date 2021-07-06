@@ -23,9 +23,9 @@ class OrderHistoryScreen extends StatelessWidget {
       ),
       body: Container(
         height: 1.hp - 56,
-        child: FutureBuilder(
-          future: Repository.instance.getCurrentUser(),
-          builder: (context, AsyncSnapshot<FirebaseUser> authSnapshot) {
+        child: StreamBuilder(
+          stream: FirebaseAuth.instance.userChanges(),
+          builder: (context, AsyncSnapshot<User> authSnapshot) {
             if (!authSnapshot.hasData ||
                 authSnapshot.connectionState == ConnectionState.waiting) {
               return Container(
@@ -83,7 +83,7 @@ class OrderHistoryScreen extends StatelessWidget {
                   );
                 }
 
-                if (snapshot.data.documents.isEmpty)
+                if (snapshot.data.docs.isEmpty)
                   return Container(
                     margin: EdgeInsets.symmetric(
                       horizontal: 15,
@@ -102,10 +102,10 @@ class OrderHistoryScreen extends StatelessWidget {
                   );
 
                 return ListView.builder(
-                  itemCount: snapshot.data.documents.length,
+                  itemCount: snapshot.data.docs.length,
                   itemBuilder: (context, index) {
                     Order order =
-                        Order.fromJson(snapshot.data.documents[index].data);
+                        Order.fromJson(snapshot.data.docs[index].data());
                     return Card(
                       child: ListTile(
                         contentPadding: EdgeInsets.symmetric(
@@ -146,7 +146,7 @@ class OrderHistoryScreen extends StatelessWidget {
                         trailing: buildTrailing(
                           context,
                           order,
-                          snapshot.data.documents[index].documentID,
+                          snapshot.data.docs[index].id,
                         ),
                         subtitle: order.requestedAt != null
                             ? Text(

@@ -153,9 +153,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       );
                     }
-                    if (clientSnapshot.data.data['favoriteSellers'] == null ||
-                        clientSnapshot.data.data['favoriteSellers'].length ==
-                            0) {
+                    var clientSnapshotdata =
+                        clientSnapshot.data.data() as Map<String, dynamic>;
+                    if (clientSnapshotdata['favoriteSellers'] == null ||
+                        clientSnapshotdata['favoriteSellers'].length == 0) {
                       return Container(
                         margin: EdgeInsets.symmetric(
                             horizontal: 0.03.wp, vertical: 15),
@@ -182,7 +183,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     }
                     final favoriteSellers = List<String>.from(
-                        clientSnapshot.data.data['favoriteSellers']);
+                        clientSnapshotdata['favoriteSellers']);
 
                     // Um belo exemplo de list view! A busca pelo seller só acontece quando o elemento pode aparecer na tela.
                     // Usa-se um StreamBuilder para aproveitar a cache do firestore
@@ -224,10 +225,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             );
                           }
-
+                          var sellerSnapshotdata = clientSnapshot.data.data()
+                              as Map<String, dynamic>;
                           Seller seller = Seller.fromJson(
-                              sellerSnapshot.data.data,
-                              id: sellerSnapshot.data.documentID);
+                            sellerSnapshotdata,
+                            id: sellerSnapshot.data.id,
+                          );
 
                           return GestureDetector(
                             onTap: () => pushNewScreen(

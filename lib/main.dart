@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:rango/resources/rangeChangeNotifier.dart';
 import 'package:rango/screens/SplashScreen.dart';
@@ -8,8 +9,23 @@ import 'package:rango/screens/auth/ForgotPasswordScreen.dart';
 import 'package:rango/screens/auth/LoginScreen.dart';
 import 'package:rango/screens/main/NewTabsScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Firebase.initializeApp();
+  const AndroidInitializationSettings initializationAndroidSettings =
+      AndroidInitializationSettings('app_icon');
+  final InitializationSettings initializationSettings =
+      InitializationSettings(android: initializationAndroidSettings);
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: (String payload) async {
+    if (payload != null) {
+      print(payload);
+    }
+  });
   runApp(MyApp());
 }
 
@@ -69,7 +85,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
         home: StreamBuilder(
-          stream: FirebaseAuth.instance.onAuthStateChanged,
+          stream: FirebaseAuth.instance.authStateChanges(),
           builder: (ctx, userSnapshot) {
             if (userSnapshot.connectionState == ConnectionState.waiting) {
               return SplashScreen();
