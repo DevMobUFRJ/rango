@@ -59,7 +59,7 @@ class SellerGridVertical extends StatelessWidget {
                 pageTransitionAnimation: PageTransitionAnimation.cupertino,
               ),
               child: Container(
-                constraints: BoxConstraints(maxHeight: 0.33.hp),
+                constraints: BoxConstraints(maxHeight: 430.h),
                 child: Card(
                   semanticContainer: true,
                   clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -68,48 +68,56 @@ class SellerGridVertical extends StatelessWidget {
                   child: Column(
                     children: <Widget>[
                       Expanded(
-                        flex: 2,
-                        child: Container(
-                          child: Stack(
-                            children: [
-                              Shimmer.fromColors(
-                                baseColor: Colors.grey[300],
-                                highlightColor: Colors.white,
-                                child: Container(
-                                  color: Colors.white,
-                                ),
+                        flex: 0,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Shimmer.fromColors(
+                              baseColor: Color.fromRGBO(255, 146, 117, 1),
+                              highlightColor: Colors.white,
+                              child: Container(
+                                height: 300.h,
+                                color: Colors.white,
                               ),
-                              Center(
-                                child: Icon(
-                                  Icons.store,
-                                  size: 75,
-                                  color: Colors.white,
-                                ),
+                            ),
+                            Center(
+                              child: Icon(
+                                Icons.store,
+                                size: 75,
+                                color: Colors.white,
                               ),
-                              FadeInImage.memoryNetwork(
-                                placeholder: kTransparentImage,
-                                image: sellers[index].logo,
-                                fit: BoxFit.cover,
-                              ),
-                            ],
-                          ),
+                            ),
+                            FadeInImage.memoryNetwork(
+                              placeholder: kTransparentImage,
+                              image: sellers[index].logo,
+                              fit: BoxFit.cover,
+                              height: 330.h,
+                            ),
+                          ],
                         ),
                       ),
                       Flexible(
-                        flex: 0,
+                        flex: 1,
                         child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 4),
+                          constraints: BoxConstraints(maxHeight: 100.h),
+                          padding: EdgeInsets.symmetric(vertical: 1),
                           child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               AutoSizeText(
                                 sellers[index].name,
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.montserrat(fontSize: 28.nsp),
+                                minFontSize: 15,
+                                maxFontSize: 15,
+                                style: GoogleFonts.montserrat(),
                               ),
                               SizedBox(height: 4),
                               AutoSizeText(
                                 distanceInKM(sellers[index], userLocation),
-                                style: GoogleFonts.montserrat(fontSize: 28.nsp),
+                                minFontSize: 15,
+                                maxFontSize: 15,
+                                style: GoogleFonts.montserrat(),
                               ),
                             ],
                           ),
