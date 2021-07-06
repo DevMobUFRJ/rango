@@ -41,12 +41,14 @@ dependencies:
     rxdart: ^0.23.1
     shared_preferences: 0.5.12+4
     provider: 4.3.3
-    intl: ^0.17.0
+    intl: ^0.15.7
     font_awesome_flutter: ^9.1.0
     url_launcher: ^6.0.5
     permission_handler: ^5.1.0+2
     shimmer: ^2.0.0
     transparent_image: ^2.0.0
+    flutter_local_notifications: ^4.0.1+2
+    firebase_messaging: 6.0.16
 
 dev_dependencies:
     flutter_test:

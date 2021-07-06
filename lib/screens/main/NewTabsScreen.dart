@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rango/models/client.dart';
@@ -16,9 +17,24 @@ class NewTabsScreen extends StatefulWidget {
 }
 
 class _NewTabsScreenState extends State<NewTabsScreen> {
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  Future<void> _registerOnFirebase() async {
+    await _firebaseMessaging.subscribeToTopic('all');
+    await _firebaseMessaging
+        .getToken()
+        .then((token) => debugPrint('Token: $token'));
+    _firebaseMessaging.configure(
+      onMessage: (message) async {
+        print(message);
+      },
+    );
+  }
+
   @override
   void initState() {
     _getUserId();
+    _registerOnFirebase();
+
     super.initState();
   }
 
