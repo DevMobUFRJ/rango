@@ -25,12 +25,12 @@ class AuthForm extends StatefulWidget {
 
 class _AuthFormState extends State<AuthForm> {
   final _formKey = GlobalKey<FormState>();
+
+  final TextEditingController _name = TextEditingController();
+  final TextEditingController _email = TextEditingController();
   final TextEditingController _pass = TextEditingController();
   final TextEditingController _confirmPass = TextEditingController();
 
-  String _name = '';
-  String _email = '';
-  String _password = '';
   File _userImageFile;
   String _emailErrorMessage;
   String _nameErrorMessage;
@@ -38,6 +38,7 @@ class _AuthFormState extends State<AuthForm> {
   String _confirmPasswordErrorMessage;
 
   final _focusNodeName = FocusNode();
+  final _focusNodeEmail = FocusNode();
   final _focusNodePass = FocusNode();
   final _focusNodeConfirmPass = FocusNode();
 
@@ -54,21 +55,29 @@ class _AuthFormState extends State<AuthForm> {
           _confirmPasswordErrorMessage == null) {
         _formKey.currentState.save();
         widget.submitForm(
-          email: _email.trim(),
-          name: _name.trim(),
-          password: _password.trim(),
+          email: _email.text.trim(),
+          name: _name.text.trim(),
+          password: _pass.text.trim(),
           ctx: context,
           image: _userImageFile,
         );
       }
     } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e.toString(),
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
+      );
       print(e);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
     return LayoutBuilder(
       builder: (ctx, constraint) => SingleChildScrollView(
         child: ConstrainedBox(
@@ -103,6 +112,7 @@ class _AuthFormState extends State<AuthForm> {
                             flex: 2,
                             child: CustomTextFormField(
                               labelText: 'Email:',
+                              focusNode: _focusNodeEmail,
                               key: ValueKey('email'),
                               validator: (value) {
                                 if (value.isEmpty || !value.contains('@')) {
@@ -117,12 +127,13 @@ class _AuthFormState extends State<AuthForm> {
                                 }
                                 return null;
                               },
-                              onSaved: (value) => _email = value,
+                              onSaved: (value) => _email.text = value,
                               keyboardType: TextInputType.emailAddress,
                               onFieldSubmitted: (_) => !widget._isLogin
                                   ? FocusScope.of(context)
                                       .requestFocus(_focusNodeName)
-                                  : FocusScope.of(context).nextFocus(),
+                                  : FocusScope.of(context)
+                                      .requestFocus(_focusNodePass),
                               textInputAction: TextInputAction.next,
                               errorText: _emailErrorMessage,
                             ),
@@ -135,7 +146,7 @@ class _AuthFormState extends State<AuthForm> {
                                 focusNode: _focusNodeName,
                                 errorText: _nameErrorMessage,
                                 key: ValueKey('name'),
-                                onSaved: (value) => _name = value,
+                                onSaved: (value) => _name.text = value,
                                 validator: (value) {
                                   if (value.isEmpty) {
                                     setState(() {
@@ -170,7 +181,7 @@ class _AuthFormState extends State<AuthForm> {
                                 return null;
                               },
                               onSaved: (value) =>
-                                  {setState(() => _password = value)},
+                                  {setState(() => _pass.text = value)},
                               errorText: _passwordErrorMessage,
                               isPassword: true,
                               textInputAction: !widget._isLogin
@@ -204,6 +215,8 @@ class _AuthFormState extends State<AuthForm> {
                                   return null;
                                 },
                                 errorText: _confirmPasswordErrorMessage,
+                                onSaved: (value) =>
+                                    {setState(() => _confirmPass.text = value)},
                                 isPassword: true,
                               ),
                             ),

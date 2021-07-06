@@ -36,6 +36,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   bool _loading = false;
 
   final _focusNodeTel = FocusNode();
+  final _focusNodeName = FocusNode();
   final _focusNodePass = FocusNode();
   final _focusNodeConfirmPass = FocusNode();
 
@@ -176,6 +177,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             flex: 2,
                             child: CustomTextFormField(
                               labelText: 'Nome:',
+                              focusNode: _focusNodeName,
                               key: ValueKey('name'),
                               controller: _name,
                               validator: (String value) {

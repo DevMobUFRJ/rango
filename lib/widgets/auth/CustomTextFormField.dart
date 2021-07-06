@@ -15,6 +15,7 @@ class CustomTextFormField extends StatefulWidget {
   final bool isPassword;
   final TextEditingController controller;
   final FocusNode focusNode;
+  final num numberOfLines;
 
   CustomTextFormField({
     @required this.labelText,
@@ -28,6 +29,7 @@ class CustomTextFormField extends StatefulWidget {
     this.isPassword = false,
     this.controller,
     this.focusNode,
+    this.numberOfLines = 1,
   });
 
   @override
@@ -54,45 +56,44 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             ),
           ),
         ),
-        Flexible(
-          flex: 1,
-          child: Material(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+        Material(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          elevation: 5,
+          child: TextFormField(
+            focusNode: widget.focusNode != null ? widget.focusNode : null,
+            controller: widget.controller,
+            textInputAction: widget.textInputAction,
+            onFieldSubmitted: widget.onFieldSubmitted,
+            key: widget.key,
+            validator: widget.validator,
+            onSaved: widget.onSaved,
+            minLines: 1,
+            maxLines: widget.numberOfLines,
+            obscureText: widget.isPassword != null && !widget.isPassword
+                ? false
+                : !_showPassword,
+            decoration: InputDecoration(
+              errorStyle: TextStyle(fontSize: 22.nsp),
+              border: InputBorder.none,
+              contentPadding: widget.isPassword != null && widget.isPassword
+                  ? EdgeInsets.all(15)
+                  : EdgeInsets.only(left: 15),
+              suffixIcon: widget.isPassword != null && widget.isPassword
+                  ? IconButton(
+                      icon: Icon(
+                        !_showPassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: Theme.of(context).accentColor,
+                      ),
+                      onPressed: () =>
+                          {setState(() => _showPassword = !_showPassword)},
+                    )
+                  : null,
             ),
-            elevation: 5,
-            child: TextFormField(
-              focusNode: widget.focusNode != null ? widget.focusNode : null,
-              controller: widget.controller,
-              textInputAction: widget.textInputAction,
-              onFieldSubmitted: widget.onFieldSubmitted,
-              key: widget.key,
-              validator: widget.validator,
-              onSaved: widget.onSaved,
-              obscureText: widget.isPassword != null && !widget.isPassword
-                  ? false
-                  : !_showPassword,
-              decoration: InputDecoration(
-                errorStyle: TextStyle(fontSize: 22.nsp),
-                border: InputBorder.none,
-                contentPadding: widget.isPassword != null && widget.isPassword
-                    ? EdgeInsets.all(15)
-                    : EdgeInsets.only(left: 15),
-                suffixIcon: widget.isPassword != null && widget.isPassword
-                    ? IconButton(
-                        icon: Icon(
-                          !_showPassword
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                          color: Theme.of(context).accentColor,
-                        ),
-                        onPressed: () =>
-                            {setState(() => _showPassword = !_showPassword)},
-                      )
-                    : null,
-              ),
-              keyboardType: widget.keyboardType,
-            ),
+            keyboardType: widget.keyboardType,
           ),
         ),
         if (widget.errorText != null) ErrorMessageText(widget.errorText),

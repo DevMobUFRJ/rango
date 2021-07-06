@@ -14,7 +14,9 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldMessengerState>();
-  String _email;
+
+  TextEditingController _email = TextEditingController();
+
   String _emailErrorMessage;
 
   Future<void> _submit(BuildContext ctx) async {
@@ -24,7 +26,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       _formKey.currentState.save();
       try {
         final firebaseAuth = FirebaseAuth.instance;
-        await firebaseAuth.sendPasswordResetEmail(email: _email);
+        await firebaseAuth.sendPasswordResetEmail(email: _email.text);
         ScaffoldMessenger.of(context)
             .showSnackBar(
               SnackBar(
@@ -42,6 +44,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             .closed
             .then((value) => Navigator.of(ctx).pop());
       } catch (error) {
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          SnackBar(
+            content: Text(
+              error.toString(),
+              textAlign: TextAlign.center,
+            ),
+            backgroundColor: Theme.of(context).errorColor,
+          ),
+        );
         print(error);
       }
     }
@@ -49,7 +60,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -106,7 +116,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     }
                     return null;
                   },
-                  onSaved: (value) => _email = value,
+                  onSaved: (value) => _email.text = value,
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.done,
                   errorText: _emailErrorMessage,
