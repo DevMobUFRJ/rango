@@ -97,17 +97,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           changeHasMade = true;
         }
         if (changeHasMade) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              duration: Duration(seconds: 2),
-              backgroundColor: Theme.of(context).accentColor,
-              content: Text(
-                'Mudanças realizadas',
-                textAlign: TextAlign.center,
-              ),
-            ),
-          );
-          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context)
+              .showSnackBar(
+                SnackBar(
+                  duration: Duration(seconds: 2),
+                  backgroundColor: Theme.of(context).accentColor,
+                  content: Text(
+                    'Mudanças realizadas',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              )
+              .closed
+              .then((value) => Navigator.of(context).pop());
         }
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
