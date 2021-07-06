@@ -73,10 +73,10 @@ class SellerGridVertical extends StatelessWidget {
                           alignment: Alignment.center,
                           children: [
                             Shimmer.fromColors(
-                              baseColor: Color.fromRGBO(255, 146, 117, 1),
+                              baseColor: Color.fromRGBO(255, 175, 153, 1),
                               highlightColor: Colors.white,
                               child: Container(
-                                height: 300.h,
+                                height: 330.h,
                                 color: Colors.white,
                               ),
                             ),

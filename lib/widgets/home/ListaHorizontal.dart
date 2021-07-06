@@ -65,7 +65,7 @@ class ListaHorizontal extends StatelessWidget {
                             child: Stack(
                               children: [
                                 Shimmer.fromColors(
-                                  baseColor: Color.fromRGBO(255, 146, 117, 1),
+                                  baseColor: Color.fromRGBO(255, 175, 153, 1),
                                   highlightColor: Colors.white,
                                   child: Container(
                                     color: Colors.white,
@@ -92,7 +92,7 @@ class ListaHorizontal extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Shimmer.fromColors(
-                                    baseColor: Color.fromRGBO(255, 146, 117, 1),
+                                    baseColor: Color.fromRGBO(255, 175, 153, 1),
                                     highlightColor: Colors.white,
                                     child: Container(
                                       color: Colors.grey[300],
@@ -103,7 +103,7 @@ class ListaHorizontal extends StatelessWidget {
                                     ),
                                   ),
                                   Shimmer.fromColors(
-                                    baseColor: Color.fromRGBO(255, 146, 117, 1),
+                                    baseColor: Color.fromRGBO(255, 175, 153, 1),
                                     highlightColor: Colors.white,
                                     child: Container(
                                       margin: EdgeInsets.only(top: 6),
@@ -171,7 +171,7 @@ class ListaHorizontal extends StatelessWidget {
                               alignment: Alignment.center,
                               children: [
                                 Shimmer.fromColors(
-                                  baseColor: Color.fromRGBO(255, 146, 117, 1),
+                                  baseColor: Color.fromRGBO(255, 175, 153, 1),
                                   highlightColor: Colors.white,
                                   child: Container(
                                     color: Colors.white,
