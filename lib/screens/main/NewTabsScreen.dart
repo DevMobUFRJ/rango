@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rango/main.dart';
 import 'package:rango/models/client.dart';
+import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/SplashScreen.dart';
 import 'package:rango/screens/main/tabs/HomeScreen.dart';
@@ -12,6 +13,7 @@ import 'package:rango/screens/main/tabs/ProfileScreen.dart';
 import 'package:rango/screens/main/tabs/SearchScreen.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:rango/screens/seller/ChatScreen.dart';
 
 class NewTabsScreen extends StatefulWidget {
   @override
@@ -61,19 +63,21 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
       initializationSettings,
       onSelectNotification: (String payload) async {
         if (payload != null) {
-          print(payload);
-          if (payload == 'trocarScene') {
-            pushNewScreen(
-              context,
-              screen: ProfileScreen(actualClient),
-              withNavBar: true,
-            );
-          } else if (payload == 'historico') {
+          if (payload == 'historico') {
             pushNewScreen(
               context,
               screen: OrderHistoryScreen(),
               withNavBar: true,
             );
+          } else if (payload.contains('chat')) {
+            String sellerId = payload.split('/')[1];
+            print('clicou na notificação');
+            var sellerJson = await FirebaseFirestore.instance
+                .collection('sellers')
+                .doc(sellerId)
+                .get();
+            Seller seller = Seller.fromJson(sellerJson.data());
+            pushNewScreen(context, screen: ChatScreen(seller));
           }
         }
       },
