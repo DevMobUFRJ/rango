@@ -58,7 +58,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
               );
             }
 
-            Seller seller = Seller.fromJson(sellerSnapshot.data.data);
+            Seller seller = Seller.fromJson(sellerSnapshot.data.data() as Map<String, dynamic>);
             List<String> currentMealsIds = seller.currentMeals.keys.toList();
 
             if (currentMealsIds.isEmpty) {
@@ -314,7 +314,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
 
               return ListView.builder(
                 padding: EdgeInsets.all(0),
-                itemCount: mealsSnapshot.data.documents.length,
+                itemCount: mealsSnapshot.data.docs.length,
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
                 itemBuilder: (ctx, index) => Row(
@@ -328,7 +328,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
                         onTap: () => {},
                         child: AutoSizeText(
                           // TODO Adicionar lógica a isso, vai adicionar o mealId no currentMeals
-                          mealsSnapshot.data.documents[index].data['name'],
+                          (mealsSnapshot.data.docs[index].data() as Map<String, dynamic>)['name'],
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.montserrat(
                             color: Color(0xFFF9B152),

@@ -60,7 +60,7 @@ class GridHorizontal extends StatelessWidget {
               );
             }
 
-            Meal meal = Meal.fromJson(mealSnapshot.data.data);
+            Meal meal = Meal.fromJson(mealSnapshot.data.data() as Map<String, dynamic>);
 
             return GestureDetector(
               onTap: () => pushNewScreen(context,

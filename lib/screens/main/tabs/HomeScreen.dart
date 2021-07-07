@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
         height: 1.hp - 56,
         child: StreamBuilder(
           stream: Repository.instance.getOpenOrdersFromSeller(widget.usuario.id),
-          builder: (context, AsyncSnapshot<QuerySnapshot> openOrdersSnapshot) {
+          builder: (context, AsyncSnapshot<QuerySnapshot<Order>> openOrdersSnapshot) {
             if (!openOrdersSnapshot.hasData ||
                 openOrdersSnapshot.connectionState == ConnectionState.waiting) {
               return Container(
@@ -64,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
             return StreamBuilder(
               stream: Repository.instance.getClosedOrdersFromSeller(widget.usuario.id),
-              builder: (context, AsyncSnapshot<QuerySnapshot> closedOrdersSnapshot) {
+              builder: (context, AsyncSnapshot<QuerySnapshot<Order>> closedOrdersSnapshot) {
                 if (!closedOrdersSnapshot.hasData) {
                   return Container(
                     height: 0.5.hp,
@@ -92,13 +92,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 }
                 
-                if (openOrdersSnapshot.data.documents.isEmpty && closedOrdersSnapshot.data.documents.isEmpty) {
+                if (openOrdersSnapshot.data.docs.isEmpty && closedOrdersSnapshot.data.docs.isEmpty) {
                   return NoOrdersWidget(assetName: assetName, widget: widget);
                 }
                 
                 return Column(
                   children: [
-                    _buildHeader(assetName, closedOrdersSnapshot.data.documents),
+                    _buildHeader(assetName, closedOrdersSnapshot.data.docs),
                     Container(
                       margin: EdgeInsets.only(
                         left: 0.1.wp,
@@ -108,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            child: closedOrdersSnapshot.data.documents.isEmpty && openOrdersSnapshot.data.documents.isEmpty
+                            child: closedOrdersSnapshot.data.docs.isEmpty && openOrdersSnapshot.data.docs.isEmpty
                                 ? SizedBox()
                                 : AutoSizeText(
                               "Pedidos do dia",
@@ -126,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Flexible(
                       flex: 1,
                       child: Container(
-                        child: closedOrdersSnapshot.data.documents.isNotEmpty && openOrdersSnapshot.data.documents.isEmpty
+                        child: closedOrdersSnapshot.data.docs.isNotEmpty && openOrdersSnapshot.data.docs.isEmpty
                             ? Container(
                                 alignment: Alignment.center,
                                 margin: EdgeInsets.symmetric(
@@ -145,13 +145,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             : ListView.builder(
                                 physics: ClampingScrollPhysics(),
                                 key: _listKey,
-                                itemCount: openOrdersSnapshot.data.documents.length,
+                                itemCount: openOrdersSnapshot.data.docs.length,
                                 itemBuilder: (ctx, index) {
-                                  Order order = Order.fromJson(
-                                      openOrdersSnapshot.data.documents[index].data,
-                                      id: openOrdersSnapshot.data.documents[index].documentID
-                                  );
-                                  return OrderContainer(order);
+                                  return OrderContainer(openOrdersSnapshot.data.docs[index].data());
                                 },
                             ),
                       ),

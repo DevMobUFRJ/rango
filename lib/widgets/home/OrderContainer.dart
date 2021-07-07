@@ -11,9 +11,7 @@ import 'package:rango/utils/string_formatters.dart';
 class OrderContainer extends StatefulWidget {
   final Order pedido;
 
-  OrderContainer(
-    this.pedido,
-  );
+  OrderContainer(this.pedido);
 
   @override
   _OrderContainerState createState() => _OrderContainerState();
@@ -42,6 +40,7 @@ class _OrderContainerState extends State<OrderContainer> {
         actions: [
           TextButton(
             onPressed: () {
+              //TODO Chamar firestore para cancelar, fazer através de uma transaction para incrementar quantity caso status: reserved ou sold
               Navigator.of(ctx).pop();
             },
             child: Text(
@@ -178,8 +177,23 @@ class _OrderContainerState extends State<OrderContainer> {
                                         : Color(0xFFF9B152),
                                     activeColor: Colors.white,
                                     value: widget.pedido.status == 'reserved' || widget.pedido.status == 'sold',
-                                    onChanged: (reserved) {
-                                      if (reserved) Repository.instance.reserveOrder(widget.pedido.id);
+                                    onChanged: (reserved) async {
+                                      try {
+                                        await Repository.instance.reserveOrderTransaction(widget.pedido);
+                                      } catch (e) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 20),
+                                              child: Text(
+                                                e.toString(),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                            backgroundColor: Theme.of(context).errorColor,
+                                          ),
+                                        );
+                                      }
                                     },
                                   ),
                                 ),

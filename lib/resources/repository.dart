@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rango/models/client.dart';
 import 'package:rango/models/meals.dart';
 import 'package:rango/models/order.dart';
 import 'package:geolocator/geolocator.dart';
@@ -19,34 +18,41 @@ const weekdayMap = {
 };
 
 class Repository {
-  final sellersRef = Firestore.instance.collection('sellers');
-  final clientsRef = Firestore.instance.collection('clients');
-  final ordersRef = Firestore.instance.collection('orders');
+  final sellersRef = FirebaseFirestore.instance.collection('sellers');
+  final clientsRef = FirebaseFirestore.instance.collection('clients');
+  final ordersRef = FirebaseFirestore.instance.collection('orders').withConverter<Order>(
+      fromFirestore: (snapshot, _) => Order.fromJson(snapshot.data(), id: snapshot.id),
+      toFirestore: (order, _) => order.toJson()
+  );
+  CollectionReference<Meal> mealsRef(String sellerId) => sellersRef.doc(sellerId).collection('meals').withConverter<Meal>(
+      fromFirestore: (snapshot, _) => Meal.fromJson(snapshot.data(), id: snapshot.id),
+      toFirestore: (meal, _) => meal.toJson()
+  );
   final geo = Geoflutterfire();
   final auth = FirebaseAuth.instance;
 
   Stream<DocumentSnapshot> getSeller(String uid) {
-    return sellersRef.document(uid).snapshots();
+    return sellersRef.doc(uid).snapshots();
   }
 
   Stream<DocumentSnapshot> getMealFromSeller(String mealUid, String sellerUid) {
-    return sellersRef.document(sellerUid).collection("meals").document(mealUid).snapshots();
+    return sellersRef.doc(sellerUid).collection("meals").doc(mealUid).snapshots();
   }
 
   Future<DocumentSnapshot> getSellerFuture(String uid) {
-    return sellersRef.document(uid).get();
+    return sellersRef.doc(uid).get();
   }
 
-  Future<FirebaseUser> getCurrentUser() {
-    return auth.currentUser();
+  User getCurrentUser() {
+    return auth.currentUser;
   }
 
   Stream<DocumentSnapshot> getClientStream(String uid) {
-    return clientsRef.document(uid).snapshots();
+    return clientsRef.doc(uid).snapshots();
   }
 
   Stream<QuerySnapshot> getSellerMeals(String uid) {
-    return sellersRef.document(uid).collection('meals').snapshots();
+    return sellersRef.doc(uid).collection('meals').snapshots();
   }
 
   Stream<QuerySnapshot> getFavoriteSellers(List<String> favorites) {
@@ -55,24 +61,63 @@ class Repository {
   }
 
   Future<void> addSellerToClientFavorites(String clientId, String sellerId) {
-    return clientsRef.document(clientId).updateData({'favoriteSellers': FieldValue.arrayUnion([sellerId])});
+    return clientsRef.doc(clientId).update({'favoriteSellers': FieldValue.arrayUnion([sellerId])});
   }
 
   Future<void> removeSellerFromClientFavorites(String clientId, String sellerId) {
-    return clientsRef.document(clientId).updateData({'favoriteSellers': FieldValue.arrayRemove([sellerId])});
+    return clientsRef.doc(clientId).update({'favoriteSellers': FieldValue.arrayRemove([sellerId])});
   }
 
   Future<DocumentReference> addOrder(Order order) async {
-    var mealDoc = await sellersRef.document(order.sellerId).collection('meals').document(order.mealId).get();
-    Meal meal = Meal.fromJson(mealDoc.data);
+    var mealDoc = await sellersRef.doc(order.sellerId).collection('meals').doc(order.mealId).get();
+    Meal meal = Meal.fromJson(mealDoc.data());
     if (meal.quantity < order.quantity) {
       throw('Não há quentinhas suficientes para o seu pedido. Quantidade disponível: ${meal.quantity}.');
     }
-    return ordersRef.add(order.toJson());
+    return ordersRef.add(order);
+  }
+
+  Future<void> reserveOrderTransaction(Order order) async {
+    try {
+      return await FirebaseFirestore.instance.runTransaction((transaction) async {
+        DocumentReference<Meal> mealRef = mealsRef(order.sellerId).doc(order.mealId);
+        DocumentReference<Order> orderRef = ordersRef.doc(order.id);
+
+        DocumentSnapshot<Meal> snapshot = await transaction.get<Meal>(mealRef);
+        int quantity = snapshot.data().quantity;
+
+        if (quantity - order.quantity >= 0) {
+          transaction.update(mealRef, {
+            'quantity' : quantity - order.quantity
+          });
+          transaction.update(orderRef, {
+            'status': 'reserved',
+            'reservedAt': Timestamp.now()
+          });
+        } else {
+          switch (quantity) {
+            case 0:
+              throw ("Você não possui mais quentinhas dessa. Cancele o pedido ou aumente o número de quentinhas, caso tenha mais.");
+              break;
+            case 1:
+              throw ("Você só possui $quantity unidade dessa quentinha disponível. Cancele o pedido ou aumente o número de quentinhas, caso tenha mais.");
+              break;
+            default:
+              throw ("Você só possui $quantity unidades dessa quentinha disponíveis. Cancele o pedido ou aumente o número de quentinhas, caso tenha mais.");
+          }
+        }
+      });
+    } catch (e) {
+      throw e;
+    }
   }
 
   Future<void> reserveOrder(String orderUid) async {
-    return ordersRef.document(orderUid).updateData(
+    //TODO Transformar em transaction
+    // 1- Checar quantidade
+    // 2- Decrementar quantidade
+    // 3- Atualizar status
+    return ordersRef.doc(orderUid).update(
         {
           'status': 'reserved',
           'reservedAt': Timestamp.now()
@@ -80,7 +125,7 @@ class Repository {
   }
 
   Future<void> sellOrder(String orderUid) async {
-    return ordersRef.document(orderUid).updateData(
+    return ordersRef.doc(orderUid).update(
         {
           'status': 'sold',
           'soldAt': Timestamp.now()
@@ -88,21 +133,22 @@ class Repository {
   }
 
   Future<void> cancelOrder(String orderUid) async {
-    return ordersRef.document(orderUid).updateData(
+    // TODO Se status = reserved ou sold, incrementar quantidade
+    return ordersRef.doc(orderUid).update(
         {
           'status': 'canceled',
           'canceledAt': Timestamp.now()
         });
   }
 
-  Stream<QuerySnapshot> getOrdersFromClient(String clientId, {int limit}) {
+  Stream<QuerySnapshot<Order>> getOrdersFromClient(String clientId, {int limit}) {
     if (limit != null && limit > 0) {
       return ordersRef.where('clientId', isEqualTo: clientId).orderBy('requestedAt', descending: true).limit(limit).snapshots();
     }
     return ordersRef.where('clientId', isEqualTo: clientId).orderBy('requestedAt', descending: true).snapshots();
   }
 
-  Stream<QuerySnapshot> getOrdersFromSeller(String sellerId, {int limit}) {
+  Stream<QuerySnapshot<Order>> getOrdersFromSeller(String sellerId, {int limit}) {
     if (limit != null && limit > 0) {
       return ordersRef.where('sellerId', isEqualTo: sellerId).orderBy('requestedAt', descending: true).limit(limit).snapshots();
     }
@@ -110,14 +156,14 @@ class Repository {
   }
 
   //TODO Query pelo dia
-  Stream<QuerySnapshot> getOpenOrdersFromSeller(String sellerId, {int limit}) {
+  Stream<QuerySnapshot<Order>> getOpenOrdersFromSeller(String sellerId, {int limit}) {
     if (limit != null && limit > 0) {
       return ordersRef.where('sellerId', isEqualTo: sellerId).where('status', whereIn: ['requested', 'reserved']).orderBy('requestedAt').limit(limit).snapshots();
     }
     return ordersRef.where('sellerId', isEqualTo: sellerId).where('status', whereIn: ['requested', 'reserved']).orderBy('requestedAt').snapshots();
   }
 
-  Stream<QuerySnapshot> getClosedOrdersFromSeller(String sellerId, {int limit}) {
+  Stream<QuerySnapshot<Order>> getClosedOrdersFromSeller(String sellerId, {int limit}) {
     if (limit != null && limit > 0) {
       return ordersRef.where('sellerId', isEqualTo: sellerId).where('status', isEqualTo: 'sold').orderBy('requestedAt', descending: true).limit(limit).snapshots();
     }
@@ -125,7 +171,7 @@ class Repository {
   }
 
   Future<void> updateSeller(String uid, Map<String, dynamic> dataToUpdate) async {
-    return sellersRef.document(uid).updateData(dataToUpdate);
+    return sellersRef.doc(uid).update(dataToUpdate);
   }
 
   Future<Position> getUserLocation() {
@@ -134,7 +180,7 @@ class Repository {
   }
 
   bool isInTimeRange(DocumentSnapshot seller, String weekday, int time) {
-    return seller.data["shift"][weekday]["openingTime"] <= time && seller.data["shift"][weekday]["closingTime"] >= time;
+    return (seller.data() as Map<String, dynamic>)["shift"][weekday]["openingTime"] <= time && (seller.data() as Map<String, dynamic>)["shift"][weekday]["closingTime"] >= time;
   }
 
   Stream<List<DocumentSnapshot>> filterTimeRange(Stream<List<DocumentSnapshot>> stream) {

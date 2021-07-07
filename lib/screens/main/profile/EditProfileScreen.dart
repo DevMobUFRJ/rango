@@ -85,12 +85,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           dataToUpdate['paymentMethods'] = _payments.text;
         }
         if (_userImageFile != null) {
-          final user = await FirebaseAuth.instance.currentUser();
+          final user = FirebaseAuth.instance.currentUser;
           final ref = FirebaseStorage.instance
               .ref()
               .child('user_image')
               .child(user.uid + '.jpg');
-          await ref.putFile(_userImageFile).onComplete;
+          await ref.putFile(_userImageFile).whenComplete(() => null);
           final url = await ref.getDownloadURL();
           dataToUpdate['picture'] = url;
         }

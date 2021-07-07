@@ -42,6 +42,17 @@ class Meal {
         picture = json['picture'],
         price = json['price'],
         sellerName = json['sellerName'],
-        quantity = json['quantity'],
-        sellerId = json['sellerId'];
+        sellerId = json['sellerId'],
+        quantity = json['quantity'];
+
+  Map<String, dynamic> toJson() => {
+    'name': name,
+    'description': description,
+    'featured': featured,
+    'picture': picture,
+    'price': price,
+    'sellerName': sellerName,
+    'sellerId': sellerId,
+    'quantity': quantity,
+  };
 }

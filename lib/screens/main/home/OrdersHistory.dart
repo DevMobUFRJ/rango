@@ -6,12 +6,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/order.dart';
 import 'package:rango/models/seller.dart';
-import 'package:rango/resources/repository.dart';
 import 'package:rango/widgets/home/OrderContainer.dart';
 
 class OrdersHistory extends StatefulWidget {
   final Seller usuario;
-  List <DocumentSnapshot> closedOrders;
+  List <DocumentSnapshot<Order>> closedOrders;
 
   OrdersHistory(this.usuario, this.closedOrders);
   static const String name = 'OrdersHistory';
@@ -89,8 +88,7 @@ class _OrdersHistoryState extends State<OrdersHistory> {
                             key: _listKey,
                             initialItemCount: widget.closedOrders.length,
                             itemBuilder: (ctx, index, animation) {
-                              Order order = Order.fromJson(widget.closedOrders[index].data);
-                              return OrderContainer(order);
+                              return OrderContainer(widget.closedOrders[index].data());
                             }
                         ),
                       ),

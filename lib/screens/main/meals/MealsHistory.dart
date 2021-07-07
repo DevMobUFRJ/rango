@@ -68,7 +68,7 @@ class _MealsHistoryState extends State<MealsHistory> {
             );
           }
 
-          if (mealsSnapshot.data.documents.isEmpty) {
+          if (mealsSnapshot.data.docs.isEmpty) {
             return Container(
               alignment: Alignment.center,
               margin: EdgeInsets.symmetric(horizontal: 0.1.wp),
@@ -83,7 +83,7 @@ class _MealsHistoryState extends State<MealsHistory> {
           } else {
             //TODO Mudar isso?
             setState(() {
-              ordersCheckedValue = List.filled(mealsSnapshot.data.documents.length, false);
+              ordersCheckedValue = List.filled(mealsSnapshot.data.docs.length, false);
               _hasAnySelected = false;
             });
 
@@ -97,10 +97,10 @@ class _MealsHistoryState extends State<MealsHistory> {
                         scrollDirection: Axis.vertical,
                         crossAxisCount: 2,
                         shrinkWrap: true,
-                        itemCount: mealsSnapshot.data.documents.length,
+                        itemCount: mealsSnapshot.data.docs.length,
                         staggeredTileBuilder: (index) => StaggeredTile.fit(1),
                         itemBuilder: (ctx, index) {
-                          Meal meal = Meal.fromJson(mealsSnapshot.data.documents[index].data);
+                          Meal meal = Meal.fromJson(mealsSnapshot.data.docs[index].data() as Map<String, dynamic>);
 
                           return Container(
                             child: Stack(

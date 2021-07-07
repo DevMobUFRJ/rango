@@ -66,7 +66,7 @@ class _ClientProfileState extends State<ClientProfile> {
           );
         }
 
-        Client client = Client.fromJson(snapshot.data.data);
+        Client client = Client.fromJson(snapshot.data.data() as Map<String, dynamic>);
 
         return Scaffold(
           appBar: AppBar(
