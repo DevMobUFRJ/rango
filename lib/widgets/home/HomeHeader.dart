@@ -1,19 +1,16 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HomeHeader extends StatelessWidget {
-  HomeHeader();
+  final String userName;
+  HomeHeader(this.userName);
 
   @override
   Widget build(BuildContext context) {
     final String assetName = 'assets/imgs/curva_principal.svg';
-    String userName = FirebaseAuth.instance.currentUser.displayName;
-    String nameToDisplay =
-        userName.contains(' ') ? userName.split(' ')[0] : userName;
     return Stack(
       children: [
         SvgPicture.asset(
@@ -32,7 +29,7 @@ class HomeHeader extends StatelessWidget {
                 padding: EdgeInsets.symmetric(
                     horizontal: 0.04.wp, vertical: 0.01.hp),
                 child: AutoSizeText(
-                  'Olá, $nameToDisplay!\nBateu a fome?',
+                  'Olá, $userName!\nBateu a fome?',
                   maxLines: 2,
                   textAlign: TextAlign.start,
                   style: GoogleFonts.montserratTextTheme(
