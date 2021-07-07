@@ -1,0 +1,119 @@
+{
+  "project_info": {
+    "project_number": "913383967959",
+    "firebase_url": "https://rango-ufrj.firebaseio.com",
+    "project_id": "rango-ufrj",
+    "storage_bucket": "rango-ufrj.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:913383967959:android:d3d1a11061773c6a8eb492",
+        "android_client_info": {
+          "package_name": "com.devmob.rango"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "913383967959-u90ia1f41as7o021culcqhkf0o112j2p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhThVYWURqQI-SeiaX2M93s_uHpU8z0YM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "913383967959-u90ia1f41as7o021culcqhkf0o112j2p.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "913383967959-kqip7ard4qckuvfc55k97qki8jg06hna.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.devmob.rango"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:913383967959:android:176330e01746a6b88eb492",
+        "android_client_info": {
+          "package_name": "com.devmob.rango.client"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "913383967959-u90ia1f41as7o021culcqhkf0o112j2p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhThVYWURqQI-SeiaX2M93s_uHpU8z0YM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "913383967959-u90ia1f41as7o021culcqhkf0o112j2p.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "913383967959-kqip7ard4qckuvfc55k97qki8jg06hna.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.devmob.rango"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:913383967959:android:bcc2bb9e95cb0bb58eb492",
+        "android_client_info": {
+          "package_name": "com.devmob.rango.seller"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "913383967959-u90ia1f41as7o021culcqhkf0o112j2p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhThVYWURqQI-SeiaX2M93s_uHpU8z0YM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "913383967959-u90ia1f41as7o021culcqhkf0o112j2p.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "913383967959-kqip7ard4qckuvfc55k97qki8jg06hna.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.devmob.rango"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
