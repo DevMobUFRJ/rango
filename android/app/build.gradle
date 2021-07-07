@@ -54,6 +54,26 @@ android {
             minifyEnabled true
         }
     }
+
+    flavorDimensions "mode"
+    productFlavors {
+        dev {
+            dimension "mode"
+            applicationId "com.devmob.rango.seller.dev"
+            minSdkVersion 23
+            targetSdkVersion 29
+            versionCode flutterVersionCode.toInteger()
+            versionName flutterVersionName
+        }
+        prod {
+            dimension "mode"
+            applicationId "com.devmob.rango.seller"
+            minSdkVersion 23
+            targetSdkVersion 29
+            versionCode flutterVersionCode.toInteger()
+            versionName flutterVersionName
+        }
+    }
 }
 
 flutter {
