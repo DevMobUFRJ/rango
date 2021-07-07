@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rango/main.dart';
 import 'package:rango/models/client.dart';
-import 'package:rango/models/user_notification_settings.dart';
+import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/SplashScreen.dart';
 import 'package:rango/screens/main/tabs/HomeScreen.dart';
 import 'package:rango/screens/main/tabs/OrderHistory.dart';
@@ -19,29 +19,27 @@ class NewTabsScreen extends StatefulWidget {
 }
 
 Future<void> _showNotification(Map<String, dynamic> message) async {
-  const AndroidNotificationDetails androidPlatformChannelSpecifics =
+  AndroidNotificationDetails androidPlatformChannelSpecifics =
       AndroidNotificationDetails(
-    '1',
-    'teste',
-    'descr',
+    message['channelId'],
+    message['channelName'],
+    message['channelDescription'],
     importance: Importance.max,
     priority: Priority.high,
     ticker: 'ticker',
   );
-  print(message);
-  const NotificationDetails platformChannelSpecifics =
+  NotificationDetails platformChannelSpecifics =
       NotificationDetails(android: androidPlatformChannelSpecifics);
   await flutterLocalNotificationsPlugin.show(
-    0,
+    int.parse(message['id']),
     message['title'],
     message['description'],
     platformChannelSpecifics,
-    payload: 'item x',
+    payload: message['payload'],
   );
 }
 
-Future<void> _teste(RemoteMessage message) async {
-  print(message);
+Future<void> _receiveOnBackgroundMessage(RemoteMessage message) async {
   _showNotification(message.data);
 }
 
@@ -49,21 +47,49 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
   Future<void> _registerOnFirebase() async {
     await FirebaseMessaging.instance.subscribeToTopic('all');
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('otario');
-      print(message.data);
       _showNotification(message.data);
     });
-    FirebaseMessaging.onBackgroundMessage(_teste);
+    FirebaseMessaging.onBackgroundMessage(_receiveOnBackgroundMessage);
+  }
+
+  void _configNotification() async {
+    const AndroidInitializationSettings initializationAndroidSettings =
+        AndroidInitializationSettings('app_icon');
+    final InitializationSettings initializationSettings =
+        InitializationSettings(android: initializationAndroidSettings);
+    await flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onSelectNotification: (String payload) async {
+        if (payload != null) {
+          print(payload);
+          if (payload == 'trocarScene') {
+            pushNewScreen(
+              context,
+              screen: ProfileScreen(actualClient),
+              withNavBar: true,
+            );
+          } else if (payload == 'historico') {
+            pushNewScreen(
+              context,
+              screen: OrderHistoryScreen(),
+              withNavBar: true,
+            );
+          }
+        }
+      },
+    );
   }
 
   @override
   void initState() {
+    _configNotification();
     _getUserId();
     _registerOnFirebase();
     super.initState();
   }
 
   String userId;
+  Client actualClient;
   bool loading = true;
 
   void _getUserId() {
@@ -78,38 +104,18 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
   Widget build(BuildContext context) {
     PersistentTabController _controller;
     _controller = PersistentTabController(initialIndex: 0);
-
     return loading
         ? SplashScreen()
         : StreamBuilder(
-            stream: FirebaseFirestore.instance
-                .collection('clients')
-                .doc(userId)
-                .snapshots(),
+            stream: Repository.instance.getClientStream(userId),
             builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting ||
                   !snapshot.hasData ||
                   snapshot.data.data == null) {
-                //      !snapshot.data.data containsKey('email')
                 return SplashScreen();
               }
-              Client client = new Client(
-                id: userId,
-                email: snapshot?.data['email']?.toString(),
-                picture: snapshot?.data['picture']?.toString(),
-                name: snapshot.data['name'].toString(),
-                phone: snapshot?.data['phone']?.toString(),
-                notificationSettings: snapshot.data['notifications'] != null
-                    ? UserNotificationSettings(
-                        discounts: snapshot.data['notifications']['discounts'],
-                        favoriteSellers: snapshot.data['notifications']
-                            ['favoriteSellers'],
-                        messages: snapshot.data['notifications']['messages'],
-                        reservations: snapshot.data['notifications']
-                            ['reservations'],
-                      )
-                    : null,
-              );
+              Client cliente = snapshot.data.data() as Client;
+              actualClient = cliente;
               return PersistentTabView(
                 controller: _controller,
                 navBarStyle: NavBarStyle.style6,
@@ -130,10 +136,10 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
                   duration: Duration(milliseconds: 180),
                 ),
                 screens: <Widget>[
-                  HomeScreen(client),
-                  SearchScreen(client),
+                  HomeScreen(cliente),
+                  SearchScreen(cliente),
                   OrderHistoryScreen(),
-                  ProfileScreen(client),
+                  ProfileScreen(cliente),
                 ],
                 items: [
                   PersistentBottomNavBarItem(

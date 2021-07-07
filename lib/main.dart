@@ -16,16 +16,7 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  const AndroidInitializationSettings initializationAndroidSettings =
-      AndroidInitializationSettings('app_icon');
-  final InitializationSettings initializationSettings =
-      InitializationSettings(android: initializationAndroidSettings);
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-      onSelectNotification: (String payload) async {
-    if (payload != null) {
-      print(payload);
-    }
-  });
+
   runApp(MyApp());
 }
 

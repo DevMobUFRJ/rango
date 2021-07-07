@@ -1,5 +1,7 @@
 import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,7 +22,6 @@ import 'package:rango/widgets/home/SellersList.dart';
 
 class HomeScreen extends StatefulWidget {
   final Client usuario;
-
   HomeScreen(this.usuario);
   static const String name = 'homeScreen';
 
@@ -119,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       physics: ClampingScrollPhysics(),
                       child: Column(
                         children: [
-                          HomeHeader(widget.usuario.name.split(" ")[0]),
+                          HomeHeader(),
                           FutureBuilder(
                             future: Repository.instance.getUserLocation(),
                             builder: (
@@ -369,7 +370,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        HomeHeader(widget.usuario.name.split(" ")[0]),
+        HomeHeader(),
         Container(
           height: 0.5.hp,
           alignment: Alignment.center,
@@ -389,7 +390,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        HomeHeader(widget.usuario.name.split(" ")[0]),
+        HomeHeader(),
         SizedBox(height: 0.1.hp),
         AutoSizeText(
           'É necessário dar permissão de localização para utilizar o aplicativo',

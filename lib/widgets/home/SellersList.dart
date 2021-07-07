@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rango/models/client.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/widgets/home/SellerGridVertical.dart';
@@ -52,9 +53,8 @@ class SellersList extends StatelessWidget {
         }
 
         // Ordena por sellers favoritos
-        var clientSnapshotdata =
-            clientSnapshot.data.data() as Map<String, dynamic>;
-        var favorites = clientSnapshotdata['favoriteSellers'];
+        var clientSnapshotdata = clientSnapshot.data.data() as Client;
+        var favorites = clientSnapshotdata.favoriteSellers;
         if (favorites != null) {
           sellerList.sort(
             (a, b) =>

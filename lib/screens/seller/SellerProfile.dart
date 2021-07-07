@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:rango/models/client.dart';
 import 'package:rango/models/meal_request.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
@@ -395,10 +396,9 @@ class _SellerProfileState extends State<SellerProfile> {
                 return SizedBox();
               }
               var isFavorite = false;
-              var clientSnapshotdata =
-                  clientSnapshot.data.data() as Map<String, dynamic>;
-              if (clientSnapshotdata['favoriteSellers'] != null) {
-                isFavorite = clientSnapshotdata['favoriteSellers']
+              var clientSnapshotdata = clientSnapshot.data.data() as Client;
+              if (clientSnapshotdata.favoriteSellers != null) {
+                isFavorite = clientSnapshotdata.favoriteSellers
                     .contains(widget.sellerId);
               }
               return Padding(

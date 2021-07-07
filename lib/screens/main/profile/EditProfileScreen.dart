@@ -85,6 +85,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           dataToUpdate['picture'] = url;
         }
         final firebaseUser = FirebaseAuth.instance.currentUser;
+        await firebaseUser.updateDisplayName(_name.text.trim());
         if (dataToUpdate.length > 0) {
           await FirebaseFirestore.instance
               .collection('clients')

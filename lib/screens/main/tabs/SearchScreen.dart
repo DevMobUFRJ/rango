@@ -3,7 +3,6 @@ import 'package:rango/models/client.dart';
 
 class SearchScreen extends StatefulWidget {
   final Client usuario;
-
   SearchScreen(this.usuario);
 
   @override

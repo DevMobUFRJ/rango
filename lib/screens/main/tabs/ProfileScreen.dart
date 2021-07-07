@@ -14,7 +14,6 @@ import 'package:rango/widgets/user/UserPicture.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Client usuario;
-
   ProfileScreen(this.usuario);
 
   @override
@@ -22,6 +21,10 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  void initState() {
+    super.initState();
+  }
+
   final yellow = Color(0xFFF9B152);
   @override
   Widget build(BuildContext context) {
@@ -154,9 +157,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     }
                     var clientSnapshotdata =
-                        clientSnapshot.data.data() as Map<String, dynamic>;
-                    if (clientSnapshotdata['favoriteSellers'] == null ||
-                        clientSnapshotdata['favoriteSellers'].length == 0) {
+                        clientSnapshot.data.data() as Client;
+                    if (clientSnapshotdata.favoriteSellers == null ||
+                        clientSnapshotdata.favoriteSellers.length == 0) {
                       return Container(
                         margin: EdgeInsets.symmetric(
                             horizontal: 0.03.wp, vertical: 15),
@@ -182,8 +185,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       );
                     }
-                    final favoriteSellers = List<String>.from(
-                        clientSnapshotdata['favoriteSellers']);
+                    final favoriteSellers =
+                        List<String>.from(clientSnapshotdata.favoriteSellers);
 
                     // Um belo exemplo de list view! A busca pelo seller só acontece quando o elemento pode aparecer na tela.
                     // Usa-se um StreamBuilder para aproveitar a cache do firestore
