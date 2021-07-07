@@ -25,7 +25,9 @@ class Client {
         email = json['email'],
         name = json['name'],
         picture = json['picture'],
-        favoriteSellers = List<String>.from(json['favoriteSellers']),
+        favoriteSellers = json['favoriteSellers'] != null
+            ? List<String>.from(json['favoriteSellers'])
+            : null,
         notificationSettings = json['notificationSettings'] == null
             ? null
             : UserNotificationSettings.fromJson(json['notificationSettings']),
