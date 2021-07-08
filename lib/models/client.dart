@@ -33,4 +33,13 @@ class Client {
             ? null
             : UserNotificationSettings.fromJson(json['notificationSettings']),
         phone = json['phone'];
+
+  Map<String, dynamic> toJson() => {
+    'email': email,
+    'name': name,
+    'picture': picture,
+    'favoriteSellers': favoriteSellers,
+    'notificationSettings': notificationSettings,
+    'phone': phone
+  };
 }

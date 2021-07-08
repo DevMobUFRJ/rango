@@ -37,7 +37,7 @@ class _ClientProfileState extends State<ClientProfile> {
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: Repository.instance.getClientStream(widget.clientId),
-      builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+      builder: (context, AsyncSnapshot<DocumentSnapshot<Client>> snapshot) {
         if (!snapshot.hasData ||
             snapshot.connectionState == ConnectionState.waiting) {
           return Container(
@@ -66,7 +66,7 @@ class _ClientProfileState extends State<ClientProfile> {
           );
         }
 
-        Client client = Client.fromJson(snapshot.data.data() as Map<String, dynamic>);
+        Client client = snapshot.data.data();
 
         return Scaffold(
           appBar: AppBar(

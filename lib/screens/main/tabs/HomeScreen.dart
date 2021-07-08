@@ -147,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 key: _listKey,
                                 itemCount: openOrdersSnapshot.data.docs.length,
                                 itemBuilder: (ctx, index) {
-                                  return OrderContainer(openOrdersSnapshot.data.docs[index].data());
+                                  return OrderContainer(openOrdersSnapshot.data.docs[index].data(), null);
                                 },
                             ),
                       ),

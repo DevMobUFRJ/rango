@@ -10,8 +10,9 @@ import 'package:rango/utils/string_formatters.dart';
 
 class OrderContainer extends StatefulWidget {
   final Order pedido;
+  final void Function() undoSellOrderCallback;
 
-  OrderContainer(this.pedido);
+  OrderContainer(this.pedido, this.undoSellOrderCallback);
 
   @override
   _OrderContainerState createState() => _OrderContainerState();
@@ -19,9 +20,6 @@ class OrderContainer extends StatefulWidget {
 
 class _OrderContainerState extends State<OrderContainer> {
   void _cancelOrder() {
-    final String cancelText = widget.pedido.status != 'sold'
-        ? 'Deseja realmente cancelar esta reserva?'
-        : 'Deseja apagar esse pedido permanentemente do histórico?';
     showDialog(
       context: context,
       builder: (BuildContext ctx) => AlertDialog(
@@ -39,9 +37,24 @@ class _OrderContainerState extends State<OrderContainer> {
         ),
         actions: [
           TextButton(
-            onPressed: () {
-              //TODO Chamar firestore para cancelar, fazer através de uma transaction para incrementar quantity caso status: reserved ou sold
+            onPressed: () async {
               Navigator.of(ctx).pop();
+              try {
+                await Repository.instance.cancelOrder(widget.pedido);
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        'Ocorreu um erro ao cancelar o pedido.',
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    backgroundColor: Theme.of(context).errorColor,
+                  ),
+                );
+              }
             },
             child: Text(
               'Sim',
@@ -73,7 +86,7 @@ class _OrderContainerState extends State<OrderContainer> {
           ),
         ),
         content: Text(
-          cancelText,
+          'Deseja realmente cancelar esta reserva?',
           style: GoogleFonts.montserrat(
             color: Colors.white,
             fontSize: 28.nsp,
@@ -116,7 +129,6 @@ class _OrderContainerState extends State<OrderContainer> {
                           GestureDetector(
                             onTap: () => pushNewScreen(
                               context,
-                              //TODO Mudar pra pegar o client pelo id
                               screen: ClientProfile(widget.pedido.clientId),
                               withNavBar: false,
                             ),
@@ -179,7 +191,11 @@ class _OrderContainerState extends State<OrderContainer> {
                                     value: widget.pedido.status == 'reserved' || widget.pedido.status == 'sold',
                                     onChanged: (reserved) async {
                                       try {
-                                        await Repository.instance.reserveOrderTransaction(widget.pedido);
+                                        if (reserved && widget.pedido.status == 'requested') {
+                                          await Repository.instance.reserveOrderTransaction(widget.pedido);
+                                        } else if (!reserved && widget.pedido.status == 'reserved') {
+                                          await Repository.instance.undoReserveOrderTransaction(widget.pedido);
+                                        }
                                       } catch (e) {
                                         ScaffoldMessenger.of(context).showSnackBar(
                                           SnackBar(
@@ -221,8 +237,45 @@ class _OrderContainerState extends State<OrderContainer> {
                                         : Color(0xFFF9B152),
                                     activeColor: Colors.white,
                                     value: widget.pedido.status == 'sold',
-                                    onChanged: (sold) {
-                                      if (sold) Repository.instance.sellOrder(widget.pedido.id);
+                                    onChanged: (sold) async {
+                                      if (sold && widget.pedido.status == 'requested') {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 20),
+                                              child: Text(
+                                                "Você deve primeiro confirmar a reserva.",
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                            backgroundColor: Theme.of(context).errorColor,
+                                          ),
+                                        );
+                                        return;
+                                      }
+                                      try {
+                                        if (sold && widget.pedido.status == 'reserved') {
+                                          await Repository.instance.sellOrder(widget.pedido.id);
+                                          //TODO Adicionar animação
+                                        } else if (!sold && widget.pedido.status == 'sold') {
+                                          await Repository.instance.undoSellOrder(widget.pedido.id);
+                                          //TODO Adicionar animação
+                                          widget.undoSellOrderCallback();
+                                        }
+                                      } catch (e) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 20),
+                                              child: Text(
+                                                'Ocorreu um erro.',
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                            backgroundColor: Theme.of(context).errorColor,
+                                          ),
+                                        );
+                                      }
                                     },
                                   ),
                                 ),
@@ -240,23 +293,25 @@ class _OrderContainerState extends State<OrderContainer> {
                 ),
               ),
             ),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                color: Colors.red[400],
-              ),
-              child: GestureDetector(
-                onTap: () => _cancelOrder(),
-                child: Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: Icon(
-                    Icons.close,
-                    size: 15,
-                    color: Colors.white,
+            if (widget.pedido.status != 'sold') ...{
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    color: Colors.red[400],
                   ),
-                ),
-              ),
-            ),
+                  child: GestureDetector(
+                    onTap: () => _cancelOrder(),
+                    child: Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Icon(
+                        Icons.close,
+                        size: 15,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                )
+              },
           ],
         ),
       ),

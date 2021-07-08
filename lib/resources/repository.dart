@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rango/models/client.dart';
 import 'package:rango/models/meals.dart';
 import 'package:rango/models/order.dart';
 import 'package:geolocator/geolocator.dart';
@@ -19,7 +20,10 @@ const weekdayMap = {
 
 class Repository {
   final sellersRef = FirebaseFirestore.instance.collection('sellers');
-  final clientsRef = FirebaseFirestore.instance.collection('clients');
+  final clientsRef = FirebaseFirestore.instance.collection('clients').withConverter<Client>(
+      fromFirestore: (snapshot, _) => Client.fromJson(snapshot.data(), id: snapshot.id),
+      toFirestore: (client, _) => client.toJson()
+  );
   final ordersRef = FirebaseFirestore.instance.collection('orders').withConverter<Order>(
       fromFirestore: (snapshot, _) => Order.fromJson(snapshot.data(), id: snapshot.id),
       toFirestore: (order, _) => order.toJson()
@@ -47,7 +51,7 @@ class Repository {
     return auth.currentUser;
   }
 
-  Stream<DocumentSnapshot> getClientStream(String uid) {
+  Stream<DocumentSnapshot<Client>> getClientStream(String uid) {
     return clientsRef.doc(uid).snapshots();
   }
 
@@ -112,33 +116,75 @@ class Repository {
     }
   }
 
-  Future<void> reserveOrder(String orderUid) async {
-    //TODO Transformar em transaction
-    // 1- Checar quantidade
-    // 2- Decrementar quantidade
-    // 3- Atualizar status
-    return ordersRef.doc(orderUid).update(
-        {
-          'status': 'reserved',
-          'reservedAt': Timestamp.now()
+  Future<void> undoReserveOrderTransaction(Order order) async {
+    try {
+      return await FirebaseFirestore.instance.runTransaction((transaction) async {
+        DocumentReference<Meal> mealRef = mealsRef(order.sellerId).doc(order.mealId);
+        DocumentReference<Order> orderRef = ordersRef.doc(order.id);
+
+        DocumentSnapshot<Meal> snapshot = await transaction.get<Meal>(mealRef);
+        int quantity = snapshot.data().quantity;
+
+        transaction.update(mealRef, {
+          'quantity' : quantity + order.quantity
         });
+        transaction.update(orderRef, {
+          'status': 'requested',
+          'reservedAt': null
+        });
+      });
+    } catch (e) {
+      throw e;
+    }
   }
 
   Future<void> sellOrder(String orderUid) async {
-    return ordersRef.doc(orderUid).update(
-        {
-          'status': 'sold',
-          'soldAt': Timestamp.now()
-        });
+    try {
+      ordersRef.doc(orderUid).update(
+          {
+            'status': 'sold',
+            'soldAt': Timestamp.now()
+          });
+    } catch (e) {
+      throw e;
+    }
   }
 
-  Future<void> cancelOrder(String orderUid) async {
-    // TODO Se status = reserved ou sold, incrementar quantidade
-    return ordersRef.doc(orderUid).update(
-        {
+  Future<void> undoSellOrder(String orderUid) async {
+    try {
+      ordersRef.doc(orderUid).update(
+          {
+            'status': 'reserved',
+            'soldAt': null
+          });
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> cancelOrder(Order order) async {
+    try {
+      return await FirebaseFirestore.instance.runTransaction((transaction) async {
+        DocumentReference<Order> orderRef = ordersRef.doc(order.id);
+
+        if (order.status == 'reserved') {
+          DocumentReference<Meal> mealRef = mealsRef(order.sellerId).doc(order.mealId);
+          DocumentSnapshot<Meal> snapshot = await transaction.get<Meal>(mealRef);
+          int quantity = snapshot.data().quantity;
+
+          transaction.update(mealRef, {
+            'quantity' : quantity + order.quantity
+          });
+        }
+
+        transaction.update(orderRef, {
           'status': 'canceled',
           'canceledAt': Timestamp.now()
         });
+      });
+    } catch (e) {
+      throw e;
+    }
   }
 
   Stream<QuerySnapshot<Order>> getOrdersFromClient(String clientId, {int limit}) {

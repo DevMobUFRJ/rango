@@ -50,7 +50,7 @@ class _OrdersHistoryState extends State<OrdersHistory> {
                     padding: EdgeInsets.symmetric(
                         horizontal: 0.04.wp, vertical: 0.01.hp),
                     child: AutoSizeText(
-                      'Histórico de pedidos',
+                      'Pedidos concluídos do dia',
                       maxLines: 2,
                       textAlign: TextAlign.start,
                       style: GoogleFonts.montserrat(
@@ -67,7 +67,7 @@ class _OrdersHistoryState extends State<OrdersHistory> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           AutoSizeText(
-                            'Você ainda não possui pedidos finalizados!',
+                            'Você ainda não possui pedidos concluídos!',
                             style: GoogleFonts.montserrat(
                               color: Theme
                                   .of(context)
@@ -84,11 +84,17 @@ class _OrdersHistoryState extends State<OrdersHistory> {
                     Flexible(
                       flex: 1,
                       child: Container(
-                        child: AnimatedList(
-                            key: _listKey,
-                            initialItemCount: widget.closedOrders.length,
-                            itemBuilder: (ctx, index, animation) {
-                              return OrderContainer(widget.closedOrders[index].data());
+                        child: ListView.builder(
+                            padding: EdgeInsets.only(top: 20),
+                            itemCount: widget.closedOrders.length,
+                            itemBuilder: (ctx, index) {
+                              return OrderContainer(
+                                  widget.closedOrders[index].data(),
+                                  () {
+                                    widget.closedOrders.removeAt(index);
+                                    setState(() {});
+                                  }
+                              );
                             }
                         ),
                       ),
