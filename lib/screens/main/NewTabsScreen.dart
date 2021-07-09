@@ -50,6 +50,7 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
                 return SplashScreen();
               }
               Client cliente = snapshot.data.data() as Client;
+              print(cliente.notificationSettings);
               actualClient = cliente;
               return PersistentTabView(
                 controller: _controller,

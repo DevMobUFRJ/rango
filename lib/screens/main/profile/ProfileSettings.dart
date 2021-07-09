@@ -25,10 +25,8 @@ class ProfileSettings extends StatefulWidget {
 
 class _ProfileSettingsState extends State<ProfileSettings> {
   bool _switchValue;
-  bool _attValue;
   bool _reservaValue;
   bool _newMessagesValue;
-  bool _promotionsValue;
   double _rangeValue;
 
   @override
@@ -38,23 +36,15 @@ class _ProfileSettingsState extends State<ProfileSettings> {
       () {
         if (widget.user.notificationSettings == null) {
           _switchValue = false;
-          _attValue = false;
           _reservaValue = false;
           _newMessagesValue = false;
-          _promotionsValue = false;
         } else {
           _switchValue = true;
-          _attValue = widget.user.notificationSettings.favoriteSellers != null
-              ? widget.user.notificationSettings.favoriteSellers
-              : false;
           _reservaValue = widget.user.notificationSettings.reservations != null
               ? widget.user.notificationSettings.reservations
               : false;
           _newMessagesValue = widget.user.notificationSettings.messages != null
               ? widget.user.notificationSettings.messages
-              : false;
-          _promotionsValue = widget.user.notificationSettings.discounts != null
-              ? widget.user.notificationSettings.discounts
               : false;
         }
       },
@@ -128,6 +118,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
   @override
   Widget build(BuildContext context) {
     const green = Color(0xFF609B90);
+    print(_switchValue);
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
@@ -161,12 +152,11 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                       value: _switchValue,
                       activeColor: Theme.of(context).accentColor,
                       onChanged: (value) => setState(() {
+                        print('chamou aq');
                         _switchValue = value;
                         if (value == false) {
-                          _attValue = false;
                           _reservaValue = false;
                           _newMessagesValue = false;
-                          _promotionsValue = false;
                         }
                       }),
                     ),
@@ -181,18 +171,8 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                       height: 0.07.hp,
                       child: CustomCheckBox(
                         changeValue: (value) =>
-                            setState(() => _attValue = value),
-                        text: 'Atualização dos vendedores favoritos',
-                        value: _attValue,
-                        isActive: _switchValue,
-                      ),
-                    ),
-                    Container(
-                      height: 0.07.hp,
-                      child: CustomCheckBox(
-                        changeValue: (value) =>
                             setState(() => _reservaValue = value),
-                        text: 'Reserva confirmada',
+                        text: 'Atualizações de pedidos',
                         value: _reservaValue,
                         isActive: _switchValue,
                       ),
@@ -204,16 +184,6 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                             setState(() => _newMessagesValue = value),
                         text: 'Novas mensagens',
                         value: _newMessagesValue,
-                        isActive: _switchValue,
-                      ),
-                    ),
-                    Container(
-                      height: 0.07.hp,
-                      child: CustomCheckBox(
-                        changeValue: (value) =>
-                            setState(() => _promotionsValue = value),
-                        text: 'Promoções',
-                        value: _promotionsValue,
                         isActive: _switchValue,
                       ),
                     ),
@@ -325,19 +295,14 @@ class _ProfileSettingsState extends State<ProfileSettings> {
         ),
       );
       Provider.of<RangeChangeNotifier>(context, listen: false).triggerRefresh();
-      FocusScope.of(context).unfocus();
       Map<String, dynamic> dataToUpdate = {};
       if (_switchValue = false) {
         Map<String, dynamic> notifications = {};
-        notifications['discounts'] = false;
-        notifications['favoriteSellers'] = false;
         notifications['messages'] = false;
         notifications['reservations'] = false;
         dataToUpdate['notifications'] = notifications;
       } else {
         Map<String, dynamic> notifications = {};
-        notifications['discounts'] = _promotionsValue;
-        notifications['favoriteSellers'] = _attValue;
         notifications['messages'] = _newMessagesValue;
         notifications['reservations'] = _reservaValue;
         dataToUpdate['notifications'] = notifications;

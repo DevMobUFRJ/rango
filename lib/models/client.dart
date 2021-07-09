@@ -29,9 +29,9 @@ class Client {
         favoriteSellers = json['favoriteSellers'] != null
             ? List<String>.from(json['favoriteSellers'])
             : null,
-        notificationSettings = json['notificationSettings'] == null
+        notificationSettings = json['notifications'] == null
             ? null
-            : UserNotificationSettings.fromJson(json['notificationSettings']),
+            : UserNotificationSettings.fromJson(json['notifications']),
         phone = json['phone'],
         deviceToken = json['deviceToken'];
 
