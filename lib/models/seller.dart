@@ -20,6 +20,7 @@ class Seller {
   final String paymentMethods;
   Map<String, CurrentMeal> currentMeals;
   List<Meal> meals;
+  String deviceToken;
 
   Seller({
     this.id,
@@ -55,6 +56,7 @@ class Seller {
         description = json['description'],
         paymentMethods = json['paymentMethods'],
         currentMeals = buildCurrentMeals(json['currentMeals']),
+        deviceToken = json['deviceToken'],
         meals = [];
 
   Map<String, dynamic> toJson() => {

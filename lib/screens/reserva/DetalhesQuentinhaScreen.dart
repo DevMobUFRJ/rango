@@ -1,17 +1,20 @@
+import 'dart:convert';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
-import 'package:rango/main.dart';
 import 'package:rango/models/meals.dart';
+import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/order.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/main/tabs/OrderHistory.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
+import 'package:rango/utils/constants.dart';
 import 'package:rango/utils/string_formatters.dart';
 
 class DetalhesQuentinhaScreen extends StatelessWidget {
@@ -28,6 +31,7 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
   static const routeName = '/detalhes-reserva-quentinha';
   @override
   Widget build(BuildContext context) {
+    bool _doingOrder = false;
     String price = intToCurrency(marmita.price);
     if (price.length == 6 && price.contains(',')) price = '${price}0';
     return Scaffold(
@@ -201,6 +205,37 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
     }
   }
 
+  Future<void> _sendOrderNotification(
+      String deviceToken, BuildContext context) async {
+    try {
+      var data = (<String, String>{
+        'id': '1',
+        'channelId': '1',
+        'channelName': 'Teste',
+        'channelDescription': 'Canal de teste',
+        'status': 'done',
+        'description':
+            '${FirebaseAuth.instance.currentUser.displayName} fez uma reserva com você',
+        'payload': 'orders',
+        'title': 'Novo pedido recebido!',
+      });
+      await http.post(
+        Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        headers: <String, String>{
+          'Authorization': 'key=$firabaseMessagingAuthorizationKey',
+          'content-type': 'application/json; charset=UTF-8'
+        },
+        body: jsonEncode(<String, dynamic>{
+          'priority': 'high',
+          'data': data,
+          'to': deviceToken,
+        }),
+      );
+    } catch (error) {
+      print(error);
+    }
+  }
+
   void _showOrderDialog(context, maxQuantity) async {
     await showDialog(
       context: context,
@@ -322,6 +357,9 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                     );
                     try {
                       await Repository.instance.addOrder(order);
+                      if (seller.deviceToken != null) {
+                        await _sendOrderNotification(seller.deviceToken, ctx);
+                      }
                       Navigator.of(ctx).pop();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
