@@ -14,7 +14,6 @@ import 'package:rango/widgets/user/UserPicture.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Client usuario;
-
   ProfileScreen(this.usuario);
 
   @override
@@ -22,6 +21,10 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  void initState() {
+    super.initState();
+  }
+
   final yellow = Color(0xFFF9B152);
   @override
   Widget build(BuildContext context) {
@@ -153,9 +156,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       );
                     }
-                    if (clientSnapshot.data.data['favoriteSellers'] == null ||
-                        clientSnapshot.data.data['favoriteSellers'].length ==
-                            0) {
+                    var clientSnapshotdata =
+                        clientSnapshot.data.data() as Client;
+                    if (clientSnapshotdata.favoriteSellers == null ||
+                        clientSnapshotdata.favoriteSellers.length == 0) {
                       return Container(
                         margin: EdgeInsets.symmetric(
                             horizontal: 0.03.wp, vertical: 15),
@@ -181,8 +185,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       );
                     }
-                    final favoriteSellers = List<String>.from(
-                        clientSnapshot.data.data['favoriteSellers']);
+                    final favoriteSellers =
+                        List<String>.from(clientSnapshotdata.favoriteSellers);
 
                     // Um belo exemplo de list view! A busca pelo seller só acontece quando o elemento pode aparecer na tela.
                     // Usa-se um StreamBuilder para aproveitar a cache do firestore
@@ -224,10 +228,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             );
                           }
-
+                          var sellerSnapshotdata = sellerSnapshot.data.data()
+                              as Map<String, dynamic>;
                           Seller seller = Seller.fromJson(
-                              sellerSnapshot.data.data,
-                              id: sellerSnapshot.data.documentID);
+                            sellerSnapshotdata,
+                            id: sellerSnapshot.data.id,
+                          );
 
                           return GestureDetector(
                             onTap: () => pushNewScreen(

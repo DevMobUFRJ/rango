@@ -342,12 +342,12 @@ class _ProfileSettingsState extends State<ProfileSettings> {
         notifications['reservations'] = _reservaValue;
         dataToUpdate['notifications'] = notifications;
       }
-      final firebaseUser = await FirebaseAuth.instance.currentUser();
+      final firebaseUser = FirebaseAuth.instance.currentUser;
       if (dataToUpdate.length > 0) {
-        await Firestore.instance
+        await FirebaseFirestore.instance
             .collection('clients')
-            .document(firebaseUser.uid)
-            .updateData(dataToUpdate);
+            .doc(firebaseUser.uid)
+            .update(dataToUpdate);
       }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

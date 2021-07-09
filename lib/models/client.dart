@@ -9,6 +9,7 @@ class Client {
   List<String> favoriteSellers;
   UserNotificationSettings notificationSettings;
   String phone;
+  String deviceToken;
 
   Client({
     this.id,
@@ -25,9 +26,22 @@ class Client {
         email = json['email'],
         name = json['name'],
         picture = json['picture'],
-        favoriteSellers = List<String>.from(json['favoriteSellers']),
+        favoriteSellers = json['favoriteSellers'] != null
+            ? List<String>.from(json['favoriteSellers'])
+            : null,
         notificationSettings = json['notificationSettings'] == null
             ? null
             : UserNotificationSettings.fromJson(json['notificationSettings']),
-        phone = json['phone'];
+        phone = json['phone'],
+        deviceToken = json['deviceToken'];
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'email': email,
+        'name': name,
+        'picture': picture,
+        'phone': phone,
+        'favoriteSellers': favoriteSellers,
+        'notificationSettings': notificationSettings,
+      };
 }

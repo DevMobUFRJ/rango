@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rango/main.dart';
 import 'package:rango/models/client.dart';
-import 'package:rango/models/user_notification_settings.dart';
+import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/SplashScreen.dart';
 import 'package:rango/screens/main/tabs/HomeScreen.dart';
 import 'package:rango/screens/main/tabs/OrderHistory.dart';
@@ -23,10 +24,11 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
   }
 
   String userId;
+  Client actualClient;
   bool loading = true;
 
-  Future<void> _getUserId() async {
-    final user = await FirebaseAuth.instance.currentUser();
+  void _getUserId() {
+    final user = FirebaseAuth.instance.currentUser;
     setState(() => {
           loading = false,
           userId = user.uid,
@@ -37,38 +39,18 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
   Widget build(BuildContext context) {
     PersistentTabController _controller;
     _controller = PersistentTabController(initialIndex: 0);
-
     return loading
         ? SplashScreen()
         : StreamBuilder(
-            stream: Firestore.instance
-                .collection('clients')
-                .document(userId)
-                .snapshots(),
+            stream: Repository.instance.getClientStream(userId),
             builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting ||
                   !snapshot.hasData ||
-                  snapshot.data.data == null ||
-                  !snapshot.data.data.containsKey('email')) {
+                  snapshot.data.data == null) {
                 return SplashScreen();
               }
-              Client client = new Client(
-                id: userId,
-                email: snapshot?.data['email']?.toString(),
-                picture: snapshot?.data['picture']?.toString(),
-                name: snapshot.data['name'].toString(),
-                phone: snapshot?.data['phone']?.toString(),
-                notificationSettings: snapshot.data['notifications'] != null
-                    ? UserNotificationSettings(
-                        discounts: snapshot.data['notifications']['discounts'],
-                        favoriteSellers: snapshot.data['notifications']
-                            ['favoriteSellers'],
-                        messages: snapshot.data['notifications']['messages'],
-                        reservations: snapshot.data['notifications']
-                            ['reservations'],
-                      )
-                    : null,
-              );
+              Client cliente = snapshot.data.data() as Client;
+              actualClient = cliente;
               return PersistentTabView(
                 controller: _controller,
                 navBarStyle: NavBarStyle.style6,
@@ -89,10 +71,10 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
                   duration: Duration(milliseconds: 180),
                 ),
                 screens: <Widget>[
-                  HomeScreen(client),
-                  SearchScreen(client),
+                  HomeScreen(cliente, key: currentKey),
+                  SearchScreen(cliente),
                   OrderHistoryScreen(),
-                  ProfileScreen(client),
+                  ProfileScreen(cliente),
                 ],
                 items: [
                   PersistentBottomNavBarItem(

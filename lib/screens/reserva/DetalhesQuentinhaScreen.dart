@@ -1,9 +1,10 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart' show FirebaseUser;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:rango/main.dart';
 import 'package:rango/models/meals.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/order.dart';
@@ -171,7 +172,7 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () => _showOrderDialog(context, marmita.quantity),
             child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 0.05.wp),
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 0.05.wp),
               child: AutoSizeText(
                 'Reservar',
                 maxLines: 1,
@@ -305,8 +306,7 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () async {
-                    final FirebaseUser user =
-                        await Repository.instance.getCurrentUser();
+                    final User user = Repository.instance.getCurrentUser();
 
                     Order order = Order(
                       clientId: user.uid,

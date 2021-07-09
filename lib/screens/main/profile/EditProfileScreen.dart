@@ -75,21 +75,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           dataToUpdate['name'] = _name.text;
         }
         if (_userImageFile != null) {
-          final user = await FirebaseAuth.instance.currentUser();
+          final user = FirebaseAuth.instance.currentUser;
           final ref = FirebaseStorage.instance
               .ref()
               .child('user_image')
               .child(user.uid + '.jpg');
-          await ref.putFile(_userImageFile).onComplete;
+          await ref.putFile(_userImageFile).whenComplete(() => null);
           final url = await ref.getDownloadURL();
           dataToUpdate['picture'] = url;
         }
-        final firebaseUser = await FirebaseAuth.instance.currentUser();
+        final firebaseUser = FirebaseAuth.instance.currentUser;
+        await firebaseUser.updateDisplayName(_name.text.trim());
         if (dataToUpdate.length > 0) {
-          await Firestore.instance
+          await FirebaseFirestore.instance
               .collection('clients')
-              .document(firebaseUser.uid)
-              .updateData(dataToUpdate);
+              .doc(firebaseUser.uid)
+              .update(dataToUpdate);
           changeHasMade = true;
         }
         if (_pass.text.length > 0) {

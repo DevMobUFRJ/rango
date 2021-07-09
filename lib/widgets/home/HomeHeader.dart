@@ -6,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 class HomeHeader extends StatelessWidget {
   final String userName;
-
   HomeHeader(this.userName);
 
   @override

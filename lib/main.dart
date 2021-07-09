@@ -1,6 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:provider/provider.dart';
+import 'package:rango/models/seller.dart';
 import 'package:rango/resources/rangeChangeNotifier.dart';
 import 'package:rango/screens/SplashScreen.dart';
 import 'package:rango/screens/auth/AuthScreen.dart';
@@ -8,9 +13,80 @@ import 'package:rango/screens/auth/ForgotPasswordScreen.dart';
 import 'package:rango/screens/auth/LoginScreen.dart';
 import 'package:rango/screens/main/NewTabsScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:rango/screens/main/tabs/OrderHistory.dart';
+import 'package:rango/screens/seller/ChatScreen.dart';
 
-void main() {
+var currentKey = GlobalKey();
+final chatScreenKey = new GlobalKey<State<ChatScreen>>();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  const AndroidInitializationSettings initializationAndroidSettings =
+      AndroidInitializationSettings('app_icon');
+  final InitializationSettings initializationSettings =
+      InitializationSettings(android: initializationAndroidSettings);
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+    onSelectNotification: (String payload) async {
+      if (payload != null) {
+        if (payload == 'historico') {
+          pushNewScreen(
+            currentKey.currentState.context,
+            screen: OrderHistoryScreen(),
+            withNavBar: true,
+          );
+        } else if (payload.contains('chat')) {
+          String sellerId = payload.split('/')[1];
+          String sellerName = payload.split('/')[2];
+          pushNewScreenWithRouteSettings(
+            currentKey.currentState.context,
+            withNavBar: false,
+            screen: ChatScreen(sellerId, sellerName, key: chatScreenKey),
+            settings: RouteSettings(name: 'chatScreen'),
+          );
+        }
+      }
+    },
+  );
+
+  await FirebaseMessaging.instance.subscribeToTopic('all');
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    if ((message.data['payload'].toString().contains('chat') &&
+            chatScreenKey.currentState == null) ||
+        !message.data['payload'].toString().contains('chat')) {
+      _showNotification(message.data);
+    }
+  });
+  FirebaseMessaging.onBackgroundMessage(_receiveOnBackgroundMessage);
   runApp(MyApp());
+}
+
+Future<void> _showNotification(Map<String, dynamic> message) async {
+  AndroidNotificationDetails androidPlatformChannelSpecifics =
+      AndroidNotificationDetails(
+    message['channelId'],
+    message['channelName'],
+    message['channelDescription'],
+    importance: Importance.max,
+    priority: Priority.high,
+    ticker: 'ticker',
+  );
+  NotificationDetails platformChannelSpecifics =
+      NotificationDetails(android: androidPlatformChannelSpecifics);
+  await flutterLocalNotificationsPlugin.show(
+    int.parse(message['id']),
+    message['title'],
+    message['description'],
+    platformChannelSpecifics,
+    payload: message['payload'],
+  );
+}
+
+Future<void> _receiveOnBackgroundMessage(RemoteMessage message) async {
+  _showNotification(message.data);
 }
 
 class MyApp extends StatelessWidget {
@@ -69,7 +145,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
         home: StreamBuilder(
-          stream: FirebaseAuth.instance.onAuthStateChanged,
+          stream: FirebaseAuth.instance.authStateChanges(),
           builder: (ctx, userSnapshot) {
             if (userSnapshot.connectionState == ConnectionState.waiting) {
               return SplashScreen();

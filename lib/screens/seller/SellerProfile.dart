@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:rango/main.dart';
+import 'package:rango/models/client.dart';
 import 'package:rango/models/meal_request.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
@@ -109,7 +111,6 @@ String _retrieveSellerShift(Seller seller) {
 class _SellerProfileState extends State<SellerProfile> {
   @override
   Widget build(BuildContext context) {
-    final yellow = Color(0xFFF9B152);
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
@@ -150,8 +151,10 @@ class _SellerProfileState extends State<SellerProfile> {
             );
           }
 
-          Seller seller =
-              Seller.fromJson(snapshot.data.data, id: snapshot.data.documentID);
+          Seller seller = Seller.fromJson(
+            snapshot.data.data(),
+            id: snapshot.data.id,
+          );
           var currentMeals = seller.currentMeals;
           List<MealRequest> allCurrentMeals = currentMeals.entries.map((meal) {
             return MealRequest(mealId: meal.key, seller: seller);
@@ -315,11 +318,12 @@ class _SellerProfileState extends State<SellerProfile> {
                 flex: 1,
                 child: ElevatedButton.icon(
                   icon: Icon(Icons.chat, size: 38.nsp),
-                  onPressed: () => pushNewScreen(
+                  onPressed: () => pushNewScreenWithRouteSettings(
                     context,
+                    screen:
+                        ChatScreen(seller.id, seller.name, key: chatScreenKey),
                     withNavBar: false,
-                    screen: ChatScreen(seller),
-                    pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                    settings: RouteSettings(name: 'chatScreen'),
                   ),
                   label: Container(
                     width: 0.5.wp,
@@ -360,9 +364,9 @@ class _SellerProfileState extends State<SellerProfile> {
   }
 
   _buildFavoriteButton() {
-    return FutureBuilder(
-      future: Repository.instance.getCurrentUser(),
-      builder: (context, AsyncSnapshot<FirebaseUser> authSnapshot) {
+    return StreamBuilder(
+      stream: FirebaseAuth.instance.userChanges(),
+      builder: (context, AsyncSnapshot<User> authSnapshot) {
         if (!authSnapshot.hasData || authSnapshot.hasError) {
           return Padding(
             padding: EdgeInsets.only(
@@ -394,8 +398,9 @@ class _SellerProfileState extends State<SellerProfile> {
                 return SizedBox();
               }
               var isFavorite = false;
-              if (clientSnapshot.data.data['favoriteSellers'] != null) {
-                isFavorite = clientSnapshot.data.data['favoriteSellers']
+              var clientSnapshotdata = clientSnapshot.data.data() as Client;
+              if (clientSnapshotdata.favoriteSellers != null) {
+                isFavorite = clientSnapshotdata.favoriteSellers
                     .contains(widget.sellerId);
               }
               return Padding(
@@ -406,10 +411,10 @@ class _SellerProfileState extends State<SellerProfile> {
                   onTap: () async {
                     if (isFavorite) {
                       Repository.instance.removeSellerFromClientFavorites(
-                          clientSnapshot.data.documentID, widget.sellerId);
+                          clientSnapshot.data.id, widget.sellerId);
                     } else {
                       Repository.instance.addSellerToClientFavorites(
-                          clientSnapshot.data.documentID, widget.sellerId);
+                          clientSnapshot.data.id, widget.sellerId);
                     }
                   },
                   child: Icon(
