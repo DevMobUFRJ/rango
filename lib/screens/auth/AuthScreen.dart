@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:rango/widgets/auth/AuthForm.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -39,7 +40,16 @@ class _AuthScreenState extends State<AuthScreen> {
           bool isSeller = sellers.docs.isNotEmpty;
           if (!isSeller) {
             authResult = await _auth.signInWithEmailAndPassword(
-                email: email, password: password);
+              email: email,
+              password: password,
+            );
+            Map<String, dynamic> dataToUpdate = {};
+            dataToUpdate['deviceToken'] =
+                await FirebaseMessaging.instance.getToken();
+            await FirebaseFirestore.instance
+                .collection('clients')
+                .doc(FirebaseAuth.instance.currentUser.uid)
+                .update(dataToUpdate);
             Navigator.of(context).pop();
           } else {
             ScaffoldMessenger.of(ctx).showSnackBar(
@@ -100,6 +110,7 @@ class _AuthScreenState extends State<AuthScreen> {
           await ref.putFile(image).whenComplete(() => null);
           url = await ref.getDownloadURL();
         }
+        String deviceToken = await FirebaseMessaging.instance.getToken();
         await FirebaseFirestore.instance
             .collection('clients')
             .doc(authResult.user.uid)
@@ -108,6 +119,7 @@ class _AuthScreenState extends State<AuthScreen> {
             'name': name,
             'email': email,
             'picture': url != null ? url : null,
+            'deviceToken': deviceToken,
           },
         );
         Navigator.of(context).pop();

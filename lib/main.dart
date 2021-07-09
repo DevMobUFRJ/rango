@@ -40,16 +40,11 @@ Future<void> main() async {
           );
         } else if (payload.contains('chat')) {
           String sellerId = payload.split('/')[1];
-          print('clicou na notificação');
-          var sellerJson = await FirebaseFirestore.instance
-              .collection('sellers')
-              .doc(sellerId)
-              .get();
-          Seller seller = Seller.fromJson(sellerJson.data());
-          //var route = ModalRoute.of(currentKey.currentState.context);
+          String sellerName = payload.split('/')[2];
           pushNewScreenWithRouteSettings(
             currentKey.currentState.context,
-            screen: ChatScreen(seller, key: chatScreenKey),
+            withNavBar: false,
+            screen: ChatScreen(sellerId, sellerName, key: chatScreenKey),
             settings: RouteSettings(name: 'chatScreen'),
           );
         }
