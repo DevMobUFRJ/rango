@@ -23,7 +23,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
   final String assetName = 'assets/imgs/curva_principal.svg';
   @override
   Widget build(BuildContext context) {
@@ -144,7 +143,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               )
                             : ListView.builder(
                                 physics: ClampingScrollPhysics(),
-                                key: _listKey,
                                 itemCount: openOrdersSnapshot.data.docs.length,
                                 itemBuilder: (ctx, index) {
                                   return OrderContainer(openOrdersSnapshot.data.docs[index].data(), null);
@@ -193,29 +191,27 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(left: 50, bottom: 10),
-                    padding: EdgeInsets.only(
-                        top: 3, bottom: 3, right: 4, left: 3),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(
-                        ScreenUtil().setSp(30),
-                      ),
-                      color: Theme.of(context).accentColor,
+                  GestureDetector(
+                    onTap: () => pushNewScreen(
+                      context,
+                      screen: OrdersHistory(widget.usuario, closedOrders),
+                      withNavBar: false,
                     ),
-                    child: GestureDetector(
-                      onTap: () => pushNewScreen(
-                        context,
-                        screen: OrdersHistory(widget.usuario, closedOrders),
-                        withNavBar: false,
+                    child: Container(
+                      margin: EdgeInsets.only(left: 50, bottom: 10),
+                      padding: EdgeInsets.only(
+                          top: 3, bottom: 3, right: 4, left: 3),
+                      decoration: ShapeDecoration(
+                        shape: CircleBorder(),
+                        color: Theme.of(context).accentColor,
                       ),
                       child: Icon(
                         Icons.history,
                         color: Colors.white,
-                        size: 22,
+                        size: 26,
                       ),
                     ),
-                  )
+                  ),               
                 ],
               ),
             ],

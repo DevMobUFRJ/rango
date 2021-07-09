@@ -66,12 +66,9 @@ class _ProfileSettingsState extends State<ProfileSettings> {
         ),
         actions: [
           TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              FirebaseAuth.instance.signOut();
-            },
+            onPressed: () => Navigator.of(ctx).pop(),
             child: Text(
-              'Sair',
+              'Cancelar',
               style: GoogleFonts.montserrat(
                 decoration: TextDecoration.underline,
                 color: Colors.white,
@@ -80,11 +77,15 @@ class _ProfileSettingsState extends State<ProfileSettings> {
             ),
           ),
           TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              FirebaseAuth.instance.signOut();
+            },
             child: Text(
-              'Cancelar',
+              'Sair',
               style: GoogleFonts.montserrat(
                 decoration: TextDecoration.underline,
+                fontWeight: FontWeight.bold,
                 color: Colors.white,
                 fontSize: 34.nsp,
               ),

@@ -48,7 +48,7 @@ class _OrdersHistoryState extends State<OrdersHistory> {
                   Container(
                     width: 0.7.wp,
                     padding: EdgeInsets.symmetric(
-                        horizontal: 0.04.wp, vertical: 0.01.hp),
+                        horizontal: 0.04.wp, vertical: 0.024.hp),
                     child: AutoSizeText(
                       'Pedidos concluídos do dia',
                       maxLines: 2,

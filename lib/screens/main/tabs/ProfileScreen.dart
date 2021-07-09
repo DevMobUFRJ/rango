@@ -42,11 +42,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             actions: [
               TextButton(
-                onPressed: () {
-                  Navigator.of(ctx).pop();
-                },
+                onPressed: () => Navigator.of(ctx).pop(),
                 child: Text(
-                  'Fechar',
+                  'Cancelar',
                   style: GoogleFonts.montserrat(
                     decoration: TextDecoration.underline,
                     color: Colors.white,
@@ -55,12 +53,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               TextButton(
-                onPressed: () => Navigator.of(ctx).pop(),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
                 child: Text(
-                  'Cancelar',
+                  'Fechar',
                   style: GoogleFonts.montserrat(
                     decoration: TextDecoration.underline,
                     color: Colors.white,
+                    fontWeight: FontWeight.bold,
                     fontSize: 34.nsp,
                   ),
                 ),
