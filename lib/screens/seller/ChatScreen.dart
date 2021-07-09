@@ -2,16 +2,15 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:rango/main.dart';
 import 'package:rango/models/message.dart';
-import 'package:rango/models/seller.dart';
 import 'package:rango/widgets/chat/Messages.dart';
 import 'package:rango/widgets/chat/NewMessage.dart';
 
 class ChatScreen extends StatefulWidget {
-  final Seller seller;
+  final String sellerId;
+  final String sellerName;
 
-  ChatScreen(this.seller, {Key key}) : super(key: key);
+  ChatScreen(this.sellerId, this.sellerName, {Key key}) : super(key: key);
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -34,7 +33,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
-          widget.seller.name,
+          widget.sellerName,
           maxLines: 1,
           style: GoogleFonts.montserrat(
             color: Theme.of(context).accentColor,

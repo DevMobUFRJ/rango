@@ -320,7 +320,8 @@ class _SellerProfileState extends State<SellerProfile> {
                   icon: Icon(Icons.chat, size: 38.nsp),
                   onPressed: () => pushNewScreenWithRouteSettings(
                     context,
-                    screen: ChatScreen(seller, key: chatScreenKey),
+                    screen:
+                        ChatScreen(seller.id, seller.name, key: chatScreenKey),
                     withNavBar: false,
                     settings: RouteSettings(name: 'chatScreen'),
                   ),

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rango/main.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/SplashScreen.dart';
@@ -70,7 +71,7 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
                   duration: Duration(milliseconds: 180),
                 ),
                 screens: <Widget>[
-                  HomeScreen(cliente),
+                  HomeScreen(cliente, key: currentKey),
                   SearchScreen(cliente),
                   OrderHistoryScreen(),
                   ProfileScreen(cliente),
