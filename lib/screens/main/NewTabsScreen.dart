@@ -1,10 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:rango/main.dart';
 import 'package:rango/models/client.dart';
-import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/SplashScreen.dart';
 import 'package:rango/screens/main/tabs/HomeScreen.dart';
@@ -12,83 +9,16 @@ import 'package:rango/screens/main/tabs/OrderHistory.dart';
 import 'package:rango/screens/main/tabs/ProfileScreen.dart';
 import 'package:rango/screens/main/tabs/SearchScreen.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:rango/screens/seller/ChatScreen.dart';
 
 class NewTabsScreen extends StatefulWidget {
   @override
   _NewTabsScreenState createState() => _NewTabsScreenState();
 }
 
-Future<void> _showNotification(Map<String, dynamic> message) async {
-  AndroidNotificationDetails androidPlatformChannelSpecifics =
-      AndroidNotificationDetails(
-    message['channelId'],
-    message['channelName'],
-    message['channelDescription'],
-    importance: Importance.max,
-    priority: Priority.high,
-    ticker: 'ticker',
-  );
-  NotificationDetails platformChannelSpecifics =
-      NotificationDetails(android: androidPlatformChannelSpecifics);
-  await flutterLocalNotificationsPlugin.show(
-    int.parse(message['id']),
-    message['title'],
-    message['description'],
-    platformChannelSpecifics,
-    payload: message['payload'],
-  );
-}
-
-Future<void> _receiveOnBackgroundMessage(RemoteMessage message) async {
-  _showNotification(message.data);
-}
-
 class _NewTabsScreenState extends State<NewTabsScreen> {
-  Future<void> _registerOnFirebase() async {
-    await FirebaseMessaging.instance.subscribeToTopic('all');
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      _showNotification(message.data);
-    });
-    FirebaseMessaging.onBackgroundMessage(_receiveOnBackgroundMessage);
-  }
-
-  void _configNotification() async {
-    const AndroidInitializationSettings initializationAndroidSettings =
-        AndroidInitializationSettings('app_icon');
-    final InitializationSettings initializationSettings =
-        InitializationSettings(android: initializationAndroidSettings);
-    await flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
-      onSelectNotification: (String payload) async {
-        if (payload != null) {
-          if (payload == 'historico') {
-            pushNewScreen(
-              context,
-              screen: OrderHistoryScreen(),
-              withNavBar: true,
-            );
-          } else if (payload.contains('chat')) {
-            String sellerId = payload.split('/')[1];
-            print('clicou na notificação');
-            var sellerJson = await FirebaseFirestore.instance
-                .collection('sellers')
-                .doc(sellerId)
-                .get();
-            Seller seller = Seller.fromJson(sellerJson.data());
-            pushNewScreen(context, screen: ChatScreen(seller));
-          }
-        }
-      },
-    );
-  }
-
   @override
   void initState() {
-    _configNotification();
     _getUserId();
-    _registerOnFirebase();
     super.initState();
   }
 

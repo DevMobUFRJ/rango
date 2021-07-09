@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:rango/main.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/models/meal_request.dart';
 import 'package:rango/models/seller.dart';
@@ -317,11 +318,11 @@ class _SellerProfileState extends State<SellerProfile> {
                 flex: 1,
                 child: ElevatedButton.icon(
                   icon: Icon(Icons.chat, size: 38.nsp),
-                  onPressed: () => pushNewScreen(
+                  onPressed: () => pushNewScreenWithRouteSettings(
                     context,
+                    screen: ChatScreen(seller, key: chatScreenKey),
                     withNavBar: false,
-                    screen: ChatScreen(seller),
-                    pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                    settings: RouteSettings(name: 'chatScreen'),
                   ),
                   label: Container(
                     width: 0.5.wp,

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rango/main.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/models/meal_request.dart';
 import 'package:rango/models/seller.dart';
@@ -20,7 +21,7 @@ import 'package:rango/widgets/home/SellersList.dart';
 
 class HomeScreen extends StatefulWidget {
   final Client usuario;
-  HomeScreen(this.usuario);
+  HomeScreen(this.usuario, {Key key}) : super(key: key);
   static const String name = 'homeScreen';
 
   @override
@@ -186,8 +187,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                             .getNearbySellersStream(
                                           locationSnapshot.data,
                                           rangeSnapshot.data,
-                                          queryByActive: true,
-                                          queryByTime: true,
+                                          queryByActive: false,
+                                          queryByTime: false,
                                         ),
                                         builder: (
                                           context,
