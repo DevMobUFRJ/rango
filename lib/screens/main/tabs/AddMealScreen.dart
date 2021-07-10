@@ -29,7 +29,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
         height: 1.hp - 56,
         child: StreamBuilder(
           stream: Repository.instance.getSeller(widget.usuario.id),
-          builder: (context, AsyncSnapshot<DocumentSnapshot> sellerSnapshot) {
+          builder: (context, AsyncSnapshot<DocumentSnapshot<Seller>> sellerSnapshot) {
             if (!sellerSnapshot.hasData ||
                 sellerSnapshot.connectionState == ConnectionState.waiting) {
               return Container(
@@ -58,8 +58,10 @@ class _AddMealScreenState extends State<AddMealScreen> {
               );
             }
 
-            Seller seller = Seller.fromJson(sellerSnapshot.data.data() as Map<String, dynamic>);
-            List<String> currentMealsIds = seller.currentMeals.keys.toList();
+            Seller seller = sellerSnapshot.data.data();
+            List<String> currentMealsIds = seller.currentMeals != null
+                ? seller.currentMeals.keys.toList()
+                : [];
 
             if (currentMealsIds.isEmpty) {
               return Column(
@@ -177,7 +179,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
                       ],
                     ),
                   ),
-                  _buildMealsList()
+                  //_buildMealsList()
                 ],
               );
             }

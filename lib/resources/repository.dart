@@ -5,6 +5,7 @@ import 'package:rango/models/meals.dart';
 import 'package:rango/models/order.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:rango/models/seller.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,7 +20,10 @@ const weekdayMap = {
 };
 
 class Repository {
-  final sellersRef = FirebaseFirestore.instance.collection('sellers');
+  final sellersRef = FirebaseFirestore.instance.collection('sellers').withConverter<Seller>(
+      fromFirestore: (snapshot, _) => Seller.fromJson(snapshot.data(), id: snapshot.id),
+      toFirestore: (seller, _) => seller.toJson()
+  );
   final clientsRef = FirebaseFirestore.instance.collection('clients').withConverter<Client>(
       fromFirestore: (snapshot, _) => Client.fromJson(snapshot.data(), id: snapshot.id),
       toFirestore: (client, _) => client.toJson()
@@ -35,7 +39,7 @@ class Repository {
   final geo = Geoflutterfire();
   final auth = FirebaseAuth.instance;
 
-  Stream<DocumentSnapshot> getSeller(String uid) {
+  Stream<DocumentSnapshot<Seller>> getSeller(String uid) {
     return sellersRef.doc(uid).snapshots();
   }
 

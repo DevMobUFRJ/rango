@@ -48,8 +48,8 @@ class Seller {
   Seller.fromJson(Map<String, dynamic> json, {String id})
       : id = id,
         email = json['email'],
-        contact = Contact.fromJson(json['contact']),
-        shift = Shift.fromJson(json['shift']),
+        contact = json['contact'] == null? null: Contact.fromJson(json['contact']),
+        shift = json['shift'] == null? null: Shift.fromJson(json['shift']),
         name = json['name'],
         active = json['active'],
         canReservate = json['canReservate'],
@@ -59,7 +59,7 @@ class Seller {
         picture = json['picture'],
         description = json['description'],
         paymentMethods = json['paymentMethods'],
-        currentMeals = buildCurrentMeals(json['currentMeals']),
+        currentMeals = json['currentMeals'] == null? null: buildCurrentMeals(json['currentMeals']),
         notificationSettings = json['notificationSettings'] == null
             ? null
             : UserNotificationSettings.fromJson(json['notificationSettings']),
