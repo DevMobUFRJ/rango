@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,7 +14,6 @@ import 'package:rango/screens/main/tabs/SearchScreen.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:rango/utils/constants.dart';
 import 'package:rango/widgets/others/NoConecctionWidget.dart';
 
 class NewTabsScreen extends StatefulWidget {
@@ -72,9 +70,13 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
                         bool _hasInternet = false;
                         if (snapshot.hasData && snapshot.data == true) {
                           _hasInternet = true;
+                          Repository.instance
+                              .setInternetConnection(true, context);
                         } else if (!snapshot.hasData ||
                             snapshot.data == false) {
                           _hasInternet = false;
+                          Repository.instance
+                              .setInternetConnection(false, context);
                         }
                         return StreamBuilder(
                           stream: Repository.instance.getClientStream(userId),
