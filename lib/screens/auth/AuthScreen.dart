@@ -108,7 +108,7 @@ class _AuthScreenState extends State<AuthScreen> {
               .child('user_image')
               .child(authResult.user.uid + '.jpg');
           await ref.putFile(image).whenComplete(() => null);
-          url = await ref.getDownloadURL();
+          url = 'gs://rango-ufrj.appspot.com/${ref.fullPath}';
         }
         String deviceToken = await FirebaseMessaging.instance.getToken();
         await FirebaseFirestore.instance

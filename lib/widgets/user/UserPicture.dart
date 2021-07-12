@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:rango/resources/repository.dart';
 
-class UserPicture extends StatelessWidget {
+class UserPicture extends StatefulWidget {
   final String picture;
   final bool hasInternet;
 
@@ -11,7 +13,31 @@ class UserPicture extends StatelessWidget {
   });
 
   @override
+  _UserPictureState createState() => _UserPictureState();
+}
+
+class _UserPictureState extends State<UserPicture> {
+  bool _hasInternet;
+  @override
+  void initState() {
+    if (widget.hasInternet == null) {
+      _checkInternet();
+    } else {
+      setState(() => _hasInternet = widget.hasInternet);
+    }
+    super.initState();
+  }
+
+  Future<void> _checkInternet() async {
+    bool hasInternet = await Repository.instance.getInternetConnection();
+    setState(() => _hasInternet = hasInternet);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_hasInternet == null) {
+      Repository.instance.checkInternetConnection(context);
+    }
     return Container(
       child: Stack(
         alignment: Alignment.center,
@@ -25,7 +51,7 @@ class UserPicture extends StatelessWidget {
               color: Color(0xFFF9B152),
             ),
           ),
-          if (picture == null || hasInternet == null || !hasInternet)
+          if (widget.picture == null || _hasInternet == null || !_hasInternet)
             FittedBox(
               fit: BoxFit.cover,
               child: CircleAvatar(
@@ -34,16 +60,15 @@ class UserPicture extends StatelessWidget {
                 radius: 80,
               ),
             ),
-          if (picture != null && (hasInternet != null && hasInternet))
+          if (widget.picture != null && (_hasInternet != null && _hasInternet))
             ClipRRect(
               borderRadius: BorderRadius.circular(120),
               child: Container(
                 width: 150,
                 height: 150,
                 color: Theme.of(context).accentColor,
-                child: FadeInImage.assetNetwork(
-                  placeholder: 'assets/imgs/user_placeholder.png',
-                  image: picture,
+                child: Image(
+                  image: FirebaseImage(widget.picture),
                   fit: BoxFit.cover,
                 ),
               ),

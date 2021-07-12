@@ -81,7 +81,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               .child('user_image')
               .child(user.uid + '.jpg');
           await ref.putFile(_userImageFile).whenComplete(() => null);
-          final url = await ref.getDownloadURL();
+          final url = 'gs://rango-ufrj.appspot.com/${ref.fullPath}';
           dataToUpdate['picture'] = url;
         }
         final firebaseUser = FirebaseAuth.instance.currentUser;

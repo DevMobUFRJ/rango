@@ -223,7 +223,6 @@ class Repository {
   }
 
   Future<void> checkInternetConnection(BuildContext context) async {
-    print('chamou aqui');
     try {
       final result = await InternetAddress.lookup('example.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
