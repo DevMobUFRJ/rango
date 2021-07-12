@@ -57,7 +57,7 @@ class _UserPictureState extends State<UserPicture> {
               child: CircleAvatar(
                 backgroundColor: Theme.of(context).accentColor,
                 backgroundImage: AssetImage('assets/imgs/user_placeholder.png'),
-                radius: 80,
+                radius: 70,
               ),
             ),
           if (widget.picture != null && (_hasInternet != null && _hasInternet))
@@ -67,7 +67,8 @@ class _UserPictureState extends State<UserPicture> {
                 width: 150,
                 height: 150,
                 color: Theme.of(context).accentColor,
-                child: Image(
+                child: FadeInImage(
+                  placeholder: AssetImage('assets/imgs/user_placeholder.png'),
                   image: FirebaseImage(widget.picture),
                   fit: BoxFit.cover,
                 ),

@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -87,9 +88,9 @@ class SellerGridVertical extends StatelessWidget {
                                 color: Colors.white,
                               ),
                             ),
-                            FadeInImage.memoryNetwork(
-                              placeholder: kTransparentImage,
-                              image: sellers[index].logo,
+                            FadeInImage(
+                              placeholder: MemoryImage(kTransparentImage),
+                              image: FirebaseImage(sellers[index].logo),
                               fit: BoxFit.cover,
                               height: 330.h,
                             ),

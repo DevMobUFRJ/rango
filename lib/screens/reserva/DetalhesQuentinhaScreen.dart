@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
@@ -70,9 +71,10 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                 ),
                 child: Hero(
                   tag: marmita.hashCode * tagM,
-                  child: FadeInImage.assetNetwork(
-                    placeholder: 'assets/imgs/quentinha_placeholder.png',
-                    image: marmita.picture,
+                  child: FadeInImage(
+                    placeholder:
+                        AssetImage('assets/imgs/quentinha_placeholder.png'),
+                    image: FirebaseImage(marmita.picture),
                   ),
                 ),
               ),

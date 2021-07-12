@@ -15,7 +15,6 @@ import 'package:rango/screens/seller/ChatScreen.dart';
 import 'package:rango/widgets/home/ListaHorizontal.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rango/widgets/user/UserPicture.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart' show DocumentSnapshot;
 

@@ -317,7 +317,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                                         allMealsRequests,
                                                         widget.usuario.id,
                                                       ),
-                                                    SizedBox(height: 0.02.hp),
                                                     if (filteredMealsRequests
                                                         .isNotEmpty)
                                                       _buildSuggestions(
@@ -525,6 +524,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               tagM: Random().nextDouble(),
               meals: meals,
             ),
+            SizedBox(height: 0.02.hp),
           ],
         );
       },
