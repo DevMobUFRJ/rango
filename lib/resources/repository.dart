@@ -1,12 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/models/meals.dart';
 import 'package:rango/models/order.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
-import 'package:rango/models/user_notification_settings.dart';
+import 'package:rango/resources/rangeChangeNotifier.dart';
+import 'dart:io';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -202,6 +205,35 @@ class Repository {
   setSellerRange(double range) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setDouble('seller_range', range);
+  }
+
+  setInternetConnection(bool hasInternet, BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool("hasInternet", hasInternet);
+    Provider.of<RangeChangeNotifier>(context, listen: false).triggerRefresh();
+  }
+
+  Future<bool> getInternetConnection() async {
+    var prefs = await SharedPreferences.getInstance();
+    var hasInternet = prefs.getBool('hasInternet');
+    if (hasInternet == null) {
+      return false;
+    }
+    return hasInternet;
+  }
+
+  Future<void> checkInternetConnection(BuildContext context) async {
+    print('chamou aqui');
+    try {
+      final result = await InternetAddress.lookup('example.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        print('tem internet');
+        setInternetConnection(true, context);
+      }
+    } on SocketException catch (_) {
+      print('n tem internet');
+      setInternetConnection(false, context);
+    }
   }
 
   static Repository get instance => Repository();

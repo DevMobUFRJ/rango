@@ -118,7 +118,6 @@ class _ProfileSettingsState extends State<ProfileSettings> {
   @override
   Widget build(BuildContext context) {
     const green = Color(0xFF609B90);
-    print(_switchValue);
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
@@ -152,7 +151,6 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                       value: _switchValue,
                       activeColor: Theme.of(context).accentColor,
                       onChanged: (value) => setState(() {
-                        print('chamou aq');
                         _switchValue = value;
                         if (value == false) {
                           _reservaValue = false;

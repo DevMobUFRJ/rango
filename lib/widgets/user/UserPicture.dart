@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class UserPicture extends StatelessWidget {
-  const UserPicture(
-    this.picture,
-  );
-
   final String picture;
+  final bool hasInternet;
+
+  const UserPicture(
+    this.picture, {
+    this.hasInternet,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,16 @@ class UserPicture extends StatelessWidget {
               color: Color(0xFFF9B152),
             ),
           ),
-          if (picture != null)
+          if (picture == null || hasInternet == null || !hasInternet)
+            FittedBox(
+              fit: BoxFit.cover,
+              child: CircleAvatar(
+                backgroundColor: Theme.of(context).accentColor,
+                backgroundImage: AssetImage('assets/imgs/user_placeholder.png'),
+                radius: 80,
+              ),
+            ),
+          if (picture != null && (hasInternet != null && hasInternet))
             ClipRRect(
               borderRadius: BorderRadius.circular(120),
               child: Container(
@@ -35,15 +46,6 @@ class UserPicture extends StatelessWidget {
                   image: picture,
                   fit: BoxFit.cover,
                 ),
-              ),
-            ),
-          if (picture == null)
-            FittedBox(
-              fit: BoxFit.cover,
-              child: CircleAvatar(
-                backgroundColor: Theme.of(context).accentColor,
-                backgroundImage: AssetImage('assets/imgs/user_placeholder.png'),
-                radius: 80,
               ),
             ),
         ],
