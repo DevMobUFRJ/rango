@@ -20,11 +20,11 @@ import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rango/widgets/home/SellersList.dart';
 import 'package:rango/widgets/others/NoConecctionWidget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   final Client usuario;
-  final bool hasInternet;
-  HomeScreen(this.usuario, this.hasInternet, {Key key}) : super(key: key);
+  HomeScreen(this.usuario, {Key key}) : super(key: key);
   static const String name = 'homeScreen';
 
   @override
@@ -93,8 +93,23 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   initState() {
     checkForPermission();
+    _checkInternet();
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+  }
+
+  Future<void> _checkInternet() async {
+    try {
+      final result = await InternetAddress.lookup('example.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        Repository.instance.setInternetConnection(true, context);
+        return true;
+      } else
+        return false;
+    } on SocketException catch (_) {
+      Repository.instance.setInternetConnection(false, context);
+      return true;
+    }
   }
 
   @override
@@ -107,281 +122,288 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      body: !widget.hasInternet
-          ? Container(
-              height: 1.hp - 56,
-              child: NoConecctionWidget(),
-            )
-          : Container(
-              height: 1.hp - 56,
-              child: RefreshIndicator(
-                onRefresh: () {
-                  setState(() {});
-                  return Future.value();
-                },
-                child: _locationPermissionStatus == null
-                    ? _buildLoadingSpinnerScene()
-                    : !_locationPermissionStatus
-                        ? _buildRequestForPermissionWidget()
-                        : SingleChildScrollView(
-                            physics: ClampingScrollPhysics(),
-                            child: Column(
-                              children: [
-                                HomeHeader(
-                                  widget.usuario.name.contains(' ')
-                                      ? widget.usuario.name.split(' ')[0]
-                                      : widget.usuario.name,
-                                ),
-                                FutureBuilder(
-                                  future: Repository.instance.getUserLocation(),
-                                  builder: (
-                                    context,
-                                    AsyncSnapshot<Position> locationSnapshot,
-                                  ) {
-                                    if (locationSnapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return _buildLoadingSpinner();
-                                    }
+      body: FutureBuilder(
+        future: SharedPreferences.getInstance(),
+        builder:
+            (BuildContext context, AsyncSnapshot<SharedPreferences> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return _buildLoadingSpinnerScene();
+          }
+          if (snapshot.hasData) {
+            var hasInternet = snapshot.data.getBool('hasInternet');
+            if (hasInternet == null || !hasInternet) {
+              return Container(
+                height: 1.hp - 56,
+                child: NoConecctionWidget(),
+              );
+            }
+          }
+          return Container(
+            height: 1.hp - 56,
+            child: RefreshIndicator(
+              onRefresh: () {
+                setState(() {});
+                return Future.value();
+              },
+              child: _locationPermissionStatus == null
+                  ? _buildLoadingSpinnerScene()
+                  : !_locationPermissionStatus
+                      ? _buildRequestForPermissionWidget()
+                      : SingleChildScrollView(
+                          physics: ClampingScrollPhysics(),
+                          child: Column(
+                            children: [
+                              HomeHeader(
+                                widget.usuario.name.contains(' ')
+                                    ? widget.usuario.name.split(' ')[0]
+                                    : widget.usuario.name,
+                              ),
+                              FutureBuilder(
+                                future: Repository.instance.getUserLocation(),
+                                builder: (
+                                  context,
+                                  AsyncSnapshot<Position> locationSnapshot,
+                                ) {
+                                  if (locationSnapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return _buildLoadingSpinner();
+                                  }
 
-                                    if (locationSnapshot.hasError) {
-                                      return Container(
-                                        height: 0.6.hp - 56,
-                                        margin: EdgeInsets.symmetric(
-                                            horizontal: 10),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            AutoSizeText(
-                                              locationSnapshot.error,
-                                              textAlign: TextAlign.center,
-                                              style: GoogleFonts.montserrat(
-                                                fontSize: 45.nsp,
-                                                color: Theme.of(context)
-                                                    .accentColor,
-                                              ),
+                                  if (locationSnapshot.hasError) {
+                                    return Container(
+                                      height: 0.6.hp - 56,
+                                      margin:
+                                          EdgeInsets.symmetric(horizontal: 10),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          AutoSizeText(
+                                            locationSnapshot.error,
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.montserrat(
+                                              fontSize: 45.nsp,
+                                              color:
+                                                  Theme.of(context).accentColor,
                                             ),
-                                          ],
-                                        ),
-                                      );
-                                    }
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
 
-                                    return Consumer<RangeChangeNotifier>(
-                                      builder: (context, shouldChange, child) {
-                                        return FutureBuilder(
-                                          future: Repository.instance
-                                              .getSellerRange(),
-                                          builder: (
-                                            context,
-                                            AsyncSnapshot<double> rangeSnapshot,
-                                          ) {
-                                            if (rangeSnapshot.connectionState ==
-                                                ConnectionState.waiting) {
-                                              return _buildLoadingSpinner();
-                                            }
-                                            if (rangeSnapshot.hasError) {
-                                              return Container(
-                                                height: 0.6.hp - 56,
-                                                alignment: Alignment.center,
-                                                child: AutoSizeText(
-                                                  rangeSnapshot.error
-                                                      .toString(),
-                                                  style: GoogleFonts.montserrat(
+                                  return Consumer<RangeChangeNotifier>(
+                                    builder: (context, shouldChange, child) {
+                                      return FutureBuilder(
+                                        future: Repository.instance
+                                            .getSellerRange(),
+                                        builder: (
+                                          context,
+                                          AsyncSnapshot<double> rangeSnapshot,
+                                        ) {
+                                          if (rangeSnapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return _buildLoadingSpinner();
+                                          }
+                                          if (rangeSnapshot.hasError) {
+                                            return Container(
+                                              height: 0.6.hp - 56,
+                                              alignment: Alignment.center,
+                                              child: AutoSizeText(
+                                                rangeSnapshot.error.toString(),
+                                                style: GoogleFonts.montserrat(
+                                                    fontSize: 45.nsp,
+                                                    color: Theme.of(context)
+                                                        .accentColor),
+                                              ),
+                                            );
+                                          }
+
+                                          return StreamBuilder(
+                                            stream: Repository.instance
+                                                .getNearbySellersStream(
+                                              locationSnapshot.data,
+                                              rangeSnapshot.data,
+                                              queryByActive: false,
+                                              queryByTime: false,
+                                            ),
+                                            builder: (
+                                              context,
+                                              AsyncSnapshot<
+                                                      List<DocumentSnapshot>>
+                                                  snapshot,
+                                            ) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return _buildLoadingSpinner();
+                                              }
+                                              if (snapshot.hasError) {
+                                                return Container(
+                                                  height: 0.6.hp - 56,
+                                                  alignment: Alignment.center,
+                                                  child: AutoSizeText(
+                                                    snapshot.error.toString(),
+                                                    style:
+                                                        GoogleFonts.montserrat(
+                                                            fontSize: 45.nsp,
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .accentColor),
+                                                  ),
+                                                );
+                                              }
+
+                                              List<MealRequest>
+                                                  allMealsRequests = [];
+                                              List<MealRequest>
+                                                  filteredMealsRequests = [];
+
+                                              List<Seller> sellerList = [];
+                                              snapshot.data.forEach(
+                                                (sellerDoc) {
+                                                  Seller seller =
+                                                      Seller.fromJson(
+                                                    sellerDoc.data(),
+                                                    id: sellerDoc.id,
+                                                  );
+                                                  sellerList.add(seller);
+                                                  var filterByFeatured = false;
+                                                  var mealsLimit = 0;
+                                                  var currentMeals =
+                                                      seller.currentMeals;
+
+                                                  var sellerAll =
+                                                      currentMeals.entries.map(
+                                                    (meal) {
+                                                      return MealRequest(
+                                                          mealId: meal.key,
+                                                          seller: seller);
+                                                    },
+                                                  ).toList();
+                                                  allMealsRequests
+                                                      .addAll(sellerAll);
+
+                                                  if (filterByFeatured) {
+                                                    currentMeals.removeWhere(
+                                                        (mealId, details) =>
+                                                            !details.featured);
+                                                  }
+                                                  var sellerFiltered =
+                                                      currentMeals.entries.map(
+                                                    (meal) {
+                                                      return MealRequest(
+                                                          mealId: meal.key,
+                                                          seller: seller);
+                                                    },
+                                                  ).toList();
+                                                  if (mealsLimit > 0) {
+                                                    sellerFiltered =
+                                                        sellerFiltered
+                                                            .take(mealsLimit)
+                                                            .toList();
+                                                  }
+                                                  filteredMealsRequests
+                                                      .addAll(sellerFiltered);
+                                                },
+                                              );
+
+                                              if (allMealsRequests.isEmpty &&
+                                                  filteredMealsRequests
+                                                      .isEmpty &&
+                                                  sellerList.isEmpty)
+                                                return Container(
+                                                  margin: EdgeInsets.symmetric(
+                                                    horizontal: 15,
+                                                    vertical: 10,
+                                                  ),
+                                                  height: 0.7.wp - 56,
+                                                  alignment: Alignment.center,
+                                                  child: AutoSizeText(
+                                                    'Sem sugestões ou vendedores próximos abertos.Você pode aumentar o alcance ou fazer pedidos para receber sugestões!',
+                                                    style:
+                                                        GoogleFonts.montserrat(
                                                       fontSize: 45.nsp,
                                                       color: Theme.of(context)
-                                                          .accentColor),
-                                                ),
+                                                          .accentColor,
+                                                    ),
+                                                  ),
+                                                );
+
+                                              return Column(
+                                                children: [
+                                                  if (allMealsRequests
+                                                      .isNotEmpty)
+                                                    _buildOrderAgain(
+                                                      allMealsRequests,
+                                                      widget.usuario.id,
+                                                    ),
+                                                  if (filteredMealsRequests
+                                                      .isNotEmpty)
+                                                    _buildSuggestions(
+                                                      filteredMealsRequests,
+                                                    ),
+                                                  if (allMealsRequests
+                                                          .isEmpty &&
+                                                      filteredMealsRequests
+                                                          .isEmpty)
+                                                    Container(
+                                                      margin:
+                                                          EdgeInsets.symmetric(
+                                                        horizontal: 15,
+                                                        vertical: 10,
+                                                      ),
+                                                      child: AutoSizeText(
+                                                        'Use o aplicativo e faça reservas para receber sugestões de quentinhas!',
+                                                        style: GoogleFonts
+                                                            .montserrat(
+                                                          fontSize: 45.nsp,
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .accentColor,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  SizedBox(height: 0.02.hp),
+                                                  if (sellerList.isNotEmpty)
+                                                    SellersList(
+                                                        sellerList,
+                                                        locationSnapshot,
+                                                        widget.usuario.id),
+                                                  if (sellerList.isEmpty)
+                                                    Container(
+                                                      margin:
+                                                          EdgeInsets.symmetric(
+                                                        horizontal: 15,
+                                                        vertical: 10,
+                                                      ),
+                                                      child: AutoSizeText(
+                                                        'Aumente o alcance para visualizar vendedores!',
+                                                        style: GoogleFonts
+                                                            .montserrat(
+                                                          fontSize: 45.nsp,
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .accentColor,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                ],
                                               );
-                                            }
-
-                                            return StreamBuilder(
-                                              stream: Repository.instance
-                                                  .getNearbySellersStream(
-                                                locationSnapshot.data,
-                                                rangeSnapshot.data,
-                                                queryByActive: false,
-                                                queryByTime: false,
-                                              ),
-                                              builder: (
-                                                context,
-                                                AsyncSnapshot<
-                                                        List<DocumentSnapshot>>
-                                                    snapshot,
-                                              ) {
-                                                if (snapshot.connectionState ==
-                                                    ConnectionState.waiting) {
-                                                  return _buildLoadingSpinner();
-                                                }
-                                                if (snapshot.hasError) {
-                                                  return Container(
-                                                    height: 0.6.hp - 56,
-                                                    alignment: Alignment.center,
-                                                    child: AutoSizeText(
-                                                      snapshot.error.toString(),
-                                                      style: GoogleFonts
-                                                          .montserrat(
-                                                              fontSize: 45.nsp,
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .accentColor),
-                                                    ),
-                                                  );
-                                                }
-
-                                                List<MealRequest>
-                                                    allMealsRequests = [];
-                                                List<MealRequest>
-                                                    filteredMealsRequests = [];
-
-                                                List<Seller> sellerList = [];
-                                                snapshot.data.forEach(
-                                                  (sellerDoc) {
-                                                    Seller seller =
-                                                        Seller.fromJson(
-                                                      sellerDoc.data(),
-                                                      id: sellerDoc.id,
-                                                    );
-                                                    sellerList.add(seller);
-                                                    var filterByFeatured =
-                                                        false;
-                                                    var mealsLimit = 0;
-                                                    var currentMeals =
-                                                        seller.currentMeals;
-
-                                                    var sellerAll = currentMeals
-                                                        .entries
-                                                        .map(
-                                                      (meal) {
-                                                        return MealRequest(
-                                                            mealId: meal.key,
-                                                            seller: seller);
-                                                      },
-                                                    ).toList();
-                                                    allMealsRequests
-                                                        .addAll(sellerAll);
-
-                                                    if (filterByFeatured) {
-                                                      currentMeals.removeWhere(
-                                                          (mealId, details) =>
-                                                              !details
-                                                                  .featured);
-                                                    }
-                                                    var sellerFiltered =
-                                                        currentMeals.entries
-                                                            .map(
-                                                      (meal) {
-                                                        return MealRequest(
-                                                            mealId: meal.key,
-                                                            seller: seller);
-                                                      },
-                                                    ).toList();
-                                                    if (mealsLimit > 0) {
-                                                      sellerFiltered =
-                                                          sellerFiltered
-                                                              .take(mealsLimit)
-                                                              .toList();
-                                                    }
-                                                    filteredMealsRequests
-                                                        .addAll(sellerFiltered);
-                                                  },
-                                                );
-
-                                                if (allMealsRequests.isEmpty &&
-                                                    filteredMealsRequests
-                                                        .isEmpty &&
-                                                    sellerList.isEmpty)
-                                                  return Container(
-                                                    margin:
-                                                        EdgeInsets.symmetric(
-                                                      horizontal: 15,
-                                                      vertical: 10,
-                                                    ),
-                                                    height: 0.7.wp - 56,
-                                                    alignment: Alignment.center,
-                                                    child: AutoSizeText(
-                                                      'Sem sugestões ou vendedores próximos abertos.Você pode aumentar o alcance ou fazer pedidos para receber sugestões!',
-                                                      style: GoogleFonts
-                                                          .montserrat(
-                                                        fontSize: 45.nsp,
-                                                        color: Theme.of(context)
-                                                            .accentColor,
-                                                      ),
-                                                    ),
-                                                  );
-
-                                                return Column(
-                                                  children: [
-                                                    if (allMealsRequests
-                                                        .isNotEmpty)
-                                                      _buildOrderAgain(
-                                                        allMealsRequests,
-                                                        widget.usuario.id,
-                                                      ),
-                                                    if (filteredMealsRequests
-                                                        .isNotEmpty)
-                                                      _buildSuggestions(
-                                                        filteredMealsRequests,
-                                                      ),
-                                                    if (allMealsRequests
-                                                            .isEmpty &&
-                                                        filteredMealsRequests
-                                                            .isEmpty)
-                                                      Container(
-                                                        margin: EdgeInsets
-                                                            .symmetric(
-                                                          horizontal: 15,
-                                                          vertical: 10,
-                                                        ),
-                                                        child: AutoSizeText(
-                                                          'Use o aplicativo e faça reservas para receber sugestões de quentinhas!',
-                                                          style: GoogleFonts
-                                                              .montserrat(
-                                                            fontSize: 45.nsp,
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .accentColor,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    SizedBox(height: 0.02.hp),
-                                                    if (sellerList.isNotEmpty)
-                                                      SellersList(
-                                                          sellerList,
-                                                          locationSnapshot,
-                                                          widget.usuario.id),
-                                                    if (sellerList.isEmpty)
-                                                      Container(
-                                                        margin: EdgeInsets
-                                                            .symmetric(
-                                                          horizontal: 15,
-                                                          vertical: 10,
-                                                        ),
-                                                        child: AutoSizeText(
-                                                          'Aumente o alcance para visualizar vendedores!',
-                                                          style: GoogleFonts
-                                                              .montserrat(
-                                                            fontSize: 45.nsp,
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .accentColor,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          },
-                                        );
-                                      },
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
+                                            },
+                                          );
+                                        },
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ],
                           ),
-              ),
+                        ),
             ),
+          );
+        },
+      ),
     );
   }
 

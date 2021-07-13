@@ -5,12 +5,8 @@ import 'package:rango/resources/repository.dart';
 
 class UserPicture extends StatefulWidget {
   final String picture;
-  final bool hasInternet;
 
-  const UserPicture(
-    this.picture, {
-    this.hasInternet,
-  });
+  const UserPicture(this.picture);
 
   @override
   _UserPictureState createState() => _UserPictureState();
@@ -20,17 +16,7 @@ class _UserPictureState extends State<UserPicture> {
   bool _hasInternet;
   @override
   void initState() {
-    if (widget.hasInternet == null) {
-      _checkInternet();
-    } else {
-      setState(() => _hasInternet = widget.hasInternet);
-    }
     super.initState();
-  }
-
-  Future<void> _checkInternet() async {
-    bool hasInternet = await Repository.instance.getInternetConnection();
-    setState(() => _hasInternet = hasInternet);
   }
 
   @override
@@ -51,7 +37,7 @@ class _UserPictureState extends State<UserPicture> {
               color: Color(0xFFF9B152),
             ),
           ),
-          if (widget.picture == null || _hasInternet == null || !_hasInternet)
+          if (widget.picture == null)
             FittedBox(
               fit: BoxFit.cover,
               child: CircleAvatar(
@@ -60,7 +46,7 @@ class _UserPictureState extends State<UserPicture> {
                 radius: 70,
               ),
             ),
-          if (widget.picture != null && (_hasInternet != null && _hasInternet))
+          if (widget.picture != null)
             ClipRRect(
               borderRadius: BorderRadius.circular(120),
               child: Container(
