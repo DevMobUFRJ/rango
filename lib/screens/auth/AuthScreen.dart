@@ -62,25 +62,26 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
             );
           }
-        } on PlatformException catch (error) {
+        } on FirebaseAuthException catch (error) {
+          print(error.code);
           String errorText;
           switch (error.code) {
-            case 'ERROR_TOO_MANY_REQUESTS':
+            case 'too-many-requests':
               errorText =
                   'Acesso a conta bloqueado, tente mais tarde ou resete sua senha.';
               break;
-            case 'ERROR_WRONG_PASSWORD':
-              errorText = 'Senha incorreta';
+            case 'user-not-found':
+              errorText = 'Essa conta não existe';
               break;
-            case 'ERROR_USER_NOT_FOUND':
-              errorText = 'Usuário não encontrado';
+            case 'wrong-password':
+              errorText = 'Senha inválida';
+              break;
+            case 'network-request-failed':
+              errorText = 'Erro de conexão, tente novamente';
               break;
             default:
-              errorText = 'Ocorreu um erro, tente novamente.';
-              break;
+              errorText = 'Ocorreu um erro';
           }
-          print(error);
-          setState(() => _isLoading = false);
           ScaffoldMessenger.of(ctx).showSnackBar(
             SnackBar(
               content: Text(
@@ -92,7 +93,15 @@ class _AuthScreenState extends State<AuthScreen> {
           );
         } catch (error) {
           setState(() => _isLoading = false);
-          print(error);
+          ScaffoldMessenger.of(ctx).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Ocorreu um erro',
+                textAlign: TextAlign.center,
+              ),
+              backgroundColor: Theme.of(context).errorColor,
+            ),
+          );
         }
       } else {
         setState(() => _isLoading = true);
@@ -125,24 +134,39 @@ class _AuthScreenState extends State<AuthScreen> {
         Navigator.of(context).pop();
       }
       setState(() => _isLoading = false);
-    } on PlatformException catch (error) {
-      var message = 'Ocorreu um erro';
-      if (error.message != null) {
-        message = error.message;
+    } on FirebaseAuthException catch (error) {
+      setState(() => _isLoading = false);
+      if (error.code == 'network-request-failed') {
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Erro de conexão, tente novamente.',
+              textAlign: TextAlign.center,
+            ),
+            backgroundColor: Theme.of(context).errorColor,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          SnackBar(
+            content: Text(
+              error.message,
+              textAlign: TextAlign.center,
+            ),
+            backgroundColor: Theme.of(context).errorColor,
+          ),
+        );
       }
+    } catch (error) {
       ScaffoldMessenger.of(ctx).showSnackBar(
         SnackBar(
           content: Text(
-            message,
+            'Ocorreu um erro',
             textAlign: TextAlign.center,
           ),
           backgroundColor: Theme.of(context).errorColor,
         ),
       );
-      setState(() => _isLoading = false);
-    } catch (error) {
-      setState(() => _isLoading = false);
-      print(error);
     }
   }
 
