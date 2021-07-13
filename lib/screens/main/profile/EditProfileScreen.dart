@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/client.dart';
+import 'package:rango/utils/constants.dart';
 import 'package:rango/widgets/auth/CustomTextFormField.dart';
 import 'package:rango/widgets/pickers/UserImagePicker.dart';
 
@@ -112,6 +113,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               .closed
               .then((value) => Navigator.of(context).pop());
         }
+      } on FirebaseAuthException catch (error) {
+        String errorText;
+        switch (error.code) {
+          case 'network-request-failed':
+            errorText = networkErrorMessage;
+            break;
+          default:
+            errorText = defaultErrorMessage;
+            break;
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            duration: Duration(seconds: 2),
+            backgroundColor: Theme.of(context).errorColor,
+            content: Text(
+              errorText,
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

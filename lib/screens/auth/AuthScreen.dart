@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:rango/utils/constants.dart';
 import 'package:rango/widgets/auth/AuthForm.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -68,20 +69,19 @@ class _AuthScreenState extends State<AuthScreen> {
           String errorText;
           switch (error.code) {
             case 'too-many-requests':
-              errorText =
-                  'Acesso a conta bloqueado, tente mais tarde ou resete sua senha.';
+              errorText = tooManyRequestsErrorMessage;
               break;
             case 'user-not-found':
-              errorText = 'Essa conta não existe';
+              errorText = userNotFoundErrorMessage;
               break;
             case 'wrong-password':
-              errorText = 'Senha inválida';
+              errorText = wrongPasswordErrorMessage;
               break;
             case 'network-request-failed':
-              errorText = 'Erro de conexão, tente novamente';
+              errorText = networkErrorMessage;
               break;
             default:
-              errorText = 'Ocorreu um erro';
+              errorText = defaultErrorMessage;
           }
           ScaffoldMessenger.of(ctx).showSnackBar(
             SnackBar(
@@ -144,7 +144,7 @@ class _AuthScreenState extends State<AuthScreen> {
           SnackBar(
             duration: Duration(seconds: 2),
             content: Text(
-              'Erro de conexão, tente novamente.',
+              networkErrorMessage,
               textAlign: TextAlign.center,
             ),
             backgroundColor: Theme.of(context).errorColor,
