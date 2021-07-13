@@ -335,7 +335,6 @@ class _ProfileSettingsState extends State<ProfileSettings> {
         ),
       );
     } catch (e) {
-      print('erro aqui cacete');
       print(e);
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
