@@ -50,15 +50,15 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
         : StreamBuilder(
             stream: Connectivity().onConnectivityChanged,
             builder: (context, snap) {
-              if (snap.connectionState == ConnectionState.waiting ||
-                  !snap.hasData) {
-                return Container(
-                  height: 1.hp - 56,
-                  child: Scaffold(
-                    body: NoConecctionWidget(),
-                  ),
-                );
-              }
+              // if (snap.connectionState == ConnectionState.waiting ||
+              //     !snap.hasData) {
+              //   return Container(
+              //     height: 1.hp - 56,
+              //     child: Scaffold(
+              //       body: NoConecctionWidget(),
+              //     ),
+              //   );
+              // }
               return StreamBuilder(
                 stream: Repository.instance.getClientStream(userId),
                 builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
@@ -68,14 +68,14 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
                     return SplashScreen();
                   }
                   Client cliente = snapshot.data.data() as Client;
-                  if (snap.hasData && snap.data == ConnectivityResult.none) {
-                    return Container(
-                      height: 1.hp - 56,
-                      child: Scaffold(
-                        body: NoConecctionWidget(),
-                      ),
-                    );
-                  }
+                  // if (snap.hasData && snap.data == ConnectivityResult.none) {
+                  //   return Container(
+                  //     height: 1.hp - 56,
+                  //     child: Scaffold(
+                  //       body: NoConecctionWidget(),
+                  //     ),
+                  //   );
+                  // }
                   actualClient = cliente;
                   return PersistentTabView(
                     controller: _controller,

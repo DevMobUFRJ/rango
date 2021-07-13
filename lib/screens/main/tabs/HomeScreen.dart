@@ -126,18 +126,18 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         future: SharedPreferences.getInstance(),
         builder:
             (BuildContext context, AsyncSnapshot<SharedPreferences> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return _buildLoadingSpinnerScene();
-          }
-          if (snapshot.hasData) {
-            var hasInternet = snapshot.data.getBool('hasInternet');
-            if (hasInternet == null || !hasInternet) {
-              return Container(
-                height: 1.hp - 56,
-                child: NoConecctionWidget(),
-              );
-            }
-          }
+          // if (snapshot.connectionState == ConnectionState.waiting) {
+          //   return _buildLoadingSpinnerScene();
+          // }
+          // if (snapshot.hasData) {
+          //   var hasInternet = snapshot.data.getBool('hasInternet');
+          //   if (hasInternet == null || !hasInternet) {
+          //     return Container(
+          //       height: 1.hp - 56,
+          //       child: NoConecctionWidget(),
+          //     );
+          //   }
+          // }
           return Container(
             height: 1.hp - 56,
             child: RefreshIndicator(
