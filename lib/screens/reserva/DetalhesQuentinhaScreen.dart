@@ -18,7 +18,7 @@ import 'package:rango/screens/seller/SellerProfile.dart';
 import 'package:rango/utils/constants.dart';
 import 'package:rango/utils/string_formatters.dart';
 
-class DetalhesQuentinhaScreen extends StatelessWidget {
+class DetalhesQuentinhaScreen extends StatefulWidget {
   final Meal marmita;
   final Seller seller;
   final double tagM;
@@ -30,10 +30,18 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
   });
 
   static const routeName = '/detalhes-reserva-quentinha';
+
+  @override
+  _DetalhesQuentinhaScreenState createState() =>
+      _DetalhesQuentinhaScreenState();
+}
+
+class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
+  bool _doingOrder = false;
+
   @override
   Widget build(BuildContext context) {
-    bool _doingOrder = false;
-    String price = intToCurrency(marmita.price);
+    String price = intToCurrency(widget.marmita.price);
     if (price.length == 6 && price.contains(',')) price = '${price}0';
     return Scaffold(
       appBar: AppBar(
@@ -41,11 +49,11 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
           onTap: () => pushNewScreen(
             context,
             withNavBar: false,
-            screen: SellerProfile(seller.id, seller.name),
+            screen: SellerProfile(widget.seller.id, widget.seller.name),
             pageTransitionAnimation: PageTransitionAnimation.cupertino,
           ),
           child: AutoSizeText(
-            seller.name,
+            widget.seller.name,
             style: GoogleFonts.montserrat(
               color: Theme.of(context).accentColor,
               fontSize: 40.nsp,
@@ -70,11 +78,11 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                   maxWidth: 0.8.wp,
                 ),
                 child: Hero(
-                  tag: marmita.hashCode * tagM,
+                  tag: widget.marmita.hashCode * widget.tagM,
                   child: FadeInImage(
                     placeholder:
                         AssetImage('assets/imgs/quentinha_placeholder.png'),
-                    image: FirebaseImage(marmita.picture),
+                    image: FirebaseImage(widget.marmita.picture),
                   ),
                 ),
               ),
@@ -93,7 +101,7 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                       child: Align(
                         alignment: Alignment.topLeft,
                         child: AutoSizeText(
-                          marmita.name,
+                          widget.marmita.name,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.montserratTextTheme(
@@ -130,7 +138,7 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                           Align(
                             alignment: Alignment.topLeft,
                             child: AutoSizeText(
-                              marmita.description,
+                              widget.marmita.description,
                               maxLines: 4,
                               style: GoogleFonts.montserratTextTheme(
                                       Theme.of(context).textTheme)
@@ -170,13 +178,13 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
   }
 
   Widget _buildReservate(context) {
-    if (seller.canReservate) {
+    if (widget.seller.canReservate) {
       return Flexible(
         flex: 3,
         child: Container(
           width: 0.4.wp,
           child: ElevatedButton(
-            onPressed: () => _showOrderDialog(context, marmita.quantity),
+            onPressed: () => _showOrderDialog(context, widget.marmita.quantity),
             child: AutoSizeText(
               'Reservar',
               maxLines: 1,
@@ -242,165 +250,207 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
         int _quantity = 1;
         return StatefulBuilder(
           builder: (dialogContext, setState) {
-            return AlertDialog(
-              insetPadding: EdgeInsets.symmetric(horizontal: 0.1.wp),
-              backgroundColor: Color(0xFFF9B152),
-              actionsPadding: EdgeInsets.all(10),
-              contentPadding: EdgeInsets.only(
-                top: 20,
-                left: 24,
-                right: 24,
-                bottom: 0,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              title: Text(
-                'Confirmar Reserva',
-                style: GoogleFonts.montserrat(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 42.ssp,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Quantas deseja reservar?',
-                    style: GoogleFonts.montserrat(
-                      color: Colors.white,
-                      fontSize: 28.nsp,
+            return _doingOrder
+                ? AlertDialog(
+                    insetPadding: EdgeInsets.symmetric(horizontal: 0.1.wp),
+                    backgroundColor: Color(0xFFF9B152),
+                    actionsPadding: EdgeInsets.all(10),
+                    contentPadding: EdgeInsets.only(
+                      top: 20,
+                      left: 24,
+                      right: 24,
+                      bottom: 0,
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 10),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        FloatingActionButton(
-                          onPressed: () {
-                            setState(() {
-                              if (_quantity > 1) {
-                                _quantity -= 1;
-                              }
-                            });
-                          },
-                          child: Icon(Icons.remove, color: Colors.black),
-                          backgroundColor: Colors.white,
-                        ),
-                        Text(
-                          '$_quantity',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 80.nsp,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    title: Text(
+                      'Reservando',
+                      style: GoogleFonts.montserrat(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 42.ssp,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    content: Container(
+                      margin: EdgeInsets.only(bottom: 12),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                        FloatingActionButton(
-                          onPressed: () {
-                            setState(() {
-                              if (_quantity < maxQuantity) {
-                                _quantity += 1;
-                              }
-                            });
-                          },
-                          child: Icon(
-                            Icons.add,
-                            color: Colors.black,
-                          ),
-                          backgroundColor: Colors.white,
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   )
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
-                  },
-                  child: Text(
-                    'Cancelar',
-                    style: GoogleFonts.montserrat(
-                      decoration: TextDecoration.underline,
-                      color: Colors.white,
-                      fontSize: 34.nsp,
+                : AlertDialog(
+                    insetPadding: EdgeInsets.symmetric(horizontal: 0.1.wp),
+                    backgroundColor: Color(0xFFF9B152),
+                    actionsPadding: EdgeInsets.all(10),
+                    contentPadding: EdgeInsets.only(
+                      top: 20,
+                      left: 24,
+                      right: 24,
+                      bottom: 0,
                     ),
-                  ),
-                ),
-                TextButton(
-                  child: Text(
-                    'Confirmar',
-                    style: GoogleFonts.montserrat(
-                      decoration: TextDecoration.underline,
-                      color: Colors.white,
-                      fontSize: 34.nsp,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                  ),
-                  onPressed: () async {
-                    final User user = Repository.instance.getCurrentUser();
-
-                    Order order = Order(
-                      clientId: user.uid,
-                      clientName: user.displayName,
-                      sellerId: seller.id,
-                      sellerName: seller.name,
-                      mealId: marmita.id,
-                      mealName: marmita.name,
-                      price: marmita.price,
-                      quantity: _quantity,
-                      requestedAt: Timestamp.now(),
-                      status: "requested",
-                    );
-                    try {
-                      await Repository.instance.addOrder(order);
-                      if (seller.deviceToken != null) {
-                        await _sendOrderNotification(seller.deviceToken, ctx);
-                      }
-                      Navigator.of(ctx).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: Theme.of(ctx).accentColor,
-                          duration: Duration(seconds: 2),
-                          content: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            child: Text(
-                              "Reserva feita com sucesso.",
-                              textAlign: TextAlign.center,
-                            ),
+                    title: Text(
+                      'Confirmar Reserva',
+                      style: GoogleFonts.montserrat(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 42.ssp,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Quantas deseja reservar?',
+                          style: GoogleFonts.montserrat(
+                            color: Colors.white,
+                            fontSize: 28.nsp,
                           ),
                         ),
-                      );
-
-                      pushNewScreen(
-                        context,
-                        screen: OrderHistoryScreen(),
-                        withNavBar: true,
-                        pageTransitionAnimation:
-                            PageTransitionAnimation.cupertino,
-                      );
-                    } catch (e) {
-                      Navigator.of(ctx).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          duration: Duration(seconds: 2),
-                          content: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            child: Text(
-                              e.toString(),
-                              textAlign: TextAlign.center,
-                            ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 10),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              FloatingActionButton(
+                                onPressed: () {
+                                  setState(() {
+                                    if (_quantity > 1) {
+                                      _quantity -= 1;
+                                    }
+                                  });
+                                },
+                                child: Icon(Icons.remove, color: Colors.black),
+                                backgroundColor: Colors.white,
+                              ),
+                              Text(
+                                '$_quantity',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 80.nsp,
+                                ),
+                              ),
+                              FloatingActionButton(
+                                onPressed: () {
+                                  setState(() {
+                                    if (_quantity < maxQuantity) {
+                                      _quantity += 1;
+                                    }
+                                  });
+                                },
+                                child: Icon(
+                                  Icons.add,
+                                  color: Colors.black,
+                                ),
+                                backgroundColor: Colors.white,
+                              ),
+                            ],
                           ),
-                          backgroundColor: Theme.of(context).errorColor,
+                        )
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(ctx).pop();
+                        },
+                        child: Text(
+                          'Cancelar',
+                          style: GoogleFonts.montserrat(
+                            decoration: TextDecoration.underline,
+                            color: Colors.white,
+                            fontSize: 34.nsp,
+                          ),
                         ),
-                      );
-                    }
-                  },
-                ),
-              ],
-            );
+                      ),
+                      TextButton(
+                        child: Text(
+                          'Confirmar',
+                          style: GoogleFonts.montserrat(
+                            decoration: TextDecoration.underline,
+                            color: Colors.white,
+                            fontSize: 34.nsp,
+                          ),
+                        ),
+                        onPressed: () async {
+                          setState(() => _doingOrder = true);
+                          final User user =
+                              Repository.instance.getCurrentUser();
+                          Order order = Order(
+                            clientId: user.uid,
+                            clientName: user.displayName,
+                            sellerId: widget.seller.id,
+                            sellerName: widget.seller.name,
+                            mealId: widget.marmita.id,
+                            mealName: widget.marmita.name,
+                            price: widget.marmita.price,
+                            quantity: _quantity,
+                            requestedAt: Timestamp.now(),
+                            status: "requested",
+                          );
+                          try {
+                            await Repository.instance.addOrder(order);
+                            if (widget.seller.deviceToken != null) {
+                              await _sendOrderNotification(
+                                  widget.seller.deviceToken, ctx);
+                            }
+                            Navigator.of(ctx).pop();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: Theme.of(ctx).accentColor,
+                                duration: Duration(seconds: 2),
+                                content: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  child: Text(
+                                    "Reserva feita com sucesso.",
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            );
+                            Navigator.of(ctx).pop();
+                            pushNewScreen(
+                              context,
+                              screen: OrderHistoryScreen(),
+                              withNavBar: true,
+                              pageTransitionAnimation:
+                                  PageTransitionAnimation.cupertino,
+                            );
+                          } catch (e) {
+                            Navigator.of(ctx).pop();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                duration: Duration(seconds: 2),
+                                content: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  child: Text(
+                                    e.toString(),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                backgroundColor: Theme.of(context).errorColor,
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  );
           },
         );
       },
