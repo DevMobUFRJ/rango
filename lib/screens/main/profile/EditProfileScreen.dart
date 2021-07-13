@@ -115,6 +115,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
+            duration: Duration(seconds: 2),
             backgroundColor: Theme.of(context).errorColor,
             content: Text(
               error.toString(),

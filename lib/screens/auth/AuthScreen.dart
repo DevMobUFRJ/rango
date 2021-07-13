@@ -54,6 +54,7 @@ class _AuthScreenState extends State<AuthScreen> {
           } else {
             ScaffoldMessenger.of(ctx).showSnackBar(
               SnackBar(
+                duration: Duration(seconds: 2),
                 content: Text(
                   'Você tentou entrar com uma conta de vendedor! Use o app do vendedor para isso.',
                   textAlign: TextAlign.center,
@@ -84,6 +85,7 @@ class _AuthScreenState extends State<AuthScreen> {
           }
           ScaffoldMessenger.of(ctx).showSnackBar(
             SnackBar(
+              duration: Duration(seconds: 2),
               content: Text(
                 errorText,
                 textAlign: TextAlign.center,
@@ -95,6 +97,7 @@ class _AuthScreenState extends State<AuthScreen> {
           setState(() => _isLoading = false);
           ScaffoldMessenger.of(ctx).showSnackBar(
             SnackBar(
+              duration: Duration(seconds: 2),
               content: Text(
                 'Ocorreu um erro',
                 textAlign: TextAlign.center,
@@ -139,6 +142,7 @@ class _AuthScreenState extends State<AuthScreen> {
       if (error.code == 'network-request-failed') {
         ScaffoldMessenger.of(ctx).showSnackBar(
           SnackBar(
+            duration: Duration(seconds: 2),
             content: Text(
               'Erro de conexão, tente novamente.',
               textAlign: TextAlign.center,
@@ -149,6 +153,7 @@ class _AuthScreenState extends State<AuthScreen> {
       } else {
         ScaffoldMessenger.of(ctx).showSnackBar(
           SnackBar(
+            duration: Duration(seconds: 2),
             content: Text(
               error.message,
               textAlign: TextAlign.center,
@@ -160,6 +165,7 @@ class _AuthScreenState extends State<AuthScreen> {
     } catch (error) {
       ScaffoldMessenger.of(ctx).showSnackBar(
         SnackBar(
+          duration: Duration(seconds: 2),
           content: Text(
             'Ocorreu um erro',
             textAlign: TextAlign.center,

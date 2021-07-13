@@ -363,6 +363,7 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           backgroundColor: Theme.of(ctx).accentColor,
+                          duration: Duration(seconds: 2),
                           content: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 20),
                             child: Text(
@@ -384,6 +385,7 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
                       Navigator.of(ctx).pop();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
+                          duration: Duration(seconds: 2),
                           content: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 20),
                             child: Text(

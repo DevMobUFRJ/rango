@@ -50,6 +50,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       } catch (error) {
         ScaffoldMessenger.of(ctx).showSnackBar(
           SnackBar(
+            duration: Duration(seconds: 2),
             content: Text(
               error.toString(),
               textAlign: TextAlign.center,

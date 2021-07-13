@@ -65,6 +65,7 @@ class _AuthFormState extends State<AuthForm> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          duration: Duration(seconds: 2),
           content: Text(
             e.toString(),
             textAlign: TextAlign.center,

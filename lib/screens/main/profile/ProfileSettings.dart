@@ -312,6 +312,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
       }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          duration: Duration(seconds: 2),
           backgroundColor: Theme.of(context).accentColor,
           content: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
@@ -325,6 +326,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          duration: Duration(seconds: 2),
           content: Text(
             e.toString(),
             textAlign: TextAlign.center,

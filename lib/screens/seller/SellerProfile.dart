@@ -269,6 +269,7 @@ class _SellerProfileState extends State<SellerProfile> {
                           } catch (error) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
+                                duration: Duration(seconds: 2),
                                 content: Text(
                                   'WhatsApp não instalado',
                                   textAlign: TextAlign.center,
