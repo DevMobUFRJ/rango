@@ -28,6 +28,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
   bool _reservaValue;
   bool _newMessagesValue;
   double _rangeValue;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -226,14 +227,22 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                 margin: EdgeInsets.symmetric(vertical: 0.01.hp),
                 width: 0.5.wp,
                 child: ElevatedButton(
-                  onPressed: () => _saveSettings(context),
+                  onPressed: _isLoading ? null : () => _saveSettings(context),
                   child: Container(
-                    child: AutoSizeText(
-                      'Confirmar',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 36.nsp,
-                      ),
-                    ),
+                    child: _isLoading
+                        ? SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          )
+                        : AutoSizeText(
+                            'Confirmar',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 36.nsp,
+                            ),
+                          ),
                   ),
                 ),
               ),
@@ -284,6 +293,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
   }
 
   void _saveSettings(context) async {
+    setState(() => _isLoading = true);
     try {
       await Repository.instance.setSellerRange(
         double.parse(
@@ -292,7 +302,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
       );
       Provider.of<RangeChangeNotifier>(context, listen: false).triggerRefresh();
       Map<String, dynamic> dataToUpdate = {};
-      if (_switchValue = false) {
+      if (_switchValue == false) {
         Map<String, dynamic> notifications = {};
         notifications['messages'] = false;
         notifications['reservations'] = false;
@@ -310,6 +320,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
             .doc(firebaseUser.uid)
             .update(dataToUpdate);
       }
+      setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           duration: Duration(seconds: 2),
@@ -324,6 +335,9 @@ class _ProfileSettingsState extends State<ProfileSettings> {
         ),
       );
     } catch (e) {
+      print('erro aqui cacete');
+      print(e);
+      setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           duration: Duration(seconds: 2),
@@ -334,7 +348,6 @@ class _ProfileSettingsState extends State<ProfileSettings> {
           backgroundColor: Theme.of(context).errorColor,
         ),
       );
-      print(e);
     }
   }
 }
