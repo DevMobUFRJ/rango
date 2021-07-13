@@ -239,7 +239,7 @@ class _AuthFormState extends State<AuthForm> {
                           Flexible(
                             flex: 1,
                             child: SizedBox(
-                              width: 0.7.wp,
+                              width: 0.5.wp,
                               child: ElevatedButton(
                                 onPressed: widget._isLoading ? null : _submit,
                                 child: widget._isLoading
@@ -250,12 +250,10 @@ class _AuthFormState extends State<AuthForm> {
                                                   Colors.white),
                                           strokeWidth: 3.0,
                                         ),
-                                        height: 30.w,
-                                        width: 30.w,
+                                        height: 40.w,
+                                        width: 40.w,
                                       )
                                     : Container(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 0.02.wp),
                                         child: Text(
                                           'Continuar',
                                           style: GoogleFonts.montserrat(

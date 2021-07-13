@@ -79,8 +79,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 0.1.wp),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Flexible(
+            Expanded(
               flex: 1,
               child: Container(
                 margin: EdgeInsets.only(top: 50, bottom: 20),
@@ -139,7 +140,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             Flexible(
               flex: 1,
               child: Container(
-                width: 0.4.wp,
+                width: 0.5.wp,
                 child: ElevatedButton(
                   onPressed: _loading ? null : () => _submit(context),
                   child: _loading

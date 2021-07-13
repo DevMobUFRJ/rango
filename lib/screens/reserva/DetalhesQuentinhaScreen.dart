@@ -174,18 +174,15 @@ class DetalhesQuentinhaScreen extends StatelessWidget {
       return Flexible(
         flex: 3,
         child: Container(
-          width: 0.6.wp,
+          width: 0.4.wp,
           child: ElevatedButton(
             onPressed: () => _showOrderDialog(context, marmita.quantity),
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 0.05.wp),
-              child: AutoSizeText(
-                'Reservar',
-                maxLines: 1,
-                style:
-                    GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
-                        .button,
-              ),
+            child: AutoSizeText(
+              'Reservar',
+              maxLines: 1,
+              style:
+                  GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
+                      .button,
             ),
           ),
         ),

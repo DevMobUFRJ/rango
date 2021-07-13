@@ -224,12 +224,10 @@ class _ProfileSettingsState extends State<ProfileSettings> {
               ),
               Container(
                 margin: EdgeInsets.symmetric(vertical: 0.01.hp),
-                width: 0.6.wp,
+                width: 0.5.wp,
                 child: ElevatedButton(
                   onPressed: () => _saveSettings(context),
                   child: Container(
-                    padding: EdgeInsets.symmetric(
-                        vertical: 0.01.hp, horizontal: 0.1.wp),
                     child: AutoSizeText(
                       'Confirmar',
                       style: GoogleFonts.montserrat(

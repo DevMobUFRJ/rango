@@ -317,16 +317,23 @@ class _SellerProfileState extends State<SellerProfile> {
               Flexible(
                 flex: 1,
                 child: ElevatedButton.icon(
-                  icon: Icon(Icons.chat, size: 38.nsp),
+                  icon: Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Icon(Icons.chat, size: 38.nsp),
+                  ),
                   onPressed: () => pushNewScreenWithRouteSettings(
                     context,
-                    screen:
-                        ChatScreen(seller.id, seller.name, key: chatScreenKey),
+                    screen: ChatScreen(
+                      seller.id,
+                      seller.name,
+                      key: chatScreenKey,
+                    ),
                     withNavBar: false,
                     settings: RouteSettings(name: 'chatScreen'),
                   ),
                   label: Container(
                     width: 0.5.wp,
+                    padding: EdgeInsets.only(right: 10),
                     child: AutoSizeText(
                       'Chat com o vendedor',
                       maxLines: 1,
@@ -341,9 +348,13 @@ class _SellerProfileState extends State<SellerProfile> {
               Flexible(
                 flex: 1,
                 child: ElevatedButton.icon(
-                  icon: Icon(Icons.map, size: 38.nsp),
+                  icon: Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Icon(Icons.map, size: 38.nsp),
+                  ),
                   onPressed: () {},
                   label: Container(
+                    padding: EdgeInsets.only(right: 10),
                     width: 0.35.wp,
                     child: AutoSizeText(
                       'Ver localização',
