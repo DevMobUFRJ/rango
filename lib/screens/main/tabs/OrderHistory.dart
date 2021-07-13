@@ -9,13 +9,10 @@ import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/order.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
-import 'package:rango/utils/constants.dart';
 import 'package:rango/utils/string_formatters.dart';
-import 'package:rango/widgets/others/NoConecctionWidget.dart';
 
 class OrderHistoryScreen extends StatelessWidget {
-  final bool hasInternet;
-  OrderHistoryScreen({this.hasInternet});
+  OrderHistoryScreen();
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,12 +21,7 @@ class OrderHistoryScreen extends StatelessWidget {
             style: GoogleFonts.montserrat(
                 color: Theme.of(context).accentColor, fontSize: 40.nsp)),
       ),
-      body: hasInternet == null || !hasInternet
-          ? Container(
-              height: 1.hp - 56,
-              child: NoConecctionWidget(),
-            )
-          : Container(
+      body:  Container(
               height: 1.hp - 56,
               child: StreamBuilder(
                 stream: FirebaseAuth.instance.userChanges(),

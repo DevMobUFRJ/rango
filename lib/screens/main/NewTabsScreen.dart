@@ -126,7 +126,7 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
                                 HomeScreen(cliente, _hasInternet,
                                     key: currentKey),
                                 SearchScreen(cliente, _hasInternet),
-                                OrderHistoryScreen(hasInternet: _hasInternet),
+                                OrderHistoryScreen(),
                                 ProfileScreen(cliente, _hasInternet),
                               ],
                               items: [
