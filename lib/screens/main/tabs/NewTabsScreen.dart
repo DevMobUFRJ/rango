@@ -7,7 +7,7 @@ import 'package:rango/models/contact.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/models/user_notification_settings.dart';
 import 'package:rango/screens/SplashScreen.dart';
-import 'package:rango/screens/main/tabs/AddMealScreen.dart';
+import 'package:rango/screens/main/tabs/ManageMealsScreen.dart';
 import 'package:rango/screens/main/tabs/HomeScreen.dart';
 import 'package:rango/screens/main/tabs/ProfileScreen.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
@@ -130,8 +130,9 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
                 duration: Duration(milliseconds: 180),
               ),
               screens: <Widget>[
+                ManageMealsScreen(seller),
                 HomeScreen(seller),
-                AddMealScreen(seller),
+
                 ProfileScreen(seller),
               ],
               items: [

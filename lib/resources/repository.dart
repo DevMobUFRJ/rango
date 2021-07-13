@@ -43,8 +43,8 @@ class Repository {
     return sellersRef.doc(uid).snapshots();
   }
 
-  Stream<DocumentSnapshot> getMealFromSeller(String mealUid, String sellerUid) {
-    return sellersRef.doc(sellerUid).collection("meals").doc(mealUid).snapshots();
+  Stream<DocumentSnapshot<Meal>> getMealFromSeller(String mealUid, String sellerId) {
+    return mealsRef(sellerId).doc(mealUid).snapshots();
   }
 
   Future<DocumentSnapshot> getSellerFuture(String uid) {
@@ -59,8 +59,8 @@ class Repository {
     return clientsRef.doc(uid).snapshots();
   }
 
-  Stream<QuerySnapshot> getSellerMeals(String uid) {
-    return sellersRef.doc(uid).collection('meals').snapshots();
+  Stream<QuerySnapshot<Meal>> getSellerMeals(String sellerId) {
+    return mealsRef(sellerId).snapshots();
   }
 
   Stream<QuerySnapshot> getFavoriteSellers(List<String> favorites) {
@@ -83,6 +83,38 @@ class Repository {
       throw('Não há quentinhas suficientes para o seu pedido. Quantidade disponível: ${meal.quantity}.');
     }
     return ordersRef.add(order);
+  }
+
+  Future<void> addMealToCurrent(mealId, sellerId) async {
+    try {
+      await sellersRef.doc(sellerId).update({
+        'currentMeals.$mealId': {
+          'featured': false
+        }
+      });
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> removeMealFromCurrent(mealId, sellerId) async {
+    try {
+      await sellersRef.doc(sellerId).update({
+        'currentMeals.$mealId': FieldValue.delete()
+      });
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> toggleMealFeatured(String mealId, Seller seller) async {
+    try {
+      await sellersRef.doc(seller.id).update({
+        'currentMeals.$mealId.featured': !seller.currentMeals[mealId].featured
+      });
+    } catch (e) {
+      throw e;
+    }
   }
 
   Future<void> reserveOrderTransaction(Order order) async {

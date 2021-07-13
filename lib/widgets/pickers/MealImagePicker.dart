@@ -25,49 +25,69 @@ class _MealImagePickerState extends State<MealImagePicker> {
     await showDialog(
         context: context,
         builder: (BuildContext ctx) => AlertDialog(
-              backgroundColor: Theme.of(ctx).backgroundColor,
-              actionsPadding: EdgeInsets.all(10),
-              title: Text(
-                'Escolha de onde pegar a imagem',
-                style: GoogleFonts.montserrat(
-                  color: Theme.of(context).accentColor,
-                  fontSize: 38.nsp,
+          backgroundColor: Theme.of(ctx).backgroundColor,
+          actionsPadding: EdgeInsets.all(10),
+          title: Text(
+            'Escolha de onde pegar a imagem',
+            style: GoogleFonts.montserrat(
+              color: Theme.of(context).accentColor,
+              fontSize: 38.nsp,
+            ),
+          ),
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              TextButton(
+                onPressed: () async {
+                  try {
+                    //await Permission.photosAddOnly.request();
+                    pickImgFromGallery = true;
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content:
+                        Text('Ocorreu um erro ao escolher a foto, tente novamanete'),
+                      ),
+                    );
+                  }
+                  Navigator.of(ctx).pop();
+                },
+                child: Text(
+                  'Galeria',
+                  style: GoogleFonts.montserrat(
+                    color: Theme.of(context).accentColor,
+                    fontSize: 36.nsp,
+                  ),
                 ),
               ),
-              content: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      pickImgFromGallery = true;
-                      Navigator.of(ctx).pop();
-                    },
-                    child: Text(
-                      'Galeria',
-                      style: GoogleFonts.montserrat(
-                        color: Theme.of(context).accentColor,
-                        fontSize: 36.nsp,
+              TextButton(
+                onPressed: () async {
+                  try {
+                    //await Permission.camera.request();
+                    pickImgFromGallery = false;
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content:
+                        Text('Ocorreu um erro ao escolher a foto, tente novamanete'),
                       ),
-                    ),
+                    );
+                  }
+                  Navigator.of(ctx).pop();
+                },
+                child: Text(
+                  'Câmera',
+                  style: GoogleFonts.montserrat(
+                    color: Theme.of(context).accentColor,
+                    fontSize: 36.nsp,
                   ),
-                  TextButton(
-                    onPressed: () {
-                      pickImgFromGallery = false;
-                      Navigator.of(ctx).pop();
-                    },
-                    child: Text(
-                      'Câmera',
-                      style: GoogleFonts.montserrat(
-                        color: Theme.of(context).accentColor,
-                        fontSize: 36.nsp,
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15)),
-            ));
+            ],
+          ),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15)),
+        ));
     final picker = ImagePicker();
     if (pickImgFromGallery != null) {
       try {
@@ -81,11 +101,12 @@ class _MealImagePickerState extends State<MealImagePicker> {
           final pickedImageFile = File(pickedImage.path);
           setState(() => _pickedImage = pickedImageFile);
         }
-      } catch (error) {
+      } catch (e) {
+        print(e);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content:
-                Text('Ocorreu um erro ao escolher a foto, tente novmanete'),
+                Text('Ocorreu um erro ao escolher a foto, tente novamanete'),
           ),
         );
       }

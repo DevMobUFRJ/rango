@@ -2,23 +2,23 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/meals.dart';
-import 'package:rango/models/order.dart';
+import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/widgets/pickers/MealImagePicker.dart';
 
-class ManageOrder extends StatefulWidget {
+class ManageMeal extends StatefulWidget {
   final Meal meal;
 
-  ManageOrder({
+  ManageMeal({
     this.meal,
   });
 
   //TODO Se vier meal, editar. Se não, criar
   @override
-  _ManageOrderState createState() => _ManageOrderState();
+  _ManageMealState createState() => _ManageMealState();
 }
 
-class _ManageOrderState extends State<ManageOrder> {
+class _ManageMealState extends State<ManageMeal> {
   @override
   Widget build(BuildContext context) {
     TextEditingController _mealName;
@@ -28,15 +28,17 @@ class _ManageOrderState extends State<ManageOrder> {
     if (widget.meal != null) {
       _mealName = TextEditingController(
           text: widget.meal.name);
-      _mealValue = TextEditingController(
-          text: widget.meal.price.toString());
+      _mealValue = MoneyMaskedTextController(
+          initialValue: widget.meal.price.toDouble()/100,
+          leftSymbol: 'R\$ ',
+      );
       _mealDescription = TextEditingController(
           text: widget.meal.description);
       _mealQuantity = TextEditingController(
           text: widget.meal.quantity.toString());
     } else {
       _mealName = TextEditingController();
-      _mealValue = TextEditingController();
+      _mealValue = MoneyMaskedTextController(leftSymbol: 'R\$ ');
       _mealDescription = TextEditingController();
       _mealQuantity = TextEditingController();
     }
@@ -62,7 +64,7 @@ class _ManageOrderState extends State<ManageOrder> {
                           widget.meal.picture != null
                       ? widget.meal.picture
                       : null,
-                  editText: "Clique para editar",
+                  editText: "Editar imagem",
                 ),
                 Container(
                   margin: EdgeInsets.only(
@@ -231,6 +233,7 @@ class _ManageOrderState extends State<ManageOrder> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
+                    //TODO Adicionar logica, lembrando de multiplicar value por 100
                     onPressed: () => {},
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 42),
