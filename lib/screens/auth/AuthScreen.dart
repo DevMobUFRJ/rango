@@ -45,12 +45,29 @@ class _AuthScreenState extends State<AuthScreen> {
               password: password,
             );
             Map<String, dynamic> dataToUpdate = {};
-            dataToUpdate['deviceToken'] =
+            String actualDeviceToken =
                 await FirebaseMessaging.instance.getToken();
-            await FirebaseFirestore.instance
-                .collection('clients')
-                .doc(FirebaseAuth.instance.currentUser.uid)
-                .update(dataToUpdate);
+            dataToUpdate['deviceToken'] = actualDeviceToken;
+            DocumentReference<Map<String, dynamic>> userInstance =
+                FirebaseFirestore.instance
+                    .collection('clients')
+                    .doc(FirebaseAuth.instance.currentUser.uid);
+            userInstance.get().then((value) {
+              var oldDeviceToken = value.data()['deviceToken'];
+              if (oldDeviceToken != null &&
+                  oldDeviceToken != actualDeviceToken) {
+                ScaffoldMessenger.of(ctx).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Você se conectou com um novo dispositivo! Novas notificações chegaram apenas a ele.',
+                      textAlign: TextAlign.center,
+                    ),
+                    backgroundColor: Theme.of(context).accentColor,
+                  ),
+                );
+                userInstance.update(dataToUpdate);
+              }
+            });
             Navigator.of(context).pop();
           } else {
             ScaffoldMessenger.of(ctx).showSnackBar(
