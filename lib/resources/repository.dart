@@ -222,16 +222,17 @@ class Repository {
     return hasInternet;
   }
 
-  Future<void> checkInternetConnection(BuildContext context) async {
+  Future<bool> checkInternetConnection(BuildContext context) async {
     try {
       final result = await InternetAddress.lookup('example.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        print('tem internet');
         setInternetConnection(true, context);
-      }
+        return true;
+      } else
+        return false;
     } on SocketException catch (_) {
-      print('n tem internet');
       setInternetConnection(false, context);
+      return true;
     }
   }
 

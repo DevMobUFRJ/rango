@@ -17,6 +17,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:rango/utils/constants.dart';
 import 'package:rango/widgets/others/NoConecctionWidget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NewTabsScreen extends StatefulWidget {
   @override
@@ -63,17 +64,20 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
                     );
                   }
                   return FutureBuilder(
-                      future: Repository.instance.getInternetConnection(),
+                      future: SharedPreferences.getInstance(),
                       builder: (context, snapshot) {
+                        print(snapshot);
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return SplashScreen();
                         }
+                        var ref = snapshot.data.getBool('hasInternet');
                         bool _hasInternet = false;
-                        if (snapshot.hasData && snapshot.data == true) {
+                        if (snapshot.hasData && ref == true) {
                           _hasInternet = true;
                         } else if (!snapshot.hasData ||
-                            snapshot.data == false) {
+                            ref == null ||
+                            ref == false) {
                           _hasInternet = false;
                         }
                         return StreamBuilder(
