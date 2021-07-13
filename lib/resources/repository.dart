@@ -105,7 +105,9 @@ class Repository {
       return ordersRef.add(order.toJson());
     } on PlatformException catch (e) {
       throw e;
-    } catch (e) {}
+    } catch (e) {
+      throw ("Serviço indisponível, tente novamente mais tarde.");
+    }
   }
 
   Future<void> cancelOrder(String orderUid) async {
