@@ -256,6 +256,16 @@ class Repository {
     return sellersRef.doc(uid).update(dataToUpdate);
   }
 
+  Future<void> updateMeal(String sellerId, String mealId, Map<String, dynamic> dataToUpdate) async {
+    return sellersRef.doc(sellerId).collection('meals').doc(mealId).update(dataToUpdate);
+  }
+
+  Future<String> createMeal(String sellerId, Map<String, dynamic> data) async {
+    data['featured'] = false;
+    var response = await sellersRef.doc(sellerId).collection('meals').add(data);
+    return Future.value(response.id);
+  }
+
   Future<Position> getUserLocation() {
     // Stream para pegar a localização da pessoa
     return Geolocator.getCurrentPosition();

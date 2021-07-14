@@ -1,5 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -7,9 +7,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:rango/models/meals.dart';
-import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/main/meals/ManageMeal.dart';
 import 'package:rango/utils/string_formatters.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class GridHorizontal extends StatelessWidget {
   final String sellerId;
@@ -34,6 +34,7 @@ class GridHorizontal extends StatelessWidget {
           return GestureDetector(
             onTap: () => pushNewScreen(context,
                 screen: ManageMeal(
+                  sellerId,
                   meal: meal,
                 ),
                 withNavBar: false,
@@ -49,13 +50,10 @@ class GridHorizontal extends StatelessWidget {
                       constraints: BoxConstraints(minWidth: 0.5.wp),
                       child: meal.picture !=
                           null
-                          ? FadeInImage.assetNetwork(
-                        placeholder:
-                        'assets/imgs/quentinha_placeholder.png',
-                        image: meal.picture,
-                        fit: currentMeals.length > 6
-                            ? BoxFit.fitWidth
-                            : BoxFit.fitWidth,
+                          ? FadeInImage(
+                        placeholder: MemoryImage(kTransparentImage),
+                        image: FirebaseImage(meal.picture),
+                        fit: BoxFit.fitWidth
                       )
                           : Image.asset(
                         'assets/imgs/quentinha_placeholder.png',

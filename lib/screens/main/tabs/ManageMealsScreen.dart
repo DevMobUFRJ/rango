@@ -9,7 +9,6 @@ import 'package:rango/models/seller.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/main/meals/ManageMeal.dart';
-import 'package:rango/screens/main/meals/MealsHistory.dart';
 import 'package:rango/utils/string_formatters.dart';
 import 'package:rango/widgets/home/GridHorizontal.dart';
 
@@ -150,7 +149,7 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                       )
                     },
                     SizedBox(height: 20),
-                    _buildButtons(),
+                    _buildButtons(seller.id),
                     ListView.builder(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
@@ -202,6 +201,7 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                                     IconButton(
                                         onPressed: () => pushNewScreen(context,
                                             screen: ManageMeal(
+                                              seller.id,
                                               meal: meals[index],
                                             ),
                                             withNavBar: false,
@@ -262,7 +262,7 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
     );
   }
 
-  Widget _buildButtons() {
+  Widget _buildButtons(String sellerId) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -279,7 +279,7 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
               ),
               onPressed: () => pushNewScreen(
                 context,
-                screen: ManageMeal(),
+                screen: ManageMeal(sellerId),
                 withNavBar: false,
               ),
               child: AutoSizeText(

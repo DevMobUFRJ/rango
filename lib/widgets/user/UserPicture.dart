@@ -1,5 +1,7 @@
+import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class UserPicture extends StatelessWidget {
   const UserPicture({
@@ -31,9 +33,9 @@ class UserPicture extends StatelessWidget {
                 width: 160,
                 height: 160,
                 color: Theme.of(context).accentColor,
-                child: FadeInImage.assetNetwork(
-                  placeholder: 'assets/imgs/user_placeholder.png',
-                  image: picture,
+                child: FadeInImage(
+                  placeholder: MemoryImage(kTransparentImage),
+                  image: FirebaseImage(picture),
                   fit: BoxFit.cover,
                 ),
               ),

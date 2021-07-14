@@ -1,13 +1,10 @@
 import 'dart:io';
-
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:rango/models/contact.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/widgets/auth/CustomTextFormField.dart';
@@ -88,11 +85,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           final user = FirebaseAuth.instance.currentUser;
           final ref = FirebaseStorage.instance
               .ref()
-              .child('user_image')
-              .child(user.uid + '.jpg');
+              .child('users/${user.uid}/logo.png');
           await ref.putFile(_userImageFile).whenComplete(() => null);
-          final url = await ref.getDownloadURL();
-          dataToUpdate['picture'] = url;
+          final metadata = await ref.getMetadata();
+          dataToUpdate['picture'] = 'gs://${metadata.bucket}/${metadata.fullPath}';
         }
         if (dataToUpdate.length > 0) {
           final firebaseUser = await Repository.instance.getCurrentUser();

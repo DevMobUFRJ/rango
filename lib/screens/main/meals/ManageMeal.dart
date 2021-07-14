@@ -1,30 +1,38 @@
+import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/meals.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:rango/resources/repository.dart';
 import 'package:rango/widgets/pickers/MealImagePicker.dart';
 
 class ManageMeal extends StatefulWidget {
   final Meal meal;
+  @required final String sellerId;
 
-  ManageMeal({
-    this.meal,
-  });
+  ManageMeal(this.sellerId, {
+      this.meal
+    }
+  );
 
-  //TODO Se vier meal, editar. Se não, criar
   @override
   _ManageMealState createState() => _ManageMealState();
 }
 
 class _ManageMealState extends State<ManageMeal> {
+  File _mealImageFile;
+  void _pickedImage(File image) => setState(() => _mealImageFile = image);
+
+  TextEditingController _mealName;
+  MoneyMaskedTextController _mealValue;
+  TextEditingController _mealDescription;
+  TextEditingController _mealQuantity;
+
   @override
   Widget build(BuildContext context) {
-    TextEditingController _mealName;
-    TextEditingController _mealValue;
-    TextEditingController _mealDescription;
-    TextEditingController _mealQuantity;
     if (widget.meal != null) {
       _mealName = TextEditingController(
           text: widget.meal.name);
@@ -60,6 +68,7 @@ class _ManageMealState extends State<ManageMeal> {
             child: Column(
               children: [
                 MealImagePicker(
+                  _pickedImage,
                   image: widget.meal != null &&
                           widget.meal.picture != null
                       ? widget.meal.picture
@@ -72,6 +81,7 @@ class _ManageMealState extends State<ManageMeal> {
                   ),
                   constraints: BoxConstraints(maxWidth: 0.8.wp),
                   child: TextFormField(
+                    textCapitalization: TextCapitalization.sentences,
                     maxLines: 5,
                     minLines: 1,
                     controller: _mealName,
@@ -117,6 +127,7 @@ class _ManageMealState extends State<ManageMeal> {
                     ),
                     elevation: 5,
                     child: TextFormField(
+                      textCapitalization: TextCapitalization.sentences,
                       controller: _mealDescription,
                       style: GoogleFonts.montserrat(
                         fontSize: 35.nsp,
@@ -233,8 +244,7 @@ class _ManageMealState extends State<ManageMeal> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    //TODO Adicionar logica, lembrando de multiplicar value por 100
-                    onPressed: () => {},
+                    onPressed: () => _upsertMeal(context),
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 42),
                       child: AutoSizeText(
@@ -252,5 +262,60 @@ class _ManageMealState extends State<ManageMeal> {
         ),
       ),
     );
+  }
+
+  void _upsertMeal(BuildContext context) async {
+    try {
+      Map<String, dynamic> dataToUpdate = {};
+
+      if (_mealName.toString() != null) {
+        dataToUpdate['name'] = _mealName.text;
+      }
+      if (_mealDescription.toString() != null) {
+        dataToUpdate['description'] = _mealDescription.text;
+      }
+      if (_mealValue != null && _mealValue.numberValue != 0) {
+        dataToUpdate['price'] = (_mealValue.numberValue*100).round();
+      }
+      if (_mealQuantity != null && _mealQuantity.text != '') {
+        dataToUpdate['quantity'] = int.parse(_mealQuantity.text);
+      }
+      if (widget.meal == null) {
+        dataToUpdate['createdAt'] = DateTime.now();
+      }
+      dataToUpdate['updatedAt'] = DateTime.now();
+
+      if (widget.meal != null) {
+        if (_mealImageFile != null) {
+          final ref = FirebaseStorage.instance
+              .ref()
+              .child('users/${widget.sellerId}/meals/${widget.meal.id}.png');
+          await ref.putFile(_mealImageFile).whenComplete(() => null);
+          final metadata = await ref.getMetadata();
+          dataToUpdate['picture'] = 'gs://${metadata.bucket}/${metadata.fullPath}';
+        }
+
+        await Repository.instance.updateMeal(widget.sellerId, widget.meal.id, dataToUpdate);
+      } else {
+        String createdMealId = await Repository.instance.createMeal(widget.sellerId, dataToUpdate);
+
+        if (_mealImageFile != null) {
+          final ref = FirebaseStorage.instance
+              .ref()
+              .child('users/${widget.sellerId}/meals/$createdMealId.png');
+          await ref.putFile(_mealImageFile).whenComplete(() => null);
+          final metadata = await ref.getMetadata();
+          Map<String, dynamic> pictureUpdate = {
+            'picture': 'gs://${metadata.bucket}/${metadata.fullPath}'
+          };
+
+          await Repository.instance.updateMeal(widget.sellerId, createdMealId, pictureUpdate);
+        }
+      }
+
+      Navigator.of(context).pop();
+    } catch (e) {
+      print(e);
+    }
   }
 }

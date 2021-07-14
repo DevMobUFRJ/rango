@@ -1,14 +1,20 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_image/firebase_image.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class MealImagePicker extends StatefulWidget {
+  final Function(File pickedImage) _imagePickFn;
   final String image;
   final String editText;
 
-  MealImagePicker({
+  MealImagePicker(this._imagePickFn, {
     this.image,
     this.editText,
   });
@@ -93,12 +99,11 @@ class _MealImagePickerState extends State<MealImagePicker> {
       try {
         final pickedImage = await picker.getImage(
           source: pickImgFromGallery ? ImageSource.gallery : ImageSource.camera,
-          imageQuality: 85,
-          maxWidth: 0.9.wp,
-          maxHeight: 0.7.hp,
+          imageQuality: 50,
         );
         if (pickedImage != null) {
           final pickedImageFile = File(pickedImage.path);
+          widget._imagePickFn(pickedImageFile);
           setState(() => _pickedImage = pickedImageFile);
         }
       } catch (e) {
@@ -141,7 +146,7 @@ class _MealImagePickerState extends State<MealImagePicker> {
                     child: Image(
                       image: _pickedImage != null
                           ? FileImage(_pickedImage)
-                          : NetworkImage(widget.image),
+                          : FirebaseImage(widget.image),
                       fit: BoxFit.cover,
                     ),
                   ),
