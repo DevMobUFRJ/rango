@@ -7,12 +7,38 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/order.dart';
+import 'package:rango/resources/ClientOrdersBloc.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
 import 'package:rango/utils/string_formatters.dart';
 
-class OrderHistoryScreen extends StatelessWidget {
+class OrderHistoryScreen extends StatefulWidget {
   OrderHistoryScreen();
+
+  @override
+  _OrderHistoryScreenState createState() => _OrderHistoryScreenState();
+}
+
+class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
+  ClientOrdersBloc ordersListBloc;
+  ScrollController controller = ScrollController();
+  String userId;
+
+  @override
+  initState() {
+    super.initState();
+    ordersListBloc = ClientOrdersBloc();
+    userId = FirebaseAuth.instance.currentUser.uid;
+    ordersListBloc.fetchFirstList(userId);
+    controller.addListener(_scrollListener);
+  }
+
+  void _scrollListener() {
+    if (controller.offset >= controller.position.maxScrollExtent &&
+        !controller.position.outOfRange) {
+      ordersListBloc.fetchNextOrders(userId);
+    }
+  }
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,9 +79,8 @@ class OrderHistoryScreen extends StatelessWidget {
             }
 
             return StreamBuilder(
-              stream: Repository.instance
-                  .getOrdersFromClient(authSnapshot.data.uid),
-              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              stream: ordersListBloc.ordersStream,
+              builder: (context, snapshot) {
                 if (!snapshot.hasData ||
                     snapshot.connectionState == ConnectionState.waiting) {
                   return Container(
@@ -83,7 +108,7 @@ class OrderHistoryScreen extends StatelessWidget {
                   );
                 }
 
-                if (snapshot.data.docs.isEmpty)
+                if (snapshot.data.isEmpty)
                   return Container(
                     margin: EdgeInsets.symmetric(
                       horizontal: 15,
@@ -102,10 +127,10 @@ class OrderHistoryScreen extends StatelessWidget {
                   );
 
                 return ListView.builder(
-                  itemCount: snapshot.data.docs.length,
+                  itemCount: snapshot.data.length,
+                  controller: controller,
                   itemBuilder: (context, index) {
-                    Order order =
-                        Order.fromJson(snapshot.data.docs[index].data());
+                    Order order = Order.fromJson(snapshot.data[index].data());
                     return Card(
                       child: ListTile(
                         contentPadding: EdgeInsets.symmetric(
@@ -146,7 +171,7 @@ class OrderHistoryScreen extends StatelessWidget {
                         trailing: buildTrailing(
                           context,
                           order,
-                          snapshot.data.docs[index].id,
+                          snapshot.data[index].id,
                         ),
                         subtitle: order.requestedAt != null
                             ? Text(
