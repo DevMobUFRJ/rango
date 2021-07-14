@@ -63,7 +63,6 @@ class SellersList extends StatelessWidget {
         }
 
         return SellerGridVertical(
-          tagM: Random().nextDouble(),
           title: 'Vendedores',
           sellers: sellerList,
           userLocation: locationSnapshot.data,

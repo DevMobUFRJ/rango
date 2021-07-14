@@ -14,13 +14,11 @@ import 'package:shimmer/shimmer.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class SellerGridVertical extends StatelessWidget {
-  final double tagM;
   final String title;
   final List<Seller> sellers;
   final Position userLocation;
 
   SellerGridVertical({
-    @required this.tagM,
     @required this.title,
     @required this.sellers,
     @required this.userLocation,
@@ -54,7 +52,7 @@ class SellerGridVertical extends StatelessWidget {
             staggeredTileBuilder: (index) => StaggeredTile.fit(1),
             itemBuilder: (ctx, index) => GestureDetector(
               onTap: () => pushNewScreen(
-                context,
+                ctx,
                 withNavBar: false,
                 screen: SellerProfile(sellers[index].id, sellers[index].name),
                 pageTransitionAnimation: PageTransitionAnimation.cupertino,
