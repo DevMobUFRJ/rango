@@ -1,5 +1,4 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -77,107 +76,113 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                 ),
               );
             }
-
             return StreamBuilder(
-              stream: ordersListBloc.ordersStream,
-              builder: (context, snapshot) {
-                if (!snapshot.hasData ||
-                    snapshot.connectionState == ConnectionState.waiting) {
-                  return Container(
-                    height: 0.5.hp,
-                    alignment: Alignment.center,
-                    child: SizedBox(
-                      height: 50,
-                      width: 50,
-                      child: CircularProgressIndicator(
-                        color: Theme.of(context).accentColor,
-                      ),
-                    ),
-                  );
-                }
-                if (snapshot.hasError) {
-                  return Container(
-                    height: 0.6.hp - 56,
-                    alignment: Alignment.center,
-                    child: AutoSizeText(
-                      snapshot.error.toString(),
-                      style: GoogleFonts.montserrat(
-                          fontSize: 45.nsp,
-                          color: Theme.of(context).accentColor),
-                    ),
-                  );
-                }
+              stream: Repository.instance.getOrdersFromClient(userId, limit: 1),
+              builder: (ctx, snapshot) {
+                return StreamBuilder(
+                  stream: ordersListBloc.ordersStream,
+                  builder: (context, snapshot) {
+                    print(snapshot.hasData);
+                    if (!snapshot.hasData ||
+                        snapshot.connectionState == ConnectionState.waiting) {
+                      return Container(
+                        height: 0.5.hp,
+                        alignment: Alignment.center,
+                        child: SizedBox(
+                          height: 50,
+                          width: 50,
+                          child: CircularProgressIndicator(
+                            color: Theme.of(context).accentColor,
+                          ),
+                        ),
+                      );
+                    }
+                    if (snapshot.hasError) {
+                      return Container(
+                        height: 0.6.hp - 56,
+                        alignment: Alignment.center,
+                        child: AutoSizeText(
+                          snapshot.error.toString(),
+                          style: GoogleFonts.montserrat(
+                              fontSize: 45.nsp,
+                              color: Theme.of(context).accentColor),
+                        ),
+                      );
+                    }
 
-                if (snapshot.data.isEmpty)
-                  return Container(
-                    margin: EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 10,
-                    ),
-                    height: 0.7.wp - 56,
-                    alignment: Alignment.center,
-                    child: AutoSizeText(
-                      'Você ainda não possui histórico. Faça reservas para elas aparecerem aqui!',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 45.nsp,
-                        color: Theme.of(context).accentColor,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  );
-
-                return ListView.builder(
-                  itemCount: snapshot.data.length,
-                  controller: controller,
-                  itemBuilder: (context, index) {
-                    Order order = Order.fromJson(snapshot.data[index].data());
-                    return Card(
-                      child: ListTile(
-                        contentPadding: EdgeInsets.symmetric(
+                    if (snapshot.data.isEmpty)
+                      return Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 15,
                           vertical: 10,
-                          horizontal: 20,
                         ),
-                        title: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            GestureDetector(
-                              onTap: () => pushNewScreen(
-                                context,
-                                withNavBar: false,
-                                screen: SellerProfile(
-                                    order.sellerId, order.sellerName),
-                                pageTransitionAnimation:
-                                    PageTransitionAnimation.cupertino,
-                              ),
-                              child: AutoSizeText(
-                                order.sellerName,
-                                style: GoogleFonts.montserrat(
-                                  color: Theme.of(context).accentColor,
-                                  decoration: TextDecoration.underline,
-                                  fontSize: 32.nsp,
-                                ),
-                              ),
+                        height: 0.7.wp - 56,
+                        alignment: Alignment.center,
+                        child: AutoSizeText(
+                          'Você ainda não possui histórico. Faça reservas para elas aparecerem aqui!',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 45.nsp,
+                            color: Theme.of(context).accentColor,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+
+                    return ListView.builder(
+                      itemCount: snapshot.data.length,
+                      controller: controller,
+                      itemBuilder: (context, index) {
+                        Order order =
+                            Order.fromJson(snapshot.data[index].data());
+                        return Card(
+                          child: ListTile(
+                            contentPadding: EdgeInsets.symmetric(
+                              vertical: 10,
+                              horizontal: 20,
                             ),
-                            SizedBox(height: 10),
-                            buildOrderStatus(order),
-                            SizedBox(height: 10),
-                            Text('${order.quantity} x ${order.mealName}'),
-                            SizedBox(height: 10),
-                            Text(
-                                'Total: ${intToCurrency(order.price * order.quantity)}'),
-                            SizedBox(height: 10),
-                          ],
-                        ),
-                        trailing: buildTrailing(
-                          context,
-                          order,
-                          snapshot.data[index].id,
-                        ),
-                        subtitle: order.requestedAt != null
-                            ? Text(
-                                '${order.requestedAt?.toDate()?.day}/${order.requestedAt?.toDate()?.month}/${order.requestedAt?.toDate()?.year}')
-                            : null,
-                      ),
+                            title: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                GestureDetector(
+                                  onTap: () => pushNewScreen(
+                                    context,
+                                    withNavBar: false,
+                                    screen: SellerProfile(
+                                        order.sellerId, order.sellerName),
+                                    pageTransitionAnimation:
+                                        PageTransitionAnimation.cupertino,
+                                  ),
+                                  child: AutoSizeText(
+                                    order.sellerName,
+                                    style: GoogleFonts.montserrat(
+                                      color: Theme.of(context).accentColor,
+                                      decoration: TextDecoration.underline,
+                                      fontSize: 32.nsp,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                                buildOrderStatus(order),
+                                SizedBox(height: 10),
+                                Text('${order.quantity} x ${order.mealName}'),
+                                SizedBox(height: 10),
+                                Text(
+                                    'Total: ${intToCurrency(order.price * order.quantity)}'),
+                                SizedBox(height: 10),
+                              ],
+                            ),
+                            trailing: buildTrailing(
+                              context,
+                              order,
+                              snapshot.data[index].id,
+                            ),
+                            subtitle: order.requestedAt != null
+                                ? Text(
+                                    '${order.requestedAt?.toDate()?.day}/${order.requestedAt?.toDate()?.month}/${order.requestedAt?.toDate()?.year}')
+                                : null,
+                          ),
+                        );
+                      },
                     );
                   },
                 );

@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rxdart/rxdart.dart';
@@ -14,8 +13,6 @@ class ClientOrdersBloc {
   }
 
   Stream<List<DocumentSnapshot>> get ordersStream => ordersController.stream;
-
-  final ordersRef = FirebaseFirestore.instance.collection('orders');
 
   Future fetchFirstList(String clientId) async {
     try {

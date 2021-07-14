@@ -25,6 +25,7 @@ const weekdayMap = {
 
 class Repository {
   final sellersRef = FirebaseFirestore.instance.collection('sellers');
+  final chatRef = FirebaseFirestore.instance.collection('chat');
   final clientsRef =
       FirebaseFirestore.instance.collection('clients').withConverter<Client>(
             fromFirestore: (snapshot, _) =>
@@ -135,6 +136,16 @@ class Repository {
     var querySnapshot = await ordersRef
         .where('clientId', isEqualTo: clientId)
         .orderBy('requestedAt', descending: true)
+        .limit(10)
+        .get();
+    return querySnapshot.docs;
+  }
+
+  Future<List<DocumentSnapshot>> getLastChatMessages(docId) async {
+    var querySnapshot = await chatRef
+        .doc(docId)
+        .collection('messages')
+        .orderBy('sentAt', descending: true)
         .limit(10)
         .get();
     return querySnapshot.docs;

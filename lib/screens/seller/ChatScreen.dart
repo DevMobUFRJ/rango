@@ -1,4 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,19 +19,37 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  List<Message> messages = [
-    Message(sender: 'loja', text: 'Oi, tudo bem?'),
-  ];
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  CollectionReference chatReference;
+  ScrollController controller = ScrollController();
+  String userId;
+  String docId;
 
-  void _addNewMessage(Message newMessage) {
-    setState(() {
-      messages.insert(0, newMessage);
-    });
+  @override
+  initState() {
+    super.initState();
+    userId = FirebaseAuth.instance.currentUser.uid;
+    docId = '${userId}_${widget.sellerId}';
+    chatReference = db.collection('chat').doc(docId).collection('messages');
+    controller.addListener(_scrollListener);
+  }
+
+  void _scrollListener() {
+    if (controller.offset >= controller.position.maxScrollExtent &&
+        !controller.position.outOfRange) {}
+  }
+
+  Future<void> _addNewMessage(Message newMessage) async {
+    try {
+      print(chatReference);
+      chatReference.add(newMessage.toJson());
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    //var route = ModalRoute.of(context);
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
@@ -46,7 +66,7 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Expanded(
-              child: Messages(messages),
+              child: Messages(chatReference, controller),
             ),
             NewMessage(_addNewMessage),
           ],
