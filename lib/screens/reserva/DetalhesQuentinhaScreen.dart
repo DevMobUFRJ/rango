@@ -201,7 +201,7 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
         child: Container(
           width: 0.6.wp,
           child: AutoSizeText(
-            "Esse vendedor não está trabalhando com reservas, mas você ainda pode ver o cardápio do momento.",
+            "Esse vendedor não está trabalhando com reservas, mas você ainda pode ver o cardápio atual.",
             textAlign: TextAlign.center,
             style: GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
                 .headline2
