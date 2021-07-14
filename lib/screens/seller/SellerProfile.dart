@@ -316,56 +316,64 @@ class _SellerProfileState extends State<SellerProfile> {
                 ),
               ),
               Flexible(
-                flex: 1,
-                child: ElevatedButton.icon(
-                  icon: Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Icon(Icons.chat, size: 38.nsp),
-                  ),
-                  onPressed: () => pushNewScreenWithRouteSettings(
-                    context,
-                    screen: ChatScreen(
-                      seller.id,
-                      seller.name,
-                      key: chatScreenKey,
-                    ),
-                    withNavBar: false,
-                    settings: RouteSettings(name: 'chatScreen'),
-                  ),
-                  label: Container(
-                    width: 0.5.wp,
-                    padding: EdgeInsets.only(right: 10),
-                    child: AutoSizeText(
-                      'Chat com o vendedor',
-                      maxLines: 1,
-                      style: GoogleFonts.montserrat(
-                        fontSize: 38.nsp,
+                flex: 2,
+                child: ToggleButtons(
+                  isSelected: [true, true],
+                  borderRadius: BorderRadius.circular(10),
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Icon(
+                            Icons.chat,
+                            color: Colors.white,
+                          ),
+                          SizedBox(width: 5),
+                          Text(
+                            'Chat',
+                            style: GoogleFonts.montserrat(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
                       ),
-                      textAlign: TextAlign.center,
                     ),
-                  ),
-                ),
-              ),
-              Flexible(
-                flex: 1,
-                child: ElevatedButton.icon(
-                  icon: Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Icon(Icons.map, size: 38.nsp),
-                  ),
-                  onPressed: () {},
-                  label: Container(
-                    padding: EdgeInsets.only(right: 10),
-                    width: 0.35.wp,
-                    child: AutoSizeText(
-                      'Ver localização',
-                      maxLines: 1,
-                      style: GoogleFonts.montserrat(
-                        fontSize: 38.nsp,
+                    Container(
+                      padding: EdgeInsets.all(8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Icon(
+                            Icons.map,
+                            color: Colors.white,
+                          ),
+                          SizedBox(width: 5),
+                          Text(
+                            'Localização',
+                            style: GoogleFonts.montserrat(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
                       ),
-                      textAlign: TextAlign.center,
                     ),
-                  ),
+                  ],
+                  onPressed: (index) {
+                    if (index == 0) {
+                      pushNewScreen(
+                        context,
+                        screen: ChatScreen(
+                          seller.id,
+                          seller.name,
+                        ),
+                      );
+                    }
+                    if (index == 1) {}
+                  },
+                  color: Theme.of(context).accentColor,
+                  fillColor: Theme.of(context).accentColor,
                 ),
               ),
             ],
