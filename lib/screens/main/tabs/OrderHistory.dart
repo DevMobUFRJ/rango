@@ -7,28 +7,82 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/order.dart';
+import 'package:rango/resources/ClientOrdersBloc.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
 import 'package:rango/utils/string_formatters.dart';
 
-class OrderHistoryScreen extends StatelessWidget {
+class OrderHistoryScreen extends StatefulWidget {
   OrderHistoryScreen();
 
+  @override
+  _OrderHistoryScreenState createState() => _OrderHistoryScreenState();
+}
+
+class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
+  ClientOrdersBloc ordersListBloc;
+  ScrollController controller = ScrollController();
+  String userId;
+
+  @override
+  initState() {
+    super.initState();
+    ordersListBloc = ClientOrdersBloc();
+    userId = FirebaseAuth.instance.currentUser.uid;
+    ordersListBloc.fetchFirstList(userId);
+    controller.addListener(_scrollListener);
+  }
+
+  void _scrollListener() {
+    if (controller.offset >= controller.position.maxScrollExtent &&
+        !controller.position.outOfRange) {
+      ordersListBloc.fetchNextOrders(userId);
+    }
+  }
+
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
     return Scaffold(
-        appBar: AppBar(
-          title: AutoSizeText('Histórico',
-              style: GoogleFonts.montserrat(
-                  color: Theme.of(context).accentColor, fontSize: 40.nsp)),
-        ),
-        body: Container(
-            height: 1.hp - 56,
-            child: FutureBuilder(
-              future: Repository.instance.getCurrentUser(),
-              builder: (context, AsyncSnapshot<FirebaseUser> authSnapshot) {
-                if (!authSnapshot.hasData ||
-                    authSnapshot.connectionState == ConnectionState.waiting) {
+      appBar: AppBar(
+        title: AutoSizeText('Histórico',
+            style: GoogleFonts.montserrat(
+                color: Theme.of(context).accentColor, fontSize: 40.nsp)),
+      ),
+      body: Container(
+        height: 1.hp - 56,
+        child: StreamBuilder(
+          stream: FirebaseAuth.instance.userChanges(),
+          builder: (context, AsyncSnapshot<User> authSnapshot) {
+            if (!authSnapshot.hasData ||
+                authSnapshot.connectionState == ConnectionState.waiting) {
+              return Container(
+                height: 0.5.hp,
+                alignment: Alignment.center,
+                child: SizedBox(
+                  height: 50,
+                  width: 50,
+                  child: CircularProgressIndicator(
+                    color: Theme.of(context).accentColor,
+                  ),
+                ),
+              );
+            }
+            if (authSnapshot.hasError) {
+              return Container(
+                height: 0.6.hp - 56,
+                alignment: Alignment.center,
+                child: AutoSizeText(
+                  authSnapshot.error.toString(),
+                  style: GoogleFonts.montserrat(
+                      fontSize: 45.nsp, color: Theme.of(context).accentColor),
+                ),
+              );
+            }
+
+            return StreamBuilder(
+              stream: ordersListBloc.ordersStream,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData ||
+                    snapshot.connectionState == ConnectionState.waiting) {
                   return Container(
                     height: 0.5.hp,
                     alignment: Alignment.center,
@@ -41,12 +95,12 @@ class OrderHistoryScreen extends StatelessWidget {
                     ),
                   );
                 }
-                if (authSnapshot.hasError) {
+                if (snapshot.hasError) {
                   return Container(
                     height: 0.6.hp - 56,
                     alignment: Alignment.center,
                     child: AutoSizeText(
-                      authSnapshot.error.toString(),
+                      snapshot.error.toString(),
                       style: GoogleFonts.montserrat(
                           fontSize: 45.nsp,
                           color: Theme.of(context).accentColor),
@@ -54,102 +108,85 @@ class OrderHistoryScreen extends StatelessWidget {
                   );
                 }
 
-                return StreamBuilder(
-                  stream: Repository.instance
-                      .getOrdersFromClient(authSnapshot.data.uid),
-                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if (!snapshot.hasData ||
-                        snapshot.connectionState == ConnectionState.waiting) {
-                      return Container(
-                        height: 0.5.hp,
-                        alignment: Alignment.center,
-                        child: SizedBox(
-                          height: 50,
-                          width: 50,
-                          child: CircularProgressIndicator(
-                            color: Theme.of(context).accentColor,
-                          ),
-                        ),
-                      );
-                    }
-                    if (snapshot.hasError) {
-                      return Container(
-                        height: 0.6.hp - 56,
-                        alignment: Alignment.center,
-                        child: AutoSizeText(
-                          snapshot.error.toString(),
-                          style: GoogleFonts.montserrat(
-                              fontSize: 45.nsp,
-                              color: Theme.of(context).accentColor),
-                        ),
-                      );
-                    }
+                if (snapshot.data.isEmpty)
+                  return Container(
+                    margin: EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 10,
+                    ),
+                    height: 0.7.wp - 56,
+                    alignment: Alignment.center,
+                    child: AutoSizeText(
+                      'Você ainda não possui histórico. Faça reservas para elas aparecerem aqui!',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 45.nsp,
+                        color: Theme.of(context).accentColor,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  );
 
-                    if (snapshot.data.documents.isEmpty)
-                      return Container(
-                        margin: EdgeInsets.symmetric(
-                          horizontal: 15,
+                return ListView.builder(
+                  itemCount: snapshot.data.length,
+                  controller: controller,
+                  itemBuilder: (context, index) {
+                    Order order = Order.fromJson(snapshot.data[index].data());
+                    return Card(
+                      child: ListTile(
+                        contentPadding: EdgeInsets.symmetric(
                           vertical: 10,
+                          horizontal: 20,
                         ),
-                        height: 0.7.wp - 56,
-                        alignment: Alignment.center,
-                        child: AutoSizeText(
-                          'Você ainda não possui histórico. Faça reservas para elas aparecerem aqui!',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 45.nsp,
-                            color: Theme.of(context).accentColor,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      );
-
-                    return ListView.builder(
-                      itemCount: snapshot.data.documents.length,
-                      itemBuilder: (context, index) {
-                        Order order =
-                            Order.fromJson(snapshot.data.documents[index].data);
-                        return Card(
-                          child: ListTile(
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 20),
-                            title: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                GestureDetector(
-                                  onTap: () => pushNewScreen(
-                                    context,
-                                    withNavBar: false,
-                                    screen: SellerProfile(
-                                        order.sellerId, order.sellerName),
-                                    pageTransitionAnimation:
-                                        PageTransitionAnimation.cupertino,
-                                  ),
-                                  child: Text(order.sellerName),
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            GestureDetector(
+                              onTap: () => pushNewScreen(
+                                context,
+                                withNavBar: false,
+                                screen: SellerProfile(
+                                    order.sellerId, order.sellerName),
+                                pageTransitionAnimation:
+                                    PageTransitionAnimation.cupertino,
+                              ),
+                              child: AutoSizeText(
+                                order.sellerName,
+                                style: GoogleFonts.montserrat(
+                                  color: Theme.of(context).accentColor,
+                                  decoration: TextDecoration.underline,
+                                  fontSize: 32.nsp,
                                 ),
-                                SizedBox(height: 10),
-                                buildOrderStatus(order),
-                                SizedBox(height: 10),
-                                Text('${order.quantity} x ${order.mealName}'),
-                                SizedBox(height: 10),
-                                Text(
-                                    'Total: ${intToCurrency(order.price * order.quantity)}'),
-                                SizedBox(height: 10),
-                              ],
+                              ),
                             ),
-                            trailing: buildTrailing(context, order,
-                                snapshot.data.documents[index].documentID),
-                            subtitle: order.requestedAt != null
-                                ? Text(
-                                    '${order.requestedAt?.toDate()?.day}/${order.requestedAt?.toDate()?.month}/${order.requestedAt?.toDate()?.year}')
-                                : null,
-                          ),
-                        );
-                      },
+                            SizedBox(height: 10),
+                            buildOrderStatus(order),
+                            SizedBox(height: 10),
+                            Text('${order.quantity} x ${order.mealName}'),
+                            SizedBox(height: 10),
+                            Text(
+                                'Total: ${intToCurrency(order.price * order.quantity)}'),
+                            SizedBox(height: 10),
+                          ],
+                        ),
+                        trailing: buildTrailing(
+                          context,
+                          order,
+                          snapshot.data[index].id,
+                        ),
+                        subtitle: order.requestedAt != null
+                            ? Text(
+                                '${order.requestedAt?.toDate()?.day}/${order.requestedAt?.toDate()?.month}/${order.requestedAt?.toDate()?.year}')
+                            : null,
+                      ),
                     );
                   },
                 );
               },
-            )));
+            );
+          },
+        ),
+      ),
+    );
   }
 
   Widget buildTrailing(context, Order order, String orderUid) {
@@ -159,7 +196,6 @@ class OrderHistoryScreen extends StatelessWidget {
           icon: Icon(Icons.highlight_remove),
           color: Colors.red);
     }
-
     return null;
   }
 
@@ -207,94 +243,107 @@ class OrderHistoryScreen extends StatelessWidget {
 
   void _showCancelDialog(context, order, orderUid) async {
     await showDialog(
-        context: context,
-        builder: (BuildContext ctx) {
-          return AlertDialog(
-            insetPadding: EdgeInsets.symmetric(horizontal: 0.1.wp),
-            backgroundColor: Color(0xFFF9B152),
-            actionsPadding: EdgeInsets.all(10),
-            contentPadding: EdgeInsets.only(
-              top: 20,
-              left: 24,
-              right: 24,
-              bottom: 0,
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          insetPadding: EdgeInsets.symmetric(horizontal: 0.2.wp),
+          backgroundColor: Color(0xFFF9B152),
+          actionsPadding: EdgeInsets.all(0),
+          contentPadding: EdgeInsets.only(
+            top: 10,
+            left: 0,
+            right: 0,
+            bottom: 10,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Text(
+            'Cancelar Reserva',
+            style: GoogleFonts.montserrat(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 32.ssp,
             ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            title: Text(
-              'Cancelar Reserva',
-              style: GoogleFonts.montserrat(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 38.ssp,
-              ),
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Tem certeza?',
-                  style: GoogleFonts.montserrat(
-                    color: Colors.white,
-                    fontSize: 28.nsp,
-                  ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Tem certeza?',
+                style: GoogleFonts.montserrat(
+                  color: Colors.white,
+                  fontSize: 28.nsp,
                 ),
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    FlatButton(
-                      onPressed: () {
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                    onPressed: () async {
+                      try {
+                        await Repository.instance.cancelOrder(orderUid);
                         Navigator.of(ctx).pop();
-                      },
-                      child: Text(
-                        'Não',
-                        style: GoogleFonts.montserrat(
-                          decoration: TextDecoration.underline,
-                          color: Colors.white,
-                          fontSize: 34.nsp,
-                        ),
-                      ),
-                    ),
-                    FlatButton(
-                      onPressed: () async {
-                        try {
-                          await Repository.instance.cancelOrder(orderUid);
-                          Navigator.of(ctx).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            duration: Duration(seconds: 2),
+                            backgroundColor: Theme.of(ctx).accentColor,
                             content: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 20),
-                              child: Text("Reserva cancelada com sucesso."),
+                              child: Text(
+                                "Reserva cancelada com sucesso.",
+                                textAlign: TextAlign.center,
+                              ),
                             ),
-                          ));
-                        } catch (e) {
-                          print(e);
-                          Navigator.of(ctx).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          ),
+                        );
+                      } catch (e) {
+                        Navigator.of(ctx).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            duration: Duration(seconds: 2),
                             padding: EdgeInsets.only(bottom: 60),
                             content: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 20),
-                              child: Text(e.toString()),
+                              child: Text(
+                                e.toString(),
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                             backgroundColor: Theme.of(context).errorColor,
-                          ));
-                        }
-                      },
-                      child: Text(
-                        'Sim',
-                        style: GoogleFonts.montserrat(
-                          decoration: TextDecoration.underline,
-                          color: Colors.white,
-                          fontSize: 34.nsp,
-                        ),
+                          ),
+                        );
+                      }
+                    },
+                    child: Text(
+                      'Sim',
+                      style: GoogleFonts.montserrat(
+                        decoration: TextDecoration.underline,
+                        color: Colors.white,
+                        fontSize: 34.nsp,
                       ),
                     ),
-                  ],
-                )
-              ],
-            ),
-          );
-        });
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                    },
+                    child: Text(
+                      'Não',
+                      style: GoogleFonts.montserrat(
+                        decoration: TextDecoration.underline,
+                        color: Colors.white,
+                        fontSize: 34.nsp,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        );
+      },
+    );
   }
 }

@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 class Address {
   final String street;
   final String number;

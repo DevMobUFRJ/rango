@@ -1,3 +1,4 @@
+import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -39,7 +40,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
               content: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  FlatButton(
+                  TextButton(
                     onPressed: () {
                       pickImgFromGallery = true;
                       Navigator.of(ctx).pop();
@@ -52,7 +53,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
                       ),
                     ),
                   ),
-                  FlatButton(
+                  TextButton(
                     onPressed: () {
                       pickImgFromGallery = false;
                       Navigator.of(ctx).pop();
@@ -76,7 +77,6 @@ class _UserImagePickerState extends State<UserImagePicker> {
         final pickedImage = await picker.getImage(
           source: pickImgFromGallery ? ImageSource.gallery : ImageSource.camera,
           imageQuality: 50,
-          maxWidth: 150,
         );
         if (pickedImage != null) {
           final pickedImageFile = File(pickedImage.path);
@@ -86,8 +86,12 @@ class _UserImagePickerState extends State<UserImagePicker> {
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text('Ocorreu um erro ao escolher a foto, tente novmanete'),
+            duration: Duration(seconds: 2),
+            backgroundColor: Theme.of(context).errorColor,
+            content: Text(
+              'Ocorreu um erro ao escolher a foto, tente novamente',
+              textAlign: TextAlign.center,
+            ),
           ),
         );
       }
@@ -111,16 +115,10 @@ class _UserImagePickerState extends State<UserImagePicker> {
                   backgroundImage: _pickedImage != null
                       ? FileImage(_pickedImage)
                       : widget.image != null
-                          ? NetworkImage(widget.image)
-                          : null,
+                          ? FirebaseImage(widget.image)
+                          : AssetImage('assets/imgs/user_placeholder.png'),
                   backgroundColor: Theme.of(context).accentColor,
                 ),
-                if (_pickedImage == null && widget.image == null)
-                  Icon(
-                    Icons.person,
-                    color: Theme.of(context).backgroundColor,
-                    size: 160.nsp,
-                  ),
               ],
             ),
             if (widget.editText != null)

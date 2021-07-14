@@ -10,10 +10,11 @@ import 'package:rango/screens/main/profile/EditProfileScreen.dart';
 import 'package:rango/screens/main/profile/ProfileSettings.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:rango/widgets/others/NoConecctionWidget.dart';
+import 'package:rango/widgets/user/UserPicture.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Client usuario;
-
   ProfileScreen(this.usuario);
 
   @override
@@ -21,6 +22,10 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  void initState() {
+    super.initState();
+  }
+
   final yellow = Color(0xFFF9B152);
   @override
   Widget build(BuildContext context) {
@@ -41,47 +46,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Flexible(
-              flex: 4,
-              child: Container(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: <Widget>[
-                    FittedBox(
-                      fit: BoxFit.cover,
-                      child: Container(
-                        margin: EdgeInsets.only(left: 80.w, bottom: 50.h),
-                        height: 230.h,
-                        width: 260.w,
-                        decoration: BoxDecoration(
-                          borderRadius:
-                              BorderRadius.circular(ScreenUtil().setSp(30)),
-                          color: yellow,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 20),
-                      child: FittedBox(
-                        fit: BoxFit.cover,
-                        child: CircleAvatar(
-                          backgroundColor: Theme.of(context).accentColor,
-                          backgroundImage: widget.usuario.picture != null
-                              ? NetworkImage(widget.usuario.picture)
-                              : null,
-                          radius: 150.w,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              flex: 0,
+              child: UserPicture(widget.usuario.picture),
             ),
             Flexible(
-              flex: 1,
+              flex: 2,
               child: Container(
                 margin: EdgeInsets.symmetric(vertical: 0.01.hp),
                 child: AutoSizeText(
                   widget.usuario.name,
+                  maxLines: 2,
                   style: GoogleFonts.montserrat(
                     color: Theme.of(context).accentColor,
                     fontWeight: FontWeight.w500,
@@ -148,7 +122,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       maxLines: 1,
                       style: GoogleFonts.montserrat(
                         color: yellow,
-                        fontSize: 30.nsp,
+                        fontSize: 35.nsp,
                       ),
                     ),
                     SizedBox(width: 2),
@@ -183,7 +157,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       );
                     }
-                    if (clientSnapshot.data.data['favoriteSellers'] == null) {
+                    var clientSnapshotdata =
+                        clientSnapshot.data.data() as Client;
+                    if (clientSnapshotdata.favoriteSellers == null ||
+                        clientSnapshotdata.favoriteSellers.length == 0) {
                       return Container(
                         margin: EdgeInsets.symmetric(
                             horizontal: 0.03.wp, vertical: 15),
@@ -209,8 +186,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       );
                     }
-                    final favoriteSellers = List<String>.from(
-                        clientSnapshot.data.data['favoriteSellers']);
+                    final favoriteSellers =
+                        List<String>.from(clientSnapshotdata.favoriteSellers);
 
                     // Um belo exemplo de list view! A busca pelo seller só acontece quando o elemento pode aparecer na tela.
                     // Usa-se um StreamBuilder para aproveitar a cache do firestore
@@ -218,22 +195,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       separatorBuilder: (context, index) =>
                           SizedBox(height: 0.01.hp),
                       itemCount: favoriteSellers.length,
+                      physics: ClampingScrollPhysics(),
                       itemBuilder: (ctx, index) => StreamBuilder(
                         stream: Repository.instance
                             .getSeller(favoriteSellers[index]),
-                        builder: (context,
-                            AsyncSnapshot<DocumentSnapshot> sellerSnapshot) {
-                          // TODO (Gabriel): Trocar esse indicator por um placeholder
-                          if (!sellerSnapshot.hasData) {
-                            return Center(child: CircularProgressIndicator());
+                        builder: (
+                          context,
+                          AsyncSnapshot<DocumentSnapshot> sellerSnapshot,
+                        ) {
+                          if (sellerSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Container(
+                              height: 0.3.hp,
+                              alignment: Alignment.center,
+                              child: SizedBox(
+                                height: 40,
+                                width: 40,
+                                child: CircularProgressIndicator(
+                                  color: Theme.of(context).accentColor,
+                                ),
+                              ),
+                            );
                           }
                           if (sellerSnapshot.hasError) {
-                            return Text(sellerSnapshot.error.toString());
+                            return Container(
+                              height: 0.4.hp - 56,
+                              alignment: Alignment.center,
+                              child: AutoSizeText(
+                                sellerSnapshot.error.toString(),
+                                style: GoogleFonts.montserrat(
+                                    fontSize: 45.nsp,
+                                    color: Theme.of(context).accentColor),
+                              ),
+                            );
                           }
-
+                          var sellerSnapshotdata = sellerSnapshot.data.data()
+                              as Map<String, dynamic>;
                           Seller seller = Seller.fromJson(
-                              sellerSnapshot.data.data,
-                              id: sellerSnapshot.data.documentID);
+                            sellerSnapshotdata,
+                            id: sellerSnapshot.data.id,
+                          );
 
                           return GestureDetector(
                             onTap: () => pushNewScreen(

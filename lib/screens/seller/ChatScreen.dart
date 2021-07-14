@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/message.dart';
-import 'package:rango/models/seller.dart';
 import 'package:rango/widgets/chat/Messages.dart';
 import 'package:rango/widgets/chat/NewMessage.dart';
 
 class ChatScreen extends StatefulWidget {
-  final Seller seller;
+  final String sellerId;
+  final String sellerName;
 
-  ChatScreen(this.seller);
+  ChatScreen(this.sellerId, this.sellerName, {Key key}) : super(key: key);
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -29,11 +29,11 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
+    //var route = ModalRoute.of(context);
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
-          widget.seller.name,
+          widget.sellerName,
           maxLines: 1,
           style: GoogleFonts.montserrat(
             color: Theme.of(context).accentColor,

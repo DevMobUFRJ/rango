@@ -17,7 +17,6 @@ import 'package:rango/screens/seller/SellerProfile.dart';
 
 class SearchScreen extends StatefulWidget {
   final Client usuario;
-
   SearchScreen(this.usuario);
 
   @override

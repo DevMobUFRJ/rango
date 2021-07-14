@@ -34,23 +34,21 @@ class LoginScreen extends StatelessWidget {
                     flex: 3,
                     child: Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: 0.05.wp, vertical: 0),
+                          horizontal: 0.15.wp, vertical: 0),
                       child: Container(
                         margin: EdgeInsets.only(bottom: 20),
                         width: double.infinity,
-                        child: RaisedButton(
-                          padding: EdgeInsets.symmetric(vertical: 0.015.hp),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
+                        child: ElevatedButton(
                           onPressed: () => Navigator.of(context)
                               .pushNamed(AuthScreen.routeName, arguments: true),
-                          child: Text(
-                            'Login',
-                            style: GoogleFonts.montserratTextTheme(
-                                    Theme.of(context).textTheme)
-                                .button
-                                .copyWith(fontSize: 38.nsp),
+                          child: Container(
+                            child: AutoSizeText(
+                              'Login',
+                              style: GoogleFonts.montserratTextTheme(
+                                      Theme.of(context).textTheme)
+                                  .button
+                                  .copyWith(fontSize: 38.nsp),
+                            ),
                           ),
                         ),
                       ),
@@ -60,7 +58,7 @@ class LoginScreen extends StatelessWidget {
                     flex: 3,
                     child: Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: 0.05.wp, vertical: 0),
+                          horizontal: 0.15.wp, vertical: 0),
                       child: Container(
                         margin: EdgeInsets.symmetric(vertical: 0.015.hp),
                         width: double.infinity,
@@ -69,7 +67,6 @@ class LoginScreen extends StatelessWidget {
                               AuthScreen.routeName,
                               arguments: false),
                           child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 12),
                             child: AutoSizeText(
                               'Cadastro',
                               style: GoogleFonts.montserratTextTheme(

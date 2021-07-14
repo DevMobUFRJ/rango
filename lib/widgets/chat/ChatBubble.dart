@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,13 +15,12 @@ class ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
     const yellow = Color(0xFFF9B152);
     return Row(
       mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
       children: <Widget>[
         Container(
-          constraints: BoxConstraints(maxWidth: 0.55.wp),
+          constraints: BoxConstraints(maxWidth: 0.6.wp),
           decoration: BoxDecoration(
             color: isMe ? Theme.of(context).accentColor : yellow,
             borderRadius: BorderRadius.only(
