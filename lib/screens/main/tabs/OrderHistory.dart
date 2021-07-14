@@ -228,7 +228,7 @@ class OrderHistoryScreen extends StatelessWidget {
             top: 10,
             left: 0,
             right: 0,
-            bottom: 0,
+            bottom: 10,
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
