@@ -322,19 +322,21 @@ class _SellerProfileState extends State<SellerProfile> {
                   borderRadius: BorderRadius.circular(10),
                   children: [
                     Container(
-                      padding: EdgeInsets.all(8),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8, horizontal: 15),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
                             Icons.chat,
                             color: Colors.white,
                           ),
-                          SizedBox(width: 5),
+                          SizedBox(width: 10),
                           Text(
                             'Chat',
                             style: GoogleFonts.montserrat(
                               color: Colors.white,
+                              fontSize: 30.nsp,
                             ),
                           ),
                         ],
@@ -354,6 +356,7 @@ class _SellerProfileState extends State<SellerProfile> {
                             'Localização',
                             style: GoogleFonts.montserrat(
                               color: Colors.white,
+                              fontSize: 30.nsp,
                             ),
                           ),
                         ],
