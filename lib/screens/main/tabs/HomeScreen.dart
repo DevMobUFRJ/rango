@@ -340,6 +340,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                                   sellerList,
                                                   locationSnapshot,
                                                   widget.usuario.id,
+                                                  widget.controller,
                                                 ),
                                               if (sellerList.isEmpty)
                                                 Container(

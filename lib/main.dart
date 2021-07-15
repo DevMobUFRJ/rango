@@ -16,6 +16,8 @@ import 'package:rango/screens/main/tabs/OrderHistory.dart';
 import 'package:rango/screens/seller/ChatScreen.dart';
 
 var currentKey = GlobalKey();
+
+PersistentTabController _controller = PersistentTabController(initialIndex: 0);
 final chatScreenKey = new GlobalKey<State<ChatScreen>>();
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -33,7 +35,7 @@ Future<void> main() async {
         if (payload == 'historico') {
           pushNewScreen(
             currentKey.currentState.context,
-            screen: OrderHistoryScreen(),
+            screen: OrderHistoryScreen(_controller),
             withNavBar: true,
           );
         } else if (payload.contains('chat')) {
@@ -150,7 +152,9 @@ class MyApp extends StatelessWidget {
               return SplashScreen();
             }
             if (userSnapshot.hasData) {
-              return NewTabsScreen();
+              return NewTabsScreen(
+                controller: _controller,
+              );
             }
             return LoginScreen();
           },

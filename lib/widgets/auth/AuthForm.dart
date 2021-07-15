@@ -89,25 +89,36 @@ class _AuthFormState extends State<AuthForm> {
       builder: (ctx, constraint) => SingleChildScrollView(
         physics: ClampingScrollPhysics(),
         child: Container(
-          constraints: BoxConstraints(maxHeight: 1.hp),
           child: Padding(
             padding: EdgeInsets.all(16),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (widget._isLogin)
-                  Flexible(
-                    flex: 3,
-                    child: Text(
-                      "RANGO",
-                      style: GoogleFonts.montserrat(
-                        fontSize: 80.nsp,
-                        color: Theme.of(context).accentColor,
-                      ),
+                  Container(
+                    child: Column(
+                      children: [
+                        Flexible(
+                          flex: 0,
+                          child: Image(
+                            image: AssetImage('assets/imgs/rango.png'),
+                            width: 0.5.wp,
+                          ),
+                        ),
+                        Flexible(
+                          flex: 0,
+                          child: Text(
+                            "RANGO",
+                            style: TextStyle(
+                              color: Theme.of(context).accentColor,
+                              fontSize: 80.nsp,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                Expanded(
-                  flex: widget._isLogin ? 3 : 6,
+                Container(
                   child: Form(
                     key: _formKey,
                     child: Center(
@@ -116,8 +127,8 @@ class _AuthFormState extends State<AuthForm> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           if (!widget._isLogin) UserImagePicker(_pickedImage),
-                          Flexible(
-                            flex: 2,
+                          Container(
+                            margin: EdgeInsets.only(bottom: 10),
                             child: CustomTextFormField(
                               labelText: 'Email:',
                               focusNode: _focusNodeEmail,
@@ -147,8 +158,8 @@ class _AuthFormState extends State<AuthForm> {
                             ),
                           ),
                           if (!widget._isLogin)
-                            Flexible(
-                              flex: 2,
+                            Container(
+                              margin: EdgeInsets.only(bottom: 10),
                               child: CustomTextFormField(
                                 labelText: 'Nome:',
                                 focusNode: _focusNodeName,
@@ -173,8 +184,8 @@ class _AuthFormState extends State<AuthForm> {
                               ),
                             ),
                           if (!widget._isLogin)
-                            Flexible(
-                              flex: 2,
+                            Container(
+                              margin: EdgeInsets.only(bottom: 10),
                               child: CustomTextFormField(
                                 labelText: 'Telefone:',
                                 focusNode: _focusNodePhone,
@@ -201,8 +212,8 @@ class _AuthFormState extends State<AuthForm> {
                                 keyboardType: TextInputType.phone,
                               ),
                             ),
-                          Flexible(
-                            flex: 2,
+                          Container(
+                            margin: EdgeInsets.only(bottom: 10),
                             child: CustomTextFormField(
                               labelText: 'Senha:',
                               focusNode: _focusNodePass,
@@ -231,8 +242,8 @@ class _AuthFormState extends State<AuthForm> {
                             ),
                           ),
                           if (!widget._isLogin)
-                            Flexible(
-                              flex: 2,
+                            Container(
+                              margin: EdgeInsets.only(bottom: 10),
                               child: CustomTextFormField(
                                 labelText: 'Confirmar Senha:',
                                 controller: _confirmPass,
@@ -259,8 +270,8 @@ class _AuthFormState extends State<AuthForm> {
                               ),
                             ),
                           if (widget._isLogin)
-                            Expanded(
-                              flex: 1,
+                            Container(
+                              margin: EdgeInsets.only(bottom: 10),
                               child: TextButton(
                                 onPressed: () => Navigator.of(context)
                                     .pushNamed(ForgotPasswordScreen.routeName),
@@ -273,32 +284,29 @@ class _AuthFormState extends State<AuthForm> {
                                 ),
                               ),
                             ),
-                          Flexible(
-                            flex: 1,
-                            child: SizedBox(
-                              width: 0.5.wp,
-                              child: ElevatedButton(
-                                onPressed: widget._isLoading ? null : _submit,
-                                child: widget._isLoading
-                                    ? SizedBox(
-                                        child: CircularProgressIndicator(
-                                          valueColor:
-                                              new AlwaysStoppedAnimation<Color>(
-                                                  Colors.white),
-                                          strokeWidth: 3.0,
-                                        ),
-                                        height: 40.w,
-                                        width: 40.w,
-                                      )
-                                    : Container(
-                                        child: Text(
-                                          'Continuar',
-                                          style: GoogleFonts.montserrat(
-                                              color: Colors.white,
-                                              fontSize: 36.nsp),
-                                        ),
+                          SizedBox(
+                            width: 0.5.wp,
+                            child: ElevatedButton(
+                              onPressed: widget._isLoading ? null : _submit,
+                              child: widget._isLoading
+                                  ? SizedBox(
+                                      child: CircularProgressIndicator(
+                                        valueColor:
+                                            new AlwaysStoppedAnimation<Color>(
+                                                Colors.white),
+                                        strokeWidth: 3.0,
                                       ),
-                              ),
+                                      height: 40.w,
+                                      width: 40.w,
+                                    )
+                                  : Container(
+                                      child: Text(
+                                        'Continuar',
+                                        style: GoogleFonts.montserrat(
+                                            color: Colors.white,
+                                            fontSize: 36.nsp),
+                                      ),
+                                    ),
                             ),
                           ),
                         ],

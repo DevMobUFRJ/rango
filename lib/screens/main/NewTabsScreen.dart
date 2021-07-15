@@ -13,6 +13,9 @@ import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 class NewTabsScreen extends StatefulWidget {
+  final PersistentTabController controller;
+
+  NewTabsScreen({this.controller});
   @override
   _NewTabsScreenState createState() => _NewTabsScreenState();
 }
@@ -38,8 +41,6 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    PersistentTabController _controller;
-    _controller = PersistentTabController(initialIndex: 0);
     return loading
         ? SplashScreen()
         : StreamBuilder(
@@ -73,7 +74,7 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
                   // }
                   actualClient = cliente;
                   return PersistentTabView(
-                    controller: _controller,
+                    controller: widget.controller,
                     navBarStyle: NavBarStyle.style6,
                     confineInSafeArea: true,
                     backgroundColor: Theme.of(context).backgroundColor,
@@ -92,10 +93,10 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
                       duration: Duration(milliseconds: 180),
                     ),
                     screens: <Widget>[
-                      HomeScreen(cliente, _controller, key: currentKey),
+                      HomeScreen(cliente, widget.controller, key: currentKey),
                       SearchScreen(cliente),
-                      OrderHistoryScreen(),
-                      ProfileScreen(cliente),
+                      OrderHistoryScreen(widget.controller),
+                      ProfileScreen(cliente, widget.controller),
                     ],
                     items: [
                       PersistentBottomNavBarItem(

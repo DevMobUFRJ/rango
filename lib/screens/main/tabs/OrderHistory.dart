@@ -18,7 +18,8 @@ import 'package:http/http.dart' as http;
 import 'package:paginate_firestore/paginate_firestore.dart';
 
 class OrderHistoryScreen extends StatefulWidget {
-  OrderHistoryScreen();
+  final PersistentTabController controller;
+  OrderHistoryScreen(this.controller);
 
   @override
   _OrderHistoryScreenState createState() => _OrderHistoryScreenState();
@@ -144,8 +145,11 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                           onTap: () => pushNewScreen(
                             context,
                             withNavBar: false,
-                            screen:
-                                SellerProfile(order.sellerId, order.sellerName),
+                            screen: SellerProfile(
+                              order.sellerId,
+                              order.sellerName,
+                              widget.controller,
+                            ),
                             pageTransitionAnimation:
                                 PageTransitionAnimation.cupertino,
                           ),

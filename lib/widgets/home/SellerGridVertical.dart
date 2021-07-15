@@ -17,11 +17,13 @@ class SellerGridVertical extends StatelessWidget {
   final String title;
   final List<Seller> sellers;
   final Position userLocation;
+  final PersistentTabController controller;
 
   SellerGridVertical({
     @required this.title,
     @required this.sellers,
     @required this.userLocation,
+    @required this.controller,
   });
 
   @override
@@ -54,7 +56,11 @@ class SellerGridVertical extends StatelessWidget {
               onTap: () => pushNewScreen(
                 ctx,
                 withNavBar: false,
-                screen: SellerProfile(sellers[index].id, sellers[index].name),
+                screen: SellerProfile(
+                  sellers[index].id,
+                  sellers[index].name,
+                  controller,
+                ),
               ),
               child: Container(
                 constraints: BoxConstraints(maxHeight: 430.h),

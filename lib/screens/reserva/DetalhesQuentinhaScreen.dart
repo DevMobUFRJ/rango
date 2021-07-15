@@ -13,7 +13,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/order.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
-import 'package:rango/screens/main/tabs/OrderHistory.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
 import 'package:rango/utils/constants.dart';
 import 'package:rango/utils/string_formatters.dart';
@@ -55,7 +54,11 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
               : () => pushNewScreen(
                     context,
                     withNavBar: false,
-                    screen: SellerProfile(widget.seller.id, widget.seller.name),
+                    screen: SellerProfile(
+                      widget.seller.id,
+                      widget.seller.name,
+                      widget.controller,
+                    ),
                     pageTransitionAnimation: PageTransitionAnimation.cupertino,
                   ),
           child: AutoSizeText(

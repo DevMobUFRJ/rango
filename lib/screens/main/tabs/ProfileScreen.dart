@@ -15,7 +15,8 @@ import 'package:rango/widgets/user/UserPicture.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Client usuario;
-  ProfileScreen(this.usuario);
+  final PersistentTabController controller;
+  ProfileScreen(this.usuario, this.controller);
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -246,7 +247,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               onTap: () => pushNewScreen(
                                 context,
                                 withNavBar: false,
-                                screen: SellerProfile(seller.id, seller.name),
+                                screen: SellerProfile(
+                                  seller.id,
+                                  seller.name,
+                                  widget.controller,
+                                ),
                                 pageTransitionAnimation:
                                     PageTransitionAnimation.cupertino,
                               ),

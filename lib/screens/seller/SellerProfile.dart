@@ -20,8 +20,9 @@ import 'package:cloud_firestore/cloud_firestore.dart' show DocumentSnapshot;
 class SellerProfile extends StatefulWidget {
   final String sellerName;
   final String sellerId;
+  final PersistentTabController controller;
 
-  SellerProfile(this.sellerId, this.sellerName);
+  SellerProfile(this.sellerId, this.sellerName, this.controller);
 
   @override
   _SellerProfileState createState() => _SellerProfileState();
@@ -313,6 +314,7 @@ class _SellerProfileState extends State<SellerProfile> {
                     tagM: Random().nextDouble(),
                     meals: allCurrentMeals,
                     isFromSellerScreen: true,
+                    controller: widget.controller,
                   ),
                 ),
               ),
