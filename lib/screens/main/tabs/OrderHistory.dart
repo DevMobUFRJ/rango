@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -36,10 +37,11 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
       String deviceToken, BuildContext context) async {
     try {
       var data = (<String, String>{
-        'id': '1',
+        'id': Random().toString(),
         'channelId': '1',
         'channelName': 'Reservas',
-        'channelDescription': 'Canal usado para fazer reservas de quentinhas',
+        'channelDescription':
+            'Canal usado para notificações de reservas de quentinhas',
         'status': 'done',
         'description':
             '${FirebaseAuth.instance.currentUser.displayName} cancelou uma reserva com você',

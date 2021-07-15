@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,8 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/message.dart';
+import 'package:rango/models/seller.dart';
+import 'package:rango/resources/repository.dart';
+import 'package:rango/utils/constants.dart';
 import 'package:rango/widgets/chat/Messages.dart';
 import 'package:rango/widgets/chat/NewMessage.dart';
+import 'package:http/http.dart' as http;
 
 class ChatScreen extends StatefulWidget {
   final String sellerId;
@@ -20,6 +27,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   FirebaseFirestore db = FirebaseFirestore.instance;
+  Seller _seller;
   CollectionReference chatReference;
   String userId;
   String docId;
@@ -29,13 +37,23 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
     userId = FirebaseAuth.instance.currentUser.uid;
     docId = '${userId}_${widget.sellerId}';
+    _getSeller(widget.sellerId);
     chatReference = db.collection('chat').doc(docId).collection('messages');
+  }
+
+  Future<void> _getSeller(String sellerId) async {
+    var ref = await Repository.instance.sellersRef
+        .doc(sellerId)
+        .get()
+        .then((value) => value.data());
+    Seller seller = Seller.fromJson(ref);
+    setState(() => _seller = seller);
   }
 
   Future<void> _addNewMessage(Message newMessage) async {
     try {
-      print(chatReference);
       chatReference.add(newMessage.toJson());
+      _sendNewMessageNotification();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -51,6 +69,37 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       );
       print(e);
+    }
+  }
+
+  Future<void> _sendNewMessageNotification() async {
+    try {
+      var data = (<String, String>{
+        'id': Random().toString(),
+        'channelId': '2',
+        'channelName': 'Chat',
+        'channelDescription': 'Canal usado para notificações do chat',
+        'status': 'done',
+        'description':
+            '${FirebaseAuth.instance.currentUser.displayName} te enviou uma mensagem no chat!',
+        'payload':
+            'chat/$userId/${FirebaseAuth.instance.currentUser.displayName}',
+        'title': 'Você recebeu uma nova mensagem!',
+      });
+      await http.post(
+        Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        headers: <String, String>{
+          'Authorization': 'key=$firabaseMessagingAuthorizationKey',
+          'content-type': 'application/json; charset=UTF-8'
+        },
+        body: jsonEncode(<String, dynamic>{
+          'priority': 'high',
+          'data': data,
+          'to': _seller.deviceToken,
+        }),
+      );
+    } catch (error) {
+      print(error);
     }
   }
 
