@@ -71,8 +71,14 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                   .orderBy('requestedAt', descending: true),
               isLive: true,
               itemsPerPage: 10,
-              initialLoader: CircularProgressIndicator(
-                color: Theme.of(context).accentColor,
+              initialLoader: Center(
+                child: Container(
+                  width: 30,
+                  height: 30,
+                  child: CircularProgressIndicator(
+                    color: Theme.of(context).accentColor,
+                  ),
+                ),
               ),
               emptyDisplay: Center(
                 child: AutoSizeText(

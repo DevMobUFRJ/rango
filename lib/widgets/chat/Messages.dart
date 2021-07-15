@@ -15,8 +15,14 @@ class Messages extends StatelessWidget {
       query: chatReference,
       itemBuilderType: PaginateBuilderType.listView,
       emptyDisplay: Container(),
-      initialLoader: CircularProgressIndicator(
-        color: Theme.of(context).accentColor,
+      initialLoader: Center(
+        child: Container(
+          width: 30,
+          height: 30,
+          child: CircularProgressIndicator(
+            color: Theme.of(context).accentColor,
+          ),
+        ),
       ),
       itemsPerPage: 10,
       reverse: true,
