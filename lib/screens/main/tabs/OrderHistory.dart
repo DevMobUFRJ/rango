@@ -255,102 +255,88 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
       context: context,
       builder: (BuildContext ctx) {
         return AlertDialog(
-          insetPadding: EdgeInsets.symmetric(horizontal: 0.2.wp),
+          insetPadding: EdgeInsets.symmetric(horizontal: 0.1.wp),
           backgroundColor: Color(0xFFF9B152),
           actionsPadding: EdgeInsets.all(0),
-          contentPadding: EdgeInsets.only(
-            top: 10,
-            left: 0,
-            right: 0,
-            bottom: 10,
-          ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
           title: Text(
-            'Cancelar Reserva',
+            'Cancelando reserva',
             style: GoogleFonts.montserrat(
               color: Colors.white,
               fontWeight: FontWeight.bold,
-              fontSize: 32.ssp,
+              fontSize: 35.nsp,
             ),
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Tem certeza?',
+          content: Text(
+            'Deseja realmente cancelar este reserva?',
+            style: GoogleFonts.montserrat(
+              color: Colors.white,
+              fontSize: 32.nsp,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+              child: Text(
+                'Voltar',
                 style: GoogleFonts.montserrat(
+                  decoration: TextDecoration.underline,
                   color: Colors.white,
-                  fontSize: 28.nsp,
+                  fontSize: 34.nsp,
                 ),
               ),
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  TextButton(
-                    onPressed: () async {
-                      try {
-                        await Repository.instance.cancelOrder(orderUid);
-                        Navigator.of(ctx).pop();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            duration: Duration(seconds: 2),
-                            backgroundColor: Theme.of(ctx).accentColor,
-                            content: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 20),
-                              child: Text(
-                                "Reserva cancelada com sucesso.",
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ),
-                        );
-                      } catch (e) {
-                        Navigator.of(ctx).pop();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            duration: Duration(seconds: 2),
-                            padding: EdgeInsets.only(bottom: 60),
-                            content: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 20),
-                              child: Text(
-                                e.toString(),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            backgroundColor: Theme.of(context).errorColor,
-                          ),
-                        );
-                      }
-                    },
-                    child: Text(
-                      'Sim',
-                      style: GoogleFonts.montserrat(
-                        decoration: TextDecoration.underline,
-                        color: Colors.white,
-                        fontSize: 34.nsp,
+            ),
+            TextButton(
+              child: Text(
+                'Cancelar',
+                style: GoogleFonts.montserrat(
+                  decoration: TextDecoration.underline,
+                  color: Colors.white,
+                  fontSize: 34.nsp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onPressed: () async {
+                try {
+                  await Repository.instance.cancelOrder(orderUid);
+                  Navigator.of(ctx).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      duration: Duration(seconds: 2),
+                      backgroundColor: Theme.of(ctx).accentColor,
+                      content: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          "Reserva cancelada com sucesso.",
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(ctx).pop();
-                    },
-                    child: Text(
-                      'Não',
-                      style: GoogleFonts.montserrat(
-                        decoration: TextDecoration.underline,
-                        color: Colors.white,
-                        fontSize: 34.nsp,
+                  );
+                } catch (e) {
+                  Navigator.of(ctx).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      duration: Duration(seconds: 2),
+                      padding: EdgeInsets.only(bottom: 60),
+                      content: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          e.toString(),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
+                      backgroundColor: Theme.of(context).errorColor,
                     ),
-                  ),
-                ],
-              )
-            ],
-          ),
+                  );
+                }
+              },
+            ),
+          ],
         );
       },
     );

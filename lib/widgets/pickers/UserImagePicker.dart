@@ -28,13 +28,13 @@ class _UserImagePickerState extends State<UserImagePicker> {
     await showDialog(
         context: context,
         builder: (BuildContext ctx) => AlertDialog(
-              backgroundColor: Theme.of(ctx).backgroundColor,
+              backgroundColor: Color(0xFFF9B152),
               actionsPadding: EdgeInsets.all(10),
               title: Text(
                 'Escolha de onde pegar a imagem',
                 style: GoogleFonts.montserrat(
-                  color: Theme.of(context).accentColor,
                   fontSize: 38.nsp,
+                  color: Colors.white,
                 ),
               ),
               content: Row(
@@ -48,8 +48,8 @@ class _UserImagePickerState extends State<UserImagePicker> {
                     child: Text(
                       'Galeria',
                       style: GoogleFonts.montserrat(
-                        color: Theme.of(context).accentColor,
                         fontSize: 36.nsp,
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -61,8 +61,8 @@ class _UserImagePickerState extends State<UserImagePicker> {
                     child: Text(
                       'Câmera',
                       style: GoogleFonts.montserrat(
-                        color: Theme.of(context).accentColor,
                         fontSize: 36.nsp,
+                        color: Colors.white,
                       ),
                     ),
                   ),

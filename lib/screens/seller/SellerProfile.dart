@@ -40,7 +40,7 @@ void _showShiftDialog(Seller seller, BuildContext context) async {
       content: Text(_retrieveSellerShift(seller),
           style: GoogleFonts.montserrat(
             color: Colors.white,
-            fontSize: 28.nsp,
+            fontSize: 32.nsp,
           )),
       actions: [
         TextButton(
@@ -51,6 +51,7 @@ void _showShiftDialog(Seller seller, BuildContext context) async {
               decoration: TextDecoration.underline,
               color: Colors.white,
               fontSize: 34.nsp,
+              fontWeight: FontWeight.bold,
             ),
           ),
         )

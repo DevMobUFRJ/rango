@@ -319,7 +319,7 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                           'Quantas deseja reservar?',
                           style: GoogleFonts.montserrat(
                             color: Colors.white,
-                            fontSize: 28.nsp,
+                            fontSize: 32.nsp,
                           ),
                         ),
                         Padding(
@@ -328,16 +328,21 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              FloatingActionButton(
-                                onPressed: () {
-                                  setState(() {
-                                    if (_quantity > 1) {
-                                      _quantity -= 1;
-                                    }
-                                  });
-                                },
-                                child: Icon(Icons.remove, color: Colors.black),
-                                backgroundColor: Colors.white,
+                              Container(
+                                height: 50,
+                                width: 50,
+                                child: FloatingActionButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      if (_quantity > 1) {
+                                        _quantity -= 1;
+                                      }
+                                    });
+                                  },
+                                  child:
+                                      Icon(Icons.remove, color: Colors.black),
+                                  backgroundColor: Colors.white,
+                                ),
                               ),
                               Text(
                                 '$_quantity',
@@ -345,19 +350,23 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                                   fontSize: 80.nsp,
                                 ),
                               ),
-                              FloatingActionButton(
-                                onPressed: () {
-                                  setState(() {
-                                    if (_quantity < maxQuantity) {
-                                      _quantity += 1;
-                                    }
-                                  });
-                                },
-                                child: Icon(
-                                  Icons.add,
-                                  color: Colors.black,
+                              Container(
+                                height: 50,
+                                width: 50,
+                                child: FloatingActionButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      if (_quantity < maxQuantity) {
+                                        _quantity += 1;
+                                      }
+                                    });
+                                  },
+                                  child: Icon(
+                                    Icons.add,
+                                    color: Colors.black,
+                                  ),
+                                  backgroundColor: Colors.white,
                                 ),
-                                backgroundColor: Colors.white,
                               ),
                             ],
                           ),
@@ -385,6 +394,7 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                             decoration: TextDecoration.underline,
                             color: Colors.white,
                             fontSize: 34.nsp,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                         onPressed: () async {
