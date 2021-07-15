@@ -1,9 +1,8 @@
 import 'dart:convert';
-
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
@@ -79,10 +78,17 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                 ),
                 child: Hero(
                   tag: widget.marmita.hashCode * widget.tagM,
-                  child: FadeInImage(
-                    placeholder:
-                        AssetImage('assets/imgs/quentinha_placeholder.png'),
-                    image: FirebaseImage(widget.marmita.picture),
+                  child: CachedNetworkImage(
+                    fit: BoxFit.cover,
+                    imageUrl: widget.marmita.picture,
+                    placeholder: (ctx, url) => Image(
+                      image:
+                          AssetImage('assets/imgs/quentinha_placeholder.png'),
+                    ),
+                    errorWidget: (ctx, url, error) => Image(
+                      image:
+                          AssetImage('assets/imgs/quentinha_placeholder.png'),
+                    ),
                   ),
                 ),
               ),

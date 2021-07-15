@@ -1,6 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
@@ -262,10 +262,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                                 child: Row(
                                   children: [
-                                    CircleAvatar(
-                                      backgroundImage:
-                                          FirebaseImage(seller.logo),
-                                      radius: ScreenUtil().setSp(50),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(
+                                        ScreenUtil().setSp(50),
+                                      ),
+                                      child: CachedNetworkImage(
+                                          imageUrl: seller.logo,
+                                          fit: BoxFit.cover,
+                                          placeholder: (ctx, url) =>
+                                              CircleAvatar(
+                                                radius: ScreenUtil().setSp(50),
+                                                backgroundColor: Colors.white,
+                                                backgroundImage: AssetImage(
+                                                  'assets/imgs/user_placeholder.png',
+                                                ),
+                                              ),
+                                          errorWidget: (ctx, url, error) =>
+                                              CircleAvatar(
+                                                radius: ScreenUtil().setSp(50),
+                                                backgroundColor: Colors.white,
+                                                backgroundImage: AssetImage(
+                                                  'assets/imgs/user_placeholder.png',
+                                                ),
+                                              )),
                                     ),
                                     SizedBox(width: 0.03.wp),
                                     Container(

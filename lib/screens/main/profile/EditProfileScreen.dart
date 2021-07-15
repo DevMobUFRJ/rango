@@ -176,18 +176,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 children: [
                   Flexible(
                     flex: 1,
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          UserImagePicker(
-                            _pickedImage,
-                            image: widget.user.picture,
-                            editText: 'Editar',
-                          ),
-                        ],
-                      ),
+                    child: UserImagePicker(
+                      _pickedImage,
+                      image: widget.user.picture,
+                      editText: 'Editar',
                     ),
                   ),
                   SizedBox(height: 0.02.hp),

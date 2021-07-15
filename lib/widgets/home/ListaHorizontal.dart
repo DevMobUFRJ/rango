@@ -1,6 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -190,12 +190,15 @@ class ListaHorizontal extends StatelessWidget {
                                     color: Colors.white,
                                   ),
                                 ),
-                                FadeInImage(
-                                  placeholder: MemoryImage(kTransparentImage),
-                                  image: FirebaseImage(meal.picture),
-                                  fit: BoxFit.cover,
+                                CachedNetworkImage(
+                                  imageUrl: meal.picture,
                                   height: 170.h,
                                   width: 0.45.wp,
+                                  fit: BoxFit.cover,
+                                  placeholder: (ctx, url) => Image(
+                                      image: MemoryImage(kTransparentImage)),
+                                  errorWidget: (ctx, url, error) => Image(
+                                      image: MemoryImage(kTransparentImage)),
                                 ),
                               ],
                             ),

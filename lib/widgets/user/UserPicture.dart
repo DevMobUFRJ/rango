@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_image/firebase_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/resources/repository.dart';
 
@@ -43,7 +43,7 @@ class _UserPictureState extends State<UserPicture> {
               child: CircleAvatar(
                 backgroundColor: Theme.of(context).accentColor,
                 backgroundImage: AssetImage('assets/imgs/user_placeholder.png'),
-                radius: 70,
+                radius: 150.w,
               ),
             ),
           if (widget.picture != null)
@@ -53,10 +53,15 @@ class _UserPictureState extends State<UserPicture> {
                 width: 150,
                 height: 150,
                 color: Theme.of(context).accentColor,
-                child: FadeInImage(
-                  placeholder: AssetImage('assets/imgs/user_placeholder.png'),
-                  image: FirebaseImage(widget.picture),
+                child: CachedNetworkImage(
                   fit: BoxFit.cover,
+                  imageUrl: widget.picture,
+                  placeholder: (ctx, url) => Image(
+                    image: AssetImage('assets/imgs/user_placeholder.png'),
+                  ),
+                  errorWidget: (ctx, url, error) => Image(
+                    image: AssetImage('assets/imgs/user_placeholder.png'),
+                  ),
                 ),
               ),
             ),
