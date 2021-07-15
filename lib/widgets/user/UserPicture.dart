@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:rango/resources/repository.dart';
 
 class UserPicture extends StatefulWidget {
   final String picture;
@@ -13,7 +12,6 @@ class UserPicture extends StatefulWidget {
 }
 
 class _UserPictureState extends State<UserPicture> {
-  bool _hasInternet;
   @override
   void initState() {
     super.initState();
@@ -21,9 +19,6 @@ class _UserPictureState extends State<UserPicture> {
 
   @override
   Widget build(BuildContext context) {
-    if (_hasInternet == null) {
-      Repository.instance.checkInternetConnection(context);
-    }
     return Container(
       child: Stack(
         alignment: Alignment.center,
