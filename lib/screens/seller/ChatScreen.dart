@@ -37,6 +37,19 @@ class _ChatScreenState extends State<ChatScreen> {
       print(chatReference);
       chatReference.add(newMessage.toJson());
     } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: Duration(seconds: 2),
+          content: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              'Ocorreu um erro ao enviar a mensagem.',
+              textAlign: TextAlign.center,
+            ),
+          ),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
+      );
       print(e);
     }
   }
