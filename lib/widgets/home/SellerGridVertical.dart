@@ -55,7 +55,6 @@ class SellerGridVertical extends StatelessWidget {
                 ctx,
                 withNavBar: false,
                 screen: SellerProfile(sellers[index].id, sellers[index].name),
-                pageTransitionAnimation: PageTransitionAnimation.cupertino,
               ),
               child: Container(
                 constraints: BoxConstraints(maxHeight: 430.h),
