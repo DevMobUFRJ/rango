@@ -440,18 +440,24 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 : () => requestForPermission(),
             child: _locationPermissionLoading
                 ? Container(
-                    margin: EdgeInsets.symmetric(horizontal: 40),
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
+                    margin: EdgeInsets.symmetric(horizontal: 0.15.wp),
+                    child: SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
                     ),
-                    width: 18,
-                    height: 18,
                   )
-                : AutoSizeText(
-                    'Dar permissão',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 35.nsp,
+                : Container(
+                    width: 0.4.wp,
+                    child: AutoSizeText(
+                      'Dar permissão',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 35.nsp,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
           ),
