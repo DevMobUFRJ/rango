@@ -42,8 +42,7 @@ class _AuthScreenState extends State<AuthScreen> {
               .ref()
               .child('users/${authResult.user.uid}/logo.png');
           await ref.putFile(image).whenComplete(() => null);
-          final metadata = await ref.getMetadata();
-          url = 'gs://${metadata.bucket}/${metadata.fullPath}';
+          url = await ref.getDownloadURL();
         }
         await FirebaseFirestore.instance
             .collection('sellers')

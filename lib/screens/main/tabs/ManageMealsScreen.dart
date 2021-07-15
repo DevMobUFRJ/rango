@@ -9,6 +9,7 @@ import 'package:rango/models/seller.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/main/meals/ManageMeal.dart';
+import 'package:rango/utils/constants.dart';
 import 'package:rango/utils/string_formatters.dart';
 import 'package:rango/widgets/home/GridHorizontal.dart';
 
@@ -95,8 +96,10 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                 List<Meal> meals = mealsSnapshot.data.docs
                     .map((snapshot) => snapshot.data())
                     .toList();
+                meals.sort((a, b) => a.quantity > 0? -1: 1);
                 List<Meal> currentMeals = meals
                     .where((doc) => currentMealsIds.contains(doc.id))
+                    .where((doc) => doc.quantity > 0)
                     .toList();
 
                 return Column(
@@ -156,22 +159,30 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                         itemCount: meals.length,
                         itemBuilder: (context, index) {
                           return Card(
-                            color: Color(0xFFF9B152),
+                            color: meals[index].quantity == 0? Colors.grey: Color(0xFFF9B152),
                             child: ListTile(
                               contentPadding: EdgeInsets.all(0),
-                              /*leading: FadeInImage.assetNetwork(
-                                        placeholder: 'assets/imgs/quentinha_placeholder.png',
-                                        image: meals[index].picture,
-                                        fit: BoxFit.fitHeight,
-                                      ),*/
                               trailing: Container(
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Switch(
                                         activeColor: Theme.of(context).primaryColor,
-                                        value: seller.currentMeals[meals[index].id] != null,
+                                        value: seller.currentMeals[meals[index].id] != null && meals[index].quantity > 0,
                                         onChanged: (value) async {
+                                          if (meals[index].quantity == 0) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                duration: Duration(seconds: 4),
+                                                backgroundColor: Theme.of(context).errorColor,
+                                                content: Text(
+                                                  'Você não possui mais unidades dessa quentinha\nVocê pode editá-la caso tenha mais',
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                            );
+                                            return;
+                                          }
                                           try {
                                             if (value) {
                                               Repository.instance.addMealToCurrent(meals[index].id, seller.id);
@@ -184,18 +195,37 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                                         }
                                     ),
                                     IconButton(
-                                        onPressed: () async {
-                                          try {
-                                            Repository.instance.toggleMealFeatured(meals[index].id, seller);
-                                          } catch (e) {
-                                            print(e);
-                                          }
-                                        },
+                                        onPressed: seller.currentMeals[meals[index].id] == null
+                                          ? null
+                                          : () async {
+                                              try {
+                                                if (seller.currentMeals[meals[index].id].featured == false) {
+                                                  var featuredMeals = seller.currentMeals.values.where((item) => item.featured == true).length;
+                                                  if (featuredMeals >= maxFeaturedMeals) {
+                                                    ScaffoldMessenger.of(context).showSnackBar(
+                                                      SnackBar(
+                                                        duration: Duration(seconds: 2),
+                                                        backgroundColor: Theme.of(context).errorColor,
+                                                        content: Text(
+                                                          'Você pode selecionar até $maxFeaturedMeals quentinhas em destaque',
+                                                          textAlign: TextAlign.center,
+                                                        ),
+                                                      ),
+                                                    );
+                                                    return;
+                                                  }
+                                                }
+
+                                                Repository.instance.toggleMealFeatured(meals[index].id, seller);
+                                              } catch (e) {
+                                                print(e);
+                                              }
+                                            },
                                         icon: Icon(
-                                            seller.currentMeals[meals[index].id] != null && seller.currentMeals[meals[index].id].featured
-                                                ? Icons.star
-                                                : Icons.star_border,
-                                            color: Colors.white
+                                          seller.currentMeals[meals[index].id] != null && seller.currentMeals[meals[index].id].featured
+                                              ? Icons.star
+                                              : Icons.star_border,
+                                          color: seller.currentMeals[meals[index].id] == null? Color(0xFFF9B152): Colors.white
                                         )
                                     ),
                                     IconButton(

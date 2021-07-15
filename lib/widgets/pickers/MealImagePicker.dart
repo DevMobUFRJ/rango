@@ -1,13 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_image/firebase_image.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class MealImagePicker extends StatefulWidget {
   final Function(File pickedImage) _imagePickFn;
@@ -143,12 +139,12 @@ class _MealImagePickerState extends State<MealImagePicker> {
                       BoxConstraints(maxHeight: 0.7.hp, maxWidth: 0.9.wp),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(6),
-                    child: Image(
-                      image: _pickedImage != null
-                          ? FileImage(_pickedImage)
-                          : FirebaseImage(widget.image),
-                      fit: BoxFit.cover,
-                    ),
+                    child: _pickedImage != null
+                          ? Image(image: FileImage(_pickedImage))
+                          : CachedNetworkImage(
+                              fit: BoxFit.cover,
+                              imageUrl: widget.image
+                            )
                   ),
                 ),
               if (_pickedImage == null && widget.image == null)

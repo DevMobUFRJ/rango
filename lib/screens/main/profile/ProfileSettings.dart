@@ -59,7 +59,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
           top: 20,
           left: 24,
           right: 24,
-          bottom: 0,
+          bottom: 20,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),

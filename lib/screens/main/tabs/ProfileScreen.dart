@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
@@ -101,7 +104,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: <Widget>[
             Flexible(
               flex: 5,
-              child: UserPicture(picture: widget.usuario.picture),
+              child: UserPicture(picture: widget.usuario.logo),
             ),
             Flexible(
               flex: 1,

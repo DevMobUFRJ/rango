@@ -64,6 +64,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _formKey.currentState.save();
       setState(() => _loading = true);
       try {
+        final user = FirebaseAuth.instance.currentUser;
         Map<String, dynamic> dataToUpdate = {};
         if (_tel.text != null && _tel.text != widget.user.contact.phone) {
           Map<String, dynamic> contato = {};
@@ -82,17 +83,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           dataToUpdate['paymentMethods'] = _payments.text;
         }
         if (_userImageFile != null) {
-          final user = FirebaseAuth.instance.currentUser;
           final ref = FirebaseStorage.instance
               .ref()
               .child('users/${user.uid}/logo.png');
           await ref.putFile(_userImageFile).whenComplete(() => null);
-          final metadata = await ref.getMetadata();
-          dataToUpdate['picture'] = 'gs://${metadata.bucket}/${metadata.fullPath}';
+          final url = await ref.getDownloadURL();
+          dataToUpdate['logo'] = url;
         }
         if (dataToUpdate.length > 0) {
-          final firebaseUser = await Repository.instance.getCurrentUser();
-          await Repository.instance.updateSeller(firebaseUser.uid, dataToUpdate);
+          await Repository.instance.updateSeller(user.uid, dataToUpdate);
         }
         setState(() => _loading = false);
         Navigator.of(context).pop();

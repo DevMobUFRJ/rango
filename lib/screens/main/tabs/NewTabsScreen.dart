@@ -73,7 +73,7 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
       seller = new Seller(
         id: user.uid,
         email: userData?.data()['email']?.toString(),
-        picture: userData?.data()['picture']?.toString(),
+        logo: userData?.data()['logo']?.toString(),
         description: userData?.data()['description'].toString(),
         paymentMethods: userData?.data()['paymentMethods'].toString(),
         name: userData.data()['name'].toString(),

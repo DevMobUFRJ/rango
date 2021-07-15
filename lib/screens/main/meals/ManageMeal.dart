@@ -62,7 +62,7 @@ class _ManageMealState extends State<ManageMeal> {
         ),
       ),
       body: LayoutBuilder(
-        builder: (context, constraints) => SingleChildScrollView(
+        builder: (builderContext, constraints) => SingleChildScrollView(
           child: Container(
             margin: EdgeInsets.only(top: 15),
             child: Column(
@@ -234,12 +234,11 @@ class _ManageMealState extends State<ManageMeal> {
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: 0.01.hp,
-                ),
+                SizedBox(height: 0.02.hp),
                 Center(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
+                      primary: Theme.of(context).primaryColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -249,6 +248,27 @@ class _ManageMealState extends State<ManageMeal> {
                       padding: EdgeInsets.symmetric(horizontal: 42),
                       child: AutoSizeText(
                         "Confirmar",
+                        style: GoogleFonts.montserrat(
+                          fontSize: 38.nsp,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 0.04.hp),
+                if (widget.meal != null) Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.red,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    onPressed: () => _showDeleteDialog(context, widget.sellerId, widget.meal.id),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 42),
+                      child: AutoSizeText(
+                        "Excluir",
                         style: GoogleFonts.montserrat(
                           fontSize: 38.nsp,
                         ),
@@ -291,8 +311,8 @@ class _ManageMealState extends State<ManageMeal> {
               .ref()
               .child('users/${widget.sellerId}/meals/${widget.meal.id}.png');
           await ref.putFile(_mealImageFile).whenComplete(() => null);
-          final metadata = await ref.getMetadata();
-          dataToUpdate['picture'] = 'gs://${metadata.bucket}/${metadata.fullPath}';
+          final url = await ref.getDownloadURL();
+          dataToUpdate['picture'] = url;
         }
 
         await Repository.instance.updateMeal(widget.sellerId, widget.meal.id, dataToUpdate);
@@ -304,18 +324,138 @@ class _ManageMealState extends State<ManageMeal> {
               .ref()
               .child('users/${widget.sellerId}/meals/$createdMealId.png');
           await ref.putFile(_mealImageFile).whenComplete(() => null);
-          final metadata = await ref.getMetadata();
+          final url = await ref.getDownloadURL();
           Map<String, dynamic> pictureUpdate = {
-            'picture': 'gs://${metadata.bucket}/${metadata.fullPath}'
+            'picture': url
           };
 
           await Repository.instance.updateMeal(widget.sellerId, createdMealId, pictureUpdate);
         }
       }
 
+      FocusScope.of(context).unfocus();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: Duration(seconds: 2),
+          backgroundColor: Theme.of(context).accentColor,
+          content: Text(
+            'Quentinha salva com sucesso',
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
       Navigator.of(context).pop();
     } catch (e) {
       print(e);
     }
+  }
+
+  void _showDeleteDialog(context, sellerId, mealId) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          insetPadding: EdgeInsets.symmetric(horizontal: 0.1.wp),
+          backgroundColor: Color(0xFFF9B152),
+          actionsPadding: EdgeInsets.all(10),
+          contentPadding: EdgeInsets.only(
+            top: 20,
+            left: 24,
+            right: 24,
+            bottom: 20,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Text(
+            'Excluir quentinha',
+            style: GoogleFonts.montserrat(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 32.ssp,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Essa quentinha será excluída para sempre.',
+                style: GoogleFonts.montserrat(
+                  color: Colors.white,
+                  fontSize: 28.nsp,
+                ),
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                    },
+                    child: Text(
+                      'Voltar',
+                      style: GoogleFonts.montserrat(
+                        decoration: TextDecoration.underline,
+                        color: Colors.white,
+                        fontSize: 34.nsp,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      try {
+                        await Repository.instance.deleteMeal(sellerId, mealId);
+                        FocusScope.of(context).unfocus();
+                        Navigator.of(ctx).pop();
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            duration: Duration(seconds: 2),
+                            backgroundColor: Theme.of(context).accentColor,
+                            content: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              child: Text(
+                                "Quentinha excluída com sucesso.",
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        );
+                      } catch (e) {
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            duration: Duration(seconds: 2),
+                            padding: EdgeInsets.only(bottom: 60),
+                            content: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              child: Text(
+                                e.toString(),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            backgroundColor: Theme.of(context).errorColor,
+                          ),
+                        );
+                      }
+                    },
+                    child: Text(
+                      'Excluir',
+                      style: GoogleFonts.montserrat(
+                        decoration: TextDecoration.underline,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 34.nsp,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        );
+      },
+    );
   }
 }

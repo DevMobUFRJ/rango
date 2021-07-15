@@ -1,7 +1,6 @@
-import 'package:firebase_image/firebase_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class UserPicture extends StatelessWidget {
   const UserPicture({
@@ -33,10 +32,25 @@ class UserPicture extends StatelessWidget {
                 width: 160,
                 height: 160,
                 color: Theme.of(context).accentColor,
-                child: FadeInImage(
-                  placeholder: MemoryImage(kTransparentImage),
-                  image: FirebaseImage(picture),
+                child: CachedNetworkImage(
                   fit: BoxFit.cover,
+                  imageUrl: picture,
+                  placeholder: (context, url) => FittedBox(
+                    fit: BoxFit.cover,
+                    child: CircleAvatar(
+                      backgroundColor: Theme.of(context).accentColor,
+                      backgroundImage: AssetImage('assets/imgs/user_placeholder.png'),
+                      radius: 80,
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => FittedBox(
+                    fit: BoxFit.cover,
+                    child: CircleAvatar(
+                      backgroundColor: Theme.of(context).accentColor,
+                      backgroundImage: AssetImage('assets/imgs/user_placeholder.png'),
+                      radius: 80,
+                    ),
+                  ),
                 ),
               ),
             ),

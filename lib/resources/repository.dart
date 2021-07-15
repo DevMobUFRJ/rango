@@ -266,6 +266,17 @@ class Repository {
     return Future.value(response.id);
   }
 
+  Future<void> deleteMeal(String sellerId, String mealId) async {
+    try {
+      await sellersRef.doc(sellerId).update({
+        'currentMeals.$mealId': FieldValue.delete()
+      });
+      await sellersRef.doc(sellerId).collection('meals').doc(mealId).delete();
+    } catch (e) {
+      throw e;
+    }
+  }
+
   Future<Position> getUserLocation() {
     // Stream para pegar a localização da pessoa
     return Geolocator.getCurrentPosition();

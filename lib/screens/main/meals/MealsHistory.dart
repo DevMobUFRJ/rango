@@ -85,7 +85,7 @@ class _MealsHistoryState extends State<MealsHistory> {
                           GestureDetector(
                             onTap: () => pushNewScreen(
                               context,
-                              screen: ManageMeal(
+                              screen: ManageMeal("",
                                 meal: meal,
                               ),
                               withNavBar: false,

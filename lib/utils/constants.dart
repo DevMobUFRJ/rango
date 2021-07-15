@@ -1,0 +1,1 @@
+final maxFeaturedMeals = 10;

@@ -1,5 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:firebase_image/firebase_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -9,7 +9,6 @@ import 'package:flutter/foundation.dart';
 import 'package:rango/models/meals.dart';
 import 'package:rango/screens/main/meals/ManageMeal.dart';
 import 'package:rango/utils/string_formatters.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class GridHorizontal extends StatelessWidget {
   final String sellerId;
@@ -50,11 +49,18 @@ class GridHorizontal extends StatelessWidget {
                       constraints: BoxConstraints(minWidth: 0.5.wp),
                       child: meal.picture !=
                           null
-                          ? FadeInImage(
-                        placeholder: MemoryImage(kTransparentImage),
-                        image: FirebaseImage(meal.picture),
-                        fit: BoxFit.fitWidth
-                      )
+                          ? CachedNetworkImage(
+                              placeholder: (context, url) => Image.asset(
+                                'assets/imgs/quentinha_placeholder.png',
+                                fit: BoxFit.fitHeight,
+                              ),
+                              errorWidget: (context, url, error) => Image.asset(
+                                'assets/imgs/quentinha_placeholder.png',
+                                fit: BoxFit.fitHeight,
+                              ),
+                              imageUrl: meal.picture,
+                              fit: BoxFit.cover,
+                            )
                           : Image.asset(
                         'assets/imgs/quentinha_placeholder.png',
                         fit: BoxFit.fitHeight,
@@ -99,38 +105,6 @@ class GridHorizontal extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Flexible(
-                            flex: 1,
-                            child: Container(
-                              margin: EdgeInsets.symmetric(vertical: 2),
-                              child: RichText(
-                                text: TextSpan(
-                                  style: GoogleFonts.montserrat(
-                                    fontSize:
-                                    currentMeals.length > 6 ? 25.nsp : 28.nsp,
-                                  ),
-                                  children: [
-                                    if (meal.quantity == 0) ...{
-                                      TextSpan(
-                                          text: '! ',
-                                          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)
-                                      ),
-                                    },
-                                    TextSpan(
-                                        text: '${meal.quantity} ${meal.quantity < 2 ?'disponível' :'disponíveis'}',
-                                        style: TextStyle(color: Colors.black)
-                                    ),
-                                    if (meal.quantity == 0) ...{
-                                      TextSpan(
-                                          text: ' !',
-                                          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)
-                                      ),
-                                    },
-                                  ]
-                                )
-                              ),
-                            ),
-                          )
                         ],
                       ),
                     ),
