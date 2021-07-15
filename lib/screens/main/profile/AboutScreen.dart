@@ -34,7 +34,7 @@ class AboutScreen extends StatelessWidget {
             ),
             SizedBox(height: 0.01.hp),
             Flexible(
-              flex: 3,
+              flex: 4,
               child: AutoSizeText(
                 'Feito para ajudar o rango universitário a acontecer de forma mais organizada, nesse aplicativo conectamos quem quer comprar a quem quer vender, de modo que a comunicação seja mais clara e concisa. Assim, facilitamos o horário de almoço para todo mundo e ninguém passa fome!',
                 textAlign: TextAlign.left,
@@ -46,13 +46,13 @@ class AboutScreen extends StatelessWidget {
             ),
             SizedBox(height: 0.01.hp),
             Flexible(
-              flex: 1,
+              flex: 2,
               child: AutoSizeText(
                 'Protótipo feito por: Fernanda Arnaut, Julia Lopes e Luísa Forain.',
                 textAlign: TextAlign.left,
                 style: GoogleFonts.montserrat(
                   color: Colors.grey[600],
-                  fontSize: 30.nsp,
+                  fontSize: 35.nsp,
                 ),
               ),
             ),
@@ -68,7 +68,7 @@ class AboutScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 0.01.hp),
+            SizedBox(height: 0.02.hp),
             Expanded(
               flex: 4,
               child: Container(
