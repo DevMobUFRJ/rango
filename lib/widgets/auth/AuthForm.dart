@@ -150,7 +150,7 @@ class _AuthFormState extends State<AuthForm> {
                             Flexible(
                               flex: 2,
                               child: CustomTextFormField(
-                                labelText: 'Nome',
+                                labelText: 'Nome:',
                                 focusNode: _focusNodeName,
                                 errorText: _nameErrorMessage,
                                 key: ValueKey('name'),
@@ -176,7 +176,7 @@ class _AuthFormState extends State<AuthForm> {
                             Flexible(
                               flex: 2,
                               child: CustomTextFormField(
-                                labelText: 'Telefone',
+                                labelText: 'Telefone:',
                                 focusNode: _focusNodePhone,
                                 errorText: _phoneErrorMessage,
                                 maxLength: 11,
