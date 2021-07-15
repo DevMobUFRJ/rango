@@ -6,7 +6,6 @@ import 'package:rango/widgets/auth/AuthForm.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/services.dart';
 
 class AuthScreen extends StatefulWidget {
   static const routeName = '/auth-screen';
@@ -59,7 +58,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 ScaffoldMessenger.of(ctx).showSnackBar(
                   SnackBar(
                     content: Text(
-                      'Você se conectou com um novo dispositivo! Novas notificações chegaram apenas a ele.',
+                      'Você se conectou com um novo dispositivo! Novas notificações chegarão apenas a ele.',
                       textAlign: TextAlign.center,
                     ),
                     backgroundColor: Theme.of(context).accentColor,
