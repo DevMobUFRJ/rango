@@ -18,11 +18,13 @@ class ListaHorizontal extends StatelessWidget {
   final String title;
   final double tagM;
   final List<MealRequest> meals;
+  final bool isFromSellerScreen;
 
   ListaHorizontal({
     @required this.title,
     @required this.tagM,
     @required this.meals,
+    this.isFromSellerScreen = false,
   });
 
   @override
@@ -153,6 +155,7 @@ class ListaHorizontal extends StatelessWidget {
                       marmita: meal,
                       seller: meals[index].seller,
                       tagM: tagM,
+                      isFromSellerScreen: isFromSellerScreen,
                     ),
                     withNavBar: false,
                     pageTransitionAnimation: PageTransitionAnimation.cupertino,

@@ -22,11 +22,13 @@ class DetalhesQuentinhaScreen extends StatefulWidget {
   final Meal marmita;
   final Seller seller;
   final double tagM;
+  final bool isFromSellerScreen;
 
   DetalhesQuentinhaScreen({
     @required this.marmita,
     @required this.seller,
     this.tagM,
+    this.isFromSellerScreen = false,
   });
 
   static const routeName = '/detalhes-reserva-quentinha';
@@ -46,18 +48,22 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
     return Scaffold(
       appBar: AppBar(
         title: GestureDetector(
-          onTap: () => pushNewScreen(
-            context,
-            withNavBar: false,
-            screen: SellerProfile(widget.seller.id, widget.seller.name),
-            pageTransitionAnimation: PageTransitionAnimation.cupertino,
-          ),
+          onTap: widget.isFromSellerScreen
+              ? null
+              : () => pushNewScreen(
+                    context,
+                    withNavBar: false,
+                    screen: SellerProfile(widget.seller.id, widget.seller.name),
+                    pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                  ),
           child: AutoSizeText(
             widget.seller.name,
             style: GoogleFonts.montserrat(
               color: Theme.of(context).accentColor,
               fontSize: 40.nsp,
-              decoration: TextDecoration.underline,
+              decoration: widget.isFromSellerScreen
+                  ? TextDecoration.none
+                  : TextDecoration.underline,
             ),
           ),
         ),

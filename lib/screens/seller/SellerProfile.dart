@@ -312,6 +312,7 @@ class _SellerProfileState extends State<SellerProfile> {
                     title: 'Quentinhas disponíveis',
                     tagM: Random().nextDouble(),
                     meals: allCurrentMeals,
+                    isFromSellerScreen: true,
                   ),
                 ),
               ),
