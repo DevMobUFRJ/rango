@@ -242,7 +242,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                                 id: sellerDoc.id,
                                               );
                                               sellerList.add(seller);
-                                              var filterByFeatured = false;
+                                              var filterByFeatured = true;
                                               var mealsLimit = 0;
                                               var currentMeals =
                                                   seller.currentMeals;
