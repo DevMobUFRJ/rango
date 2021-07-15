@@ -224,8 +224,8 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
       var data = (<String, String>{
         'id': '1',
         'channelId': '1',
-        'channelName': 'Teste',
-        'channelDescription': 'Canal de teste',
+        'channelName': 'Reservas',
+        'channelDescription': 'Canal usado para fazer reservas de quentinhas',
         'status': 'done',
         'description':
             '${FirebaseAuth.instance.currentUser.displayName} fez uma reserva com você',
