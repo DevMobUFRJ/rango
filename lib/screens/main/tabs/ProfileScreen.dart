@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
@@ -122,6 +123,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       style: GoogleFonts.montserrat(
                         color: yellow,
                         fontSize: 35.nsp,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     SizedBox(width: 2),
@@ -235,43 +237,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             id: sellerSnapshot.data.id,
                           );
 
-                          return GestureDetector(
-                            onTap: () => pushNewScreen(
-                              context,
-                              withNavBar: false,
-                              screen: SellerProfile(seller.id, seller.name),
-                              pageTransitionAnimation:
-                                  PageTransitionAnimation.cupertino,
+                          return Material(
+                            borderRadius: BorderRadius.circular(
+                              ScreenUtil().setSp(22),
                             ),
-                            child: Container(
-                              height: 120.h,
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 0.01.hp, horizontal: 0.05.wp),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).accentColor,
-                                borderRadius: BorderRadius.circular(
-                                  ScreenUtil().setSp(22),
-                                ),
+                            elevation: 2,
+                            child: GestureDetector(
+                              onTap: () => pushNewScreen(
+                                context,
+                                withNavBar: false,
+                                screen: SellerProfile(seller.id, seller.name),
+                                pageTransitionAnimation:
+                                    PageTransitionAnimation.cupertino,
                               ),
-                              child: Row(
-                                children: [
-                                  CircleAvatar(
-                                    backgroundImage:
-                                        NetworkImage(seller.picture),
-                                    radius: ScreenUtil().setSp(50),
+                              child: Container(
+                                height: 120.h,
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 0.01.hp, horizontal: 0.05.wp),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).accentColor,
+                                  borderRadius: BorderRadius.circular(
+                                    ScreenUtil().setSp(22),
                                   ),
-                                  SizedBox(width: 0.03.wp),
-                                  AutoSizeText(
-                                    seller.name,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.montserrat(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w300,
-                                      decoration: TextDecoration.underline,
-                                      fontSize: 32.nsp,
+                                ),
+                                child: Row(
+                                  children: [
+                                    CircleAvatar(
+                                      backgroundImage:
+                                          FirebaseImage(seller.logo),
+                                      radius: ScreenUtil().setSp(50),
                                     ),
-                                  ),
-                                ],
+                                    SizedBox(width: 0.03.wp),
+                                    Container(
+                                      width: 0.5.wp,
+                                      child: AutoSizeText(
+                                        seller.name,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.montserrat(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 32.nsp,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           );
