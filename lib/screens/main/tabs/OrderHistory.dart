@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,9 +8,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/order.dart';
+import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
+import 'package:rango/utils/constants.dart';
 import 'package:rango/utils/string_formatters.dart';
+import 'package:http/http.dart' as http;
 import 'package:paginate_firestore/paginate_firestore.dart';
 
 class OrderHistoryScreen extends StatefulWidget {
@@ -25,6 +30,37 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   initState() {
     super.initState();
     userId = FirebaseAuth.instance.currentUser.uid;
+  }
+
+  Future<void> _sendCancelOrderNotification(
+      String deviceToken, BuildContext context) async {
+    try {
+      var data = (<String, String>{
+        'id': '1',
+        'channelId': '1',
+        'channelName': 'Reservas',
+        'channelDescription': 'Canal usado para fazer reservas de quentinhas',
+        'status': 'done',
+        'description':
+            '${FirebaseAuth.instance.currentUser.displayName} cancelou uma reserva com você',
+        'payload': 'orders',
+        'title': 'Um pedido foi cancelado!',
+      });
+      await http.post(
+        Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        headers: <String, String>{
+          'Authorization': 'key=$firabaseMessagingAuthorizationKey',
+          'content-type': 'application/json; charset=UTF-8'
+        },
+        body: jsonEncode(<String, dynamic>{
+          'priority': 'high',
+          'data': data,
+          'to': deviceToken,
+        }),
+      );
+    } catch (error) {
+      print(error);
+    }
   }
 
   Widget build(BuildContext context) {
@@ -142,60 +178,6 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                         : null,
                   ),
                 );
-
-                // if (!snapshot.hasData ||
-                //     snapshot.connectionState == ConnectionState.waiting) {
-                //   return Container(
-                //     height: 0.5.hp,
-                //     alignment: Alignment.center,
-                //     child: SizedBox(
-                //       height: 50,
-                //       width: 50,
-                //       child: CircularProgressIndicator(
-                //         color: Theme.of(context).accentColor,
-                //       ),
-                //     ),
-                //   );
-                // }
-                // if (snapshot.hasError) {
-                //   return Container(
-                //     height: 0.6.hp - 56,
-                //     alignment: Alignment.center,
-                //     child: AutoSizeText(
-                //       snapshot.error.toString(),
-                //       style: GoogleFonts.montserrat(
-                //           fontSize: 45.nsp,
-                //           color: Theme.of(context).accentColor),
-                //     ),
-                //   );
-                // }
-
-                // if (snapshot.data.isEmpty)
-                //   return Container(
-                //     margin: EdgeInsets.symmetric(
-                //       horizontal: 15,
-                //       vertical: 10,
-                //     ),
-                //     height: 0.7.wp - 56,
-                //     alignment: Alignment.center,
-                //     child: AutoSizeText(
-                //       'Você ainda não possui histórico. Faça reservas para elas aparecerem aqui!',
-                //       style: GoogleFonts.montserrat(
-                //         fontSize: 45.nsp,
-                //         color: Theme.of(context).accentColor,
-                //       ),
-                //       textAlign: TextAlign.center,
-                //     ),
-                //   );
-
-                // return ListView.builder(
-                //   itemCount: snapshot.data.length,
-                //   controller: controller,
-                //   itemBuilder: (context, index) {
-                //     Order order = Order.fromJson(snapshot.data[index].data());
-                //     return
-                //   },
-                // );
               },
             );
           },
@@ -256,7 +238,8 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
     );
   }
 
-  void _showCancelDialog(context, order, orderUid) async {
+  void _showCancelDialog(
+      BuildContext context, Order order, String orderUid) async {
     await showDialog(
       context: context,
       builder: (BuildContext ctx) {
@@ -323,6 +306,12 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                       ),
                     ),
                   );
+                  var ref = await Repository.instance.sellersRef
+                      .doc(order.sellerId)
+                      .get()
+                      .then((value) => value.data());
+                  Seller seller = Seller.fromJson(ref);
+                  _sendCancelOrderNotification(seller.deviceToken, ctx);
                 } catch (e) {
                   Navigator.of(ctx).pop();
                   ScaffoldMessenger.of(context).showSnackBar(

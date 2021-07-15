@@ -421,10 +421,6 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                           );
                           try {
                             await Repository.instance.addOrder(order);
-                            if (widget.seller.deviceToken != null) {
-                              await _sendOrderNotification(
-                                  widget.seller.deviceToken, ctx);
-                            }
                             Navigator.of(ctx).pop();
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
@@ -439,6 +435,11 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                                 ),
                               ),
                             );
+
+                            if (widget.seller.deviceToken != null) {
+                              await _sendOrderNotification(
+                                  widget.seller.deviceToken, ctx);
+                            }
                             Navigator.of(ctx).pop();
                             pushNewScreen(
                               context,
