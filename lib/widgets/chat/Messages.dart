@@ -12,7 +12,7 @@ class Messages extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PaginateFirestore(
-      query: chatReference,
+      query: chatReference.orderBy('sentAt', descending: true),
       itemBuilderType: PaginateBuilderType.listView,
       emptyDisplay: Container(),
       initialLoader: Center(
