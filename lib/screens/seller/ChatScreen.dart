@@ -21,7 +21,6 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   FirebaseFirestore db = FirebaseFirestore.instance;
   CollectionReference chatReference;
-  ScrollController controller = ScrollController();
   String userId;
   String docId;
 
@@ -31,12 +30,6 @@ class _ChatScreenState extends State<ChatScreen> {
     userId = FirebaseAuth.instance.currentUser.uid;
     docId = '${userId}_${widget.sellerId}';
     chatReference = db.collection('chat').doc(docId).collection('messages');
-    controller.addListener(_scrollListener);
-  }
-
-  void _scrollListener() {
-    if (controller.offset >= controller.position.maxScrollExtent &&
-        !controller.position.outOfRange) {}
   }
 
   Future<void> _addNewMessage(Message newMessage) async {
@@ -66,7 +59,7 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Expanded(
-              child: Messages(chatReference, controller),
+              child: Messages(chatReference),
             ),
             NewMessage(_addNewMessage),
           ],

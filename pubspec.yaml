@@ -44,7 +44,7 @@ dependencies:
     location: ^4.3.0
     permission_handler: ^8.1.2
     persistent_bottom_nav_bar: ^2.0.5
-    provider: 4.3.3
+    provider: 5.0.0
     rxdart: ^0.27.1
     shared_preferences: ^2.0.6
     shimmer: ^2.0.0
@@ -54,6 +54,7 @@ dependencies:
     http: ^0.13.3
     connectivity_plus: ^1.0.5
     firebase_image: ^1.0.1
+    paginate_firestore: 1.0.0
 
 dev_dependencies:
     flutter_test:

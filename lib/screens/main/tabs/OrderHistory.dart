@@ -6,10 +6,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/order.dart';
-import 'package:rango/resources/ClientOrdersBloc.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
 import 'package:rango/utils/string_formatters.dart';
+import 'package:paginate_firestore/paginate_firestore.dart';
 
 class OrderHistoryScreen extends StatefulWidget {
   OrderHistoryScreen();
@@ -19,24 +19,12 @@ class OrderHistoryScreen extends StatefulWidget {
 }
 
 class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
-  ClientOrdersBloc ordersListBloc;
-  ScrollController controller = ScrollController();
   String userId;
 
   @override
   initState() {
     super.initState();
-    ordersListBloc = ClientOrdersBloc();
     userId = FirebaseAuth.instance.currentUser.uid;
-    ordersListBloc.fetchFirstList(userId);
-    controller.addListener(_scrollListener);
-  }
-
-  void _scrollListener() {
-    if (controller.offset >= controller.position.maxScrollExtent &&
-        !controller.position.outOfRange) {
-      ordersListBloc.fetchNextOrders(userId);
-    }
   }
 
   Widget build(BuildContext context) {
@@ -76,116 +64,132 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                 ),
               );
             }
-            return StreamBuilder(
-              stream: Repository.instance.getOrdersFromClient(userId, limit: 1),
-              builder: (ctx, snapshot) {
-                return StreamBuilder(
-                  stream: ordersListBloc.ordersStream,
-                  builder: (context, snapshot) {
-                    print(snapshot.hasData);
-                    if (!snapshot.hasData ||
-                        snapshot.connectionState == ConnectionState.waiting) {
-                      return Container(
-                        height: 0.5.hp,
-                        alignment: Alignment.center,
-                        child: SizedBox(
-                          height: 50,
-                          width: 50,
-                          child: CircularProgressIndicator(
-                            color: Theme.of(context).accentColor,
-                          ),
-                        ),
-                      );
-                    }
-                    if (snapshot.hasError) {
-                      return Container(
-                        height: 0.6.hp - 56,
-                        alignment: Alignment.center,
-                        child: AutoSizeText(
-                          snapshot.error.toString(),
-                          style: GoogleFonts.montserrat(
-                              fontSize: 45.nsp,
-                              color: Theme.of(context).accentColor),
-                        ),
-                      );
-                    }
 
-                    if (snapshot.data.isEmpty)
-                      return Container(
-                        margin: EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 10,
-                        ),
-                        height: 0.7.wp - 56,
-                        alignment: Alignment.center,
-                        child: AutoSizeText(
-                          'Você ainda não possui histórico. Faça reservas para elas aparecerem aqui!',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 45.nsp,
-                            color: Theme.of(context).accentColor,
+            return PaginateFirestore(
+              query: Repository.instance.ordersRef
+                  .where('clientId', isEqualTo: userId)
+                  .orderBy('requestedAt', descending: true),
+              isLive: true,
+              itemsPerPage: 10,
+              initialLoader: CircularProgressIndicator(
+                color: Theme.of(context).accentColor,
+              ),
+              emptyDisplay: Center(
+                child: AutoSizeText(
+                  'Pedidos já feitos serão mostrados aqui!',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 50.nsp,
+                    color: Theme.of(context).accentColor,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              itemBuilderType: PaginateBuilderType.listView,
+              itemBuilder: (index, context, snapshot) {
+                final order = new Order.fromJson(snapshot.data());
+                return Card(
+                  child: ListTile(
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 20,
+                    ),
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        GestureDetector(
+                          onTap: () => pushNewScreen(
+                            context,
+                            withNavBar: false,
+                            screen:
+                                SellerProfile(order.sellerId, order.sellerName),
+                            pageTransitionAnimation:
+                                PageTransitionAnimation.cupertino,
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                      );
-
-                    return ListView.builder(
-                      itemCount: snapshot.data.length,
-                      controller: controller,
-                      itemBuilder: (context, index) {
-                        Order order =
-                            Order.fromJson(snapshot.data[index].data());
-                        return Card(
-                          child: ListTile(
-                            contentPadding: EdgeInsets.symmetric(
-                              vertical: 10,
-                              horizontal: 20,
+                          child: AutoSizeText(
+                            order.sellerName,
+                            style: GoogleFonts.montserrat(
+                              color: Theme.of(context).accentColor,
+                              decoration: TextDecoration.underline,
+                              fontSize: 32.nsp,
                             ),
-                            title: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                GestureDetector(
-                                  onTap: () => pushNewScreen(
-                                    context,
-                                    withNavBar: false,
-                                    screen: SellerProfile(
-                                        order.sellerId, order.sellerName),
-                                    pageTransitionAnimation:
-                                        PageTransitionAnimation.cupertino,
-                                  ),
-                                  child: AutoSizeText(
-                                    order.sellerName,
-                                    style: GoogleFonts.montserrat(
-                                      color: Theme.of(context).accentColor,
-                                      decoration: TextDecoration.underline,
-                                      fontSize: 32.nsp,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 10),
-                                buildOrderStatus(order),
-                                SizedBox(height: 10),
-                                Text('${order.quantity} x ${order.mealName}'),
-                                SizedBox(height: 10),
-                                Text(
-                                    'Total: ${intToCurrency(order.price * order.quantity)}'),
-                                SizedBox(height: 10),
-                              ],
-                            ),
-                            trailing: buildTrailing(
-                              context,
-                              order,
-                              snapshot.data[index].id,
-                            ),
-                            subtitle: order.requestedAt != null
-                                ? Text(
-                                    '${order.requestedAt?.toDate()?.day}/${order.requestedAt?.toDate()?.month}/${order.requestedAt?.toDate()?.year}')
-                                : null,
                           ),
-                        );
-                      },
-                    );
-                  },
+                        ),
+                        SizedBox(height: 10),
+                        buildOrderStatus(order),
+                        SizedBox(height: 10),
+                        Text('${order.quantity} x ${order.mealName}'),
+                        SizedBox(height: 10),
+                        Text(
+                            'Total: ${intToCurrency(order.price * order.quantity)}'),
+                        SizedBox(height: 10),
+                      ],
+                    ),
+                    trailing: buildTrailing(
+                      context,
+                      order,
+                      snapshot.id,
+                    ),
+                    subtitle: order.requestedAt != null
+                        ? Text(
+                            '${order.requestedAt?.toDate()?.day}/${order.requestedAt?.toDate()?.month}/${order.requestedAt?.toDate()?.year}',
+                          )
+                        : null,
+                  ),
                 );
+
+                // if (!snapshot.hasData ||
+                //     snapshot.connectionState == ConnectionState.waiting) {
+                //   return Container(
+                //     height: 0.5.hp,
+                //     alignment: Alignment.center,
+                //     child: SizedBox(
+                //       height: 50,
+                //       width: 50,
+                //       child: CircularProgressIndicator(
+                //         color: Theme.of(context).accentColor,
+                //       ),
+                //     ),
+                //   );
+                // }
+                // if (snapshot.hasError) {
+                //   return Container(
+                //     height: 0.6.hp - 56,
+                //     alignment: Alignment.center,
+                //     child: AutoSizeText(
+                //       snapshot.error.toString(),
+                //       style: GoogleFonts.montserrat(
+                //           fontSize: 45.nsp,
+                //           color: Theme.of(context).accentColor),
+                //     ),
+                //   );
+                // }
+
+                // if (snapshot.data.isEmpty)
+                //   return Container(
+                //     margin: EdgeInsets.symmetric(
+                //       horizontal: 15,
+                //       vertical: 10,
+                //     ),
+                //     height: 0.7.wp - 56,
+                //     alignment: Alignment.center,
+                //     child: AutoSizeText(
+                //       'Você ainda não possui histórico. Faça reservas para elas aparecerem aqui!',
+                //       style: GoogleFonts.montserrat(
+                //         fontSize: 45.nsp,
+                //         color: Theme.of(context).accentColor,
+                //       ),
+                //       textAlign: TextAlign.center,
+                //     ),
+                //   );
+
+                // return ListView.builder(
+                //   itemCount: snapshot.data.length,
+                //   controller: controller,
+                //   itemBuilder: (context, index) {
+                //     Order order = Order.fromJson(snapshot.data[index].data());
+                //     return
+                //   },
+                // );
               },
             );
           },

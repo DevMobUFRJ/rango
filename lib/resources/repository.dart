@@ -131,37 +131,6 @@ class Repository {
         .snapshots();
   }
 
-  Future<List<DocumentSnapshot>> getFirstOrdersFromClient(
-      String clientId) async {
-    var querySnapshot = await ordersRef
-        .where('clientId', isEqualTo: clientId)
-        .orderBy('requestedAt', descending: true)
-        .limit(10)
-        .get();
-    return querySnapshot.docs;
-  }
-
-  Future<List<DocumentSnapshot>> getLastChatMessages(docId) async {
-    var querySnapshot = await chatRef
-        .doc(docId)
-        .collection('messages')
-        .orderBy('sentAt', descending: true)
-        .limit(10)
-        .get();
-    return querySnapshot.docs;
-  }
-
-  Future<List<DocumentSnapshot>> getNextTenOrdersFromClient(
-      String clientId, DocumentSnapshot<Object> initalDocument) async {
-    var querySnapshot = await ordersRef
-        .where('clientId', isEqualTo: clientId)
-        .orderBy('requestedAt', descending: true)
-        .startAfterDocument(initalDocument)
-        .limit(10)
-        .get();
-    return querySnapshot.docs;
-  }
-
   Future<Position> getUserLocation() {
     // Stream para pegar a localização da pessoa
     return Geolocator.getCurrentPosition();
