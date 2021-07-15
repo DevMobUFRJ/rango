@@ -24,6 +24,7 @@ class _AuthScreenState extends State<AuthScreen> {
     String name,
     File image,
     String password,
+    String phone,
     BuildContext ctx,
   }) async {
     UserCredential authResult;
@@ -148,6 +149,7 @@ class _AuthScreenState extends State<AuthScreen> {
             'email': email,
             'picture': url != null ? url : null,
             'deviceToken': deviceToken,
+            'phone': phone,
           },
         );
         Navigator.of(context).pop();

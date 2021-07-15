@@ -12,6 +12,7 @@ class AuthForm extends StatefulWidget {
     String name,
     File image,
     String password,
+    String phone,
     BuildContext ctx,
   }) submitForm;
   final bool _isLoading;
@@ -26,19 +27,22 @@ class AuthForm extends StatefulWidget {
 class _AuthFormState extends State<AuthForm> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _name = TextEditingController();
   final TextEditingController _email = TextEditingController();
+  final TextEditingController _name = TextEditingController();
+  final TextEditingController _phone = TextEditingController();
   final TextEditingController _pass = TextEditingController();
   final TextEditingController _confirmPass = TextEditingController();
 
   File _userImageFile;
   String _emailErrorMessage;
   String _nameErrorMessage;
+  String _phoneErrorMessage;
   String _passwordErrorMessage;
   String _confirmPasswordErrorMessage;
 
-  final _focusNodeName = FocusNode();
   final _focusNodeEmail = FocusNode();
+  final _focusNodeName = FocusNode();
+  final _focusNodePhone = FocusNode();
   final _focusNodePass = FocusNode();
   final _focusNodeConfirmPass = FocusNode();
 
@@ -52,7 +56,8 @@ class _AuthFormState extends State<AuthForm> {
           _emailErrorMessage == null &&
           _nameErrorMessage == null &&
           _passwordErrorMessage == null &&
-          _confirmPasswordErrorMessage == null) {
+          _confirmPasswordErrorMessage == null &&
+          _phoneErrorMessage == null) {
         _formKey.currentState.save();
         widget.submitForm(
           email: _email.text.trim(),
@@ -60,6 +65,7 @@ class _AuthFormState extends State<AuthForm> {
           password: _pass.text.trim(),
           ctx: context,
           image: _userImageFile,
+          phone: _phone.text.trim(),
         );
       }
     } catch (e) {
@@ -81,8 +87,9 @@ class _AuthFormState extends State<AuthForm> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (ctx, constraint) => SingleChildScrollView(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: 0.9.hp),
+        physics: ClampingScrollPhysics(),
+        child: Container(
+          constraints: BoxConstraints(maxHeight: 1.hp),
           child: Padding(
             padding: EdgeInsets.all(16),
             child: Column(
@@ -161,8 +168,37 @@ class _AuthFormState extends State<AuthForm> {
                                   return null;
                                 },
                                 onFieldSubmitted: (_) => FocusScope.of(context)
+                                    .requestFocus(_focusNodePhone),
+                                textInputAction: TextInputAction.next,
+                              ),
+                            ),
+                          if (!widget._isLogin)
+                            Flexible(
+                              flex: 2,
+                              child: CustomTextFormField(
+                                labelText: 'Telefone',
+                                focusNode: _focusNodePhone,
+                                errorText: _phoneErrorMessage,
+                                maxLength: 11,
+                                key: ValueKey('phone'),
+                                onSaved: (value) => _phone.text = value,
+                                validator: (value) {
+                                  if (value.length > 0 && value.length != 11) {
+                                    setState(() {
+                                      _phoneErrorMessage =
+                                          'Telefone precisa de 11 números';
+                                    });
+                                  } else {
+                                    setState(() {
+                                      _phoneErrorMessage = null;
+                                    });
+                                  }
+                                  return null;
+                                },
+                                onFieldSubmitted: (_) => FocusScope.of(context)
                                     .requestFocus(_focusNodePass),
                                 textInputAction: TextInputAction.next,
+                                keyboardType: TextInputType.phone,
                               ),
                             ),
                           Flexible(

@@ -15,7 +15,8 @@ class CustomTextFormField extends StatefulWidget {
   final bool isPassword;
   final TextEditingController controller;
   final FocusNode focusNode;
-  final num numberOfLines;
+  final int numberOfLines;
+  final int maxLength;
 
   CustomTextFormField({
     @required this.labelText,
@@ -30,6 +31,7 @@ class CustomTextFormField extends StatefulWidget {
     this.controller,
     this.focusNode,
     this.numberOfLines = 1,
+    this.maxLength,
   });
 
   @override
@@ -69,6 +71,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             key: widget.key,
             validator: widget.validator,
             onSaved: widget.onSaved,
+            maxLength: widget.maxLength,
             minLines: 1,
             maxLines: widget.numberOfLines,
             obscureText: widget.isPassword != null && !widget.isPassword
@@ -76,6 +79,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                 : !_showPassword,
             decoration: InputDecoration(
               errorStyle: TextStyle(fontSize: 22.nsp),
+              counterText: '',
               border: InputBorder.none,
               contentPadding: widget.isPassword != null && widget.isPassword
                   ? EdgeInsets.all(15)
