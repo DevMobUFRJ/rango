@@ -1,13 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/SplashScreen.dart';
 import 'package:rango/screens/auth/AuthScreen.dart';
 import 'package:rango/screens/auth/ForgotPasswordScreen.dart';
 import 'package:rango/screens/auth/LoginScreen.dart';
 import 'package:rango/screens/main/tabs/NewTabsScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import 'models/seller.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
@@ -72,12 +76,30 @@ class MyApp extends StatelessWidget {
       ),
       home: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (ctx, userSnapshot) {
+        builder: (ctx, AsyncSnapshot<User> userSnapshot) {
           if (userSnapshot.connectionState == ConnectionState.waiting) {
             return SplashScreen();
           }
+
+          if (userSnapshot.hasError) {
+            return LoginScreen();
+          }
+
           if (userSnapshot.hasData) {
-            return NewTabsScreen();
+            return StreamBuilder(
+              stream: Repository.instance.getSeller(userSnapshot.data.uid),
+              builder: (ctx, AsyncSnapshot<DocumentSnapshot<Seller>> sellerSnapshot) {
+                if (!sellerSnapshot.hasData || sellerSnapshot.connectionState == ConnectionState.waiting) {
+                  return SplashScreen();
+                }
+
+                if (sellerSnapshot.hasError) {
+                  return LoginScreen();
+                }
+
+                return NewTabsScreen(sellerSnapshot.data.data());
+              }
+            );
           }
           return LoginScreen();
         },

@@ -135,7 +135,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       children: [
                         UserImagePicker(
                           _pickedImage,
-                          image: widget.user.picture,
+                          image: widget.user.logo,
                           editText: 'Editar',
                         ),
                       ],

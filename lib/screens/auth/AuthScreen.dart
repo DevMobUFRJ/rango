@@ -1,5 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
+import 'package:rango/models/contact.dart';
+import 'package:rango/models/seller.dart';
+import 'package:rango/models/shift.dart';
+import 'package:rango/models/user_notification_settings.dart';
+import 'package:rango/resources/repository.dart';
 import 'package:rango/widgets/auth/AuthForm.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -44,14 +50,33 @@ class _AuthScreenState extends State<AuthScreen> {
           await ref.putFile(image).whenComplete(() => null);
           url = await ref.getDownloadURL();
         }
-        await FirebaseFirestore.instance
-            .collection('sellers')
-            .doc(authResult.user.uid)
-            .set({
-          'name': name,
-          'email': email,
-          'picture': url != null ? url : null,
-        });
+        var seller = Seller(
+          id: authResult.user.uid,
+          email: email,
+          name: name,
+          active: false,
+          canReservate: true,
+          logo: url != null ? url : null,
+          description: null,
+          paymentMethods: null,
+          location: null,
+          contact: Contact(
+            name: null,
+            phone: null,
+          ),
+          shift: null,
+          address: null,
+          currentMeals: null,
+          notificationSettings: UserNotificationSettings(
+              messages: true,
+              newOrder: true,
+              orderCanceled: true
+          )
+        );
+        print(seller.id);
+        print('create seller');
+        await Repository.instance.createSeller(seller);
+        print('finished creating seller');
       }
       setState(() => _isLoading = false);
       Navigator.of(context).pop();

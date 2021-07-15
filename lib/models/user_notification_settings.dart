@@ -1,19 +1,22 @@
 class UserNotificationSettings {
-  bool discounts;
-  bool favoriteSellers;
   bool messages;
-  bool reservations;
+  bool newOrder;
+  bool orderCanceled;
 
   UserNotificationSettings({
-    this.discounts = false,
-    this.favoriteSellers = false,
-    this.messages = false,
-    this.reservations = false,
+    this.messages,
+    this.newOrder,
+    this.orderCanceled
   });
 
   UserNotificationSettings.fromJson(Map<String, dynamic> json)
-      : discounts = json['discounts'],
-        favoriteSellers = json['favoriteSellers'],
-        messages = json['messages'],
-        reservations = json['reservations'];
+      : messages = json['messages'],
+        newOrder = json['newOrder'],
+        orderCanceled = json['orderCanceled'];
+
+  Map<String, dynamic> toJson() => {
+    'messages': messages,
+    'newOrder': newOrder,
+    'orderCanceled': orderCanceled
+  };
 }

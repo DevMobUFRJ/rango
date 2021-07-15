@@ -368,7 +368,7 @@ class _ManageMealState extends State<ManageMeal> {
             borderRadius: BorderRadius.circular(20),
           ),
           title: Text(
-            'Excluir quentinha',
+            'Excluindo quentinha',
             style: GoogleFonts.montserrat(
               color: Colors.white,
               fontWeight: FontWeight.bold,

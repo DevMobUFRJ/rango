@@ -20,29 +20,15 @@ class ProfileSettings extends StatefulWidget {
 
 class _ProfileSettingsState extends State<ProfileSettings> {
   bool _switchValue = false;
-  bool _attValue = false;
   bool _reservaValue = false;
   bool _newMessagesValue = false;
-  bool _promotionsValue = false;
 
   @override
   void initState() {
     setState(() {
-      _attValue = widget.user.notificationSettings != null &&
-              widget.user.notificationSettings.favoriteSellers != null
-          ? widget.user.notificationSettings.favoriteSellers
-          : false;
-      _reservaValue = widget.user.notificationSettings != null &&
-              widget.user.notificationSettings.reservations != null
-          ? widget.user.notificationSettings.reservations
-          : false;
       _newMessagesValue = widget.user.notificationSettings != null &&
               widget.user.notificationSettings.messages != null
           ? widget.user.notificationSettings.messages
-          : false;
-      _promotionsValue = widget.user.notificationSettings != null &&
-              widget.user.notificationSettings.discounts != null
-          ? widget.user.notificationSettings.discounts
           : false;
     });
     super.initState();
@@ -150,10 +136,8 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                     onChanged: (value) => setState(() {
                       _switchValue = value;
                       if (value == false) {
-                        _attValue = false;
                         _reservaValue = false;
                         _newMessagesValue = false;
-                        _promotionsValue = false;
                       }
                     }),
                   ),

@@ -12,4 +12,9 @@ class Location {
   Location.fromJson(Map<String, dynamic> json)
       : geohash = json['geohash'],
         geopoint = json['geopoint'];
+
+  Map<String, dynamic> toJson() => {
+    'geohash': geohash,
+    'geopoint': geopoint
+  };
 }

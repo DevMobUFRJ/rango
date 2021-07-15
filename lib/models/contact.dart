@@ -7,10 +7,15 @@ class Contact {
 
   Contact({
     this.name,
-    @required this.phone,
+    this.phone,
   });
 
   Contact.fromJson(Map<String, dynamic> json)
       : name = json['name'],
         phone = json['phone'];
+
+  Map<String, dynamic> toJson() => {
+    'name': name,
+    'phone': phone
+  };
 }

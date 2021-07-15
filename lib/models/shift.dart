@@ -15,6 +15,12 @@ class Weekday {
       : openingTime = json['openingTime'],
         closingTime = json['closingTime'],
         open = json['open'];
+
+  Map<String, dynamic> toJson() => {
+    'openingTime': openingTime,
+    'closingTime': closingTime,
+    'open': open
+  };
 }
 
 class Shift {
@@ -44,4 +50,14 @@ class Shift {
         thursday = Weekday.fromJson(json['thursday']),
         friday = Weekday.fromJson(json['friday']),
         saturday = Weekday.fromJson(json['saturday']);
+
+  Map<String, dynamic> toJson() => {
+    'sunday': sunday != null? sunday.toJson(): null,
+    'monday': monday != null? monday.toJson(): null,
+    'tuesday': tuesday != null? tuesday.toJson(): null,
+    'wednesday': wednesday != null? wednesday.toJson(): null,
+    'thursday': thursday != null? thursday.toJson(): null,
+    'friday': friday != null? friday.toJson(): null,
+    'saturday': saturday != null? saturday.toJson(): null
+  };
 }
