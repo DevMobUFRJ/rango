@@ -167,10 +167,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         builder: (ctx, constraint) => SingleChildScrollView(
           physics: ClampingScrollPhysics(),
           child: ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: 1.hp),
+            constraints: BoxConstraints(maxHeight: 0.9.hp),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Flexible(
