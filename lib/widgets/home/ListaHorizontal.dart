@@ -19,11 +19,13 @@ class ListaHorizontal extends StatelessWidget {
   final double tagM;
   final List<MealRequest> meals;
   final bool isFromSellerScreen;
+  final PersistentTabController controller;
 
   ListaHorizontal({
     @required this.title,
     @required this.tagM,
     @required this.meals,
+    @required this.controller,
     this.isFromSellerScreen = false,
   });
 
@@ -156,6 +158,7 @@ class ListaHorizontal extends StatelessWidget {
                       seller: meals[index].seller,
                       tagM: tagM,
                       isFromSellerScreen: isFromSellerScreen,
+                      controller: controller,
                     ),
                     withNavBar: false,
                     pageTransitionAnimation: PageTransitionAnimation.cupertino,

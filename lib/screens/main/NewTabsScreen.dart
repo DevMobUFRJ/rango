@@ -92,7 +92,7 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
                       duration: Duration(milliseconds: 180),
                     ),
                     screens: <Widget>[
-                      HomeScreen(cliente, key: currentKey),
+                      HomeScreen(cliente, _controller, key: currentKey),
                       SearchScreen(cliente),
                       OrderHistoryScreen(),
                       ProfileScreen(cliente),

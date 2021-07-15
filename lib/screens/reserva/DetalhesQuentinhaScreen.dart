@@ -23,10 +23,12 @@ class DetalhesQuentinhaScreen extends StatefulWidget {
   final Seller seller;
   final double tagM;
   final bool isFromSellerScreen;
+  final PersistentTabController controller;
 
   DetalhesQuentinhaScreen({
     @required this.marmita,
     @required this.seller,
+    @required this.controller,
     this.tagM,
     this.isFromSellerScreen = false,
   });
@@ -430,32 +432,31 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                           try {
                             await Repository.instance.addOrder(order);
                             Navigator.of(ctx).pop();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: Theme.of(ctx).accentColor,
-                                duration: Duration(seconds: 2),
-                                content: Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 20),
-                                  child: Text(
-                                    "Reserva feita com sucesso.",
-                                    textAlign: TextAlign.center,
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(
+                                  SnackBar(
+                                    backgroundColor: Theme.of(ctx).accentColor,
+                                    duration: Duration(seconds: 1),
+                                    content: Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      child: Text(
+                                        "Reserva feita com sucesso.",
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            );
+                                )
+                                .closed
+                                .then((_) => Navigator.of(context)
+                                    .popUntil(ModalRoute.withName("/")));
 
                             if (widget.seller.deviceToken != null) {
                               await _sendOrderNotification(
                                   widget.seller.deviceToken, ctx);
                             }
-                            Navigator.of(ctx).pop();
-                            pushNewScreen(
-                              context,
-                              screen: OrderHistoryScreen(),
-                              withNavBar: true,
-                              pageTransitionAnimation:
-                                  PageTransitionAnimation.cupertino,
-                            );
+
+                            setState(() => widget.controller.jumpToTab(2));
                           } catch (e) {
                             Navigator.of(ctx).pop();
                             ScaffoldMessenger.of(context).showSnackBar(

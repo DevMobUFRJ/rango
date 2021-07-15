@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/models/meal_request.dart';
 import 'package:rango/models/seller.dart';
@@ -20,7 +21,8 @@ import 'package:rango/widgets/home/SellersList.dart';
 
 class HomeScreen extends StatefulWidget {
   final Client usuario;
-  HomeScreen(this.usuario, {Key key}) : super(key: key);
+  final PersistentTabController controller;
+  HomeScreen(this.usuario, this.controller, {Key key}) : super(key: key);
   static const String name = 'homeScreen';
 
   @override
@@ -463,6 +465,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       title: 'Sugestões',
       tagM: Random().nextDouble(),
       meals: meals,
+      controller: widget.controller,
     );
   }
 
@@ -512,6 +515,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               title: 'Peça Novamente',
               tagM: Random().nextDouble(),
               meals: meals,
+              controller: widget.controller,
             ),
             SizedBox(height: 0.02.hp),
           ],
