@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/meals.dart';
@@ -58,191 +59,192 @@ class _ManageMealState extends State<ManageMeal> {
           ),
         ),
       ),
-      body: LayoutBuilder(
-        builder: (builderContext, constraints) => SingleChildScrollView(
-          child: Container(
-            margin: EdgeInsets.only(top: 15),
-            child: Column(
-              children: [
-                MealImagePicker(
-                  _pickedImage,
-                  image: widget.meal != null && widget.meal.picture != null
-                      ? widget.meal.picture
-                      : null,
-                  editText: "Editar imagem",
-                ),
-                Container(
-                  margin: EdgeInsets.only(
-                    bottom: 10,
+      body: Scrollbar(
+        isAlwaysShown: true,
+        child: LayoutBuilder(
+          builder: (builderContext, constraints) => SingleChildScrollView(
+            child: Container(
+              margin: EdgeInsets.only(top: 15),
+              child: Column(
+                children: [
+                  MealImagePicker(
+                    _pickedImage,
+                    image: widget.meal != null && widget.meal.picture != null
+                        ? widget.meal.picture
+                        : null,
+                    editText: "Editar imagem",
                   ),
-                  constraints: BoxConstraints(maxWidth: 0.8.wp),
-                  child: TextFormField(
-                    textCapitalization: TextCapitalization.sentences,
-                    maxLines: 5,
-                    minLines: 1,
-                    controller: _mealName,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 38.nsp,
-                      fontWeight: FontWeight.w500,
-                      color: Theme.of(context).accentColor,
+                  Container(
+                    margin: EdgeInsets.only(
+                      bottom: 10,
                     ),
-                    decoration: InputDecoration(
-                      hintText: 'Nome do prato',
-                      hintStyle: GoogleFonts.montserrat(
+                    constraints: BoxConstraints(maxWidth: 0.8.wp),
+                    child: TextFormField(
+                      textCapitalization: TextCapitalization.sentences,
+                      maxLines: 5,
+                      minLines: 1,
+                      controller: _mealName,
+                      style: GoogleFonts.montserrat(
                         fontSize: 38.nsp,
                         fontWeight: FontWeight.w500,
                         color: Theme.of(context).accentColor,
                       ),
-                      isDense: true,
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Theme.of(context).accentColor,
-                        ),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Theme.of(context).accentColor,
-                        ),
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 0,
-                        vertical: 0,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 0.01.hp,
-                ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 0.01.hp),
-                  constraints: BoxConstraints(maxWidth: 0.8.wp),
-                  child: Material(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    elevation: 5,
-                    child: TextFormField(
-                      textCapitalization: TextCapitalization.sentences,
-                      controller: _mealDescription,
-                      style: GoogleFonts.montserrat(
-                        fontSize: 35.nsp,
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).accentColor,
-                      ),
-                      maxLines: 5,
-                      minLines: 1,
                       decoration: InputDecoration(
-                        hintText: 'Descrição',
+                        hintText: 'Nome do prato',
                         hintStyle: GoogleFonts.montserrat(
                           fontSize: 38.nsp,
-                          color: Color(0xFFFC3C3C3),
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).accentColor,
                         ),
                         isDense: true,
-                        border: InputBorder.none,
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context).accentColor,
+                          ),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context).accentColor,
+                          ),
+                        ),
                         contentPadding: EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 5,
+                          horizontal: 0,
+                          vertical: 0,
                         ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 0.01.hp,
-                ),
-                Container(
-                  constraints: BoxConstraints(maxWidth: 0.8.wp),
-                  child: Row(
-                    children: [
-                      Flexible(
-                        flex: 1,
-                        child: Container(
-                          margin: EdgeInsets.only(right: 10),
-                          child: Material(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            elevation: 5,
-                            child: TextFormField(
-                              textAlign: TextAlign.center,
-                              controller: _mealValue,
-                              style: GoogleFonts.montserrat(
-                                fontSize: 38.nsp,
-                                fontWeight: FontWeight.w500,
-                                color: Theme.of(context).accentColor,
-                              ),
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                hintText: 'Valor',
-                                alignLabelWithHint: true,
-                                hintStyle: GoogleFonts.montserrat(
-                                  color: Color(0xFFFC3C3C3),
-                                  fontSize: 38.nsp,
-                                ),
-                                isDense: true,
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 15,
-                                  vertical: 5,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: Container(
-                          margin: EdgeInsets.only(left: 10),
-                          child: Material(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            elevation: 5,
-                            child: TextFormField(
-                              controller: _mealQuantity,
-                              keyboardType: TextInputType.number,
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.montserrat(
-                                fontSize: 38.nsp,
-                                fontWeight: FontWeight.w500,
-                                color: Theme.of(context).accentColor,
-                              ),
-                              decoration: InputDecoration(
-                                hintText: 'Quantidade',
-                                hintStyle: GoogleFonts.montserrat(
-                                  color: Color(0xFFFC3C3C3),
-                                  fontSize: 32.nsp,
-                                ),
-                                alignLabelWithHint: true,
-                                isDense: true,
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 15,
-                                  vertical: 5,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                  SizedBox(
+                    height: 0.01.hp,
                   ),
-                ),
-                SizedBox(height: 0.02.hp),
-                Container(
-                  width: 0.6.wp,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.green[400],
+                  Container(
+                    margin: EdgeInsets.only(bottom: 0.01.hp),
+                    constraints: BoxConstraints(maxWidth: 0.8.wp),
+                    child: Material(
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      elevation: 5,
+                      child: TextFormField(
+                        textCapitalization: TextCapitalization.sentences,
+                        controller: _mealDescription,
+                        style: GoogleFonts.montserrat(
+                          fontSize: 35.nsp,
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).accentColor,
+                        ),
+                        maxLines: 5,
+                        minLines: 1,
+                        decoration: InputDecoration(
+                          hintText: 'Descrição',
+                          hintStyle: GoogleFonts.montserrat(
+                            fontSize: 38.nsp,
+                            color: Color(0xFFFC3C3C3),
+                          ),
+                          isDense: true,
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 15,
+                            vertical: 5,
+                          ),
+                        ),
                       ),
                     ),
-                    onPressed: _loading ? null : () => _upsertMeal(context),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 42),
+                  ),
+                  SizedBox(
+                    height: 0.01.hp,
+                  ),
+                  Container(
+                    constraints: BoxConstraints(maxWidth: 0.8.wp),
+                    child: Row(
+                      children: [
+                        Flexible(
+                          flex: 1,
+                          child: Container(
+                            margin: EdgeInsets.only(right: 10),
+                            child: Material(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              elevation: 5,
+                              child: TextFormField(
+                                textAlign: TextAlign.center,
+                                controller: _mealValue,
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 38.nsp,
+                                  fontWeight: FontWeight.w500,
+                                  color: Theme.of(context).accentColor,
+                                ),
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  hintText: 'Valor',
+                                  alignLabelWithHint: true,
+                                  hintStyle: GoogleFonts.montserrat(
+                                    color: Color(0xFFFC3C3C3),
+                                    fontSize: 38.nsp,
+                                  ),
+                                  isDense: true,
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                    vertical: 5,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          flex: 1,
+                          child: Container(
+                            margin: EdgeInsets.only(left: 10),
+                            child: Material(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              elevation: 5,
+                              child: TextFormField(
+                                controller: _mealQuantity,
+                                keyboardType: TextInputType.number,
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 38.nsp,
+                                  fontWeight: FontWeight.w500,
+                                  color: Theme.of(context).accentColor,
+                                ),
+                                decoration: InputDecoration(
+                                  hintText: 'Quantidade',
+                                  hintStyle: GoogleFonts.montserrat(
+                                    color: Color(0xFFFC3C3C3),
+                                    fontSize: 32.nsp,
+                                  ),
+                                  alignLabelWithHint: true,
+                                  isDense: true,
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                    vertical: 5,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 0.02.hp),
+                  Container(
+                    width: 0.6.wp,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.green[400],
+                        padding: EdgeInsets.symmetric(vertical: 5),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      onPressed: _loading ? null : () => _upsertMeal(context),
                       child: _loading
                           ? SizedBox(
                               width: 20,
@@ -255,40 +257,38 @@ class _ManageMealState extends State<ManageMeal> {
                           : AutoSizeText(
                               "Confirmar",
                               style: GoogleFonts.montserrat(
-                                fontSize: 38.nsp,
+                                fontSize: 34.nsp,
                               ),
                             ),
                     ),
                   ),
-                ),
-                if (widget.meal != null)
-                  Container(
-                    width: 0.6.wp,
-                    margin: EdgeInsets.only(bottom: 10),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.red[500],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                  if (widget.meal != null)
+                    Container(
+                      width: 0.6.wp,
+                      margin: EdgeInsets.only(bottom: 10),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.red[500],
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
                         ),
-                      ),
-                      onPressed: _loading
-                          ? null
-                          : () => _showDeleteDialog(
-                              context, widget.sellerId, widget.meal.id),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 42),
+                        onPressed: _loading
+                            ? null
+                            : () => _showDeleteDialog(
+                                context, widget.sellerId, widget.meal.id),
                         child: AutoSizeText(
                           "Excluir",
                           style: GoogleFonts.montserrat(
-                            fontSize: 38.nsp,
+                            fontSize: 34.nsp,
                             color: _loading ? Colors.white : null,
                           ),
                         ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
