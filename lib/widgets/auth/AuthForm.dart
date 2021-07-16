@@ -89,10 +89,12 @@ class _AuthFormState extends State<AuthForm> {
       builder: (ctx, constraint) => SingleChildScrollView(
         physics: ClampingScrollPhysics(),
         child: Container(
+          constraints: BoxConstraints(minHeight: constraint.maxHeight),
           child: Padding(
             padding: EdgeInsets.all(16),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
               children: [
                 if (widget._isLogin)
                   Container(
