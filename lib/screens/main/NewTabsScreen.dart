@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:rango/main.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/SplashScreen.dart';
@@ -15,7 +14,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 class NewTabsScreen extends StatefulWidget {
   final PersistentTabController controller;
 
-  NewTabsScreen({this.controller});
+  NewTabsScreen(this.controller, {Key key}) : super(key: key);
   @override
   _NewTabsScreenState createState() => _NewTabsScreenState();
 }
@@ -93,7 +92,7 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
                       duration: Duration(milliseconds: 180),
                     ),
                     screens: <Widget>[
-                      HomeScreen(cliente, widget.controller, key: currentKey),
+                      HomeScreen(cliente, widget.controller),
                       SearchScreen(cliente),
                       OrderHistoryScreen(widget.controller),
                       ProfileScreen(cliente, widget.controller),

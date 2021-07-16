@@ -36,11 +36,10 @@ Future<void> main() async {
         } else if (payload.contains('chat')) {
           String sellerId = payload.split('/')[1];
           String sellerName = payload.split('/')[2];
-          pushNewScreenWithRouteSettings(
+          pushNewScreen(
             currentKey.currentState.context,
             withNavBar: false,
             screen: ChatScreen(sellerId, sellerName, key: chatScreenKey),
-            settings: RouteSettings(name: 'chatScreen'),
           );
         }
       }
@@ -49,7 +48,6 @@ Future<void> main() async {
 
   await FirebaseMessaging.instance.subscribeToTopic('all');
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print('chamou msg');
     if ((message.data['payload'].toString().contains('chat') &&
             chatScreenKey.currentState == null) ||
         !message.data['payload'].toString().contains('chat')) {
@@ -149,7 +147,8 @@ class MyApp extends StatelessWidget {
             }
             if (userSnapshot.hasData) {
               return NewTabsScreen(
-                controller: _controller,
+                _controller,
+                key: currentKey,
               );
             }
             return LoginScreen();
