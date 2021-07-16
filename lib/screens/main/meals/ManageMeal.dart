@@ -235,7 +235,7 @@ class _ManageMealState extends State<ManageMeal> {
                   ),
                   SizedBox(height: 0.02.hp),
                   Container(
-                    width: 0.6.wp,
+                    width: 0.5.wp,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         primary: Colors.green[400],
@@ -264,7 +264,7 @@ class _ManageMealState extends State<ManageMeal> {
                   ),
                   if (widget.meal != null)
                     Container(
-                      width: 0.6.wp,
+                      width: 0.5.wp,
                       margin: EdgeInsets.only(bottom: 10),
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
