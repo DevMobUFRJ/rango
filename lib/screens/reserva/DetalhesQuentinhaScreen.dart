@@ -157,12 +157,14 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                             alignment: Alignment.topLeft,
                             child: AutoSizeText(
                               widget.marmita.description,
-                              maxLines: 4,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 7,
                               style: GoogleFonts.montserratTextTheme(
                                       Theme.of(context).textTheme)
                                   .headline2
                                   .copyWith(
                                     fontSize: 35.nsp,
+                                    fontWeight: FontWeight.w500,
                                   ),
                             ),
                           ),

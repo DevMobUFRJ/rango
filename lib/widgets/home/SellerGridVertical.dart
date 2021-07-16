@@ -116,8 +116,10 @@ class SellerGridVertical extends StatelessWidget {
                               AutoSizeText(
                                 sellers[index].name,
                                 textAlign: TextAlign.center,
+                                maxLines: 1,
                                 minFontSize: 15,
                                 maxFontSize: 15,
+                                overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.montserrat(),
                               ),
                               SizedBox(height: 4),

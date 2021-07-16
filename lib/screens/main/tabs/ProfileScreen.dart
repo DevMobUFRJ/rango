@@ -274,6 +274,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       child: CachedNetworkImage(
                                           imageUrl: seller.logo,
                                           fit: BoxFit.cover,
+                                          width: 100.nsp,
+                                          height: 100.nsp,
                                           placeholder: (ctx, url) =>
                                               CircleAvatar(
                                                 radius: ScreenUtil().setSp(50),

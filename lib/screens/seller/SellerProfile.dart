@@ -214,97 +214,99 @@ class _SellerProfileState extends State<SellerProfile> {
                     ),
                   ),
                 ),
-              Flexible(
-                flex: 0,
-                child: Container(
-                  margin: EdgeInsets.symmetric(vertical: 5),
-                  child: Column(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(bottom: 5),
-                        child: GestureDetector(
-                          onTap: () => {
-                            Clipboard.setData(
-                              ClipboardData(text: seller.contact.phone),
-                            ),
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: Theme.of(context).accentColor,
-                                content: AutoSizeText(
-                                  'Número copiado para área de transferência',
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.montserrat(),
-                                ),
-                                duration: Duration(seconds: 2),
+              if (seller.contact != null && seller.contact.phone != null)
+                Flexible(
+                  flex: 0,
+                  child: Container(
+                    margin: EdgeInsets.symmetric(vertical: 5),
+                    child: Column(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(bottom: 5),
+                          child: GestureDetector(
+                            onTap: () => {
+                              Clipboard.setData(
+                                ClipboardData(text: seller.contact.phone),
                               ),
-                            )
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  backgroundColor:
+                                      Theme.of(context).accentColor,
+                                  content: AutoSizeText(
+                                    'Número copiado para área de transferência',
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.montserrat(),
+                                  ),
+                                  duration: Duration(seconds: 2),
+                                ),
+                              )
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(right: 1),
+                                  child: Icon(Icons.phone, size: 32.nsp),
+                                ),
+                                AutoSizeText(
+                                  seller.contact.phone,
+                                  maxLines: 1,
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 30.nsp,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            try {
+                              final Uri whatsAppUrl = Uri(
+                                scheme: 'http',
+                                path:
+                                    "wa.me/+55${seller.contact.phone.replaceAll('(', '').replaceAll(')', '')}",
+                              );
+                              launch(whatsAppUrl.toString());
+                            } catch (error) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  duration: Duration(seconds: 2),
+                                  content: Text(
+                                    'WhatsApp não instalado',
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.montserrat(),
+                                  ),
+                                ),
+                              );
+                            }
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Container(
-                                margin: EdgeInsets.only(right: 1),
-                                child: Icon(Icons.phone, size: 32.nsp),
-                              ),
                               AutoSizeText(
-                                seller.contact.phone,
-                                maxLines: 1,
+                                'Abrir no WhatsApp',
                                 style: GoogleFonts.montserrat(
                                   fontSize: 30.nsp,
                                   decoration: TextDecoration.underline,
                                 ),
                               ),
+                              Container(
+                                margin: EdgeInsets.only(left: 2),
+                                child: FaIcon(
+                                  FontAwesomeIcons.whatsapp,
+                                  size: 36.nsp,
+                                  color: Colors.green,
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          try {
-                            final Uri whatsAppUrl = Uri(
-                              scheme: 'http',
-                              path:
-                                  "wa.me/+55${seller.contact.phone.replaceAll('(', '').replaceAll(')', '')}",
-                            );
-                            launch(whatsAppUrl.toString());
-                          } catch (error) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                duration: Duration(seconds: 2),
-                                content: Text(
-                                  'WhatsApp não instalado',
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.montserrat(),
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            AutoSizeText(
-                              'Abrir no WhatsApp',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 30.nsp,
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(left: 2),
-                              child: FaIcon(
-                                FontAwesomeIcons.whatsapp,
-                                size: 36.nsp,
-                                color: Colors.green,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
               Flexible(
                 flex: 0,
                 child: Container(
