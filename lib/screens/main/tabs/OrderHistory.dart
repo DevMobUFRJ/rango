@@ -317,7 +317,11 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                       .get()
                       .then((value) => value.data());
                   Seller seller = Seller.fromJson(ref);
-                  _sendCancelOrderNotification(seller.deviceToken, ctx);
+                  if (seller.deviceToken != null &&
+                      seller.notificationSettings != null &&
+                      seller.notificationSettings.reservations == true) {
+                    _sendCancelOrderNotification(seller.deviceToken, ctx);
+                  }
                 } catch (e) {
                   Navigator.of(ctx).pop();
                   ScaffoldMessenger.of(context).showSnackBar(

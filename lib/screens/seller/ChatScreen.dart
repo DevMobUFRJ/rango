@@ -53,7 +53,11 @@ class _ChatScreenState extends State<ChatScreen> {
   Future<void> _addNewMessage(Message newMessage) async {
     try {
       chatReference.add(newMessage.toJson());
-      _sendNewMessageNotification();
+      if (_seller.deviceToken != null &&
+          _seller.notificationSettings != null &&
+          _seller.notificationSettings.messages == true) {
+        _sendNewMessageNotification();
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
