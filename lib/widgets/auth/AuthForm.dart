@@ -70,7 +70,7 @@ class _AuthFormState extends State<AuthForm> {
         child: ConstrainedBox(
           constraints: BoxConstraints(minHeight: constraint.maxHeight),
           child: Padding(
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
