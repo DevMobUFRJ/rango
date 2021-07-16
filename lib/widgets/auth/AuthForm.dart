@@ -73,7 +73,6 @@ class _AuthFormState extends State<AuthForm> {
             padding: EdgeInsets.all(16),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
               children: [
                 if (widget._isLogin)
                   Container(
@@ -191,7 +190,7 @@ class _AuthFormState extends State<AuthForm> {
                           onFieldSubmitted: !widget._isLogin
                               ? (_) => FocusScope.of(context)
                                   .requestFocus(_focusNodeConfirmPass)
-                              : null,
+                              : (_) => _submit(),
                         ),
                         if (!widget._isLogin)
                           CustomTextFormField(
@@ -213,6 +212,7 @@ class _AuthFormState extends State<AuthForm> {
                               }
                               return null;
                             },
+                            onFieldSubmitted: (_) => _submit(),
                             errorText: _confirmPasswordErrorMessage,
                             isPassword: true,
                           ),
@@ -232,18 +232,7 @@ class _AuthFormState extends State<AuthForm> {
                           width: 0.5.wp,
                           child: ElevatedButton(
                             onPressed: widget._isLoading
-                                ? () => {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          duration: Duration(seconds: 2),
-                                          content: Text(
-                                            'Carregando, aguarde.',
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                      )
-                                    }
+                                ? null
                                 : (widget._isLogin &&
                                             (_email.isEmpty ||
                                                 _password.isEmpty)) ||
@@ -259,7 +248,8 @@ class _AuthFormState extends State<AuthForm> {
                                     child: CircularProgressIndicator(
                                       valueColor:
                                           new AlwaysStoppedAnimation<Color>(
-                                              Colors.white),
+                                        Colors.white,
+                                      ),
                                       strokeWidth: 3.0,
                                     ),
                                     height: 30.w,
