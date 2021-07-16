@@ -240,19 +240,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       width: 0.7.wp,
                       child: ElevatedButton(
                         onPressed: _loading
-                            ? () => {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      duration: Duration(seconds: 2),
-                                      backgroundColor:
-                                          Theme.of(context).accentColor,
-                                      content: Text(
-                                        'Carregando, aguarde.',
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  ),
-                                }
+                            ? null
                             : (_userImageFile != null ||
                                     (_pass.text != null &&
                                         _confirmPass.text != null) ||
