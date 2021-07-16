@@ -51,24 +51,27 @@ class _AuthScreenState extends State<AuthScreen> {
           url = await ref.getDownloadURL();
         }
         var seller = Seller(
-            id: authResult.user.uid,
-            email: email,
-            name: name,
-            active: false,
-            canReservate: true,
-            logo: url != null ? url : null,
-            description: null,
-            paymentMethods: null,
-            location: null,
-            contact: Contact(
-              name: null,
-              phone: null,
-            ),
-            shift: null,
-            address: null,
-            currentMeals: {},
-            notificationSettings: UserNotificationSettings(
-                messages: true, newOrder: true, orderCanceled: true));
+          id: authResult.user.uid,
+          email: email,
+          name: name,
+          active: false,
+          canReservate: true,
+          logo: url != null ? url : null,
+          description: null,
+          paymentMethods: null,
+          location: null,
+          contact: Contact(
+            name: null,
+            phone: null,
+          ),
+          shift: null,
+          address: null,
+          currentMeals: {},
+          notificationSettings: UserNotificationSettings(
+            messages: true,
+            orders: true,
+          ),
+        );
         print(seller.id);
         print('create seller');
         await Repository.instance.createSeller(seller);
