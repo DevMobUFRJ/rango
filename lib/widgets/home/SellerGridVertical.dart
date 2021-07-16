@@ -94,6 +94,7 @@ class SellerGridVertical extends StatelessWidget {
                             CachedNetworkImage(
                               imageUrl: sellers[index].logo,
                               height: 330.h,
+                              width: 330.w,
                               fit: BoxFit.cover,
                               placeholder: (ctx, url) =>
                                   Image(image: MemoryImage(kTransparentImage)),
