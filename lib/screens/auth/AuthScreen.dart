@@ -72,10 +72,7 @@ class _AuthScreenState extends State<AuthScreen> {
             orders: true,
           ),
         );
-        print(seller.id);
-        print('create seller');
         await Repository.instance.createSeller(seller);
-        print('finished creating seller');
       }
       setState(() => _isLoading = false);
       Navigator.of(context).pop();
