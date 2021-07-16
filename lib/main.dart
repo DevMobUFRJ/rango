@@ -12,7 +12,6 @@ import 'package:rango/screens/auth/LoginScreen.dart';
 import 'package:rango/screens/main/NewTabsScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:rango/screens/main/tabs/OrderHistory.dart';
 import 'package:rango/screens/seller/ChatScreen.dart';
 
 var currentKey = GlobalKey();

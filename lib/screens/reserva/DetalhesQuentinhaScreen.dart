@@ -451,7 +451,11 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                                 .then((_) => Navigator.of(context)
                                     .popUntil(ModalRoute.withName("/")));
 
-                            if (widget.seller.deviceToken != null) {
+                            if (widget.seller.deviceToken != null &&
+                                widget.seller.notificationSettings != null &&
+                                widget.seller.notificationSettings
+                                        .reservations ==
+                                    true) {
                               await _sendOrderNotification(
                                   widget.seller.deviceToken, ctx);
                             }
