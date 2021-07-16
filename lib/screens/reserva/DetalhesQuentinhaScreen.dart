@@ -276,9 +276,9 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                     actionsPadding: EdgeInsets.all(10),
                     contentPadding: EdgeInsets.only(
                       top: 20,
-                      left: 24,
-                      right: 24,
-                      bottom: 0,
+                      left: 14,
+                      right: 14,
+                      bottom: 32,
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
@@ -292,21 +292,18 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    content: Container(
-                      margin: EdgeInsets.only(bottom: 12),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SizedBox(
-                            width: 30,
-                            height: 30,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                            ),
+                    content: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   )
                 : AlertDialog(
