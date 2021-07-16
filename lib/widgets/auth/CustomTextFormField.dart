@@ -73,6 +73,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             onSaved: widget.onSaved,
             maxLength: widget.maxLength,
             minLines: 1,
+            cursorColor: Theme.of(context).accentColor,
             maxLines: widget.numberOfLines,
             obscureText: widget.isPassword != null && !widget.isPassword
                 ? false
