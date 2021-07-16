@@ -73,9 +73,11 @@ class _HorarioRowState extends State<HorarioRow> {
                         ),
                       },
               child: Material(
-                shape: RoundedRectangleBorder(),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                elevation: 2,
                 color: widget.horarioDia.open ? Colors.white : Colors.grey[200],
-                elevation: 1,
                 child: TextFormField(
                   enabled: false,
                   textAlign: TextAlign.center,
@@ -83,7 +85,7 @@ class _HorarioRowState extends State<HorarioRow> {
                     errorStyle: GoogleFonts.montserrat(fontSize: 22.nsp),
                     border: InputBorder.none,
                     hintText: widget.horarioDia.open
-                    //TODO Adicionar :
+                        //TODO Adicionar :
                         ? widget.horarioDia.openingTime.toString()
                         : null,
                   ),
@@ -115,9 +117,11 @@ class _HorarioRowState extends State<HorarioRow> {
                         ),
                       },
               child: Material(
-                shape: RoundedRectangleBorder(),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                elevation: 2,
                 color: widget.horarioDia.open ? Colors.white : Colors.grey[200],
-                elevation: 1,
                 child: TextFormField(
                   enabled: false,
                   textAlign: TextAlign.center,
@@ -125,7 +129,7 @@ class _HorarioRowState extends State<HorarioRow> {
                     errorStyle: GoogleFonts.montserrat(fontSize: 22.nsp),
                     border: InputBorder.none,
                     hintText: widget.horarioDia.open
-                    //TODO Adicionar :
+                        //TODO Adicionar :
                         ? widget.horarioDia.closingTime.toString()
                         : null,
                   ),
