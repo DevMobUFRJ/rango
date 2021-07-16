@@ -250,7 +250,6 @@ class _ManageMealState extends State<ManageMeal> {
                     ),
                   ),
                 ),
-                SizedBox(height: 0.04.hp),
                 if (widget.meal != null)
                   Center(
                     child: ElevatedButton(
