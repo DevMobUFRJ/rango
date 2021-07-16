@@ -9,6 +9,8 @@ import 'package:flutter/foundation.dart';
 import 'package:rango/models/meals.dart';
 import 'package:rango/screens/main/meals/ManageMeal.dart';
 import 'package:rango/utils/string_formatters.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class GridHorizontal extends StatelessWidget {
   final String sellerId;
@@ -39,32 +41,66 @@ class GridHorizontal extends StatelessWidget {
                 withNavBar: false,
                 pageTransitionAnimation: PageTransitionAnimation.cupertino),
             child: Card(
+              semanticContainer: true,
+              clipBehavior: Clip.antiAliasWithSaveLayer,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8)),
               child: Column(
                 children: <Widget>[
                   Expanded(
                     flex: currentMeals.length > 6 ? 3 : 4,
-                    child: Container(
-                      constraints: BoxConstraints(minWidth: 0.5.wp),
-                      child: meal.picture !=
-                          null
-                          ? CachedNetworkImage(
-                              placeholder: (context, url) => Image.asset(
-                                'assets/imgs/quentinha_placeholder.png',
-                                fit: BoxFit.fitHeight,
-                              ),
-                              errorWidget: (context, url, error) => Image.asset(
-                                'assets/imgs/quentinha_placeholder.png',
-                                fit: BoxFit.fitHeight,
-                              ),
-                              imageUrl: meal.picture,
-                              fit: BoxFit.cover,
-                            )
-                          : Image.asset(
-                        'assets/imgs/quentinha_placeholder.png',
-                        fit: BoxFit.fitHeight,
-                      ),
+                    child: Stack(
+                      children: [
+                        Shimmer.fromColors(
+                          baseColor: Color.fromRGBO(255, 175, 153, 1),
+                          highlightColor: Colors.white,
+                          child: Container(
+                            color: Colors.white,
+                            child: SizedBox(
+                              height: 170.h,
+                              width: 0.5.wp,
+                            ),
+                          ),
+                        ),
+                        Center(
+                          child: Icon(
+                            Icons.local_dining,
+                            size: 55,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Container(
+                          height: 170.h,
+                          width: 0.5.wp,
+                          child: meal.picture != null
+                              ? CachedNetworkImage(
+                                  placeholder: (context, url) => Image(
+                                      image: MemoryImage(kTransparentImage)),
+                                  errorWidget: (context, url, error) => Image(
+                                      image: MemoryImage(kTransparentImage)),
+                                  imageUrl: meal.picture,
+                                  fit: BoxFit.cover,
+                                )
+                              : Stack(
+                                  children: [
+                                    Container(
+                                      color: Color.fromRGBO(255, 175, 153, 1),
+                                      child: SizedBox(
+                                        height: 170.h,
+                                        width: 0.5.wp,
+                                      ),
+                                    ),
+                                    Center(
+                                      child: Icon(
+                                        Icons.local_dining,
+                                        size: 55,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                        ),
+                      ],
                     ),
                   ),
                   Expanded(
@@ -87,7 +123,7 @@ class GridHorizontal extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.montserrat(
                                   fontSize:
-                                  currentMeals.length > 6 ? 25.nsp : 30.nsp,
+                                      currentMeals.length > 6 ? 25.nsp : 30.nsp,
                                 ),
                               ),
                             ),
@@ -100,7 +136,7 @@ class GridHorizontal extends StatelessWidget {
                                 intToCurrency(meal.price),
                                 style: GoogleFonts.montserrat(
                                   fontSize:
-                                  currentMeals.length > 6 ? 25.nsp : 28.nsp,
+                                      currentMeals.length > 6 ? 25.nsp : 28.nsp,
                                 ),
                               ),
                             ),

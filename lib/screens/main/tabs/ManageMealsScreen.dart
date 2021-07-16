@@ -162,8 +162,6 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                           physics: NeverScrollableScrollPhysics(),
                           itemCount: meals.length,
                           itemBuilder: (context, index) {
-                            print(meals[index].id);
-
                             return Card(
                               color: meals[index].quantity == 0
                                   ? Colors.grey
@@ -192,7 +190,7 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                                                       Theme.of(context)
                                                           .errorColor,
                                                   content: Text(
-                                                    'Você não possui mais unidades dessa quentinha\nVocê pode editá-la caso tenha mais',
+                                                    'Você não possui mais unidades dessa quentinha! Adicione mais unidades para disponibilizar ela.',
                                                     textAlign: TextAlign.center,
                                                   ),
                                                 ),

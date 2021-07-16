@@ -230,7 +230,8 @@ class _ManageMealState extends State<ManageMeal> {
                   ),
                 ),
                 SizedBox(height: 0.02.hp),
-                Center(
+                Container(
+                  width: 0.6.wp,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       primary: Colors.green[400],
@@ -250,12 +251,13 @@ class _ManageMealState extends State<ManageMeal> {
                     ),
                   ),
                 ),
-                SizedBox(height: 0.04.hp),
                 if (widget.meal != null)
-                  Center(
+                  Container(
+                    width: 0.6.wp,
+                    margin: EdgeInsets.only(bottom: 10),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.red,
+                        primary: Colors.red[500],
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
@@ -357,10 +359,10 @@ class _ManageMealState extends State<ManageMeal> {
           backgroundColor: Color(0xFFF9B152),
           actionsPadding: EdgeInsets.all(10),
           contentPadding: EdgeInsets.only(
-            top: 20,
+            top: 24,
             left: 24,
             right: 24,
-            bottom: 20,
+            bottom: 10,
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
