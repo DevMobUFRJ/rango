@@ -139,6 +139,7 @@ class _AuthFormState extends State<AuthForm> {
                         if (!widget._isLogin)
                           CustomTextFormField(
                             labelText: 'Nome',
+                            textCapitalization: TextCapitalization.sentences,
                             errorText: _nameErrorMessage,
                             focusNode: _focusNodeName,
                             onChanged: (value) =>

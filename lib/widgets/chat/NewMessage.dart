@@ -50,6 +50,8 @@ class _NewMessageState extends State<NewMessage> {
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
                 controller: _controller,
+                textCapitalization: TextCapitalization.sentences,
+                cursorColor: Theme.of(context).accentColor,
                 decoration: InputDecoration(
                   hintText: 'Digite aqui...',
                   border: InputBorder.none,
