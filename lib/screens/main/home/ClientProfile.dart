@@ -169,27 +169,32 @@ class _ClientProfileState extends State<ClientProfile> {
                         ),
                       ),
                     ),
-                    ElevatedButton.icon(
-                      icon: Icon(Icons.chat, size: 38.nsp),
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
+                    Container(
+                      width: 0.6.wp,
+                      child: ElevatedButton.icon(
+                        icon: Icon(Icons.chat, size: 38.nsp),
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
                         ),
-                      ),
-                      onPressed: () => pushNewScreen(
-                        context,
-                        screen: ChatScreen(client),
-                        withNavBar: false,
-                        pageTransitionAnimation:
-                            PageTransitionAnimation.cupertino,
-                      ),
-                      label: Container(
-                        width: 0.5.wp,
-                        child: AutoSizeText(
-                          'Chat com o cliente',
-                          maxLines: 1,
-                          style: GoogleFonts.montserrat(fontSize: 36.nsp),
-                          textAlign: TextAlign.center,
+                        onPressed: () => pushNewScreen(
+                          context,
+                          screen: ChatScreen(
+                            client.id,
+                            client.name,
+                          ),
+                          withNavBar: false,
+                          pageTransitionAnimation:
+                              PageTransitionAnimation.cupertino,
+                        ),
+                        label: Container(
+                          child: AutoSizeText(
+                            'Chat com o cliente',
+                            maxLines: 1,
+                            style: GoogleFonts.montserrat(fontSize: 36.nsp),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
                     ),

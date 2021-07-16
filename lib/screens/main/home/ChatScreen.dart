@@ -1,30 +1,48 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:rango/models/client.dart';
 import 'package:rango/models/message.dart';
 import 'package:rango/widgets/chat/Messages.dart';
 import 'package:rango/widgets/chat/NewMessage.dart';
 
 class ChatScreen extends StatefulWidget {
-  final Client client;
+  final String clientId;
+  final String clientName;
 
-  ChatScreen(this.client);
+  ChatScreen(
+    this.clientId,
+    this.clientName,
+  );
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  List<Message> messages = [
-    Message(sender: 'loja', text: 'Oi, tudo bem?'),
-  ];
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  CollectionReference chatReference;
 
-  void _addNewMessage(Message newMessage) {
-    setState(() {
-      messages.insert(0, newMessage);
-    });
+  String userId;
+  String docId;
+
+  @override
+  initState() {
+    super.initState();
+    userId = FirebaseAuth.instance.currentUser.uid;
+    docId = '${widget.clientId}_$userId';
+    chatReference = db.collection('chat').doc(docId).collection('messages');
+  }
+
+  Future<void> _addNewMessage(Message newMessage) async {
+    try {
+      print(chatReference);
+      chatReference.add(newMessage.toJson());
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -32,7 +50,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
-          widget.client.name,
+          widget.clientName,
           maxLines: 1,
           style: GoogleFonts.montserrat(
             color: Theme.of(context).accentColor,
@@ -45,7 +63,7 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Expanded(
-              child: Messages(messages),
+              child: Messages(chatReference),
             ),
             NewMessage(_addNewMessage),
           ],
