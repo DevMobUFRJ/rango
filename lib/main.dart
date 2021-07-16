@@ -13,20 +13,22 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'models/seller.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Firebase.initializeApp();
-  const AndroidInitializationSettings initializationAndroidSettings = AndroidInitializationSettings('app_icon');
-  final InitializationSettings initializationSettings = InitializationSettings(android: initializationAndroidSettings);
-  await flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
+  const AndroidInitializationSettings initializationAndroidSettings =
+      AndroidInitializationSettings('app_icon');
+  final InitializationSettings initializationSettings =
+      InitializationSettings(android: initializationAndroidSettings);
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onSelectNotification: (String payload) async {
-        if (payload != null) {
-          print(payload);
-        }
-      });
+    if (payload != null) {
+      print(payload);
+    }
+  });
   runApp(MyApp());
 }
 
@@ -87,19 +89,21 @@ class MyApp extends StatelessWidget {
 
           if (userSnapshot.hasData) {
             return StreamBuilder(
-              stream: Repository.instance.getSeller(userSnapshot.data.uid),
-              builder: (ctx, AsyncSnapshot<DocumentSnapshot<Seller>> sellerSnapshot) {
-                if (!sellerSnapshot.hasData || sellerSnapshot.connectionState == ConnectionState.waiting) {
-                  return SplashScreen();
-                }
+                stream: Repository.instance.getSeller(userSnapshot.data.uid),
+                builder: (ctx,
+                    AsyncSnapshot<DocumentSnapshot<Seller>> sellerSnapshot) {
+                  if (!sellerSnapshot.hasData ||
+                      sellerSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                    return SplashScreen();
+                  }
 
-                if (sellerSnapshot.hasError) {
-                  return LoginScreen();
-                }
+                  if (sellerSnapshot.hasError) {
+                    return LoginScreen();
+                  }
 
-                return NewTabsScreen(sellerSnapshot.data.data());
-              }
-            );
+                  return NewTabsScreen(sellerSnapshot.data.data());
+                });
           }
           return LoginScreen();
         },
