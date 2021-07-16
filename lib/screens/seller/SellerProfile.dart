@@ -183,6 +183,21 @@ class _SellerProfileState extends State<SellerProfile> {
                     ),
                   ),
                 ),
+              if (seller.paymentMethods != null)
+                Flexible(
+                  flex: 0,
+                  child: Container(
+                    margin: EdgeInsets.only(top: 8),
+                    constraints: BoxConstraints(maxWidth: 0.7.wp),
+                    child: AutoSizeText(
+                      'Pagamentos aceitos: ${seller.paymentMethods}',
+                      textAlign: TextAlign.center,
+                      maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.montserrat(fontSize: 30.nsp),
+                    ),
+                  ),
+                ),
               if (seller.shift != null)
                 Flexible(
                   flex: 0,
