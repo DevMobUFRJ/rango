@@ -240,7 +240,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                           return Material(
                             borderRadius: BorderRadius.circular(
-                              ScreenUtil().setSp(22),
+                              20.nsp,
                             ),
                             elevation: 2,
                             child: GestureDetector(
@@ -262,14 +262,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).accentColor,
                                   borderRadius: BorderRadius.circular(
-                                    ScreenUtil().setSp(22),
+                                    20.nsp,
                                   ),
                                 ),
                                 child: Row(
                                   children: [
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(
-                                        ScreenUtil().setSp(50),
+                                        50.nsp,
                                       ),
                                       child: CachedNetworkImage(
                                           imageUrl: seller.logo,
