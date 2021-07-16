@@ -11,12 +11,10 @@ import 'package:rango/widgets/pickers/MealImagePicker.dart';
 
 class ManageMeal extends StatefulWidget {
   final Meal meal;
-  @required final String sellerId;
+  @required
+  final String sellerId;
 
-  ManageMeal(this.sellerId, {
-      this.meal
-    }
-  );
+  ManageMeal(this.sellerId, {this.meal});
 
   @override
   _ManageMealState createState() => _ManageMealState();
@@ -34,16 +32,14 @@ class _ManageMealState extends State<ManageMeal> {
   @override
   Widget build(BuildContext context) {
     if (widget.meal != null) {
-      _mealName = TextEditingController(
-          text: widget.meal.name);
+      _mealName = TextEditingController(text: widget.meal.name);
       _mealValue = MoneyMaskedTextController(
-          initialValue: widget.meal.price.toDouble()/100,
-          leftSymbol: 'R\$ ',
+        initialValue: widget.meal.price.toDouble() / 100,
+        leftSymbol: 'R\$ ',
       );
-      _mealDescription = TextEditingController(
-          text: widget.meal.description);
-      _mealQuantity = TextEditingController(
-          text: widget.meal.quantity.toString());
+      _mealDescription = TextEditingController(text: widget.meal.description);
+      _mealQuantity =
+          TextEditingController(text: widget.meal.quantity.toString());
     } else {
       _mealName = TextEditingController();
       _mealValue = MoneyMaskedTextController(leftSymbol: 'R\$ ');
@@ -69,8 +65,7 @@ class _ManageMealState extends State<ManageMeal> {
               children: [
                 MealImagePicker(
                   _pickedImage,
-                  image: widget.meal != null &&
-                          widget.meal.picture != null
+                  image: widget.meal != null && widget.meal.picture != null
                       ? widget.meal.picture
                       : null,
                   editText: "Editar imagem",
@@ -238,7 +233,7 @@ class _ManageMealState extends State<ManageMeal> {
                 Center(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      primary: Theme.of(context).primaryColor,
+                      primary: Colors.green[400],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -256,26 +251,28 @@ class _ManageMealState extends State<ManageMeal> {
                   ),
                 ),
                 SizedBox(height: 0.04.hp),
-                if (widget.meal != null) Center(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.red,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                if (widget.meal != null)
+                  Center(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.red,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                       ),
-                    ),
-                    onPressed: () => _showDeleteDialog(context, widget.sellerId, widget.meal.id),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 42),
-                      child: AutoSizeText(
-                        "Excluir",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 38.nsp,
+                      onPressed: () => _showDeleteDialog(
+                          context, widget.sellerId, widget.meal.id),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 42),
+                        child: AutoSizeText(
+                          "Excluir",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 38.nsp,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
               ],
             ),
           ),
@@ -295,7 +292,7 @@ class _ManageMealState extends State<ManageMeal> {
         dataToUpdate['description'] = _mealDescription.text;
       }
       if (_mealValue != null && _mealValue.numberValue != 0) {
-        dataToUpdate['price'] = (_mealValue.numberValue*100).round();
+        dataToUpdate['price'] = (_mealValue.numberValue * 100).round();
       }
       if (_mealQuantity != null && _mealQuantity.text != '') {
         dataToUpdate['quantity'] = int.parse(_mealQuantity.text);
@@ -315,9 +312,11 @@ class _ManageMealState extends State<ManageMeal> {
           dataToUpdate['picture'] = url;
         }
 
-        await Repository.instance.updateMeal(widget.sellerId, widget.meal.id, dataToUpdate);
+        await Repository.instance
+            .updateMeal(widget.sellerId, widget.meal.id, dataToUpdate);
       } else {
-        String createdMealId = await Repository.instance.createMeal(widget.sellerId, dataToUpdate);
+        String createdMealId =
+            await Repository.instance.createMeal(widget.sellerId, dataToUpdate);
 
         if (_mealImageFile != null) {
           final ref = FirebaseStorage.instance
@@ -325,11 +324,10 @@ class _ManageMealState extends State<ManageMeal> {
               .child('users/${widget.sellerId}/meals/$createdMealId.png');
           await ref.putFile(_mealImageFile).whenComplete(() => null);
           final url = await ref.getDownloadURL();
-          Map<String, dynamic> pictureUpdate = {
-            'picture': url
-          };
+          Map<String, dynamic> pictureUpdate = {'picture': url};
 
-          await Repository.instance.updateMeal(widget.sellerId, createdMealId, pictureUpdate);
+          await Repository.instance
+              .updateMeal(widget.sellerId, createdMealId, pictureUpdate);
         }
       }
 
