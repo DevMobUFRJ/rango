@@ -24,6 +24,7 @@ class _ManageMealState extends State<ManageMeal> {
   File _mealImageFile;
   void _pickedImage(File image) => setState(() => _mealImageFile = image);
 
+  bool _loading = false;
   TextEditingController _mealName;
   MoneyMaskedTextController _mealValue;
   TextEditingController _mealDescription;
@@ -239,15 +240,24 @@ class _ManageMealState extends State<ManageMeal> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    onPressed: () => _upsertMeal(context),
+                    onPressed: _loading ? null : () => _upsertMeal(context),
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 42),
-                      child: AutoSizeText(
-                        "Confirmar",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 38.nsp,
-                        ),
-                      ),
+                      child: _loading
+                          ? SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                                color: Colors.white,
+                              ),
+                            )
+                          : AutoSizeText(
+                              "Confirmar",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 38.nsp,
+                              ),
+                            ),
                     ),
                   ),
                 ),
@@ -262,14 +272,17 @@ class _ManageMealState extends State<ManageMeal> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                       ),
-                      onPressed: () => _showDeleteDialog(
-                          context, widget.sellerId, widget.meal.id),
+                      onPressed: _loading
+                          ? null
+                          : () => _showDeleteDialog(
+                              context, widget.sellerId, widget.meal.id),
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 42),
                         child: AutoSizeText(
                           "Excluir",
                           style: GoogleFonts.montserrat(
                             fontSize: 38.nsp,
+                            color: _loading ? Colors.white : null,
                           ),
                         ),
                       ),
@@ -284,6 +297,7 @@ class _ManageMealState extends State<ManageMeal> {
   }
 
   void _upsertMeal(BuildContext context) async {
+    setState(() => _loading = true);
     try {
       Map<String, dynamic> dataToUpdate = {};
 
@@ -344,8 +358,19 @@ class _ManageMealState extends State<ManageMeal> {
           ),
         ),
       );
+      setState(() => _loading = false);
       Navigator.of(context).pop();
     } catch (e) {
+      setState(() => _loading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Theme.of(context).errorColor,
+          content: Text(
+            'Erro ao adicionar quentinha.',
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
       print(e);
     }
   }
