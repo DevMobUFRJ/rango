@@ -242,9 +242,15 @@ class _AuthFormState extends State<AuthForm> {
                                 onPressed: widget._isLoading
                                     ? () => {
                                           ScaffoldMessenger.of(context)
-                                              .showSnackBar(SnackBar(
-                                                  content: Text(
-                                                      'Carregando, aguarde.')))
+                                              .showSnackBar(
+                                            SnackBar(
+                                              duration: Duration(seconds: 2),
+                                              content: Text(
+                                                'Carregando, aguarde.',
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          )
                                         }
                                     : (widget._isLogin &&
                                                 (_email.isEmpty ||

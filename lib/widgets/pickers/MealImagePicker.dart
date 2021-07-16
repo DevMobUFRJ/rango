@@ -48,8 +48,11 @@ class _MealImagePickerState extends State<MealImagePicker> {
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
+                            backgroundColor: Theme.of(context).errorColor,
                             content: Text(
-                                'Ocorreu um erro ao escolher a foto, tente novamanete'),
+                              'Ocorreu um erro ao escolher a foto, tente novamanete',
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         );
                       }
@@ -71,8 +74,11 @@ class _MealImagePickerState extends State<MealImagePicker> {
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
+                            backgroundColor: Theme.of(context).errorColor,
                             content: Text(
-                                'Ocorreu um erro ao escolher a foto, tente novamanete'),
+                              'Ocorreu um erro ao escolher a foto, tente novamanete',
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         );
                       }
@@ -107,8 +113,12 @@ class _MealImagePickerState extends State<MealImagePicker> {
         print(e);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text('Ocorreu um erro ao escolher a foto, tente novamanete'),
+            duration: Duration(seconds: 2),
+            backgroundColor: Theme.of(context).errorColor,
+            content: Text(
+              'Ocorreu um erro ao escolher a foto, tente novamanete',
+              textAlign: TextAlign.center,
+            ),
           ),
         );
       }

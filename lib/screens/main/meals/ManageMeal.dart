@@ -413,12 +413,9 @@ class _ManageMealState extends State<ManageMeal> {
                           SnackBar(
                             duration: Duration(seconds: 2),
                             backgroundColor: Theme.of(context).accentColor,
-                            content: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 20),
-                              child: Text(
-                                "Quentinha excluída com sucesso.",
-                                textAlign: TextAlign.center,
-                              ),
+                            content: Text(
+                              "Quentinha excluída com sucesso.",
+                              textAlign: TextAlign.center,
                             ),
                           ),
                         );
@@ -428,12 +425,9 @@ class _ManageMealState extends State<ManageMeal> {
                           SnackBar(
                             duration: Duration(seconds: 2),
                             padding: EdgeInsets.only(bottom: 60),
-                            content: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 20),
-                              child: Text(
-                                e.toString(),
-                                textAlign: TextAlign.center,
-                              ),
+                            content: Text(
+                              e.toString(),
+                              textAlign: TextAlign.center,
                             ),
                             backgroundColor: Theme.of(context).errorColor,
                           ),

@@ -185,7 +185,7 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                                                   .showSnackBar(
                                                 SnackBar(
                                                   duration:
-                                                      Duration(seconds: 4),
+                                                      Duration(seconds: 2),
                                                   backgroundColor:
                                                       Theme.of(context)
                                                           .errorColor,
