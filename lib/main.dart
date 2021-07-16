@@ -33,11 +33,7 @@ Future<void> main() async {
     onSelectNotification: (String payload) async {
       if (payload != null) {
         if (payload == 'historico') {
-          pushNewScreen(
-            currentKey.currentState.context,
-            screen: OrderHistoryScreen(_controller),
-            withNavBar: true,
-          );
+          _controller.jumpToTab(2);
         } else if (payload.contains('chat')) {
           String sellerId = payload.split('/')[1];
           String sellerName = payload.split('/')[2];
@@ -54,6 +50,7 @@ Future<void> main() async {
 
   await FirebaseMessaging.instance.subscribeToTopic('all');
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('chamou msg');
     if ((message.data['payload'].toString().contains('chat') &&
             chatScreenKey.currentState == null) ||
         !message.data['payload'].toString().contains('chat')) {
