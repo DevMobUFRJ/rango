@@ -74,6 +74,7 @@ flutter:
         - assets/imgs/quentinha_placeholder.png
         - assets/imgs/user_placeholder.png
         - assets/imgs/logo_devmob.png
+        - assets/imgs/rango.png
     #   - images/a_dot_ham.jpeg
     # An image asset can refer to one or more resolution-specific "variants", see
     # https://flutter.dev/assets-and-images/#resolution-aware.
