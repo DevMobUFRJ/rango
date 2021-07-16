@@ -75,12 +75,14 @@ Future<void> _showNotification(Map<String, dynamic> message) async {
     message['title'],
     message['description'],
     platformChannelSpecifics,
-    payload: message['payload'],
+    payload: message['background'] != null
+        ? 'backgroundNotification'
+        : message['payload'],
   );
 }
 
 Future<void> _receiveOnBackgroundMessage(RemoteMessage message) async {
-  _showNotification(message.data);
+  _showNotification({...message.data, 'background': true});
 }
 
 class MyApp extends StatelessWidget {
@@ -148,7 +150,6 @@ class MyApp extends StatelessWidget {
             if (userSnapshot.hasData) {
               return NewTabsScreen(
                 _controller,
-                key: currentKey,
               );
             }
             return LoginScreen();
