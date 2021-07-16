@@ -151,7 +151,7 @@ class _MealImagePickerState extends State<MealImagePicker> {
                 Container(
                   margin: EdgeInsets.symmetric(vertical: 10),
                   constraints:
-                      BoxConstraints(maxHeight: 0.5.hp, maxWidth: 0.9.wp),
+                      BoxConstraints(maxHeight: 0.4.hp, maxWidth: 0.9.wp),
                   child: ClipRRect(
                       borderRadius: BorderRadius.circular(6),
                       child: _pickedImage != null

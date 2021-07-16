@@ -61,278 +61,273 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
             }
 
             return StreamBuilder(
-                stream: Repository.instance.getSellerMeals(widget.usuario.id),
-                builder: (context,
-                    AsyncSnapshot<QuerySnapshot<Meal>> mealsSnapshot) {
-                  // Para buscar meals
-                  if (!mealsSnapshot.hasData) {
-                    return Container(
-                      height: 0.5.hp,
-                      alignment: Alignment.center,
-                      child: SizedBox(
-                        height: 50,
-                        width: 50,
-                        child: CircularProgressIndicator(
-                          color: Theme.of(context).accentColor,
-                        ),
+              stream: Repository.instance.getSellerMeals(widget.usuario.id),
+              builder:
+                  (context, AsyncSnapshot<QuerySnapshot<Meal>> mealsSnapshot) {
+                // Para buscar meals
+                if (!mealsSnapshot.hasData) {
+                  return Container(
+                    height: 0.5.hp,
+                    alignment: Alignment.center,
+                    child: SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: CircularProgressIndicator(
+                        color: Theme.of(context).accentColor,
                       ),
-                    );
-                  }
+                    ),
+                  );
+                }
 
-                  if (mealsSnapshot.hasError) {
-                    return Container(
-                      height: 0.6.hp - 56,
-                      alignment: Alignment.center,
-                      child: AutoSizeText(
-                        mealsSnapshot.error.toString(),
-                        style: GoogleFonts.montserrat(
-                            fontSize: 45.nsp,
-                            color: Theme.of(context).accentColor),
-                      ),
-                    );
-                  }
+                if (mealsSnapshot.hasError) {
+                  return Container(
+                    height: 0.6.hp - 56,
+                    alignment: Alignment.center,
+                    child: AutoSizeText(
+                      mealsSnapshot.error.toString(),
+                      style: GoogleFonts.montserrat(
+                          fontSize: 45.nsp,
+                          color: Theme.of(context).accentColor),
+                    ),
+                  );
+                }
 
-                  Seller seller = sellerSnapshot.data.data();
-                  List<String> currentMealsIds = seller.currentMeals != null
-                      ? seller.currentMeals.keys.toList()
-                      : [];
-                  List<Meal> meals = mealsSnapshot.data.docs
-                      .map((snapshot) => snapshot.data())
-                      .toList();
-                  meals.sort((a, b) => a.quantity > 0 ? -1 : 1);
-                  List<Meal> currentMeals = meals
-                      .where((doc) => currentMealsIds.contains(doc.id))
-                      .where((doc) => doc.quantity > 0)
-                      .toList();
+                Seller seller = sellerSnapshot.data.data();
+                List<String> currentMealsIds = seller.currentMeals != null
+                    ? seller.currentMeals.keys.toList()
+                    : [];
+                List<Meal> meals = mealsSnapshot.data.docs
+                    .map((snapshot) => snapshot.data())
+                    .toList();
+                meals.sort((a, b) => a.quantity > 0 ? -1 : 1);
+                List<Meal> currentMeals = meals
+                    .where((doc) => currentMealsIds.contains(doc.id))
+                    .where((doc) => doc.quantity > 0)
+                    .toList();
 
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _buildHeader(),
-                      if (currentMeals.isEmpty) ...{
-                        Container(
-                          margin: EdgeInsets.only(left: 15, right: 15, top: 8),
-                          child: AutoSizeText(
-                            'Você ainda não configurou o cardápio do dia! Ative as quentinhas na lista abaixo ou crie uma nova.',
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.montserrat(
-                              color: Theme.of(context).accentColor,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 36.nsp,
-                            ),
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildHeader(),
+                    if (currentMeals.isEmpty) ...{
+                      Container(
+                        margin: EdgeInsets.only(left: 15, right: 15, top: 8),
+                        child: AutoSizeText(
+                          'Você ainda não configurou o cardápio do dia! Ative as quentinhas na lista abaixo ou crie uma nova.',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.montserrat(
+                            color: Theme.of(context).accentColor,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 36.nsp,
                           ),
                         ),
-                      } else ...{
-                        Column(
-                          children: [
-                            Container(
-                              child: Column(
-                                children: [
-                                  Align(
-                                    alignment: Alignment.topLeft,
-                                    child: Container(
-                                      margin: EdgeInsets.symmetric(
-                                          horizontal: 0.03.wp),
-                                      child: AutoSizeText(
-                                        "Cardápio do dia",
-                                        style: GoogleFonts.montserrat(
-                                          color: Theme.of(context).accentColor,
-                                          fontSize: 30.ssp,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    height: 160,
-                                    child: GridHorizontal(
-                                      sellerId: seller.id,
-                                      currentMeals: currentMeals,
-                                    ),
-                                  ),
-                                ],
+                      ),
+                    } else ...{
+                      Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Container(
+                              margin: EdgeInsets.symmetric(horizontal: 0.03.wp),
+                              child: AutoSizeText(
+                                "Cardápio do dia",
+                                style: GoogleFonts.montserrat(
+                                  color: Theme.of(context).accentColor,
+                                  fontSize: 30.ssp,
+                                ),
                               ),
                             ),
-                          ],
-                        )
-                      },
-                      SizedBox(height: 20),
-                      _buildButtons(seller.id),
-                      ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: meals.length,
-                          itemBuilder: (context, index) {
-                            return Card(
-                              color: meals[index].quantity == 0
-                                  ? Colors.grey
-                                  : Color(0xFFF9B152),
-                              child: ListTile(
-                                contentPadding: EdgeInsets.all(0),
-                                trailing: Container(
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Switch(
-                                          activeColor:
-                                              Theme.of(context).primaryColor,
-                                          value: seller.currentMeals[
-                                                      meals[index].id] !=
-                                                  null &&
-                                              meals[index].quantity > 0,
-                                          onChanged: (value) async {
-                                            if (meals[index].quantity == 0) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  duration:
-                                                      Duration(seconds: 2),
-                                                  backgroundColor:
-                                                      Theme.of(context)
-                                                          .errorColor,
-                                                  content: Text(
-                                                    'Você não possui mais unidades dessa quentinha! Adicione mais unidades para disponibilizar ela.',
-                                                    textAlign: TextAlign.center,
-                                                  ),
+                          ),
+                          Container(
+                            height: 160,
+                            child: GridHorizontal(
+                              sellerId: seller.id,
+                              currentMeals: currentMeals,
+                            ),
+                          ),
+                        ],
+                      )
+                    },
+                    _buildButtons(seller.id),
+                    Container(
+                      height: 0.42.hp,
+                      child: ListView.builder(
+                        padding: EdgeInsets.only(top: 0),
+                        shrinkWrap: true,
+                        physics: ClampingScrollPhysics(),
+                        itemCount: meals.length,
+                        itemBuilder: (context, index) {
+                          return Card(
+                            color: meals[index].quantity == 0
+                                ? Colors.grey
+                                : Color(0xFFF9B152),
+                            child: ListTile(
+                              contentPadding: EdgeInsets.all(0),
+                              trailing: Container(
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Switch(
+                                        activeColor:
+                                            Theme.of(context).primaryColor,
+                                        value: seller.currentMeals[
+                                                    meals[index].id] !=
+                                                null &&
+                                            meals[index].quantity > 0,
+                                        onChanged: (value) async {
+                                          if (meals[index].quantity == 0) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                duration: Duration(seconds: 2),
+                                                backgroundColor:
+                                                    Theme.of(context)
+                                                        .errorColor,
+                                                content: Text(
+                                                  'Você não possui mais unidades dessa quentinha! Adicione mais unidades para disponibilizar ela.',
+                                                  textAlign: TextAlign.center,
                                                 ),
-                                              );
-                                              return;
+                                              ),
+                                            );
+                                            return;
+                                          }
+                                          try {
+                                            if (value) {
+                                              Repository.instance
+                                                  .addMealToCurrent(
+                                                      meals[index].id,
+                                                      seller.id);
+                                            } else {
+                                              Repository.instance
+                                                  .removeMealFromCurrent(
+                                                      meals[index].id,
+                                                      seller.id);
                                             }
-                                            try {
-                                              if (value) {
+                                          } catch (e) {
+                                            print(e);
+                                          }
+                                        }),
+                                    IconButton(
+                                      onPressed: seller.currentMeals[
+                                                  meals[index].id] ==
+                                              null
+                                          ? null
+                                          : () async {
+                                              try {
+                                                if (seller
+                                                        .currentMeals[
+                                                            meals[index].id]
+                                                        .featured ==
+                                                    false) {
+                                                  var featuredMeals = seller
+                                                      .currentMeals.values
+                                                      .where((item) =>
+                                                          item.featured == true)
+                                                      .length;
+                                                  if (featuredMeals >=
+                                                      maxFeaturedMeals) {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      SnackBar(
+                                                        duration: Duration(
+                                                            seconds: 2),
+                                                        backgroundColor:
+                                                            Theme.of(context)
+                                                                .errorColor,
+                                                        content: Text(
+                                                          'Você pode selecionar até $maxFeaturedMeals quentinhas em destaque',
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                      ),
+                                                    );
+                                                    return;
+                                                  }
+                                                }
+
                                                 Repository.instance
-                                                    .addMealToCurrent(
+                                                    .toggleMealFeatured(
                                                         meals[index].id,
-                                                        seller.id);
-                                              } else {
-                                                Repository.instance
-                                                    .removeMealFromCurrent(
-                                                        meals[index].id,
-                                                        seller.id);
+                                                        seller);
+                                              } catch (e) {
+                                                print(e);
                                               }
-                                            } catch (e) {
-                                              print(e);
-                                            }
-                                          }),
-                                      IconButton(
-                                          onPressed: seller.currentMeals[
+                                            },
+                                      icon: Icon(
+                                          seller.currentMeals[
+                                                          meals[index].id] !=
+                                                      null &&
+                                                  seller
+                                                      .currentMeals[
+                                                          meals[index].id]
+                                                      .featured
+                                              ? Icons.star
+                                              : Icons.star_border,
+                                          color: seller.currentMeals[
                                                       meals[index].id] ==
                                                   null
-                                              ? null
-                                              : () async {
-                                                  try {
-                                                    if (seller
-                                                            .currentMeals[
-                                                                meals[index].id]
-                                                            .featured ==
-                                                        false) {
-                                                      var featuredMeals = seller
-                                                          .currentMeals.values
-                                                          .where((item) =>
-                                                              item.featured ==
-                                                              true)
-                                                          .length;
-                                                      if (featuredMeals >=
-                                                          maxFeaturedMeals) {
-                                                        ScaffoldMessenger.of(
-                                                                context)
-                                                            .showSnackBar(
-                                                          SnackBar(
-                                                            duration: Duration(
-                                                                seconds: 2),
-                                                            backgroundColor:
-                                                                Theme.of(
-                                                                        context)
-                                                                    .errorColor,
-                                                            content: Text(
-                                                              'Você pode selecionar até $maxFeaturedMeals quentinhas em destaque',
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                            ),
-                                                          ),
-                                                        );
-                                                        return;
-                                                      }
-                                                    }
-
-                                                    Repository.instance
-                                                        .toggleMealFeatured(
-                                                            meals[index].id,
-                                                            seller);
-                                                  } catch (e) {
-                                                    print(e);
-                                                  }
-                                                },
-                                          icon: Icon(
-                                              seller.currentMeals[meals[index]
-                                                              .id] !=
-                                                          null &&
-                                                      seller
-                                                          .currentMeals[
-                                                              meals[index].id]
-                                                          .featured
-                                                  ? Icons.star
-                                                  : Icons.star_border,
-                                              color: seller.currentMeals[
-                                                          meals[index].id] ==
-                                                      null
-                                                  ? Color(0xFFF9B152)
-                                                  : Colors.white)),
-                                      IconButton(
-                                          onPressed: () => pushNewScreen(
-                                              context,
-                                              screen: ManageMeal(
-                                                seller.id,
-                                                meal: meals[index],
-                                              ),
-                                              withNavBar: false,
-                                              pageTransitionAnimation:
-                                                  PageTransitionAnimation
-                                                      .cupertino),
-                                          icon: Icon(Icons.edit,
-                                              color: Colors.white)),
-                                    ],
-                                  ),
+                                              ? Color(0xFFF9B152)
+                                              : Colors.white),
+                                    ),
+                                    IconButton(
+                                      onPressed: () => pushNewScreen(context,
+                                          screen: ManageMeal(
+                                            seller.id,
+                                            meal: meals[index],
+                                          ),
+                                          withNavBar: false,
+                                          pageTransitionAnimation:
+                                              PageTransitionAnimation
+                                                  .cupertino),
+                                      icon:
+                                          Icon(Icons.edit, color: Colors.white),
+                                    ),
+                                  ],
                                 ),
-                                title: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 10,
-                                    horizontal: 20,
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      AutoSizeText(meals[index].name,
-                                          style:
-                                              TextStyle(color: Colors.white)),
-                                      SizedBox(height: 5),
-                                      AutoSizeText(
-                                          intToCurrency(meals[index].price),
-                                          style:
-                                              TextStyle(color: Colors.white)),
-                                      SizedBox(height: 5),
-                                      AutoSizeText(
-                                          '${meals[index].quantity} ${meals[index].quantity < 2 ? 'disponível' : 'disponíveis'}',
-                                          style:
-                                              TextStyle(color: Colors.white)),
-                                      //SizedBox(height: 10)
-                                    ],
-                                  ),
-                                ),
-                                /*subtitle: Padding(
-                                        padding: EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 0),
-                                        child: AutoSizeText(
-                                            meals[index].description,
-                                            style: TextStyle(color: Colors.white)
-                                        ),
-                                      )*/
                               ),
-                            );
-                          }),
-                    ],
-                  );
-                });
+                              title: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 10,
+                                  horizontal: 20,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    AutoSizeText(
+                                      meals[index].name,
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    SizedBox(height: 5),
+                                    AutoSizeText(
+                                      intToCurrency(meals[index].price),
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    SizedBox(height: 5),
+                                    AutoSizeText(
+                                      '${meals[index].quantity} ${meals[index].quantity < 2 ? 'disponível' : 'disponíveis'}',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    //SizedBox(height: 10)
+                                  ],
+                                ),
+                              ),
+                              /*subtitle: Padding(
+                                          padding: EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 0),
+                                          child: AutoSizeText(
+                                              meals[index].description,
+                                              style: TextStyle(color: Colors.white)
+                                          ),
+                                        )*/
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
           },
         ),
       ),
@@ -345,19 +340,14 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
       children: [
         Align(
           alignment: Alignment.center,
-          child: Container(
-            margin: EdgeInsets.only(right: 0.05.wp),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              onPressed: () => pushNewScreen(
-                context,
-                screen: ManageMeal(sellerId),
-                withNavBar: false,
-              ),
+          child: ElevatedButton(
+            onPressed: () => pushNewScreen(
+              context,
+              screen: ManageMeal(sellerId),
+              withNavBar: false,
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
               child: AutoSizeText(
                 "Adicionar",
                 style: GoogleFonts.montserrat(
