@@ -162,8 +162,6 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                           physics: NeverScrollableScrollPhysics(),
                           itemCount: meals.length,
                           itemBuilder: (context, index) {
-                            print(meals[index].id);
-
                             return Card(
                               color: meals[index].quantity == 0
                                   ? Colors.grey
