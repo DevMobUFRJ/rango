@@ -48,9 +48,10 @@ class _UserImagePickerState extends State<UserImagePicker> {
                     child: Text(
                       'Galeria',
                       style: GoogleFonts.montserrat(
-                        fontSize: 36.nsp,
-                        color: Colors.white,
-                      ),
+                          fontSize: 36.nsp,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                          decoration: TextDecoration.underline),
                     ),
                   ),
                   TextButton(
@@ -61,9 +62,10 @@ class _UserImagePickerState extends State<UserImagePicker> {
                     child: Text(
                       'Câmera',
                       style: GoogleFonts.montserrat(
-                        fontSize: 36.nsp,
-                        color: Colors.white,
-                      ),
+                          fontSize: 36.nsp,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                          decoration: TextDecoration.underline),
                     ),
                   ),
                 ],
