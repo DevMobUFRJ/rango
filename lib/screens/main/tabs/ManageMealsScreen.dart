@@ -151,177 +151,182 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                     _buildButtons(seller.id),
                     Container(
                       height: 0.42.hp,
-                      child: ListView.builder(
-                        padding: EdgeInsets.only(top: 0),
-                        shrinkWrap: true,
-                        physics: ClampingScrollPhysics(),
-                        itemCount: meals.length,
-                        itemBuilder: (context, index) {
-                          return Card(
-                            color: meals[index].quantity == 0
-                                ? Colors.grey
-                                : Color(0xFFF9B152),
-                            child: ListTile(
-                              contentPadding: EdgeInsets.all(0),
-                              trailing: Container(
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Switch(
-                                        activeColor:
-                                            Theme.of(context).primaryColor,
-                                        value: seller.currentMeals[
-                                                    meals[index].id] !=
-                                                null &&
-                                            meals[index].quantity > 0,
-                                        onChanged: (value) async {
-                                          if (meals[index].quantity == 0) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                duration: Duration(seconds: 2),
-                                                backgroundColor:
-                                                    Theme.of(context)
-                                                        .errorColor,
-                                                content: Text(
-                                                  'Você não possui mais unidades dessa quentinha! Adicione mais unidades para disponibilizar ela.',
-                                                  textAlign: TextAlign.center,
+                      child: Scrollbar(
+                        child: ListView.builder(
+                          padding: EdgeInsets.only(top: 0),
+                          shrinkWrap: true,
+                          physics: ClampingScrollPhysics(),
+                          itemCount: meals.length,
+                          itemBuilder: (context, index) {
+                            return Card(
+                              color: meals[index].quantity == 0
+                                  ? Colors.grey
+                                  : Color(0xFFF9B152),
+                              child: ListTile(
+                                contentPadding: EdgeInsets.all(0),
+                                trailing: Container(
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Switch(
+                                          activeColor:
+                                              Theme.of(context).primaryColor,
+                                          value: seller.currentMeals[
+                                                      meals[index].id] !=
+                                                  null &&
+                                              meals[index].quantity > 0,
+                                          onChanged: (value) async {
+                                            if (meals[index].quantity == 0) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  duration:
+                                                      Duration(seconds: 2),
+                                                  backgroundColor:
+                                                      Theme.of(context)
+                                                          .errorColor,
+                                                  content: Text(
+                                                    'Você não possui mais unidades dessa quentinha! Adicione mais unidades para disponibilizar ela.',
+                                                    textAlign: TextAlign.center,
+                                                  ),
                                                 ),
-                                              ),
-                                            );
-                                            return;
-                                          }
-                                          try {
-                                            if (value) {
-                                              Repository.instance
-                                                  .addMealToCurrent(
-                                                      meals[index].id,
-                                                      seller.id);
-                                            } else {
-                                              Repository.instance
-                                                  .removeMealFromCurrent(
-                                                      meals[index].id,
-                                                      seller.id);
+                                              );
+                                              return;
                                             }
-                                          } catch (e) {
-                                            print(e);
-                                          }
-                                        }),
-                                    IconButton(
-                                      onPressed: seller.currentMeals[
-                                                  meals[index].id] ==
-                                              null
-                                          ? null
-                                          : () async {
-                                              try {
-                                                if (seller
+                                            try {
+                                              if (value) {
+                                                Repository.instance
+                                                    .addMealToCurrent(
+                                                        meals[index].id,
+                                                        seller.id);
+                                              } else {
+                                                Repository.instance
+                                                    .removeMealFromCurrent(
+                                                        meals[index].id,
+                                                        seller.id);
+                                              }
+                                            } catch (e) {
+                                              print(e);
+                                            }
+                                          }),
+                                      IconButton(
+                                        onPressed: seller.currentMeals[
+                                                    meals[index].id] ==
+                                                null
+                                            ? null
+                                            : () async {
+                                                try {
+                                                  if (seller
+                                                          .currentMeals[
+                                                              meals[index].id]
+                                                          .featured ==
+                                                      false) {
+                                                    var featuredMeals = seller
+                                                        .currentMeals.values
+                                                        .where((item) =>
+                                                            item.featured ==
+                                                            true)
+                                                        .length;
+                                                    if (featuredMeals >=
+                                                        maxFeaturedMeals) {
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        SnackBar(
+                                                          duration: Duration(
+                                                              seconds: 2),
+                                                          backgroundColor:
+                                                              Theme.of(context)
+                                                                  .errorColor,
+                                                          content: Text(
+                                                            'Você pode selecionar até $maxFeaturedMeals quentinhas em destaque',
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                          ),
+                                                        ),
+                                                      );
+                                                      return;
+                                                    }
+                                                  }
+
+                                                  Repository.instance
+                                                      .toggleMealFeatured(
+                                                          meals[index].id,
+                                                          seller);
+                                                } catch (e) {
+                                                  print(e);
+                                                }
+                                              },
+                                        icon: Icon(
+                                            seller.currentMeals[
+                                                            meals[index].id] !=
+                                                        null &&
+                                                    seller
                                                         .currentMeals[
                                                             meals[index].id]
-                                                        .featured ==
-                                                    false) {
-                                                  var featuredMeals = seller
-                                                      .currentMeals.values
-                                                      .where((item) =>
-                                                          item.featured == true)
-                                                      .length;
-                                                  if (featuredMeals >=
-                                                      maxFeaturedMeals) {
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
-                                                      SnackBar(
-                                                        duration: Duration(
-                                                            seconds: 2),
-                                                        backgroundColor:
-                                                            Theme.of(context)
-                                                                .errorColor,
-                                                        content: Text(
-                                                          'Você pode selecionar até $maxFeaturedMeals quentinhas em destaque',
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                        ),
-                                                      ),
-                                                    );
-                                                    return;
-                                                  }
-                                                }
-
-                                                Repository.instance
-                                                    .toggleMealFeatured(
-                                                        meals[index].id,
-                                                        seller);
-                                              } catch (e) {
-                                                print(e);
-                                              }
-                                            },
-                                      icon: Icon(
-                                          seller.currentMeals[
-                                                          meals[index].id] !=
-                                                      null &&
-                                                  seller
-                                                      .currentMeals[
-                                                          meals[index].id]
-                                                      .featured
-                                              ? Icons.star
-                                              : Icons.star_border,
-                                          color: seller.currentMeals[
-                                                      meals[index].id] ==
-                                                  null
-                                              ? Color(0xFFF9B152)
-                                              : Colors.white),
-                                    ),
-                                    IconButton(
-                                      onPressed: () => pushNewScreen(context,
-                                          screen: ManageMeal(
-                                            seller.id,
-                                            meal: meals[index],
-                                          ),
-                                          withNavBar: false,
-                                          pageTransitionAnimation:
-                                              PageTransitionAnimation
-                                                  .cupertino),
-                                      icon:
-                                          Icon(Icons.edit, color: Colors.white),
-                                    ),
-                                  ],
+                                                        .featured
+                                                ? Icons.star
+                                                : Icons.star_border,
+                                            color: seller.currentMeals[
+                                                        meals[index].id] ==
+                                                    null
+                                                ? Color(0xFFF9B152)
+                                                : Colors.white),
+                                      ),
+                                      IconButton(
+                                        onPressed: () => pushNewScreen(context,
+                                            screen: ManageMeal(
+                                              seller.id,
+                                              meal: meals[index],
+                                            ),
+                                            withNavBar: false,
+                                            pageTransitionAnimation:
+                                                PageTransitionAnimation
+                                                    .cupertino),
+                                        icon: Icon(Icons.edit,
+                                            color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
                                 ),
+                                title: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 10,
+                                    horizontal: 20,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      AutoSizeText(
+                                        meals[index].name,
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      SizedBox(height: 5),
+                                      AutoSizeText(
+                                        intToCurrency(meals[index].price),
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      SizedBox(height: 5),
+                                      AutoSizeText(
+                                        '${meals[index].quantity} ${meals[index].quantity < 2 ? 'disponível' : 'disponíveis'}',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      //SizedBox(height: 10)
+                                    ],
+                                  ),
+                                ),
+                                /*subtitle: Padding(
+                                            padding: EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 0),
+                                            child: AutoSizeText(
+                                                meals[index].description,
+                                                style: TextStyle(color: Colors.white)
+                                            ),
+                                          )*/
                               ),
-                              title: Padding(
-                                padding: EdgeInsets.symmetric(
-                                  vertical: 10,
-                                  horizontal: 20,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    AutoSizeText(
-                                      meals[index].name,
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    SizedBox(height: 5),
-                                    AutoSizeText(
-                                      intToCurrency(meals[index].price),
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    SizedBox(height: 5),
-                                    AutoSizeText(
-                                      '${meals[index].quantity} ${meals[index].quantity < 2 ? 'disponível' : 'disponíveis'}',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    //SizedBox(height: 10)
-                                  ],
-                                ),
-                              ),
-                              /*subtitle: Padding(
-                                          padding: EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 0),
-                                          child: AutoSizeText(
-                                              meals[index].description,
-                                              style: TextStyle(color: Colors.white)
-                                          ),
-                                        )*/
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ],

@@ -22,59 +22,61 @@ class LoginScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: Text(
-                      "RANGO",
-                      style: TextStyle(color: Colors.white, fontSize: 58.nsp),
+                  Flexible(
+                    flex: 2,
+                    child: Column(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child:
+                              Image(image: AssetImage('assets/imgs/rango.png')),
+                        ),
+                        Flexible(
+                          flex: 1,
+                          child: Text(
+                            "RANGO",
+                            style: TextStyle(
+                              color: Theme.of(context).accentColor,
+                              fontSize: 80.nsp,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   Flexible(
                     flex: 3,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 0.05.wp, vertical: 0),
-                      child: Container(
-                        margin: EdgeInsets.only(bottom: 20),
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () => Navigator.of(context)
-                              .pushNamed(AuthScreen.routeName, arguments: true),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 12),
-                            child: AutoSizeText(
-                              'Login',
-                              style: GoogleFonts.montserratTextTheme(
-                                      Theme.of(context).textTheme)
-                                  .button
-                                  .copyWith(fontSize: 38.nsp),
-                            ),
-                          ),
+                    child: Container(
+                      margin: EdgeInsets.only(
+                          bottom: 20, right: 0.2.wp, left: 0.2.wp),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.of(context)
+                            .pushNamed(AuthScreen.routeName, arguments: true),
+                        child: AutoSizeText(
+                          'Login',
+                          style: GoogleFonts.montserratTextTheme(
+                                  Theme.of(context).textTheme)
+                              .button
+                              .copyWith(fontSize: 38.nsp),
                         ),
                       ),
                     ),
                   ),
                   Flexible(
                     flex: 3,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 0.05.wp, vertical: 0),
-                      child: Container(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () => Navigator.of(context).pushNamed(
-                              AuthScreen.routeName,
-                              arguments: false),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 12),
-                            child: AutoSizeText(
-                              'Cadastro',
-                              style: GoogleFonts.montserratTextTheme(
-                                      Theme.of(context).textTheme)
-                                  .button
-                                  .copyWith(fontSize: 38.nsp),
-                            ),
-                          ),
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 0.2.wp),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.of(context)
+                            .pushNamed(AuthScreen.routeName, arguments: false),
+                        child: AutoSizeText(
+                          'Cadastro',
+                          style: GoogleFonts.montserratTextTheme(
+                                  Theme.of(context).textTheme)
+                              .button
+                              .copyWith(fontSize: 38.nsp),
                         ),
                       ),
                     ),

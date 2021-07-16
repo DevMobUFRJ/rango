@@ -175,8 +175,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                   CustomTextFormField(
                     labelText: 'Telefone com DDD:',
+                    focusNode: _telFocusNode,
                     key: ValueKey('phone'),
                     controller: _tel,
+                    maxLength: 11,
                     validator: (String value) {
                       if (value.trim() != '' && value.trim().length != 11) {
                         setState(() => _telefoneErrorMessage =
@@ -188,7 +190,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     keyboardType: TextInputType.number,
                     textInputAction: TextInputAction.next,
                     onFieldSubmitted: (_) =>
-                        FocusScope.of(context).requestFocus(_passFocusNode),
+                        FocusScope.of(context).requestFocus(_paymentsFocusNode),
                   ),
                   CustomTextFormField(
                     labelText: 'Pagamentos aceitos:',
@@ -219,7 +221,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     errorText: _passwordErrorMessage,
                   ),
                   CustomTextFormField(
-                    labelText: 'Confimar Senha:',
+                    labelText: 'Confirmar Senha:',
                     focusNode: _focusNodeConfirmPass,
                     controller: _confirmPass,
                     isPassword: true,
@@ -231,13 +233,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       }
                       return null;
                     },
+                    onFieldSubmitted: (_) => _submit(ctx),
                     errorText: _passwordErrorMessage,
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: 0.05.wp, vertical: 0.01.hp),
                     child: SizedBox(
-                      width: 0.7.wp,
+                      width: 0.5.wp,
                       child: ElevatedButton(
                         onPressed: _loading
                             ? null
@@ -248,29 +251,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 ? () => _submit(ctx)
                                 : null,
                         child: _loading
-                            ? Padding(
-                                padding:
-                                    EdgeInsets.symmetric(vertical: 0.01.hp),
-                                child: SizedBox(
-                                  child: CircularProgressIndicator(
-                                    valueColor:
-                                        new AlwaysStoppedAnimation<Color>(
-                                            Colors.white),
-                                    strokeWidth: 3.0,
-                                  ),
-                                  height: 30.w,
-                                  width: 30.w,
+                            ? SizedBox(
+                                child: CircularProgressIndicator(
+                                  valueColor: new AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                  strokeWidth: 3.0,
                                 ),
+                                height: 30.w,
+                                width: 30.w,
                               )
-                            : Padding(
-                                padding:
-                                    EdgeInsets.symmetric(vertical: 0.01.hp),
-                                child: AutoSizeText(
-                                  'Continuar',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 38.nsp,
-                                  ),
+                            : AutoSizeText(
+                                'Continuar',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 38.nsp,
                                 ),
                               ),
                       ),
