@@ -195,53 +195,33 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                                             }
                                             try {
                                               if (value) {
-                                                Repository.instance
-                                                    .addMealToCurrent(
-                                                        meals[index].id,
-                                                        seller.id);
+                                                Repository.instance.addMealToCurrent(meals[index].id, seller.id);
                                               } else {
-                                                Repository.instance
-                                                    .removeMealFromCurrent(
-                                                        meals[index].id,
-                                                        seller.id);
+                                                Repository.instance.removeMealFromCurrent(meals[index].id, seller.id);
                                               }
                                             } catch (e) {
                                               print(e);
                                             }
                                           }),
                                       IconButton(
-                                        onPressed: seller.currentMeals[
-                                                    meals[index].id] ==
-                                                null
+                                        onPressed: seller.currentMeals[meals[index].id] == null
+                                            || meals[index].quantity == 0
                                             ? null
                                             : () async {
                                                 try {
-                                                  if (seller
-                                                          .currentMeals[
-                                                              meals[index].id]
-                                                          .featured ==
-                                                      false) {
+                                                  if (seller.currentMeals[meals[index].id].featured == false) {
                                                     var featuredMeals = seller
                                                         .currentMeals.values
-                                                        .where((item) =>
-                                                            item.featured ==
-                                                            true)
+                                                        .where((item) => item.featured == true)
                                                         .length;
-                                                    if (featuredMeals >=
-                                                        maxFeaturedMeals) {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
+                                                    if (featuredMeals >= maxFeaturedMeals) {
+                                                      ScaffoldMessenger.of(context).showSnackBar(
                                                         SnackBar(
-                                                          duration: Duration(
-                                                              seconds: 2),
-                                                          backgroundColor:
-                                                              Theme.of(context)
-                                                                  .errorColor,
+                                                          duration: Duration(seconds: 2),
+                                                          backgroundColor: Theme.of(context).errorColor,
                                                           content: Text(
                                                             'Você pode selecionar até $maxFeaturedMeals quentinhas em destaque',
-                                                            textAlign: TextAlign
-                                                                .center,
+                                                            textAlign: TextAlign.center,
                                                           ),
                                                         ),
                                                       );
@@ -249,27 +229,17 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                                                     }
                                                   }
 
-                                                  Repository.instance
-                                                      .toggleMealFeatured(
-                                                          meals[index].id,
-                                                          seller);
+                                                  Repository.instance.toggleMealFeatured(meals[index].id, seller);
                                                 } catch (e) {
                                                   print(e);
                                                 }
                                               },
                                         icon: Icon(
-                                            seller.currentMeals[
-                                                            meals[index].id] !=
-                                                        null &&
-                                                    seller
-                                                        .currentMeals[
-                                                            meals[index].id]
-                                                        .featured
+                                            seller.currentMeals[meals[index].id] != null
+                                            && seller.currentMeals[meals[index].id].featured
                                                 ? Icons.star
                                                 : Icons.star_border,
-                                            color: seller.currentMeals[
-                                                        meals[index].id] ==
-                                                    null
+                                            color: seller.currentMeals[meals[index].id] == null
                                                 ? Color(0xFFF9B152)
                                                 : Colors.white),
                                       ),
@@ -316,13 +286,6 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                                     ],
                                   ),
                                 ),
-                                /*subtitle: Padding(
-                                            padding: EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 0),
-                                            child: AutoSizeText(
-                                                meals[index].description,
-                                                style: TextStyle(color: Colors.white)
-                                            ),
-                                          )*/
                               ),
                             );
                           },
