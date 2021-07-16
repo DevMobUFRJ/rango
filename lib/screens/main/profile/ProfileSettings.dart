@@ -66,6 +66,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
             onPressed: () {
               Navigator.of(ctx).pop();
               FirebaseAuth.instance.signOut();
+              Navigator.of(ctx).pop();
             },
             child: Text(
               'Sair',
