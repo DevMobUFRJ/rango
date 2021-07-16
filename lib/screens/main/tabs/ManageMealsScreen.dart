@@ -190,7 +190,7 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                                                       Theme.of(context)
                                                           .errorColor,
                                                   content: Text(
-                                                    'Você não possui mais unidades dessa quentinha\nVocê pode editá-la caso tenha mais',
+                                                    'Você não possui mais unidades dessa quentinha! Adicione mais unidades para disponibilizar ela.',
                                                     textAlign: TextAlign.center,
                                                   ),
                                                 ),

@@ -29,42 +29,15 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
-        height: 1.hp - 56,
-        child: StreamBuilder(
-          stream: Repository.instance.getOpenOrdersFromSeller(widget.usuario.id),
-          builder: (context, AsyncSnapshot<QuerySnapshot<Order>> openOrdersSnapshot) {
-            if (!openOrdersSnapshot.hasData ||
-                openOrdersSnapshot.connectionState == ConnectionState.waiting) {
-              return Container(
-                height: 0.5.hp,
-                alignment: Alignment.center,
-                child: SizedBox(
-                  height: 50,
-                  width: 50,
-                  child: CircularProgressIndicator(
-                    color: Theme.of(context).accentColor,
-                  ),
-                ),
-              );
-            }
-
-            if (openOrdersSnapshot.hasError) {
-              return Container(
-                height: 0.6.hp - 56,
-                alignment: Alignment.center,
-                child: AutoSizeText(
-                  openOrdersSnapshot.error.toString(),
-                  style: GoogleFonts.montserrat(
-                      fontSize: 45.nsp,
-                      color: Theme.of(context).accentColor),
-                ),
-              );
-            }
-
-            return StreamBuilder(
-              stream: Repository.instance.getClosedOrdersFromSeller(widget.usuario.id),
-              builder: (context, AsyncSnapshot<QuerySnapshot<Order>> closedOrdersSnapshot) {
-                if (!closedOrdersSnapshot.hasData) {
+          height: 1.hp - 56,
+          child: StreamBuilder(
+              stream: Repository.instance
+                  .getOpenOrdersFromSeller(widget.usuario.id),
+              builder: (context,
+                  AsyncSnapshot<QuerySnapshot<Order>> openOrdersSnapshot) {
+                if (!openOrdersSnapshot.hasData ||
+                    openOrdersSnapshot.connectionState ==
+                        ConnectionState.waiting) {
                   return Container(
                     height: 0.5.hp,
                     alignment: Alignment.center,
@@ -78,85 +51,120 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 }
 
-                if (closedOrdersSnapshot.hasError) {
+                if (openOrdersSnapshot.hasError) {
                   return Container(
                     height: 0.6.hp - 56,
                     alignment: Alignment.center,
                     child: AutoSizeText(
-                      closedOrdersSnapshot.error.toString(),
+                      openOrdersSnapshot.error.toString(),
                       style: GoogleFonts.montserrat(
                           fontSize: 45.nsp,
                           color: Theme.of(context).accentColor),
                     ),
                   );
                 }
-                
-                if (openOrdersSnapshot.data.docs.isEmpty && closedOrdersSnapshot.data.docs.isEmpty) {
-                  return NoOrdersWidget(assetName: assetName, widget: widget);
-                }
-                
-                return Column(
-                  children: [
-                    _buildHeader(assetName, closedOrdersSnapshot.data.docs),
-                    Container(
-                      margin: EdgeInsets.only(
-                        left: 0.1.wp,
-                        right: 0.1.wp,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                return StreamBuilder(
+                    stream: Repository.instance
+                        .getClosedOrdersFromSeller(widget.usuario.id),
+                    builder: (context,
+                        AsyncSnapshot<QuerySnapshot<Order>>
+                            closedOrdersSnapshot) {
+                      if (!closedOrdersSnapshot.hasData) {
+                        return Container(
+                          height: 0.5.hp,
+                          alignment: Alignment.center,
+                          child: SizedBox(
+                            height: 50,
+                            width: 50,
+                            child: CircularProgressIndicator(
+                              color: Theme.of(context).accentColor,
+                            ),
+                          ),
+                        );
+                      }
+
+                      if (closedOrdersSnapshot.hasError) {
+                        return Container(
+                          height: 0.6.hp - 56,
+                          alignment: Alignment.center,
+                          child: AutoSizeText(
+                            closedOrdersSnapshot.error.toString(),
+                            style: GoogleFonts.montserrat(
+                                fontSize: 45.nsp,
+                                color: Theme.of(context).accentColor),
+                          ),
+                        );
+                      }
+
+                      if (openOrdersSnapshot.data.docs.isEmpty &&
+                          closedOrdersSnapshot.data.docs.isEmpty) {
+                        return NoOrdersWidget(
+                            assetName: assetName, widget: widget);
+                      }
+
+                      return Column(
                         children: [
+                          _buildHeader(
+                              assetName, closedOrdersSnapshot.data.docs),
                           Container(
-                            child: closedOrdersSnapshot.data.docs.isEmpty && openOrdersSnapshot.data.docs.isEmpty
+                            margin: EdgeInsets.only(
+                              left: 0.1.wp,
+                              right: 0.1.wp,
+                            ),
+                            alignment: Alignment.topLeft,
+                            child: closedOrdersSnapshot.data.docs.isEmpty &&
+                                    openOrdersSnapshot.data.docs.isEmpty
                                 ? SizedBox()
                                 : AutoSizeText(
-                              "Pedidos do dia",
-                              style: GoogleFonts.montserrat(
-                                textStyle: TextStyle(
-                                  color: Theme.of(context).accentColor,
-                                  fontSize: 29.nsp,
-                                ),
-                              ),
+                                    "Pedidos do dia",
+                                    style: GoogleFonts.montserrat(
+                                      textStyle: TextStyle(
+                                        color: Theme.of(context).accentColor,
+                                        fontSize: 29.nsp,
+                                      ),
+                                    ),
+                                  ),
+                          ),
+                          Flexible(
+                            flex: 1,
+                            child: Container(
+                              child: closedOrdersSnapshot
+                                          .data.docs.isNotEmpty &&
+                                      openOrdersSnapshot.data.docs.isEmpty
+                                  ? Container(
+                                      alignment: Alignment.center,
+                                      margin: EdgeInsets.symmetric(
+                                        horizontal: 15,
+                                        vertical: 20,
+                                      ),
+                                      child: AutoSizeText(
+                                        'Você não tem mais pedidos em aberto hoje! Para verificar os pedidos já fechados, clique acima no ícone de histórico.',
+                                        style: GoogleFonts.montserrat(
+                                          color: Theme.of(context).accentColor,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 36.nsp,
+                                        ),
+                                      ),
+                                    )
+                                  : ListView.builder(
+                                      padding: EdgeInsets.only(top: 0),
+                                      physics: ClampingScrollPhysics(),
+                                      itemCount:
+                                          openOrdersSnapshot.data.docs.length,
+                                      itemBuilder: (ctx, index) {
+                                        return OrderContainer(
+                                            openOrdersSnapshot.data.docs[index]
+                                                .data(),
+                                            null);
+                                      },
+                                    ),
                             ),
                           ),
                         ],
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: Container(
-                        child: closedOrdersSnapshot.data.docs.isNotEmpty && openOrdersSnapshot.data.docs.isEmpty
-                            ? Container(
-                                alignment: Alignment.center,
-                                margin: EdgeInsets.symmetric(
-                                  horizontal: 15,
-                                  vertical: 20,
-                                ),
-                                child: AutoSizeText(
-                                  'Você não tem mais pedidos em aberto hoje! Para verificar os pedidos já fechados, clique acima no ícone de histórico.',
-                                  style: GoogleFonts.montserrat(
-                                    color: Theme.of(context).accentColor,
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 36.nsp,
-                                  ),
-                                ),
-                              )
-                            : ListView.builder(
-                                physics: ClampingScrollPhysics(),
-                                itemCount: openOrdersSnapshot.data.docs.length,
-                                itemBuilder: (ctx, index) {
-                                  return OrderContainer(openOrdersSnapshot.data.docs[index].data(), null);
-                                },
-                            ),
-                      ),
-                    ),
-                  ],
-                );
-              }
-            );
-          }
-        )
-      ),
+                      );
+                    });
+              })),
     );
   }
 
@@ -199,8 +207,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     child: Container(
                       margin: EdgeInsets.only(left: 50, bottom: 10),
-                      padding: EdgeInsets.only(
-                          top: 3, bottom: 3, right: 4, left: 3),
+                      padding:
+                          EdgeInsets.only(top: 3, bottom: 3, right: 4, left: 3),
                       decoration: ShapeDecoration(
                         shape: CircleBorder(),
                         color: Theme.of(context).accentColor,
@@ -211,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         size: 26,
                       ),
                     ),
-                  ),               
+                  ),
                 ],
               ),
             ],

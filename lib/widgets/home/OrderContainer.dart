@@ -20,7 +20,8 @@ class OrderContainer extends StatefulWidget {
   _OrderContainerState createState() => _OrderContainerState();
 }
 
-class _OrderContainerState extends State<OrderContainer> with TickerProviderStateMixin {
+class _OrderContainerState extends State<OrderContainer>
+    with TickerProviderStateMixin {
   AnimationController swipeRightController;
   AnimationController swipeLeftController;
   Animatable swipeAnimatable;
@@ -46,232 +47,272 @@ class _OrderContainerState extends State<OrderContainer> with TickerProviderStat
     swipeRightController.reset();
     swipeLeftController.reset();
     return SlideTransition(
-        position: swipeRightController.drive(swipeAnimatable),
-        textDirection: TextDirection.ltr,
-        child: SlideTransition(
-          position: swipeLeftController.drive(swipeAnimatable),
-          textDirection: TextDirection.rtl,
-          child: Container(
-            child: Center(
-              child: Stack(
-                alignment: Alignment.topRight,
-                children: [
-                  Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+      position: swipeRightController.drive(swipeAnimatable),
+      textDirection: TextDirection.ltr,
+      child: SlideTransition(
+        position: swipeLeftController.drive(swipeAnimatable),
+        textDirection: TextDirection.rtl,
+        child: Container(
+          child: Center(
+            child: Stack(
+              alignment: Alignment.topRight,
+              children: [
+                Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  color: widget.pedido.status == 'sold'
+                      ? Colors.grey
+                      : Color(0xFFF9B152),
+                  child: ConstrainedBox(
+                    constraints: new BoxConstraints(
+                      minWidth: 0.85.wp,
                     ),
-                    color: widget.pedido.status == 'sold' ? Colors.grey : Color(0xFFF9B152),
-                    child: ConstrainedBox(
-                      constraints: new BoxConstraints(
-                        minHeight: 0.12.hp,
-                        minWidth: 0.8.wp,
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            width: 0.4.wp,
-                            margin: EdgeInsets.only(left: 12, top: 8, bottom: 8),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                GestureDetector(
-                                  onTap: () => pushNewScreen(
-                                    context,
-                                    screen: ClientProfile(widget.pedido.clientId),
-                                    withNavBar: false,
-                                  ),
-                                  child: AutoSizeText(
-                                    widget.pedido.clientName,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.montserrat(
-                                      textStyle: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 29.nsp,
-                                        fontWeight: FontWeight.bold,
-                                        decoration: TextDecoration.underline,
-                                      ),
-                                    ),
-                                  ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width: 0.4.wp,
+                          margin: EdgeInsets.only(left: 12, top: 8, bottom: 8),
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              GestureDetector(
+                                onTap: () => pushNewScreen(
+                                  context,
+                                  screen: ClientProfile(widget.pedido.clientId),
+                                  withNavBar: false,
                                 ),
-                                AutoSizeText(
-                                  '${widget.pedido.quantity}x ${widget.pedido.mealName}',
+                                child: AutoSizeText(
+                                  widget.pedido.clientName,
+                                  overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts.montserrat(
                                     textStyle: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 26.nsp,
+                                      fontSize: 29.nsp,
+                                      fontWeight: FontWeight.bold,
+                                      decoration: TextDecoration.underline,
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 2),
-                                AutoSizeText(
-                                  'Valor total: ${intToCurrency(widget.pedido.quantity * widget.pedido.price)}',
-                                  style: GoogleFonts.montserrat(
-                                    textStyle: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 26.nsp,
-                                    ),
+                              ),
+                              AutoSizeText(
+                                '${widget.pedido.quantity}x ${widget.pedido.mealName}',
+                                style: GoogleFonts.montserrat(
+                                  textStyle: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 26.nsp,
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                              SizedBox(height: 2),
+                              AutoSizeText(
+                                'Valor total: ${intToCurrency(widget.pedido.quantity * widget.pedido.price)}',
+                                style: GoogleFonts.montserrat(
+                                  textStyle: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 26.nsp,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          Container(
-                            margin: EdgeInsets.symmetric(horizontal: 0.06.wp),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Theme(
-                                      data: ThemeData(
-                                          unselectedWidgetColor: Colors.white),
-                                      child: SizedBox(
-                                        height: 24,
-                                        width: 24,
-                                        child: Checkbox(
-                                          checkColor: widget.pedido.status == 'sold'
-                                              ? Colors.grey
-                                              : Color(0xFFF9B152),
-                                          activeColor: Colors.white,
-                                          value: widget.pedido.status == 'reserved' || widget.pedido.status == 'sold',
-                                          onChanged: (reserved) async {
-                                            try {
-                                              if (reserved && widget.pedido.status == 'requested') {
-                                                await Repository.instance.reserveOrderTransaction(widget.pedido);
-                                              } else if (!reserved && widget.pedido.status == 'reserved') {
-                                                await Repository.instance.undoReserveOrderTransaction(widget.pedido);
-                                              }
-                                            } catch (e) {
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(
-                                                  content: Padding(
-                                                    padding: EdgeInsets.symmetric(horizontal: 20),
-                                                    child: Text(
-                                                      e.toString(),
-                                                      textAlign: TextAlign.center,
-                                                    ),
-                                                  ),
-                                                  backgroundColor: Theme.of(context).errorColor,
-                                                ),
-                                              );
+                        ),
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 0.06.wp),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Theme(
+                                    data: ThemeData(
+                                        unselectedWidgetColor: Colors.white),
+                                    child: SizedBox(
+                                      height: 24,
+                                      width: 24,
+                                      child: Checkbox(
+                                        checkColor:
+                                            widget.pedido.status == 'sold'
+                                                ? Colors.grey
+                                                : Color(0xFFF9B152),
+                                        activeColor: Colors.white,
+                                        value: widget.pedido.status ==
+                                                'reserved' ||
+                                            widget.pedido.status == 'sold',
+                                        onChanged: (reserved) async {
+                                          try {
+                                            if (reserved &&
+                                                widget.pedido.status ==
+                                                    'requested') {
+                                              await Repository.instance
+                                                  .reserveOrderTransaction(
+                                                      widget.pedido);
+                                            } else if (!reserved &&
+                                                widget.pedido.status ==
+                                                    'reserved') {
+                                              await Repository.instance
+                                                  .undoReserveOrderTransaction(
+                                                      widget.pedido);
                                             }
-                                          },
-                                        ),
+                                          } catch (e) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 20),
+                                                  child: Text(
+                                                    e.toString(),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                                backgroundColor:
+                                                    Theme.of(context)
+                                                        .errorColor,
+                                              ),
+                                            );
+                                          }
+                                        },
                                       ),
                                     ),
-                                    Text(
-                                      "Reservado",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 0.018.hp),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Theme(
-                                      data: ThemeData(
-                                          unselectedWidgetColor: Colors.white),
-                                      child: SizedBox(
-                                        height: 24,
-                                        width: 24,
-                                        child: Checkbox(
-                                          checkColor: widget.pedido.status == 'sold'
-                                              ? Colors.grey
-                                              : Color(0xFFF9B152),
-                                          activeColor: Colors.white,
-                                          value: widget.pedido.status == 'sold',
-                                          onChanged: (sold) async {
-                                            if (sold && widget.pedido.status == 'requested') {
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(
-                                                  content: Padding(
-                                                    padding: EdgeInsets.symmetric(horizontal: 20),
-                                                    child: Text(
-                                                      "Você deve primeiro confirmar a reserva.",
-                                                      textAlign: TextAlign.center,
-                                                    ),
+                                  ),
+                                  Text(
+                                    "Reservado",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 0.018.hp),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Theme(
+                                    data: ThemeData(
+                                        unselectedWidgetColor: Colors.white),
+                                    child: SizedBox(
+                                      height: 24,
+                                      width: 24,
+                                      child: Checkbox(
+                                        checkColor:
+                                            widget.pedido.status == 'sold'
+                                                ? Colors.grey
+                                                : Color(0xFFF9B152),
+                                        activeColor: Colors.white,
+                                        value: widget.pedido.status == 'sold',
+                                        onChanged: (sold) async {
+                                          if (sold &&
+                                              widget.pedido.status ==
+                                                  'requested') {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 20),
+                                                  child: Text(
+                                                    "Você deve primeiro confirmar a reserva.",
+                                                    textAlign: TextAlign.center,
                                                   ),
-                                                  backgroundColor: Theme.of(context).errorColor,
                                                 ),
-                                              );
-                                              return;
+                                                backgroundColor:
+                                                    Theme.of(context)
+                                                        .errorColor,
+                                              ),
+                                            );
+                                            return;
+                                          }
+                                          try {
+                                            if (sold &&
+                                                widget.pedido.status ==
+                                                    'reserved') {
+                                              swipeRightController
+                                                  .forward()
+                                                  .then((_) async {
+                                                await Repository.instance
+                                                    .sellOrder(
+                                                        widget.pedido.id);
+                                              });
+                                            } else if (!sold &&
+                                                widget.pedido.status ==
+                                                    'sold') {
+                                              swipeLeftController
+                                                  .forward()
+                                                  .then((_) async {
+                                                await Repository.instance
+                                                    .undoSellOrder(
+                                                        widget.pedido.id);
+                                                widget.undoSellOrderCallback();
+                                              });
                                             }
-                                            try {
-                                              if (sold && widget.pedido.status == 'reserved') {
-                                                swipeRightController.forward().then((_) async {
-                                                  await Repository.instance.sellOrder(widget.pedido.id);
-                                                });
-                                              } else if (!sold && widget.pedido.status == 'sold') {
-                                                swipeLeftController.forward().then((_) async {
-                                                  await Repository.instance.undoSellOrder(widget.pedido.id);
-                                                  widget.undoSellOrderCallback();
-                                                });
-                                              }
-                                            } catch (e) {
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(
-                                                  content: Padding(
-                                                    padding: EdgeInsets.symmetric(horizontal: 20),
-                                                    child: Text(
-                                                      'Ocorreu um erro.',
-                                                      textAlign: TextAlign.center,
-                                                    ),
+                                          } catch (e) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 20),
+                                                  child: Text(
+                                                    'Ocorreu um erro.',
+                                                    textAlign: TextAlign.center,
                                                   ),
-                                                  backgroundColor: Theme.of(context).errorColor,
                                                 ),
-                                              );
-                                            }
-                                          },
-                                        ),
+                                                backgroundColor:
+                                                    Theme.of(context)
+                                                        .errorColor,
+                                              ),
+                                            );
+                                          }
+                                        },
                                       ),
                                     ),
-                                    Text(
-                                      "Vendido",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                  ),
+                                  Text(
+                                    "Vendido",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                  if (widget.pedido.status != 'sold') ...{
-                    GestureDetector(
-                      onTap: () => _cancelOrder(),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: Colors.red[400],
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(4),
-                          child: Icon(
-                            Icons.close,
-                            size: 15,
-                            color: Colors.white,
-                          ),
+                ),
+                if (widget.pedido.status != 'sold') ...{
+                  GestureDetector(
+                    onTap: () => _cancelOrder(),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        color: Colors.red[400],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Icon(
+                          Icons.close,
+                          size: 15,
+                          color: Colors.white,
                         ),
                       ),
-                    )
-                  },
-                ],
-              ),
+                    ),
+                  )
+                },
+              ],
             ),
           ),
         ),
+      ),
     );
   }
 
