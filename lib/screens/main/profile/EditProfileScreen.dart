@@ -79,7 +79,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             _description.text != widget.user.description) {
           dataToUpdate['description'] = _description.text;
         }
-        if (_payments.text != null && _payments.text != widget.user.paymentMethods) {
+        if (_payments.text != null &&
+            _payments.text != widget.user.paymentMethods) {
           dataToUpdate['paymentMethods'] = _payments.text;
         }
         if (_userImageFile != null) {
@@ -99,7 +100,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(error.toString()),
+            duration: Duration(seconds: 2),
+            backgroundColor: Theme.of(context).errorColor,
+            content: Text(
+              error.toString(),
+              textAlign: TextAlign.center,
+            ),
           ),
         );
         setState(() => _loading = false);
@@ -237,7 +243,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             ? () => {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text('Carregando, aguarde.'),
+                                      duration: Duration(seconds: 2),
+                                      backgroundColor:
+                                          Theme.of(context).accentColor,
+                                      content: Text(
+                                        'Carregando, aguarde.',
+                                        textAlign: TextAlign.center,
+                                      ),
                                     ),
                                   ),
                                 }

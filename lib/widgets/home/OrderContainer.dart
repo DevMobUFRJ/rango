@@ -167,13 +167,9 @@ class _OrderContainerState extends State<OrderContainer>
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
                                               SnackBar(
-                                                content: Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 20),
-                                                  child: Text(
-                                                    e.toString(),
-                                                    textAlign: TextAlign.center,
-                                                  ),
+                                                content: Text(
+                                                  e.toString(),
+                                                  textAlign: TextAlign.center,
                                                 ),
                                                 backgroundColor:
                                                     Theme.of(context)
@@ -216,13 +212,9 @@ class _OrderContainerState extends State<OrderContainer>
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
                                               SnackBar(
-                                                content: Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 20),
-                                                  child: Text(
-                                                    "Você deve primeiro confirmar a reserva.",
-                                                    textAlign: TextAlign.center,
-                                                  ),
+                                                content: Text(
+                                                  "Confirme a reserva antes de marca-lá como vendida.",
+                                                  textAlign: TextAlign.center,
                                                 ),
                                                 backgroundColor:
                                                     Theme.of(context)
@@ -258,13 +250,9 @@ class _OrderContainerState extends State<OrderContainer>
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
                                               SnackBar(
-                                                content: Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 20),
-                                                  child: Text(
-                                                    'Ocorreu um erro.',
-                                                    textAlign: TextAlign.center,
-                                                  ),
+                                                content: Text(
+                                                  'Ocorreu um erro.',
+                                                  textAlign: TextAlign.center,
                                                 ),
                                                 backgroundColor:
                                                     Theme.of(context)
@@ -352,12 +340,10 @@ class _OrderContainerState extends State<OrderContainer>
               } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Text(
-                        'Ocorreu um erro ao cancelar o pedido.',
-                        textAlign: TextAlign.center,
-                      ),
+                    duration: Duration(seconds: 2),
+                    content: Text(
+                      'Ocorreu um erro ao cancelar o pedido.',
+                      textAlign: TextAlign.center,
                     ),
                     backgroundColor: Theme.of(context).errorColor,
                   ),

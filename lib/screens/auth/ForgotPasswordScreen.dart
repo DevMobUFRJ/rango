@@ -29,11 +29,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             .showSnackBar(
               SnackBar(
                 backgroundColor: Theme.of(ctx).accentColor,
+                duration: Duration(seconds: 2),
                 content: Text(
                   'Email enviado',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.montserrat(
-                      color: Colors.white, fontSize: 28.nsp),
+                    color: Colors.white,
+                    fontSize: 28.nsp,
+                  ),
                 ),
               ),
             )
