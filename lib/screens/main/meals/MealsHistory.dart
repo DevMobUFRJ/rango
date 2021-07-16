@@ -1,5 +1,4 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -35,20 +34,19 @@ class _MealsHistoryState extends State<MealsHistory> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: AutoSizeText(
-          'Histórico',
-          maxLines: 1,
-          style: GoogleFonts.montserrat(
-            color: Theme.of(context).accentColor,
-            fontSize: 35.nsp,
+        appBar: AppBar(
+          title: AutoSizeText(
+            'Histórico',
+            maxLines: 1,
+            style: GoogleFonts.montserrat(
+              color: Theme.of(context).accentColor,
+              fontSize: 35.nsp,
+            ),
           ),
         ),
-      ),
-      body: _buildScreen(widget.meals)
-    );
+        body: _buildScreen(widget.meals));
   }
-  
+
   Widget _buildScreen(List<Meal> meals) {
     if (meals.isEmpty) {
       return Container(
@@ -85,7 +83,8 @@ class _MealsHistoryState extends State<MealsHistory> {
                           GestureDetector(
                             onTap: () => pushNewScreen(
                               context,
-                              screen: ManageMeal("",
+                              screen: ManageMeal(
+                                "",
                                 meal: meal,
                               ),
                               withNavBar: false,
@@ -103,18 +102,19 @@ class _MealsHistoryState extends State<MealsHistory> {
                                           maxHeight: 100, minWidth: 0.5.wp),
                                       child: meal.picture != null
                                           ? FadeInImage.assetNetwork(
-                                        placeholder: 'assets/imgs/quentinha_placeholder.png',
-                                        image: meal.picture,
-                                        fit: BoxFit.fitWidth,
-                                      )
+                                              placeholder:
+                                                  'assets/imgs/quentinha_placeholder.png',
+                                              image: meal.picture,
+                                              fit: BoxFit.fitWidth,
+                                            )
                                           : Image.asset(
-                                        'assets/imgs/quentinha_placeholder.png',
-                                        fit: BoxFit.fitHeight,
-                                      ),
+                                              'assets/imgs/quentinha_placeholder.png',
+                                              fit: BoxFit.fitHeight,
+                                            ),
                                     ),
                                     Container(
                                       padding:
-                                      EdgeInsets.symmetric(vertical: 5),
+                                          EdgeInsets.symmetric(vertical: 5),
                                       child: Column(
                                         children: <Widget>[
                                           AutoSizeText(
@@ -140,19 +140,20 @@ class _MealsHistoryState extends State<MealsHistory> {
                           ),
                           Theme(
                             data: ThemeData(
-                              unselectedWidgetColor: Theme.of(context).accentColor,
+                              unselectedWidgetColor:
+                                  Theme.of(context).accentColor,
                             ),
                             child: Checkbox(
                               activeColor: Theme.of(context).accentColor,
                               value: ordersCheckedValue[index],
                               onChanged: (value) {
                                 setState(() => {
-                                  ordersCheckedValue[index] = value,
-                                  if (!ordersCheckedValue.contains(true))
-                                    {_hasAnySelected = false}
-                                  else
-                                    {_hasAnySelected = true}
-                                });
+                                      ordersCheckedValue[index] = value,
+                                      if (!ordersCheckedValue.contains(true))
+                                        {_hasAnySelected = false}
+                                      else
+                                        {_hasAnySelected = true}
+                                    });
                               },
                             ),
                           ),
@@ -182,8 +183,8 @@ class _MealsHistoryState extends State<MealsHistory> {
                               color: Colors.white, fontSize: 36.nsp),
                         ),
                         onPressed: ordersCheckedValue == null ||
-                            ordersCheckedValue.length == 0 ||
-                            _hasAnySelected == false
+                                ordersCheckedValue.length == 0 ||
+                                _hasAnySelected == false
                             ? null
                             : () => {},
                       ),
@@ -195,8 +196,8 @@ class _MealsHistoryState extends State<MealsHistory> {
                             color: Colors.white, fontSize: 36.nsp),
                       ),
                       onPressed: ordersCheckedValue == null ||
-                          ordersCheckedValue.length == 0 ||
-                          _hasAnySelected == false
+                              ordersCheckedValue.length == 0 ||
+                              _hasAnySelected == false
                           ? null
                           : () => {},
                     ),

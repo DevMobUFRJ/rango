@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -10,8 +11,9 @@ import 'package:rango/main.dart';
 
 class NewTabsScreen extends StatefulWidget {
   final Seller seller;
+  final PersistentTabController controller;
 
-  NewTabsScreen(this.seller);
+  NewTabsScreen(this.seller, this.controller);
 
   @override
   _NewTabsScreenState createState() => _NewTabsScreenState();
@@ -19,7 +21,7 @@ class NewTabsScreen extends StatefulWidget {
 
 Future<void> _showNotification(Map<String, dynamic> message) async {
   const AndroidNotificationDetails androidPlatformChannelSpecifics =
-  AndroidNotificationDetails(
+      AndroidNotificationDetails(
     '1',
     'teste',
     'descr',
@@ -28,7 +30,7 @@ Future<void> _showNotification(Map<String, dynamic> message) async {
     ticker: 'ticker',
   );
   const NotificationDetails platformChannelSpecifics =
-  NotificationDetails(android: androidPlatformChannelSpecifics);
+      NotificationDetails(android: androidPlatformChannelSpecifics);
   await flutterLocalNotificationsPlugin.show(
     0,
     message['title'],
@@ -64,7 +66,6 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
   Widget build(BuildContext context) {
     PersistentTabController _controller;
     _controller = PersistentTabController(initialIndex: 0);
-
     return SafeArea(
       top: false,
       left: false,

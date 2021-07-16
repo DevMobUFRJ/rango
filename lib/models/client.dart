@@ -1,7 +1,4 @@
-import 'dart:convert';
-
-import 'package:rango/models/seller.dart';
-import 'package:rango/models/user_notification_settings.dart';
+import 'package:rango/models/client_notification_settings.dart';
 import 'package:flutter/foundation.dart';
 
 class Client {
@@ -10,8 +7,9 @@ class Client {
   String name;
   String picture;
   List<String> favoriteSellers;
-  UserNotificationSettings notificationSettings;
+  ClientNotificationSettings clientNotificationSettings;
   String phone;
+  String deviceToken;
 
   Client({
     this.id,
@@ -19,8 +17,9 @@ class Client {
     @required this.name,
     this.picture,
     this.favoriteSellers,
-    this.notificationSettings,
+    this.clientNotificationSettings,
     this.phone,
+    this.deviceToken,
   });
 
   Client.fromJson(Map<String, dynamic> json, {String id})
@@ -29,17 +28,19 @@ class Client {
         name = json['name'],
         picture = json['picture'],
         favoriteSellers = List<String>.from(json['favoriteSellers']),
-        notificationSettings = json['notificationSettings'] == null
+        clientNotificationSettings = json['notifications'] == null
             ? null
-            : UserNotificationSettings.fromJson(json['notificationSettings']),
+            : ClientNotificationSettings.fromJson(json['notifications']),
+        deviceToken = json['deviceToken'],
         phone = json['phone'];
 
   Map<String, dynamic> toJson() => {
-    'email': email,
-    'name': name,
-    'picture': picture,
-    'favoriteSellers': favoriteSellers,
-    'notificationSettings': notificationSettings,
-    'phone': phone
-  };
+        'email': email,
+        'name': name,
+        'picture': picture,
+        'favoriteSellers': favoriteSellers,
+        'ClientNotificationSettings': clientNotificationSettings,
+        'deviceToken': deviceToken,
+        'phone': phone
+      };
 }
