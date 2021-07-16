@@ -69,7 +69,8 @@ class MyApp extends StatelessWidget {
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             primary: Color.fromRGBO(252, 116, 79, 1),
-            textStyle: GoogleFonts.montserrat(fontSize: 26),
+            textStyle: GoogleFonts.montserrat(),
+            padding: EdgeInsets.symmetric(vertical: 10),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
