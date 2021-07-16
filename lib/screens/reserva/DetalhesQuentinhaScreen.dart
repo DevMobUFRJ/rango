@@ -455,8 +455,7 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
 
                             if (widget.seller.deviceToken != null &&
                                 widget.seller.notificationSettings != null &&
-                                widget.seller.notificationSettings
-                                        .reservations ==
+                                widget.seller.notificationSettings.orders ==
                                     true) {
                               await _sendOrderNotification(
                                   widget.seller.deviceToken, ctx);

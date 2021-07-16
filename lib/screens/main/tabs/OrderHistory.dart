@@ -319,7 +319,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                   Seller seller = Seller.fromJson(ref);
                   if (seller.deviceToken != null &&
                       seller.notificationSettings != null &&
-                      seller.notificationSettings.reservations == true) {
+                      seller.notificationSettings.orders == true) {
                     _sendCancelOrderNotification(seller.deviceToken, ctx);
                   }
                 } catch (e) {
