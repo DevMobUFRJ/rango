@@ -10,7 +10,7 @@ import 'package:rango/widgets/home/OrderContainer.dart';
 
 class OrdersHistory extends StatefulWidget {
   final Seller usuario;
-  List <DocumentSnapshot<Order>> closedOrders;
+  final List<DocumentSnapshot<Order>> closedOrders;
 
   OrdersHistory(this.usuario, this.closedOrders);
   static const String name = 'OrdersHistory';
@@ -20,8 +20,6 @@ class OrdersHistory extends StatefulWidget {
 }
 
 class _OrdersHistoryState extends State<OrdersHistory> {
-  final GlobalKey<AnimatedListState> _listKey = GlobalKey();
-
   @override
   Widget build(BuildContext context) {
     final String assetName = 'assets/imgs/curva_principal.svg';
@@ -69,9 +67,7 @@ class _OrdersHistoryState extends State<OrdersHistory> {
                           AutoSizeText(
                             'Você ainda não possui pedidos concluídos!',
                             style: GoogleFonts.montserrat(
-                              color: Theme
-                                  .of(context)
-                                  .accentColor,
+                              color: Theme.of(context).accentColor,
                               fontWeight: FontWeight.w400,
                               fontSize: 52.nsp,
                             ),
@@ -89,14 +85,11 @@ class _OrdersHistoryState extends State<OrdersHistory> {
                             itemCount: widget.closedOrders.length,
                             itemBuilder: (ctx, index) {
                               return OrderContainer(
-                                  widget.closedOrders[index].data(),
-                                  () {
-                                    widget.closedOrders.removeAt(index);
-                                    setState(() {});
-                                  }
-                              );
-                            }
-                        ),
+                                  widget.closedOrders[index].data(), () {
+                                widget.closedOrders.removeAt(index);
+                                setState(() {});
+                              });
+                            }),
                       ),
                     )
                   }

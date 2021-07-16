@@ -1,6 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
-
 class Contact {
   final String name;
   final String phone;
@@ -14,8 +11,5 @@ class Contact {
       : name = json['name'],
         phone = json['phone'];
 
-  Map<String, dynamic> toJson() => {
-    'name': name,
-    'phone': phone
-  };
+  Map<String, dynamic> toJson() => {'name': name, 'phone': phone};
 }

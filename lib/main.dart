@@ -1,35 +1,89 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/SplashScreen.dart';
 import 'package:rango/screens/auth/AuthScreen.dart';
 import 'package:rango/screens/auth/ForgotPasswordScreen.dart';
 import 'package:rango/screens/auth/LoginScreen.dart';
+import 'package:rango/screens/main/home/ChatScreen.dart';
 import 'package:rango/screens/main/tabs/NewTabsScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import 'models/seller.dart';
 
+var currentKey = GlobalKey();
+
+PersistentTabController _controller = PersistentTabController(initialIndex: 0);
+final chatScreenKey = new GlobalKey<State<ChatScreen>>();
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Firebase.initializeApp();
+  await Firebase.initializeApp();
   const AndroidInitializationSettings initializationAndroidSettings =
       AndroidInitializationSettings('app_icon');
   final InitializationSettings initializationSettings =
       InitializationSettings(android: initializationAndroidSettings);
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-      onSelectNotification: (String payload) async {
-    if (payload != null) {
-      print(payload);
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+    onSelectNotification: (String payload) async {
+      if (payload != null) {
+        if (payload == 'historico') {
+          _controller.jumpToTab(1);
+        } else if (payload.contains('chat')) {
+          String clientId = payload.split('/')[1];
+          String clientName = payload.split('/')[2];
+          pushNewScreenWithRouteSettings(
+            currentKey.currentState.context,
+            withNavBar: false,
+            screen: ChatScreen(clientId, clientName, key: chatScreenKey),
+            settings: RouteSettings(name: 'chatScreen'),
+          );
+        }
+      }
+    },
+  );
+
+  await FirebaseMessaging.instance.subscribeToTopic('all');
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    if ((message.data['payload'].toString().contains('chat') &&
+            chatScreenKey.currentState == null) ||
+        !message.data['payload'].toString().contains('chat')) {
+      _showNotification(message.data);
     }
   });
+  FirebaseMessaging.onBackgroundMessage(_receiveOnBackgroundMessage);
   runApp(MyApp());
+}
+
+Future<void> _receiveOnBackgroundMessage(RemoteMessage message) async {
+  _showNotification(message.data);
+}
+
+Future<void> _showNotification(Map<String, dynamic> message) async {
+  AndroidNotificationDetails androidPlatformChannelSpecifics =
+      AndroidNotificationDetails(
+    message['channelId'],
+    message['channelName'],
+    message['channelDescription'],
+    importance: Importance.max,
+    priority: Priority.high,
+    ticker: 'ticker',
+  );
+  NotificationDetails platformChannelSpecifics =
+      NotificationDetails(android: androidPlatformChannelSpecifics);
+  await flutterLocalNotificationsPlugin.show(
+    int.parse(message['id']),
+    message['title'],
+    message['description'],
+    platformChannelSpecifics,
+    payload: message['payload'],
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -103,7 +157,7 @@ class MyApp extends StatelessWidget {
                     return LoginScreen();
                   }
 
-                  return NewTabsScreen(sellerSnapshot.data.data());
+                  return NewTabsScreen(sellerSnapshot.data.data(), _controller);
                 });
           }
           return LoginScreen();
