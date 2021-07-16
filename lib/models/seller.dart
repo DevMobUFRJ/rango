@@ -45,7 +45,7 @@ class Seller {
   Seller.fromJson(Map<String, dynamic> json, {String id})
       : id = id,
         contact = Contact.fromJson(json['contact']),
-        shift = Shift.fromJson(json['shift']),
+        shift = json['shift'] != null ? Shift.fromJson(json['shift']) : null,
         name = json['name'],
         active = json['active'],
         canReservate = json['canReservate'],
