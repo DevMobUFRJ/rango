@@ -18,6 +18,7 @@ class CustomTextFormField extends StatefulWidget {
   final Function(String) onChanged;
   final num numberOfLines;
   final int maxLength;
+  final TextCapitalization textCapitalization;
 
   CustomTextFormField({
     @required this.labelText,
@@ -34,6 +35,7 @@ class CustomTextFormField extends StatefulWidget {
     this.onChanged,
     this.numberOfLines = 1,
     this.maxLength,
+    this.textCapitalization = TextCapitalization.none,
   });
 
   @override
@@ -79,6 +81,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               onChanged: widget.onChanged,
               maxLength: widget.maxLength,
               minLines: 1,
+              textCapitalization: widget.textCapitalization,
               maxLines: widget.numberOfLines,
               obscureText: widget.isPassword != null && !widget.isPassword
                   ? false

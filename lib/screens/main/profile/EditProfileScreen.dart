@@ -149,6 +149,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                   CustomTextFormField(
                     labelText: 'Nome:',
+                    textCapitalization: TextCapitalization.sentences,
                     key: ValueKey('name'),
                     controller: _name,
                     validator: (String value) {
@@ -165,6 +166,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                   CustomTextFormField(
                     labelText: 'Descrição:',
+                    textCapitalization: TextCapitalization.sentences,
                     key: ValueKey('description'),
                     controller: _description,
                     numberOfLines: 3,
@@ -194,6 +196,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                   CustomTextFormField(
                     labelText: 'Pagamentos aceitos:',
+                    textCapitalization: TextCapitalization.sentences,
                     key: ValueKey('payments'),
                     focusNode: _paymentsFocusNode,
                     controller: _payments,

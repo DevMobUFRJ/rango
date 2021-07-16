@@ -26,7 +26,8 @@ class _HorariosScreenState extends State<HorariosScreen> {
   int _handleSelectedSchedule(TimeOfDay initialHorario) {
     String stringHorario = initialHorario.format(context);
     if (stringHorario.contains('AM') || stringHorario.contains("PM")) {
-      stringHorario = DateFormat("HH:mm").format(DateFormat("hh:mm a").parse(stringHorario));
+      stringHorario = DateFormat("HH:mm")
+          .format(DateFormat("hh:mm a").parse(stringHorario));
     }
     return int.parse(stringHorario.replaceAll(':', ''));
     //TODO Chamar firebase
@@ -54,7 +55,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
               Flexible(
                 flex: 2,
                 child: AutoSizeText(
-                  'Selecione as caixas referentes aos dias de funcionamento e então selecione os horários de abertura/fechamento',
+                  'Marque as caixas referentes aos dias de funcionamento e então escolha os horários de abertura/fechamento',
                   style: GoogleFonts.montserrat(fontSize: 30.nsp),
                 ),
               ),
