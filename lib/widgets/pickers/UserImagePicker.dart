@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -103,7 +104,6 @@ class _UserImagePickerState extends State<UserImagePicker> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
     return GestureDetector(
       onTap: _pickImage,
       child: Container(
@@ -113,16 +113,32 @@ class _UserImagePickerState extends State<UserImagePicker> {
             Stack(
               alignment: Alignment.center,
               children: <Widget>[
-                CircleAvatar(
-                  radius: 120.w,
-                  backgroundImage: _pickedImage != null
-                      ? FileImage(_pickedImage)
-                      : widget.image != null
-                          ? NetworkImage(widget.image)
-                          : NetworkImage(
-                              'https://ra.ac.ae/wp-content/uploads/2017/02/user-icon-placeholder.png'),
-                  backgroundColor: Theme.of(context).accentColor,
-                ),
+                if (_pickedImage != null)
+                  CircleAvatar(
+                    radius: 120.w,
+                    backgroundImage: FileImage(_pickedImage),
+                    backgroundColor: Theme.of(context).accentColor,
+                  ),
+                if (_pickedImage == null)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(120.w),
+                    child: CachedNetworkImage(
+                      width: 120,
+                      height: 120,
+                      imageUrl: widget.image,
+                      fit: BoxFit.cover,
+                      placeholder: (ctx, url) => CircleAvatar(
+                        backgroundColor: Theme.of(context).accentColor,
+                        backgroundImage:
+                            AssetImage('assets/imgs/user_placeholder.png'),
+                      ),
+                      errorWidget: (ctx, url, error) => CircleAvatar(
+                        backgroundColor: Theme.of(context).accentColor,
+                        backgroundImage:
+                            AssetImage('assets/imgs/user_placeholder.png'),
+                      ),
+                    ),
+                  ),
               ],
             ),
             if (widget.editText != null)

@@ -25,44 +25,35 @@ class UserPicture extends StatelessWidget {
               color: Color(0xFFF9B152),
             ),
           ),
-          if (picture != null)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(120),
-              child: Container(
-                width: 160,
-                height: 160,
-                color: Theme.of(context).accentColor,
-                child: CachedNetworkImage(
-                  fit: BoxFit.cover,
-                  imageUrl: picture,
-                  placeholder: (context, url) => FittedBox(
-                    fit: BoxFit.cover,
-                    child: CircleAvatar(
-                      backgroundColor: Theme.of(context).accentColor,
-                      backgroundImage: AssetImage('assets/imgs/user_placeholder.png'),
-                      radius: 80,
-                    ),
-                  ),
-                  errorWidget: (context, url, error) => FittedBox(
-                    fit: BoxFit.cover,
-                    child: CircleAvatar(
-                      backgroundColor: Theme.of(context).accentColor,
-                      backgroundImage: AssetImage('assets/imgs/user_placeholder.png'),
-                      radius: 80,
-                    ),
-                  ),
-                ),
-              ),
-            ),
           if (picture == null)
             FittedBox(
               fit: BoxFit.cover,
               child: CircleAvatar(
                 backgroundColor: Theme.of(context).accentColor,
                 backgroundImage: AssetImage('assets/imgs/user_placeholder.png'),
-                radius: 80,
+                radius: 150.w,
               ),
             ),
+          if (picture != null)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(120),
+              child: Container(
+                width: 150,
+                height: 150,
+                color: Theme.of(context).accentColor,
+                child: CachedNetworkImage(
+                  fit: BoxFit.cover,
+                  imageUrl: picture,
+                  placeholder: (context, url) => Image(
+                    image: AssetImage('assets/imgs/user_placeholder.png'),
+                  ),
+                  errorWidget: (context, url, error) => Image(
+                    image: AssetImage('assets/imgs/user_placeholder.png'),
+                  ),
+                ),
+              ),
+            ),
+          
         ],
       ),
     );
