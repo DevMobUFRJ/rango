@@ -111,8 +111,7 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                       _buildHeader(),
                       if (currentMeals.isEmpty) ...{
                         Container(
-                          margin: EdgeInsets.only(
-                              left: 15, right: 15, top: 0.15.hp),
+                          margin: EdgeInsets.only(left: 15, right: 15, top: 8),
                           child: AutoSizeText(
                             'Você ainda não configurou o cardápio do dia! Ative as quentinhas na lista abaixo ou crie uma nova.',
                             textAlign: TextAlign.center,
@@ -163,6 +162,8 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                           physics: NeverScrollableScrollPhysics(),
                           itemCount: meals.length,
                           itemBuilder: (context, index) {
+                            print(meals[index].id);
+
                             return Card(
                               color: meals[index].quantity == 0
                                   ? Colors.grey
