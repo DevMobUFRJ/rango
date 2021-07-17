@@ -32,6 +32,7 @@ Future<void> main() async {
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
     onSelectNotification: (String payload) async {
+      print('clicou');
       if (payload != null) {
         if (payload == 'historico') {
           _controller.jumpToTab(1);
@@ -54,6 +55,7 @@ Future<void> main() async {
     if ((message.data['payload'].toString().contains('chat') &&
             chatScreenKey.currentState == null) ||
         !message.data['payload'].toString().contains('chat')) {
+      print('vai mostrar');
       _showNotification(message.data);
     }
   });
@@ -144,7 +146,8 @@ class MyApp extends StatelessWidget {
 
           if (userSnapshot.hasData) {
             return FutureBuilder(
-                future: Repository.instance.getSellerFuture(userSnapshot.data.uid),
+                future:
+                    Repository.instance.getSellerFuture(userSnapshot.data.uid),
                 builder: (ctx,
                     AsyncSnapshot<DocumentSnapshot<Seller>> sellerSnapshot) {
                   if (!sellerSnapshot.hasData ||
