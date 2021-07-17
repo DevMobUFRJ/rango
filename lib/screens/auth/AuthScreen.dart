@@ -66,6 +66,8 @@ class _AuthScreenState extends State<AuthScreen> {
                   ),
                 );
                 userInstance.update(dataToUpdate);
+              } else if (oldDeviceToken == null) {
+                userInstance.update(dataToUpdate);
               }
             });
             Navigator.of(context).pop();
@@ -127,8 +129,7 @@ class _AuthScreenState extends State<AuthScreen> {
         setState(() => _isLoading = true);
         authResult = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
-        User user = _auth.currentUser;
-        user.updateDisplayName(name);
+        authResult.user.updateDisplayName(name);
 
         String url;
         if (image != null) {
