@@ -175,27 +175,10 @@ class ListaHorizontal extends StatelessWidget {
                           flex: 0,
                           child: Hero(
                             tag: meal.hashCode * tagM,
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Shimmer.fromColors(
-                                  baseColor: Color.fromRGBO(255, 175, 153, 1),
-                                  highlightColor: Colors.white,
-                                  child: Container(
-                                    color: Colors.white,
-                                    child: SizedBox(
-                                      height: 170.h,
-                                      width: 0.45.wp,
-                                    ),
-                                  ),
-                                ),
-                                Center(
-                                  child: Icon(
-                                    Icons.local_dining,
-                                    size: 55,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                            child:
+                                Stack(alignment: Alignment.center, children: [
+                              if (meal.picture != null) ...{
+                                _renderWithImage(),
                                 CachedNetworkImage(
                                   imageUrl: meal.picture,
                                   height: 170.h,
@@ -206,8 +189,10 @@ class ListaHorizontal extends StatelessWidget {
                                   errorWidget: (ctx, url, error) => Image(
                                       image: MemoryImage(kTransparentImage)),
                                 ),
-                              ],
-                            ),
+                              } else ...{
+                                _renderWithoutImage(ctx)
+                              },
+                            ]),
                           ),
                         ),
                         Flexible(
@@ -255,6 +240,54 @@ class ListaHorizontal extends StatelessWidget {
             ),
           ),
         )
+      ],
+    );
+  }
+
+  Widget _renderWithoutImage(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+          color: Theme.of(context).accentColor,
+          child: SizedBox(
+            height: 170.h,
+            width: 0.45.wp,
+          ),
+        ),
+        Center(
+          child: Icon(
+            Icons.local_dining,
+            size: 55,
+            color: Colors.white,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _renderWithImage() {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Shimmer.fromColors(
+          baseColor: Color.fromRGBO(255, 175, 153, 1),
+          highlightColor: Colors.white,
+          child: Container(
+            color: Colors.white,
+            child: SizedBox(
+              height: 170.h,
+              width: 0.45.wp,
+            ),
+          ),
+        ),
+        Center(
+          child: Icon(
+            Icons.local_dining,
+            size: 55,
+            color: Colors.white,
+          ),
+        ),
       ],
     );
   }

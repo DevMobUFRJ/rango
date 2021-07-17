@@ -76,31 +76,21 @@ class SellerGridVertical extends StatelessWidget {
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
-                            Shimmer.fromColors(
-                              baseColor: Color.fromRGBO(255, 175, 153, 1),
-                              highlightColor: Colors.white,
-                              child: Container(
+                            if (sellers[index].logo != null) ...{
+                              _renderWithImage(),
+                              CachedNetworkImage(
+                                imageUrl: sellers[index].logo,
                                 height: 330.h,
-                                color: Colors.white,
+                                width: 330.w,
+                                fit: BoxFit.cover,
+                                placeholder: (ctx, url) => Image(
+                                    image: MemoryImage(kTransparentImage)),
+                                errorWidget: (ctx, url, error) => Image(
+                                    image: MemoryImage(kTransparentImage)),
                               ),
-                            ),
-                            Center(
-                              child: Icon(
-                                Icons.store,
-                                size: 75,
-                                color: Colors.white,
-                              ),
-                            ),
-                            CachedNetworkImage(
-                              imageUrl: sellers[index].logo,
-                              height: 330.h,
-                              width: 330.w,
-                              fit: BoxFit.cover,
-                              placeholder: (ctx, url) =>
-                                  Image(image: MemoryImage(kTransparentImage)),
-                              errorWidget: (ctx, url, error) =>
-                                  Image(image: MemoryImage(kTransparentImage)),
-                            ),
+                            } else ...{
+                              _renderWithoutImage(ctx)
+                            }
                           ],
                         ),
                       ),
@@ -138,6 +128,48 @@ class SellerGridVertical extends StatelessWidget {
                 ),
               ),
             ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _renderWithImage() {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Shimmer.fromColors(
+          baseColor: Color.fromRGBO(255, 175, 153, 1),
+          highlightColor: Colors.white,
+          child: Container(
+            height: 330.h,
+            color: Colors.white,
+          ),
+        ),
+        Center(
+          child: Icon(
+            Icons.store,
+            size: 75,
+            color: Colors.white,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _renderWithoutImage(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+          height: 330.h,
+          color: Theme.of(context).accentColor,
+        ),
+        Center(
+          child: Icon(
+            Icons.store,
+            size: 75,
+            color: Colors.white,
           ),
         ),
       ],

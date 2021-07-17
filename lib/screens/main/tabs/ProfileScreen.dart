@@ -12,6 +12,7 @@ import 'package:rango/screens/main/profile/ProfileSettings.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/widgets/user/UserPicture.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Client usuario;
@@ -268,26 +269,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     borderRadius: BorderRadius.circular(
                                       50.nsp,
                                     ),
-                                    child: CachedNetworkImage(
-                                        imageUrl: seller.logo,
-                                        fit: BoxFit.cover,
-                                        width: 100.nsp,
-                                        height: 100.nsp,
-                                        placeholder: (ctx, url) => CircleAvatar(
-                                              radius: ScreenUtil().setSp(50),
-                                              backgroundColor: Colors.white,
-                                              backgroundImage: AssetImage(
-                                                'assets/imgs/user_placeholder.png',
-                                              ),
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                              50.nsp,
                                             ),
-                                        errorWidget: (ctx, url, error) =>
-                                            CircleAvatar(
-                                              radius: ScreenUtil().setSp(50),
-                                              backgroundColor: Colors.white,
-                                              backgroundImage: AssetImage(
-                                                'assets/imgs/user_placeholder.png',
-                                              ),
-                                            )),
+                                            color: Colors.white,
+                                          ),
+                                          width: 50,
+                                          height: 50,
+                                        ),
+                                        Center(
+                                          child: Container(
+                                            child: Icon(
+                                              Icons.store,
+                                              size: 32,
+                                              color:
+                                                  Theme.of(context).accentColor,
+                                            ),
+                                          ),
+                                        ),
+                                        if (seller.logo != null)
+                                          CachedNetworkImage(
+                                            imageUrl: seller.logo,
+                                            fit: BoxFit.cover,
+                                            width: 100.nsp,
+                                            height: 100.nsp,
+                                            placeholder: (ctx, url) => Image(
+                                                image: MemoryImage(
+                                                    kTransparentImage)),
+                                            errorWidget: (ctx, url, error) =>
+                                                Image(
+                                                    image: MemoryImage(
+                                                        kTransparentImage)),
+                                          ),
+                                      ],
+                                    ),
                                   ),
                                   SizedBox(width: 0.03.wp),
                                   Container(

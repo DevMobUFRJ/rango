@@ -114,11 +114,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
                 if (_pickedImage != null)
                   CircleAvatar(
                     radius: 120.w,
-                    backgroundImage: _pickedImage != null
-                        ? FileImage(_pickedImage)
-                        : widget.image != null
-                            ? NetworkImage(widget.image)
-                            : AssetImage('assets/imgs/user_placeholder.png'),
+                    backgroundImage: FileImage(_pickedImage),
                     backgroundColor: Theme.of(context).accentColor,
                   ),
                 if (_pickedImage == null)
@@ -141,15 +137,6 @@ class _UserImagePickerState extends State<UserImagePicker> {
                       ),
                     ),
                   ),
-                // CircleAvatar(
-                //   radius: 120.w,
-                //   backgroundImage: _pickedImage != null
-                //       ? FileImage(_pickedImage)
-                //       : widget.image != null
-                //           ? NetworkImage(widget.image)
-                //           : AssetImage('assets/imgs/user_placeholder.png'),
-                //   backgroundColor: Theme.of(context).accentColor,
-                // ),
               ],
             ),
             if (widget.editText != null)

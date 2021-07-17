@@ -32,7 +32,7 @@ class _UserPictureState extends State<UserPicture> {
               color: Color(0xFFF9B152),
             ),
           ),
-          if (widget.picture == null)
+          if (widget.picture == null) ...{
             FittedBox(
               fit: BoxFit.cover,
               child: CircleAvatar(
@@ -41,7 +41,7 @@ class _UserPictureState extends State<UserPicture> {
                 radius: 150.w,
               ),
             ),
-          if (widget.picture != null)
+          } else ...{
             ClipRRect(
               borderRadius: BorderRadius.circular(120),
               child: Container(
@@ -60,6 +60,7 @@ class _UserPictureState extends State<UserPicture> {
                 ),
               ),
             ),
+          }
         ],
       ),
     );
