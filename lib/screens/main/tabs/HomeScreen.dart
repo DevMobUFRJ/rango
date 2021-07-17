@@ -515,18 +515,20 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         meals.removeWhere(
           (meal) => !mealIds.contains(meal.mealId),
         );
-
-        return Column(
-          children: [
-            ListaHorizontal(
-              title: 'Peça Novamente',
-              tagM: Random().nextDouble(),
-              meals: meals,
-              controller: widget.controller,
-            ),
-            SizedBox(height: 0.02.hp),
-          ],
-        );
+        if (meals.isNotEmpty) {
+          return Column(
+            children: [
+              ListaHorizontal(
+                title: 'Peça Novamente',
+                tagM: Random().nextDouble(),
+                meals: meals,
+                controller: widget.controller,
+              ),
+              SizedBox(height: 0.02.hp),
+            ],
+          );
+        } else
+          return Container();
       },
     );
   }
