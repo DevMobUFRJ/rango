@@ -71,7 +71,7 @@ class GridHorizontal extends StatelessWidget {
                         ),
                         Container(
                           height: 170.h,
-                          width: 0.5.wp,
+                          width: 0.6.wp,
                           child: meal.picture != null
                               ? CachedNetworkImage(
                                   placeholder: (context, url) => Image(
