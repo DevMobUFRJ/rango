@@ -71,12 +71,14 @@ void _showPaymentsDialog(Seller seller, BuildContext context) async {
   await showDialog(
     context: context,
     builder: (BuildContext ctx) => AlertDialog(
-      title: Text('Pagamentos aceitos',
-          style: GoogleFonts.montserrat(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 38.ssp,
-          )),
+      title: Text(
+        'Pagamentos aceitos',
+        style: GoogleFonts.montserrat(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 38.ssp,
+        ),
+      ),
       content: Text(seller.paymentMethods,
           style: GoogleFonts.montserrat(
             color: Colors.white,
