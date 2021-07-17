@@ -32,18 +32,18 @@ Future<void> main() async {
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
     onSelectNotification: (String payload) async {
-      print('clicou');
       if (payload != null) {
-        if (payload == 'historico') {
+        if (payload == 'orders') {
+          _controller.jumpToTab(0);
+        } else if (payload == 'meals') {
           _controller.jumpToTab(1);
         } else if (payload.contains('chat')) {
           String clientId = payload.split('/')[1];
           String clientName = payload.split('/')[2];
-          pushNewScreenWithRouteSettings(
+          pushNewScreen(
             currentKey.currentState.context,
             withNavBar: false,
             screen: ChatScreen(clientId, clientName, key: chatScreenKey),
-            settings: RouteSettings(name: 'chatScreen'),
           );
         }
       }
@@ -55,7 +55,6 @@ Future<void> main() async {
     if ((message.data['payload'].toString().contains('chat') &&
             chatScreenKey.currentState == null) ||
         !message.data['payload'].toString().contains('chat')) {
-      print('vai mostrar');
       _showNotification(message.data);
     }
   });

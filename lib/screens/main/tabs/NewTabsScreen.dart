@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rango/main.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/screens/main/tabs/ManageMealsScreen.dart';
 import 'package:rango/screens/main/tabs/HomeScreen.dart';
@@ -23,14 +24,12 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    PersistentTabController _controller;
-    _controller = PersistentTabController(initialIndex: 0);
     return SafeArea(
       top: false,
       left: false,
       right: false,
       child: PersistentTabView(
-        controller: _controller,
+        controller: widget.controller,
         navBarStyle: NavBarStyle.style6,
         confineInSafeArea: true,
         backgroundColor: Theme.of(context).backgroundColor,
@@ -49,7 +48,7 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
           duration: Duration(milliseconds: 180),
         ),
         screens: <Widget>[
-          HomeScreen(widget.seller),
+          HomeScreen(widget.seller, key: currentKey),
           ManageMealsScreen(widget.seller),
           ProfileScreen(widget.seller),
         ],
