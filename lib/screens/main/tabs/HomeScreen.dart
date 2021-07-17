@@ -15,7 +15,7 @@ import 'package:rango/widgets/home/OrderContainer.dart';
 class HomeScreen extends StatefulWidget {
   final Seller usuario;
 
-  HomeScreen(this.usuario);
+  HomeScreen(this.usuario, {Key key}) : super(key: key);
   static const String name = 'homeScreen';
 
   @override

@@ -33,16 +33,17 @@ Future<void> main() async {
     initializationSettings,
     onSelectNotification: (String payload) async {
       if (payload != null) {
-        if (payload == 'historico') {
+        if (payload == 'orders') {
+          _controller.jumpToTab(0);
+        } else if (payload == 'meals') {
           _controller.jumpToTab(1);
         } else if (payload.contains('chat')) {
           String clientId = payload.split('/')[1];
           String clientName = payload.split('/')[2];
-          pushNewScreenWithRouteSettings(
+          pushNewScreen(
             currentKey.currentState.context,
             withNavBar: false,
             screen: ChatScreen(clientId, clientName, key: chatScreenKey),
-            settings: RouteSettings(name: 'chatScreen'),
           );
         }
       }
@@ -144,7 +145,8 @@ class MyApp extends StatelessWidget {
 
           if (userSnapshot.hasData) {
             return FutureBuilder(
-                future: Repository.instance.getSellerFuture(userSnapshot.data.uid),
+                future:
+                    Repository.instance.getSellerFuture(userSnapshot.data.uid),
                 builder: (ctx,
                     AsyncSnapshot<DocumentSnapshot<Seller>> sellerSnapshot) {
                   if (!sellerSnapshot.hasData ||

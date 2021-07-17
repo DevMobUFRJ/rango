@@ -106,7 +106,6 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                     .toList();
 
                 return Column(
-                  mainAxisSize: MainAxisSize.min,
                   children: [
                     _buildHeader(),
                     if (currentMeals.isEmpty) ...{
@@ -139,7 +138,7 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                             ),
                           ),
                           Container(
-                            height: 160,
+                            constraints: BoxConstraints(maxHeight: 280.h),
                             child: GridHorizontal(
                               sellerId: seller.id,
                               currentMeals: currentMeals,
@@ -149,8 +148,8 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                       )
                     },
                     _buildButtons(seller.id),
-                    Container(
-                      height: 0.42.hp,
+                    Flexible(
+                      flex: 4,
                       child: Scrollbar(
                         child: ListView.builder(
                           padding: EdgeInsets.only(top: 0),
@@ -195,33 +194,54 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                                             }
                                             try {
                                               if (value) {
-                                                Repository.instance.addMealToCurrent(meals[index].id, seller.id);
+                                                Repository.instance
+                                                    .addMealToCurrent(
+                                                        meals[index].id,
+                                                        seller.id);
                                               } else {
-                                                Repository.instance.removeMealFromCurrent(meals[index].id, seller.id);
+                                                Repository.instance
+                                                    .removeMealFromCurrent(
+                                                        meals[index].id,
+                                                        seller.id);
                                               }
                                             } catch (e) {
                                               print(e);
                                             }
                                           }),
                                       IconButton(
-                                        onPressed: seller.currentMeals[meals[index].id] == null
-                                            || meals[index].quantity == 0
+                                        onPressed: seller.currentMeals[
+                                                        meals[index].id] ==
+                                                    null ||
+                                                meals[index].quantity == 0
                                             ? null
                                             : () async {
                                                 try {
-                                                  if (seller.currentMeals[meals[index].id].featured == false) {
+                                                  if (seller
+                                                          .currentMeals[
+                                                              meals[index].id]
+                                                          .featured ==
+                                                      false) {
                                                     var featuredMeals = seller
                                                         .currentMeals.values
-                                                        .where((item) => item.featured == true)
+                                                        .where((item) =>
+                                                            item.featured ==
+                                                            true)
                                                         .length;
-                                                    if (featuredMeals >= maxFeaturedMeals) {
-                                                      ScaffoldMessenger.of(context).showSnackBar(
+                                                    if (featuredMeals >=
+                                                        maxFeaturedMeals) {
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
                                                         SnackBar(
-                                                          duration: Duration(seconds: 2),
-                                                          backgroundColor: Theme.of(context).errorColor,
+                                                          duration: Duration(
+                                                              seconds: 2),
+                                                          backgroundColor:
+                                                              Theme.of(context)
+                                                                  .errorColor,
                                                           content: Text(
                                                             'Você pode selecionar até $maxFeaturedMeals quentinhas em destaque',
-                                                            textAlign: TextAlign.center,
+                                                            textAlign: TextAlign
+                                                                .center,
                                                           ),
                                                         ),
                                                       );
@@ -229,19 +249,31 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                                                     }
                                                   }
 
-                                                  Repository.instance.toggleMealFeatured(meals[index].id, seller);
+                                                  Repository.instance
+                                                      .toggleMealFeatured(
+                                                          meals[index].id,
+                                                          seller);
                                                 } catch (e) {
                                                   print(e);
                                                 }
                                               },
                                         icon: Icon(
-                                            seller.currentMeals[meals[index].id] != null
-                                            && seller.currentMeals[meals[index].id].featured
+                                            seller.currentMeals[
+                                                            meals[index].id] !=
+                                                        null &&
+                                                    seller
+                                                        .currentMeals[
+                                                            meals[index].id]
+                                                        .featured
                                                 ? Icons.star
                                                 : Icons.star_border,
-                                            color: seller.currentMeals[meals[index].id] == null
+                                            color: seller.currentMeals[
+                                                        meals[index].id] ==
+                                                    null
                                                 ? Color(0xFFF9B152)
-                                                : Colors.white),
+                                                : meals[index].quantity == 0
+                                                    ? Colors.grey
+                                                    : Colors.white),
                                       ),
                                       IconButton(
                                         onPressed: () => pushNewScreen(context,
