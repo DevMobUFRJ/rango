@@ -67,6 +67,44 @@ void _showShiftDialog(Seller seller, BuildContext context) async {
   );
 }
 
+void _showPaymentsDialog(Seller seller, BuildContext context) async {
+  await showDialog(
+    context: context,
+    builder: (BuildContext ctx) => AlertDialog(
+      title: Text('Pagamentos aceitos',
+          style: GoogleFonts.montserrat(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 38.ssp,
+          )),
+      content: Text(seller.paymentMethods,
+          style: GoogleFonts.montserrat(
+            color: Colors.white,
+            fontSize: 32.nsp,
+          )),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(ctx).pop(),
+          child: Text(
+            'Fechar',
+            style: GoogleFonts.montserrat(
+              decoration: TextDecoration.underline,
+              color: Colors.white,
+              fontSize: 34.nsp,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        )
+      ],
+      backgroundColor: Color(0xFFF9B152),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      insetPadding: EdgeInsets.symmetric(horizontal: 0.1.wp),
+    ),
+  );
+}
+
 String _formatOpeningAndClosingTime(String openingTime, String closingTime) {
   String openingTimePadded = openingTime.padLeft(4, '0');
   String closingTimePadded = closingTime.padLeft(4, '0');
@@ -186,15 +224,20 @@ class _SellerProfileState extends State<SellerProfile> {
               if (seller.paymentMethods != null)
                 Flexible(
                   flex: 0,
-                  child: Container(
-                    margin: EdgeInsets.only(top: 8),
-                    constraints: BoxConstraints(maxWidth: 0.7.wp),
-                    child: AutoSizeText(
-                      'Pagamentos aceitos: ${seller.paymentMethods}',
-                      textAlign: TextAlign.center,
-                      maxLines: 4,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.montserrat(fontSize: 30.nsp),
+                  child: GestureDetector(
+                    onTap: () => _showPaymentsDialog(
+                      seller,
+                      context,
+                    ),
+                    child: Container(
+                      margin: EdgeInsets.only(top: 8),
+                      child: Text(
+                        'Pagamentos aceitos',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 30.nsp,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
                     ),
                   ),
                 ),
