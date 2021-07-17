@@ -23,12 +23,14 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-  String _telefoneErrorMessage;
   String _nameErrorMessage;
+  String _emailErrorMessage;
+  String _telefoneErrorMessage;
   String _passwordErrorMessage;
   String _confirmPasswordErrorMessage;
 
   TextEditingController _name = TextEditingController();
+  TextEditingController _email = TextEditingController();
   TextEditingController _pass = TextEditingController();
   TextEditingController _confirmPass = TextEditingController();
   TextEditingController _phone = TextEditingController();
@@ -36,8 +38,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   File _userImageFile;
   bool _loading = false;
 
-  final _focusNodeTel = FocusNode();
   final _focusNodeName = FocusNode();
+  final _focusNodeEmail = FocusNode();
+  final _focusNodeTel = FocusNode();
   final _focusNodePass = FocusNode();
   final _focusNodeConfirmPass = FocusNode();
 
@@ -52,18 +55,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (widget.user.name != null) {
         _name.text = widget.user.name;
       }
+      _email.text = FirebaseAuth.instance.currentUser.email;
     });
     super.initState();
   }
 
   void _submit(BuildContext context) async {
     final isValid = _formKey.currentState.validate();
+    final user = FirebaseAuth.instance.currentUser;
     FocusScope.of(context).unfocus();
     if (isValid &&
         _telefoneErrorMessage == null &&
         _passwordErrorMessage == null &&
         _nameErrorMessage == null &&
-        _confirmPasswordErrorMessage == null) {
+        _confirmPasswordErrorMessage == null &&
+        _emailErrorMessage == null) {
       bool changeHasMade = false;
       _formKey.currentState.save();
       setState(() => _loading = true);
@@ -75,8 +81,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         if (_name != null && _name.text != widget.user.name) {
           dataToUpdate['name'] = _name.text;
         }
+        if (_email != null && _email.text != user.email) {
+          dataToUpdate['email'] = _email.text;
+          await user.updateEmail(_email.text);
+          changeHasMade = true;
+        }
         if (_userImageFile != null) {
-          final user = FirebaseAuth.instance.currentUser;
           final ref = FirebaseStorage.instance
               .ref()
               .child('user_image')
@@ -99,25 +109,36 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           changeHasMade = true;
         }
         if (changeHasMade) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(
-                SnackBar(
-                  duration: Duration(seconds: 2),
-                  backgroundColor: Theme.of(context).accentColor,
-                  content: Text(
-                    'Mudanças realizadas',
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              )
-              .closed
-              .then((value) => Navigator.of(context).pop());
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              duration: Duration(seconds: 2),
+              backgroundColor: Theme.of(context).accentColor,
+              content: Text(
+                'Mudanças realizadas',
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+          setState(() {
+            _loading = false;
+          });
         }
       } on FirebaseAuthException catch (error) {
+        setState(() => _loading = false);
+        print(error);
         String errorText;
         switch (error.code) {
           case 'network-request-failed':
             errorText = networkErrorMessage;
+            break;
+          case 'invalid-email':
+            errorText = invalidEmailErrorMessage;
+            break;
+          case 'email-already-in-use':
+            errorText = emailAlreadyInUseErrorMessage;
+            break;
+          case 'requires-recent-login':
+            errorText = requiresRecentLoginErrorMessage;
             break;
           default:
             errorText = defaultErrorMessage;
@@ -211,6 +232,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               errorText: _nameErrorMessage,
                               textInputAction: TextInputAction.next,
                               onSaved: (value) => _name.text = value,
+                              onFieldSubmitted: (_) => FocusScope.of(context)
+                                  .requestFocus(_focusNodeTel),
+                            ),
+                          ),
+                          Flexible(
+                            flex: 2,
+                            child: CustomTextFormField(
+                              labelText: 'Email:',
+                              focusNode: _focusNodeEmail,
+                              key: ValueKey('email'),
+                              controller: _email,
+                              validator: (String value) {
+                                if (value.trim() == '') {
+                                  setState(() => _emailErrorMessage =
+                                      'Email não pode ser vaizo');
+                                } else {
+                                  setState(() => _nameErrorMessage = null);
+                                }
+                                return null;
+                              },
+                              errorText: _emailErrorMessage,
+                              textInputAction: TextInputAction.next,
+                              onSaved: (value) => _email.text = value,
                               onFieldSubmitted: (_) => FocusScope.of(context)
                                   .requestFocus(_focusNodeTel),
                             ),
