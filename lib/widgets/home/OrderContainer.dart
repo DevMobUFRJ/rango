@@ -1,14 +1,20 @@
+import 'dart:convert';
+
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:ui';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:rango/models/client.dart';
 import 'package:rango/models/order.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/main/home/ClientProfile.dart';
+import 'package:rango/utils/constants.dart';
 import 'package:rango/utils/string_formatters.dart';
+import 'package:http/http.dart' as http;
 
 class OrderContainer extends StatefulWidget {
   final Order pedido;
@@ -22,6 +28,7 @@ class OrderContainer extends StatefulWidget {
 
 class _OrderContainerState extends State<OrderContainer>
     with TickerProviderStateMixin {
+  Client _client;
   AnimationController swipeRightController;
   AnimationController swipeLeftController;
   Animatable swipeAnimatable;
@@ -29,7 +36,7 @@ class _OrderContainerState extends State<OrderContainer>
   @override
   void initState() {
     super.initState();
-
+    _getClient(widget.pedido.sellerId);
     swipeRightController = AnimationController(
       duration: Duration(milliseconds: 400),
       vsync: this,
@@ -156,12 +163,16 @@ class _OrderContainerState extends State<OrderContainer>
                                               await Repository.instance
                                                   .reserveOrderTransaction(
                                                       widget.pedido);
+                                              _showOrderUpdateNotification(
+                                                  'reservated');
                                             } else if (!reserved &&
                                                 widget.pedido.status ==
                                                     'reserved') {
                                               await Repository.instance
                                                   .undoReserveOrderTransaction(
                                                       widget.pedido);
+                                              _showOrderUpdateNotification(
+                                                  'undoReservate');
                                             }
                                           } catch (e) {
                                             ScaffoldMessenger.of(context)
@@ -233,6 +244,9 @@ class _OrderContainerState extends State<OrderContainer>
                                                 await Repository.instance
                                                     .sellOrder(
                                                         widget.pedido.id);
+
+                                                _showOrderUpdateNotification(
+                                                    'sold');
                                               });
                                             } else if (!sold &&
                                                 widget.pedido.status ==
@@ -244,6 +258,9 @@ class _OrderContainerState extends State<OrderContainer>
                                                     .undoSellOrder(
                                                         widget.pedido.id);
                                                 widget.undoSellOrderCallback();
+
+                                                _showOrderUpdateNotification(
+                                                    'undoSold');
                                               });
                                             }
                                           } catch (e) {
@@ -304,6 +321,77 @@ class _OrderContainerState extends State<OrderContainer>
     );
   }
 
+  Future<void> _getClient(String sellerId) async {
+    Client client = await Repository.instance.clientsRef
+        .doc(widget.pedido.clientId)
+        .get()
+        .then((value) => value.data());
+    setState(() => _client = client);
+  }
+
+  void _showOrderUpdateNotification(String update) async {
+    String titleMessage;
+    String descriptionMessage;
+    String sellerName = FirebaseAuth.instance.currentUser.displayName;
+    String mealName = widget.pedido.mealName;
+    switch (update) {
+      case 'reservated':
+        titleMessage = 'Sua reserva foi confirmada!';
+        descriptionMessage = '$sellerName confirmou sua reserva de $mealName';
+        break;
+      case 'sold':
+        titleMessage = 'Sua reserva foi finalizada!';
+        descriptionMessage =
+            '$sellerName marcou sua reserva de $mealName como vendida!';
+        break;
+      case 'undoReservate':
+        titleMessage = 'Sua reserva foi desconfirmada!';
+        descriptionMessage =
+            '$sellerName desconfirmou sua reserva de $mealName';
+        break;
+      case 'undoSold':
+        titleMessage = 'Sua reserva foi marcada como não vendida!';
+        descriptionMessage =
+            '$sellerName desmarcou que sua reserva de $mealName foi vendida';
+        break;
+      case 'cancelled':
+        titleMessage = 'Sua reserva foi cancelada!';
+        descriptionMessage = '$sellerName cancelou sua reserva de $mealName';
+        break;
+      default:
+        titleMessage = 'Sua reserva teve atualização!';
+        descriptionMessage =
+            '$sellerName atualizou o estado da sua reserva de $mealName';
+        break;
+    }
+    try {
+      var data = (<String, String>{
+        'id': '2',
+        'channelId': '2',
+        'channelName': 'Pedidos',
+        'channelDescription': 'Canal usado para notificações de pedidos',
+        'status': 'done',
+        'description': descriptionMessage,
+        'payload': 'orders',
+        'title': titleMessage,
+      });
+      await http.post(
+        Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        headers: <String, String>{
+          'Authorization': 'key=$firabaseMessagingAuthorizationKey',
+          'content-type': 'application/json; charset=UTF-8'
+        },
+        body: jsonEncode(<String, dynamic>{
+          'priority': 'high',
+          'data': data,
+          'to': _client.deviceToken,
+        }),
+      );
+    } catch (error) {
+      print(error);
+    }
+  }
+
   void _cancelOrder() {
     showDialog(
       context: context,
@@ -337,6 +425,7 @@ class _OrderContainerState extends State<OrderContainer>
               Navigator.of(ctx).pop();
               try {
                 await Repository.instance.cancelOrder(widget.pedido);
+                _showOrderUpdateNotification('cancelled');
               } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
