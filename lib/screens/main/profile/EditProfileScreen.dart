@@ -198,6 +198,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               focusNode: _focusNodeName,
                               key: ValueKey('name'),
                               controller: _name,
+                              textCapitalization: TextCapitalization.sentences,
                               validator: (String value) {
                                 if (value.trim() == '') {
                                   setState(() => _nameErrorMessage =

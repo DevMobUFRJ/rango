@@ -49,6 +49,7 @@ class _NewMessageState extends State<NewMessage> {
               child: TextField(
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
+                textCapitalization: TextCapitalization.sentences,
                 controller: _controller,
                 decoration: InputDecoration(
                   hintText: 'Digite aqui...',
