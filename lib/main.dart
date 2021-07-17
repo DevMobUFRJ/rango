@@ -143,8 +143,8 @@ class MyApp extends StatelessWidget {
           }
 
           if (userSnapshot.hasData) {
-            return StreamBuilder(
-                stream: Repository.instance.getSeller(userSnapshot.data.uid),
+            return FutureBuilder(
+                future: Repository.instance.getSellerFuture(userSnapshot.data.uid),
                 builder: (ctx,
                     AsyncSnapshot<DocumentSnapshot<Seller>> sellerSnapshot) {
                   if (!sellerSnapshot.hasData ||

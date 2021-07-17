@@ -25,10 +25,10 @@ class _ManageMealState extends State<ManageMeal> {
   void _pickedImage(File image) => setState(() => _mealImageFile = image);
 
   bool _loading = false;
-  TextEditingController _mealName;
-  MoneyMaskedTextController _mealValue;
-  TextEditingController _mealDescription;
-  TextEditingController _mealQuantity;
+  TextEditingController _mealName = TextEditingController();
+  MoneyMaskedTextController _mealValue = MoneyMaskedTextController(leftSymbol: 'R\$ ');
+  TextEditingController _mealDescription = TextEditingController();
+  TextEditingController _mealQuantity = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -39,13 +39,7 @@ class _ManageMealState extends State<ManageMeal> {
         leftSymbol: 'R\$ ',
       );
       _mealDescription = TextEditingController(text: widget.meal.description);
-      _mealQuantity =
-          TextEditingController(text: widget.meal.quantity.toString());
-    } else {
-      _mealName = TextEditingController();
-      _mealValue = MoneyMaskedTextController(leftSymbol: 'R\$ ');
-      _mealDescription = TextEditingController();
-      _mealQuantity = TextEditingController();
+      _mealQuantity = TextEditingController(text: widget.meal.quantity.toString());
     }
     return Scaffold(
       appBar: AppBar(
@@ -256,6 +250,7 @@ class _ManageMealState extends State<ManageMeal> {
                           : AutoSizeText(
                               "Confirmar",
                               style: GoogleFonts.montserrat(
+                                color: Colors.white,
                                 fontSize: 34.nsp,
                               ),
                             ),
@@ -281,7 +276,7 @@ class _ManageMealState extends State<ManageMeal> {
                           "Excluir",
                           style: GoogleFonts.montserrat(
                             fontSize: 34.nsp,
-                            color: _loading ? Colors.white : null,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -300,18 +295,38 @@ class _ManageMealState extends State<ManageMeal> {
     try {
       Map<String, dynamic> dataToUpdate = {};
 
-      if (_mealName.toString() != null) {
+      if (_mealName.text != '') {
         dataToUpdate['name'] = _mealName.text;
+      } else {
+        _showSnackbar(context, true, 'Você deve inserir o nome do prato.');
+        setState(() => _loading = false);
+        return;
       }
-      if (_mealDescription.toString() != null) {
+
+      if (_mealDescription.text != '') {
         dataToUpdate['description'] = _mealDescription.text;
+      } else {
+        _showSnackbar(context, true, 'Você deve inserir a descrição do prato.');
+        setState(() => _loading = false);
+        return;
       }
+
       if (_mealValue != null && _mealValue.numberValue != 0) {
         dataToUpdate['price'] = (_mealValue.numberValue * 100).round();
+      } else {
+        _showSnackbar(context, true, 'Você deve inserir o preço do prato.');
+        setState(() => _loading = false);
+        return;
       }
+
       if (_mealQuantity != null && _mealQuantity.text != '') {
         dataToUpdate['quantity'] = int.parse(_mealQuantity.text);
+      } else {
+        _showSnackbar(context, true, 'Você deve inserir a quantidade.');
+        setState(() => _loading = false);
+        return;
       }
+
       if (widget.meal == null) {
         dataToUpdate['createdAt'] = DateTime.now();
       }
@@ -347,31 +362,29 @@ class _ManageMealState extends State<ManageMeal> {
       }
 
       FocusScope.of(context).unfocus();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          duration: Duration(seconds: 2),
-          backgroundColor: Theme.of(context).accentColor,
-          content: Text(
-            'Quentinha salva com sucesso',
-            textAlign: TextAlign.center,
-          ),
-        ),
-      );
+      _showSnackbar(context, false, 'Quentinha salva com sucesso');
       setState(() => _loading = false);
       Navigator.of(context).pop();
     } catch (e) {
       setState(() => _loading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Theme.of(context).errorColor,
-          content: Text(
-            'Erro ao adicionar quentinha.',
-            textAlign: TextAlign.center,
-          ),
-        ),
-      );
+      _showSnackbar(context, true, 'Erro ao adicionar quentinha.');
       print(e);
     }
+  }
+
+  void _showSnackbar(context, bool error, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: Duration(seconds: 2),
+        backgroundColor: error == true
+            ? Theme.of(context).errorColor
+            : Theme.of(context).accentColor,
+        content: Text(
+          message,
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
   }
 
   void _showDeleteDialog(context, sellerId, mealId) async {
@@ -433,29 +446,10 @@ class _ManageMealState extends State<ManageMeal> {
                         FocusScope.of(context).unfocus();
                         Navigator.of(ctx).pop();
                         Navigator.of(context).pop();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            duration: Duration(seconds: 2),
-                            backgroundColor: Theme.of(context).accentColor,
-                            content: Text(
-                              "Quentinha excluída com sucesso.",
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        );
+                        _showSnackbar(context, false, 'Quentinha excluída com sucesso.');
                       } catch (e) {
                         Navigator.of(context).pop();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            duration: Duration(seconds: 2),
-                            padding: EdgeInsets.only(bottom: 60),
-                            content: Text(
-                              e.toString(),
-                              textAlign: TextAlign.center,
-                            ),
-                            backgroundColor: Theme.of(context).errorColor,
-                          ),
-                        );
+                        _showSnackbar(context, true, e.toString());
                       }
                     },
                     child: Text(
