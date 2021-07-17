@@ -108,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         right: 0.1.wp,
                       ),
                       alignment: Alignment.topLeft,
-                      child: closedOrdersSnapshot.data.docs.isEmpty &&
+                      child: closedOrdersSnapshot.data.docs.isNotEmpty &&
                               openOrdersSnapshot.data.docs.isEmpty
                           ? SizedBox()
                           : AutoSizeText(
