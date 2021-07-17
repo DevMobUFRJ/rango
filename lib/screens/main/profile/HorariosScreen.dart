@@ -2,25 +2,23 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rango/models/seller.dart';
 import 'package:rango/models/shift.dart';
 import 'package:intl/intl.dart';
+import 'package:rango/resources/repository.dart';
 import 'package:rango/widgets/profile/HorarioRow.dart';
 
 class HorariosScreen extends StatefulWidget {
+  final Seller usuario;
+
+  HorariosScreen(this.usuario);
+
   @override
   _HorariosScreenState createState() => _HorariosScreenState();
 }
 
 class _HorariosScreenState extends State<HorariosScreen> {
-  Shift _horariosFuncionamento = Shift(
-    friday: Weekday(open: true, openingTime: 1000, closingTime: 1800),
-    monday: Weekday(open: true, openingTime: 1000, closingTime: 1800),
-    saturday: Weekday(open: false),
-    sunday: Weekday(open: false),
-    thursday: Weekday(open: true, openingTime: 1200, closingTime: 1800),
-    tuesday: Weekday(open: true, openingTime: 1000, closingTime: 1800),
-    wednesday: Weekday(open: true, openingTime: 1200, closingTime: 1800),
-  );
+  Shift _horariosFuncionamento;
   final _formKey = GlobalKey<FormState>();
 
   int _handleSelectedSchedule(TimeOfDay initialHorario) {
@@ -35,6 +33,8 @@ class _HorariosScreenState extends State<HorariosScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _horariosFuncionamento = widget.usuario.shift;
+
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
@@ -55,7 +55,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
               Flexible(
                 flex: 2,
                 child: AutoSizeText(
-                  'Marque as caixas referentes aos dias de funcionamento e então escolha os horários de abertura/fechamento',
+                  'Marque as caixas referentes aos dias de funcionamento e então escolha os horários de abertura/fechamento.',
                   style: GoogleFonts.montserrat(fontSize: 30.nsp),
                 ),
               ),
@@ -144,7 +144,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                 ),
               ),
               HorarioRow(
-                day: 'Ter',
+                day: 'Sáb',
                 switchOpen: (value) => setState(
                     () => _horariosFuncionamento.saturday.open = value),
                 horarioDia: _horariosFuncionamento.saturday,
@@ -162,7 +162,36 @@ class _HorariosScreenState extends State<HorariosScreen> {
                 child: Container(
                   width: 0.3.wp,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      try {
+                        Repository.instance.updateSeller(
+                            widget.usuario.id,
+                            {'shift': _horariosFuncionamento.toJson()}
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            duration: Duration(seconds: 2),
+                            backgroundColor: Theme.of(context).accentColor,
+                            content: Text(
+                              'Horários salvos com sucesso.',
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      } catch (e) {
+                        print(e);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            duration: Duration(seconds: 2),
+                            backgroundColor: Theme.of(context).errorColor,
+                            content: Text(
+                              'Erro ao salvar horários',
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      }
+                    },
                     child: AutoSizeText(
                       'Salvar',
                       style: GoogleFonts.montserrat(

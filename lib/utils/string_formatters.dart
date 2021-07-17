@@ -7,6 +7,11 @@ String intToCurrency(int number) {
   return "R\$ " + formatter.format(number / 100);
 }
 
+String formatTime(int time) {
+  var formatted = time.toString().padLeft(4, '0');
+  return formatted.substring(0, 2) + ':' + formatted.substring(2, 4);
+}
+
 String distanceInKM(Seller seller, Position userLocation) {
   var distance = Geolocator.distanceBetween(
       seller.location.geopoint.latitude,
