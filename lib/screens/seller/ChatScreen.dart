@@ -79,7 +79,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Future<void> _sendNewMessageNotification() async {
     try {
       var data = (<String, String>{
-        'id': Random().toString(),
+        'id': '1',
         'channelId': '2',
         'channelName': 'Chat',
         'channelDescription': 'Canal usado para notificações do chat',

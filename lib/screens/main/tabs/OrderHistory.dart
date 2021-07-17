@@ -38,7 +38,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
       String deviceToken, BuildContext context) async {
     try {
       var data = (<String, String>{
-        'id': Random().toString(),
+        'id': '1',
         'channelId': '1',
         'channelName': 'Reservas',
         'channelDescription':

@@ -236,7 +236,7 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
       String deviceToken, BuildContext context) async {
     try {
       var data = (<String, String>{
-        'id': Random().toString(),
+        'id': '1',
         'channelId': '1',
         'channelName': 'Reservas',
         'channelDescription':
