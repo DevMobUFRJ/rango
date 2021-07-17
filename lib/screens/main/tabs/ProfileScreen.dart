@@ -238,7 +238,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                         return Material(
                           borderRadius: BorderRadius.circular(
-                            20.nsp,
+                            12,
                           ),
                           elevation: 2,
                           child: GestureDetector(
@@ -260,14 +260,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               decoration: BoxDecoration(
                                 color: Theme.of(context).accentColor,
                                 borderRadius: BorderRadius.circular(
-                                  20.nsp,
+                                  12,
                                 ),
                               ),
                               child: Row(
                                 children: [
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(
-                                      50.nsp,
+                                      50,
                                     ),
                                     child: Stack(
                                       alignment: Alignment.center,
@@ -275,18 +275,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         Container(
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(
-                                              50.nsp,
+                                              60,
                                             ),
                                             color: Colors.white,
                                           ),
-                                          width: 50,
-                                          height: 50,
+                                          width: 60,
+                                          height: 60,
                                         ),
                                         Center(
                                           child: Container(
                                             child: Icon(
                                               Icons.store,
-                                              size: 32,
+                                              size: 38,
                                               color:
                                                   Theme.of(context).accentColor,
                                             ),
@@ -296,8 +296,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           CachedNetworkImage(
                                             imageUrl: seller.logo,
                                             fit: BoxFit.cover,
-                                            width: 100.nsp,
-                                            height: 100.nsp,
+                                            width: 60,
+                                            height: 60,
                                             placeholder: (ctx, url) => Image(
                                                 image: MemoryImage(
                                                     kTransparentImage)),
