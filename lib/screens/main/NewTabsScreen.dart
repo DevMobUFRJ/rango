@@ -65,12 +65,13 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
                     return SplashScreen();
                   }
                   Client cliente = snapshot.data.data() as Client;
-                  FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
+                  FirebaseMessaging.instance.onTokenRefresh
+                      .listen((newToken) async {
                     Map<String, dynamic> dataToUpdate = {};
                     DocumentReference<Client> userInstance =
                         Repository.instance.clientsRef.doc(cliente.id);
                     dataToUpdate['deviceToken'] = newToken;
-                    userInstance.update(dataToUpdate);
+                    await userInstance.update(dataToUpdate);
                   });
                   // if (snap.hasData && snap.data == ConnectivityResult.none) {
                   //   return Container(
