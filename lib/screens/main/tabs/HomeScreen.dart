@@ -108,37 +108,44 @@ class _HomeScreenState extends State<HomeScreen> {
                         height: 0.6.hp - 56,
                         margin: EdgeInsets.symmetric(horizontal: 10),
                         alignment: Alignment.center,
-                        child: Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              AutoSizeText(
-                                'Sua loja está fechada. Para receber pedidos marque ela como aberta!',
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 35.nsp,
-                                  color: Theme.of(context).accentColor,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              SizedBox(height: 10),
-                              ElevatedButton(
-                                onPressed: () => widget.controller.jumpToTab(2),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 15),
-                                  child: AutoSizeText(
-                                    'Ir para o perfil',
+                        child: GestureDetector(
+                          onTap: () => widget.controller.jumpToTab(2),
+                          child: Material(
+                            color: Theme.of(context).accentColor,
+                            elevation: 3,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  AutoSizeText(
+                                    'Sua loja está fechada. Para receber pedidos marque ela como aberta!',
                                     style: GoogleFonts.montserrat(
                                       fontSize: 35.nsp,
                                       color: Colors.white,
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
-                                ),
+                                  Container(
+                                    margin: EdgeInsets.symmetric(vertical: 10),
+                                    child: AutoSizeText(
+                                      'Ir para o perfil',
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 35.nsp,
+                                        color: Colors.white,
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  )
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
                       )
