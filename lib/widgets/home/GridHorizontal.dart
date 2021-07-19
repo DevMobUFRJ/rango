@@ -7,17 +7,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:rango/models/meals.dart';
+import 'package:rango/models/seller.dart';
 import 'package:rango/screens/main/meals/ManageMeal.dart';
 import 'package:rango/utils/string_formatters.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class GridHorizontal extends StatelessWidget {
-  final String sellerId;
+  final Seller seller;
   final List<Meal> currentMeals;
 
   GridHorizontal({
-    @required this.sellerId,
+    @required this.seller,
     @required this.currentMeals,
   });
 
@@ -35,7 +36,7 @@ class GridHorizontal extends StatelessWidget {
           return GestureDetector(
             onTap: () => pushNewScreen(context,
                 screen: ManageMeal(
-                  sellerId,
+                  seller,
                   meal: meal,
                 ),
                 withNavBar: false,

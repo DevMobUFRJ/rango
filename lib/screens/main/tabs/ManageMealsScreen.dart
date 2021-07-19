@@ -109,14 +109,14 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                       Container(
                         constraints: BoxConstraints(maxHeight: 280.h),
                         child: GridHorizontal(
-                          sellerId: seller.id,
+                          seller: seller,
                           currentMeals: currentMeals,
                         ),
                       ),
                     ],
                   )
                 },
-                _buildButtons(seller.id),
+                _buildButtons(seller),
                 Flexible(
                   flex: 4,
                   child: Scrollbar(
@@ -247,7 +247,7 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                                   IconButton(
                                     onPressed: () => pushNewScreen(context,
                                         screen: ManageMeal(
-                                          seller.id,
+                                          seller,
                                           meal: meals[index],
                                         ),
                                         withNavBar: false,
@@ -278,12 +278,13 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                                     intToCurrency(meals[index].price),
                                     style: TextStyle(color: Colors.white),
                                   ),
-                                  SizedBox(height: 5),
-                                  AutoSizeText(
-                                    '${meals[index].quantity} ${meals[index].quantity < 2 ? 'disponível' : 'disponíveis'}',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  //SizedBox(height: 10)
+                                  if (seller.canReservate) ...{
+                                    SizedBox(height: 5),
+                                    AutoSizeText(
+                                      '${meals[index].quantity} ${meals[index].quantity < 2 ? 'disponível' : 'disponíveis'}',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  }
                                 ],
                               ),
                             ),
@@ -301,7 +302,7 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
     );
   }
 
-  Widget _buildButtons(String sellerId) {
+  Widget _buildButtons(Seller seller) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -310,7 +311,7 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
           child: ElevatedButton(
             onPressed: () => pushNewScreen(
               context,
-              screen: ManageMeal(sellerId),
+              screen: ManageMeal(seller),
               withNavBar: false,
             ),
             child: Padding(
