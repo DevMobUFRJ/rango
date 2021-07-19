@@ -11,6 +11,7 @@ DateTime endOfDay() {
 }
 
 TimeOfDay intTimeToTimeOfDay(int time) {
+  if (time == null) return TimeOfDay.now();
   var string = time.toString().padLeft(4, '0');
   var hours = int.tryParse(string.substring(0, 2));
   var minutes = int.tryParse(string.substring(2, 4));

@@ -265,15 +265,7 @@ class Repository {
     }
   }
 
-  Stream<QuerySnapshot<Order>> getOrdersFromSeller(String sellerId,
-      {int limit}) {
-    if (limit != null && limit > 0) {
-      return ordersRef
-          .where('sellerId', isEqualTo: sellerId)
-          .orderBy('requestedAt', descending: true)
-          .limit(limit)
-          .snapshots();
-    }
+  Stream<QuerySnapshot<Order>> getOrdersFromSeller(String sellerId) {
     return ordersRef
         .where('sellerId', isEqualTo: sellerId)
         .orderBy('requestedAt', descending: true)
@@ -281,6 +273,10 @@ class Repository {
   }
 
   // Client
+  Future<DocumentSnapshot<Client>> getClient(String uid) async {
+    return clientsRef.doc(uid).get();
+  }
+
   Stream<DocumentSnapshot<Client>> getClientStream(String uid) {
     return clientsRef.doc(uid).snapshots();
   }

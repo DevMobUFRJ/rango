@@ -157,15 +157,12 @@ class MyApp extends StatelessWidget {
                   if (sellerSnapshot.hasError) {
                     return LoginScreen();
                   }
-
                   FirebaseMessaging.instance.onTokenRefresh
                       .listen((newToken) async {
                     Map<String, dynamic> dataToUpdate = {};
                     Seller seller = sellerSnapshot.data.data();
-                    var sellerInstance =
-                        Repository.instance.sellersRef.doc(seller.id);
                     dataToUpdate['deviceToken'] = newToken;
-                    await sellerInstance.update(dataToUpdate);
+                    await Repository.instance.updateSeller(seller.id, dataToUpdate);
                   });
 
                   return NewTabsScreen(sellerSnapshot.data.data(), _controller);

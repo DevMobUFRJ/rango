@@ -1,16 +1,16 @@
 class ClientNotificationSettings {
   bool messages;
-  bool reservation;
+  bool reservations;
 
   ClientNotificationSettings({
     this.messages,
-    this.reservation,
+    this.reservations,
   });
 
   ClientNotificationSettings.fromJson(Map<String, dynamic> json)
       : messages = json['messages'],
-        reservation = json['reservation'];
+        reservations = json['reservations'];
 
   Map<String, dynamic> toJson() =>
-      {'messages': messages, 'reservation': reservation};
+      {'messages': messages, 'reservations': reservations};
 }

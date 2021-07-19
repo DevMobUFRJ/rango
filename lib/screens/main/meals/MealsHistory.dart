@@ -84,7 +84,7 @@ class _MealsHistoryState extends State<MealsHistory> {
                             onTap: () => pushNewScreen(
                               context,
                               screen: ManageMeal(
-                                "",
+                                null,
                                 meal: meal,
                               ),
                               withNavBar: false,

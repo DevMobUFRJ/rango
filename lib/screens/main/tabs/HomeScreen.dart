@@ -9,7 +9,6 @@ import 'package:rango/models/order.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/main/home/OrdersHistory.dart';
-import 'package:rango/widgets/home/NoOrdersWidget.dart';
 import 'package:rango/widgets/home/OrderContainer.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -95,15 +94,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 }
 
-                if (openOrdersSnapshot.data.docs.isEmpty &&
-                    closedOrdersSnapshot.data.docs.isEmpty) {
-                  return NoOrdersWidget(assetName: assetName, widget: widget);
-                }
-
                 return Column(
                   children: [
                     _buildHeader(assetName, closedOrdersSnapshot.data.docs),
-                    if (!widget.usuario.active) ...{
+                    if (!widget.usuario.active || !widget.usuario.canReservate) ...{
                       Container(
                         height: 0.6.hp - 56,
                         margin: EdgeInsets.symmetric(horizontal: 10),
@@ -124,7 +118,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   AutoSizeText(
-                                    'Sua loja está fechada. Para receber pedidos marque ela como aberta!',
+                                    !widget.usuario.active
+                                        ? 'Sua loja está fechada. Para receber pedidos, marque ela como aberta!'
+                                        : 'Você não está permitindo reservas. Para receber pedidos, ative a opção "Permitir reservas" nas configurações do perfil.',
                                     style: GoogleFonts.montserrat(
                                       fontSize: 35.nsp,
                                       color: Colors.white,
@@ -146,6 +142,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ],
                               ),
                             ),
+                          ),
+                        ),
+                      )
+                    } else if (openOrdersSnapshot.data.docs.isEmpty && closedOrdersSnapshot.data.docs.isEmpty)...{
+                      Container(
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.symmetric(
+                          vertical: 0.2.hp,
+                          horizontal: 0.05.wp,
+                        ),
+                        child: AutoSizeText(
+                          'Você ainda não recebeu pedidos hoje!\n\nAproveite para gerenciar suas quentinhas e o cardápio de hoje na aba de quentinhas ou configurar horário de funcionamento, localização e outras opções na aba de perfil!',
+                          style: GoogleFonts.montserrat(
+                            color: Theme.of(context).accentColor,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 36.nsp,
                           ),
                         ),
                       )

@@ -6,15 +6,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/meals.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/widgets/pickers/MealImagePicker.dart';
 
 class ManageMeal extends StatefulWidget {
   final Meal meal;
   @required
-  final String sellerId;
+  final Seller seller;
 
-  ManageMeal(this.sellerId, {this.meal});
+  ManageMeal(this.seller, {this.meal});
 
   @override
   _ManageMealState createState() => _ManageMealState();
@@ -190,42 +191,44 @@ class _ManageMealState extends State<ManageMeal> {
                             ),
                           ),
                         ),
-                        Flexible(
-                          flex: 1,
-                          child: Container(
-                            margin: EdgeInsets.only(left: 10),
-                            child: Material(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              elevation: 5,
-                              child: TextFormField(
-                                controller: _mealQuantity,
-                                keyboardType: TextInputType.number,
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 38.nsp,
-                                  fontWeight: FontWeight.w500,
-                                  color: Theme.of(context).accentColor,
+                        if (widget.seller.canReservate) ...{
+                          Flexible(
+                            flex: 1,
+                            child: Container(
+                              margin: EdgeInsets.only(left: 10),
+                              child: Material(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
                                 ),
-                                decoration: InputDecoration(
-                                  hintText: 'Quantidade',
-                                  hintStyle: GoogleFonts.montserrat(
-                                    color: Color(0xFFFC3C3C3),
-                                    fontSize: 32.nsp,
+                                elevation: 5,
+                                child: TextFormField(
+                                  controller: _mealQuantity,
+                                  keyboardType: TextInputType.number,
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 38.nsp,
+                                    fontWeight: FontWeight.w500,
+                                    color: Theme.of(context).accentColor,
                                   ),
-                                  alignLabelWithHint: true,
-                                  isDense: true,
-                                  border: InputBorder.none,
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 15,
-                                    vertical: 5,
+                                  decoration: InputDecoration(
+                                    hintText: 'Quantidade',
+                                    hintStyle: GoogleFonts.montserrat(
+                                      color: Color(0xFFFC3C3C3),
+                                      fontSize: 32.nsp,
+                                    ),
+                                    alignLabelWithHint: true,
+                                    isDense: true,
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 15,
+                                      vertical: 5,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        ),
+                          )
+                        }
                       ],
                     ),
                   ),
@@ -274,7 +277,7 @@ class _ManageMealState extends State<ManageMeal> {
                         onPressed: _loading
                             ? null
                             : () => _showDeleteDialog(
-                                context, widget.sellerId, widget.meal.id),
+                                context, widget.seller.id, widget.meal.id),
                         child: AutoSizeText(
                           "Excluir",
                           style: GoogleFonts.montserrat(
@@ -301,7 +304,7 @@ class _ManageMealState extends State<ManageMeal> {
       if (_mealName.text != '') {
         dataToUpdate['name'] = _mealName.text;
       } else {
-        _showSnackbar(context, true, 'Você deve inserir o nome do prato.');
+        _showSnackbar(context, true, 'Você deve inserir o nome do prato');
         setState(() => _loading = false);
         return;
       }
@@ -309,7 +312,7 @@ class _ManageMealState extends State<ManageMeal> {
       if (_mealDescription.text != '') {
         dataToUpdate['description'] = _mealDescription.text;
       } else {
-        _showSnackbar(context, true, 'Você deve inserir a descrição do prato.');
+        _showSnackbar(context, true, 'Você deve inserir a descrição do prato');
         setState(() => _loading = false);
         return;
       }
@@ -317,15 +320,16 @@ class _ManageMealState extends State<ManageMeal> {
       if (_mealValue != null && _mealValue.numberValue != 0) {
         dataToUpdate['price'] = (_mealValue.numberValue * 100).round();
       } else {
-        _showSnackbar(context, true, 'Você deve inserir o preço do prato.');
+        _showSnackbar(context, true, 'Você deve inserir o preço do prato');
         setState(() => _loading = false);
         return;
       }
 
+      dataToUpdate['quantity'] = 1;
       if (_mealQuantity != null && _mealQuantity.text != '') {
         dataToUpdate['quantity'] = int.parse(_mealQuantity.text);
-      } else {
-        _showSnackbar(context, true, 'Você deve inserir a quantidade.');
+      } else if (widget.seller.canReservate) {
+        _showSnackbar(context, true, 'Você deve inserir a quantidade');
         setState(() => _loading = false);
         return;
       }
@@ -339,28 +343,28 @@ class _ManageMealState extends State<ManageMeal> {
         if (_mealImageFile != null) {
           final ref = FirebaseStorage.instance
               .ref()
-              .child('users/${widget.sellerId}/meals/${widget.meal.id}.png');
+              .child('users/${widget.seller.id}/meals/${widget.meal.id}.png');
           await ref.putFile(_mealImageFile).whenComplete(() => null);
           final url = await ref.getDownloadURL();
           dataToUpdate['picture'] = url;
         }
 
         await Repository.instance
-            .updateMeal(widget.sellerId, widget.meal.id, dataToUpdate);
+            .updateMeal(widget.seller.id, widget.meal.id, dataToUpdate);
       } else {
         String createdMealId =
-            await Repository.instance.createMeal(widget.sellerId, dataToUpdate);
+            await Repository.instance.createMeal(widget.seller.id, dataToUpdate);
 
         if (_mealImageFile != null) {
           final ref = FirebaseStorage.instance
               .ref()
-              .child('users/${widget.sellerId}/meals/$createdMealId.png');
+              .child('users/${widget.seller.id}/meals/$createdMealId.png');
           await ref.putFile(_mealImageFile).whenComplete(() => null);
           final url = await ref.getDownloadURL();
           Map<String, dynamic> pictureUpdate = {'picture': url};
 
           await Repository.instance
-              .updateMeal(widget.sellerId, createdMealId, pictureUpdate);
+              .updateMeal(widget.seller.id, createdMealId, pictureUpdate);
         }
       }
 
@@ -370,7 +374,7 @@ class _ManageMealState extends State<ManageMeal> {
       Navigator.of(context).pop();
     } catch (e) {
       setState(() => _loading = false);
-      _showSnackbar(context, true, 'Erro ao adicionar quentinha.');
+      _showSnackbar(context, true, 'Erro ao adicionar quentinha');
       print(e);
     }
   }
@@ -450,7 +454,7 @@ class _ManageMealState extends State<ManageMeal> {
                         Navigator.of(ctx).pop();
                         Navigator.of(context).pop();
                         _showSnackbar(
-                            context, false, 'Quentinha excluída com sucesso.');
+                            context, false, 'Quentinha excluída com sucesso');
                       } catch (e) {
                         Navigator.of(context).pop();
                         _showSnackbar(context, true, e.toString());
