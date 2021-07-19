@@ -12,6 +12,7 @@ import 'package:rango/models/seller.dart';
 import 'dart:io';
 import 'package:rango/resources/rangeChangeNotifier.dart';
 import 'package:rango/resources/repository.dart';
+import 'package:rango/screens/main/profile/ProfileSettings.dart';
 import 'package:rango/widgets/home/HomeHeader.dart';
 import 'package:rango/widgets/home/ListaHorizontal.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -444,23 +445,26 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 child: Stack(
                   alignment: Alignment.topRight,
                   children: [
-                    Container(
-                      margin: EdgeInsets.symmetric(
-                          horizontal: 0.01.hp, vertical: 10),
-                      child: Material(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        color: Theme.of(context).accentColor,
-                        elevation: 5,
-                        child: Container(
-                          padding: EdgeInsets.all(12),
-                          child: Text(
-                            'Você ainda não completou seu perfil:$textToShow',
-                            style: GoogleFonts.montserrat(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 28.nsp,
+                    GestureDetector(
+                      onTap: () => widget.controller.jumpToTab(3),
+                      child: Container(
+                        margin: EdgeInsets.symmetric(
+                            horizontal: 0.01.hp, vertical: 10),
+                        child: Material(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          color: Theme.of(context).accentColor,
+                          elevation: 5,
+                          child: Container(
+                            padding: EdgeInsets.all(12),
+                            child: Text(
+                              'Você ainda não completou seu perfil:$textToShow',
+                              style: GoogleFonts.montserrat(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 28.nsp,
+                              ),
                             ),
                           ),
                         ),
