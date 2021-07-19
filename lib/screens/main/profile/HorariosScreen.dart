@@ -28,13 +28,27 @@ class _HorariosScreenState extends State<HorariosScreen> {
           .format(DateFormat("hh:mm a").parse(stringHorario));
     }
     return int.parse(stringHorario.replaceAll(':', ''));
-    //TODO Chamar firebase
+  }
+
+  @override
+  void initState() {
+    _horariosFuncionamento = widget.usuario.shift;
+    if (_horariosFuncionamento == null) {
+      _horariosFuncionamento = Shift(
+          sunday: Weekday(open: false),
+          monday: Weekday(open: false),
+          tuesday: Weekday(open: false),
+          wednesday: Weekday(open: false),
+          thursday: Weekday(open: false),
+          friday: Weekday(open: false),
+          saturday: Weekday(open: false)
+      );
+    }
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    _horariosFuncionamento = widget.usuario.shift;
-
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
@@ -164,6 +178,21 @@ class _HorariosScreenState extends State<HorariosScreen> {
                   child: ElevatedButton(
                     onPressed: () async {
                       try {
+                        for (var weekday in _horariosFuncionamento.toJson().values) {
+                          if (weekday['open'] == true && (weekday['openingTime'] == null || weekday['closingTime'] == null)) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                duration: Duration(seconds: 2),
+                                backgroundColor: Theme.of(context).errorColor,
+                                content: Text(
+                                  'Complete os horários de funcionamento',
+                                  textAlign: TextAlign.center,
+                                ),
+                              )
+                            );
+                            return;
+                          }
+                        }
                         Repository.instance.updateSeller(
                             widget.usuario.id,
                             {'shift': _horariosFuncionamento.toJson()}
@@ -173,7 +202,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                             duration: Duration(seconds: 2),
                             backgroundColor: Theme.of(context).accentColor,
                             content: Text(
-                              'Horários salvos com sucesso.',
+                              'Horários salvos com sucesso',
                               textAlign: TextAlign.center,
                             ),
                           ),

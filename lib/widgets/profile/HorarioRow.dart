@@ -71,13 +71,14 @@ class _HorarioRowState extends State<HorarioRow> {
                         ).then(
                           (TimeOfDay value) {
                             if (value != null) {
-                              if (value.hour * 100 + value.minute > widget.horarioDia.closingTime) {
+                              if (widget.horarioDia.closingTime != null
+                                  && value.hour * 100 + value.minute > widget.horarioDia.closingTime) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     duration: Duration(seconds: 3),
                                     backgroundColor: Theme.of(context).errorColor,
                                     content: Text(
-                                      'O horário de abertura deve ser antes do horário de fechamento.',
+                                      'O horário de abertura deve ser antes do horário de fechamento',
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
@@ -129,13 +130,14 @@ class _HorarioRowState extends State<HorarioRow> {
                         ).then(
                           (TimeOfDay value) {
                             if (value != null) {
-                              if (value.hour * 100 + value.minute < widget.horarioDia.openingTime) {
+                              if (widget.horarioDia.openingTime != null
+                                  && value.hour * 100 + value.minute < widget.horarioDia.openingTime) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     duration: Duration(seconds: 3),
                                     backgroundColor: Theme.of(context).errorColor,
                                     content: Text(
-                                      'O horário de fechamento deve ser depois do horário de abertura.',
+                                      'O horário de fechamento deve ser depois do horário de abertura',
                                       textAlign: TextAlign.center,
                                     ),
                                   ),

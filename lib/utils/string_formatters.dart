@@ -8,6 +8,7 @@ String intToCurrency(int number) {
 }
 
 String formatTime(int time) {
+  if (time == null) return null;
   var formatted = time.toString().padLeft(4, '0');
   return formatted.substring(0, 2) + ':' + formatted.substring(2, 4);
 }
