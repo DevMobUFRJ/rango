@@ -301,7 +301,7 @@ class _ManageMealState extends State<ManageMeal> {
       if (_mealName.text != '') {
         dataToUpdate['name'] = _mealName.text;
       } else {
-        _showSnackbar(context, true, 'Você deve inserir o nome do prato.');
+        _showSnackbar(context, true, 'Você deve inserir o nome do prato');
         setState(() => _loading = false);
         return;
       }
@@ -309,7 +309,7 @@ class _ManageMealState extends State<ManageMeal> {
       if (_mealDescription.text != '') {
         dataToUpdate['description'] = _mealDescription.text;
       } else {
-        _showSnackbar(context, true, 'Você deve inserir a descrição do prato.');
+        _showSnackbar(context, true, 'Você deve inserir a descrição do prato');
         setState(() => _loading = false);
         return;
       }
@@ -317,7 +317,7 @@ class _ManageMealState extends State<ManageMeal> {
       if (_mealValue != null && _mealValue.numberValue != 0) {
         dataToUpdate['price'] = (_mealValue.numberValue * 100).round();
       } else {
-        _showSnackbar(context, true, 'Você deve inserir o preço do prato.');
+        _showSnackbar(context, true, 'Você deve inserir o preço do prato');
         setState(() => _loading = false);
         return;
       }
@@ -325,7 +325,7 @@ class _ManageMealState extends State<ManageMeal> {
       if (_mealQuantity != null && _mealQuantity.text != '') {
         dataToUpdate['quantity'] = int.parse(_mealQuantity.text);
       } else {
-        _showSnackbar(context, true, 'Você deve inserir a quantidade.');
+        _showSnackbar(context, true, 'Você deve inserir a quantidade');
         setState(() => _loading = false);
         return;
       }
@@ -370,7 +370,7 @@ class _ManageMealState extends State<ManageMeal> {
       Navigator.of(context).pop();
     } catch (e) {
       setState(() => _loading = false);
-      _showSnackbar(context, true, 'Erro ao adicionar quentinha.');
+      _showSnackbar(context, true, 'Erro ao adicionar quentinha');
       print(e);
     }
   }
@@ -450,7 +450,7 @@ class _ManageMealState extends State<ManageMeal> {
                         Navigator.of(ctx).pop();
                         Navigator.of(context).pop();
                         _showSnackbar(
-                            context, false, 'Quentinha excluída com sucesso.');
+                            context, false, 'Quentinha excluída com sucesso');
                       } catch (e) {
                         Navigator.of(context).pop();
                         _showSnackbar(context, true, e.toString());

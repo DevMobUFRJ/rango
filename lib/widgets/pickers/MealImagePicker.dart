@@ -50,7 +50,7 @@ class _MealImagePickerState extends State<MealImagePicker> {
                           SnackBar(
                             backgroundColor: Theme.of(context).errorColor,
                             content: Text(
-                              'Ocorreu um erro ao escolher a foto, tente novamanete',
+                              'Ocorreu um erro ao escolher a foto, tente novamente',
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -78,7 +78,7 @@ class _MealImagePickerState extends State<MealImagePicker> {
                           SnackBar(
                             backgroundColor: Theme.of(context).errorColor,
                             content: Text(
-                              'Ocorreu um erro ao escolher a foto, tente novamanete',
+                              'Ocorreu um erro ao escolher a foto, tente novamente',
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -120,7 +120,7 @@ class _MealImagePickerState extends State<MealImagePicker> {
             duration: Duration(seconds: 2),
             backgroundColor: Theme.of(context).errorColor,
             content: Text(
-              'Ocorreu um erro ao escolher a foto, tente novamanete',
+              'Ocorreu um erro ao escolher a foto, tente novamente',
               textAlign: TextAlign.center,
             ),
           ),

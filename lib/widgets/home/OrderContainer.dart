@@ -221,7 +221,7 @@ class _OrderContainerState extends State<OrderContainer>
                                               .showSnackBar(
                                             SnackBar(
                                               content: Text(
-                                                "Confirme a reserva antes de marca-lá como vendida.",
+                                                "Confirme a reserva antes de marca-lá como vendida",
                                                 textAlign: TextAlign.center,
                                               ),
                                               backgroundColor:
@@ -262,7 +262,7 @@ class _OrderContainerState extends State<OrderContainer>
                                               .showSnackBar(
                                             SnackBar(
                                               content: Text(
-                                                'Ocorreu um erro.',
+                                                'Ocorreu um erro',
                                                 textAlign: TextAlign.center,
                                               ),
                                               backgroundColor:
@@ -430,7 +430,7 @@ class _OrderContainerState extends State<OrderContainer>
                   SnackBar(
                     duration: Duration(seconds: 2),
                     content: Text(
-                      'Ocorreu um erro ao cancelar o pedido.',
+                      'Ocorreu um erro ao cancelar o pedido',
                       textAlign: TextAlign.center,
                     ),
                     backgroundColor: Theme.of(context).errorColor,
