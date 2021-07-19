@@ -33,12 +33,12 @@ class _AuthScreenState extends State<AuthScreen> {
     UserCredential authResult;
 
     try {
+      String actualDeviceToken = await FirebaseMessaging.instance.getToken();
       setState(() => _isLoading = true);
       if (_isLogin) {
         authResult = await _auth.signInWithEmailAndPassword(
             email: email, password: password);
         Map<String, dynamic> dataToUpdate = {};
-        String actualDeviceToken = await FirebaseMessaging.instance.getToken();
         dataToUpdate['deviceToken'] = actualDeviceToken;
         DocumentReference<Map<String, dynamic>> userInstance = FirebaseFirestore
             .instance
@@ -84,6 +84,7 @@ class _AuthScreenState extends State<AuthScreen> {
           description: null,
           paymentMethods: null,
           location: null,
+          deviceToken: actualDeviceToken,
           contact: Contact(
             name: null,
             phone: null,
