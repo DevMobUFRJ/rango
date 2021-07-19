@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rango/main.dart';
@@ -64,6 +65,13 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
                     return SplashScreen();
                   }
                   Client cliente = snapshot.data.data() as Client;
+                  FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
+                    Map<String, dynamic> dataToUpdate = {};
+                    DocumentReference<Client> userInstance =
+                        Repository.instance.clientsRef.doc(cliente.id);
+                    dataToUpdate['deviceToken'] = newToken;
+                    userInstance.update(dataToUpdate);
+                  });
                   // if (snap.hasData && snap.data == ConnectivityResult.none) {
                   //   return Container(
                   //     height: 1.hp - 56,
