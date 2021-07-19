@@ -42,7 +42,7 @@ class Seller {
   Seller.fromJson(Map<String, dynamic> json, {String id})
       : id = id,
         contact = Contact.fromJson(json['contact']),
-        shift = Shift.fromJson(json['shift']),
+        shift = json['shift'] == null ? null : Shift.fromJson(json['shift']),
         name = json['name'],
         active = json['active'],
         canReservate = json['canReservate'],
@@ -60,17 +60,17 @@ class Seller {
         meals = [];
 
   Map<String, dynamic> toJson() => {
-    'name': name,
-    'meals': meals,
-    'currentMeals': currentMeals,
-    'sunday': shift.sunday,
-    'monday': shift.monday,
-    'tuesday': shift.tuesday,
-    'wednesday': shift.wednesday,
-    'thursday': shift.thursday,
-    'friday': shift.friday,
-    'saturday': shift.saturday
-  };
+        'name': name,
+        'meals': meals,
+        'currentMeals': currentMeals,
+        'sunday': shift==null ? null : shift.sunday,
+        'monday': shift==null ? null : shift.monday,
+        'tuesday': shift==null ? null : shift.tuesday,
+        'wednesday': shift==null ? null : shift.wednesday,
+        'thursday': shift==null ? null : shift.thursday,
+        'friday': shift==null ? null : shift.friday,
+        'saturday': shift==null ? null : shift.saturday
+      };
 }
 
 Map<String, CurrentMeal> buildCurrentMeals(Map<String, dynamic> json) {

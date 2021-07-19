@@ -58,9 +58,9 @@ dependencies:
     connectivity_plus: ^1.0.5
     firebase_image: ^1.0.1
 
-dev_dependencies:
-    flutter_test:
-        sdk: flutter
+# dev_dependencies:
+#     flutter_test:
+#         sdk: flutter
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -78,6 +78,7 @@ flutter:
         - assets/imgs/quentinha_placeholder.png
         - assets/imgs/logo_devmob.png
         - assets/imgs/user_placeholder.png
+        - assets/imgs/iconeRoxo.png
     #   - images/a_dot_ham.jpeg
     # An image asset can refer to one or more resolution-specific "variants", see
     # https://flutter.dev/assets-and-images/#resolution-aware.
