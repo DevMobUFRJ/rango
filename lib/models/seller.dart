@@ -2,6 +2,7 @@ import 'package:rango/models/address.dart';
 import 'package:rango/models/contact.dart';
 import 'package:rango/models/location.dart';
 import 'package:rango/models/meals.dart';
+import 'package:rango/models/seller_notifications_settings.dart';
 import 'package:rango/models/shift.dart';
 import 'package:flutter/foundation.dart';
 
@@ -17,6 +18,7 @@ class Seller {
   final Address address;
   final String picture;
   final String description;
+  SellerNotificationSettings notificationSettings;
   final String paymentMethods;
   Map<String, CurrentMeal> currentMeals;
   List<Meal> meals;
@@ -37,12 +39,13 @@ class Seller {
     this.paymentMethods,
     this.meals,
     this.currentMeals,
+    this.notificationSettings,
   });
 
   Seller.fromJson(Map<String, dynamic> json, {String id})
       : id = id,
         contact = Contact.fromJson(json['contact']),
-        shift = json['shift'] == null ? null : Shift.fromJson(json['shift']),
+        shift = json['shift'] != null ? Shift.fromJson(json['shift']) : null,
         name = json['name'],
         active = json['active'],
         canReservate = json['canReservate'],
@@ -53,6 +56,9 @@ class Seller {
         address =
             json['address'] == null ? null : Address.fromJson(json['address']),
         picture = json['picture'],
+        notificationSettings = json['notificationSettings'] == null
+            ? null
+            : SellerNotificationSettings.fromJson(json['notificationSettings']),
         description = json['description'],
         paymentMethods = json['paymentMethods'],
         currentMeals = buildCurrentMeals(json['currentMeals']),

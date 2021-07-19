@@ -22,11 +22,26 @@ class LoginScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: Text(
-                      "RANGO",
-                      style: TextStyle(color: Colors.white, fontSize: 58.nsp),
+                  Flexible(
+                    flex: 2,
+                    child: Column(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child:
+                              Image(image: AssetImage('assets/imgs/rango.png')),
+                        ),
+                        Flexible(
+                          flex: 1,
+                          child: Text(
+                            "RANGO",
+                            style: TextStyle(
+                              color: Theme.of(context).accentColor,
+                              fontSize: 80.nsp,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   Flexible(

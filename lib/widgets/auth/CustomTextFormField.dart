@@ -13,9 +13,12 @@ class CustomTextFormField extends StatefulWidget {
   final TextInputType keyboardType;
   final String errorText;
   final bool isPassword;
+  final Function(String) onChanged;
   final TextEditingController controller;
   final FocusNode focusNode;
-  final num numberOfLines;
+  final int numberOfLines;
+  final int maxLength;
+  final TextCapitalization textCapitalization;
 
   CustomTextFormField({
     @required this.labelText,
@@ -23,6 +26,7 @@ class CustomTextFormField extends StatefulWidget {
     this.onFieldSubmitted,
     @required this.key,
     @required this.validator,
+    this.onChanged,
     this.onSaved,
     this.keyboardType,
     @required this.errorText,
@@ -30,6 +34,8 @@ class CustomTextFormField extends StatefulWidget {
     this.controller,
     this.focusNode,
     this.numberOfLines = 1,
+    this.maxLength,
+    this.textCapitalization = TextCapitalization.none,
   });
 
   @override
@@ -67,15 +73,20 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             textInputAction: widget.textInputAction,
             onFieldSubmitted: widget.onFieldSubmitted,
             key: widget.key,
+            textCapitalization: widget.textCapitalization,
             validator: widget.validator,
             onSaved: widget.onSaved,
+            maxLength: widget.maxLength,
             minLines: 1,
+            cursorColor: Theme.of(context).accentColor,
+            onChanged: widget.onChanged,
             maxLines: widget.numberOfLines,
             obscureText: widget.isPassword != null && !widget.isPassword
                 ? false
                 : !_showPassword,
             decoration: InputDecoration(
               errorStyle: TextStyle(fontSize: 22.nsp),
+              counterText: '',
               border: InputBorder.none,
               contentPadding: widget.isPassword != null && widget.isPassword
                   ? EdgeInsets.all(15)

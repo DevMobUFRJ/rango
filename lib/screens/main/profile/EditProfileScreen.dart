@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -23,21 +24,27 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-  String _telefoneErrorMessage;
   String _nameErrorMessage;
+  String _emailErrorMessage;
+  String _telefoneErrorMessage;
   String _passwordErrorMessage;
+  String _actualPassErrorMessage;
   String _confirmPasswordErrorMessage;
 
   TextEditingController _name = TextEditingController();
+  TextEditingController _actualPass = TextEditingController();
+  TextEditingController _email = TextEditingController();
   TextEditingController _pass = TextEditingController();
   TextEditingController _confirmPass = TextEditingController();
   TextEditingController _phone = TextEditingController();
 
   File _userImageFile;
   bool _loading = false;
+  User _user;
 
-  final _focusNodeTel = FocusNode();
   final _focusNodeName = FocusNode();
+  final _focusNodeEmail = FocusNode();
+  final _focusNodeTel = FocusNode();
   final _focusNodePass = FocusNode();
   final _focusNodeConfirmPass = FocusNode();
 
@@ -52,6 +59,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (widget.user.name != null) {
         _name.text = widget.user.name;
       }
+      _email.text = FirebaseAuth.instance.currentUser.email;
+      _user = FirebaseAuth.instance.currentUser;
     });
     super.initState();
   }
@@ -63,7 +72,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         _telefoneErrorMessage == null &&
         _passwordErrorMessage == null &&
         _nameErrorMessage == null &&
-        _confirmPasswordErrorMessage == null) {
+        _confirmPasswordErrorMessage == null &&
+        _emailErrorMessage == null) {
       bool changeHasMade = false;
       _formKey.currentState.save();
       setState(() => _loading = true);
@@ -75,12 +85,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         if (_name != null && _name.text != widget.user.name) {
           dataToUpdate['name'] = _name.text;
         }
+        if (_email != null && _email.text != _user.email) {
+          dataToUpdate['email'] = _email.text;
+          await _user.updateEmail(_email.text);
+          changeHasMade = true;
+        }
         if (_userImageFile != null) {
-          final user = FirebaseAuth.instance.currentUser;
           final ref = FirebaseStorage.instance
               .ref()
               .child('user_image')
-              .child(user.uid + '.jpg');
+              .child(_user.uid + '.jpg');
           await ref.putFile(_userImageFile).whenComplete(() => null);
           final url = 'gs://rango-ufrj.appspot.com/${ref.fullPath}';
           dataToUpdate['picture'] = url;
@@ -99,25 +113,37 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           changeHasMade = true;
         }
         if (changeHasMade) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(
-                SnackBar(
-                  duration: Duration(seconds: 2),
-                  backgroundColor: Theme.of(context).accentColor,
-                  content: Text(
-                    'Mudanças realizadas',
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              )
-              .closed
-              .then((value) => Navigator.of(context).pop());
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              duration: Duration(seconds: 2),
+              backgroundColor: Theme.of(context).accentColor,
+              content: Text(
+                'Mudanças realizadas',
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+          setState(() {
+            _loading = false;
+          });
         }
       } on FirebaseAuthException catch (error) {
+        setState(() => _loading = false);
+        print(error);
         String errorText;
         switch (error.code) {
           case 'network-request-failed':
             errorText = networkErrorMessage;
+            break;
+          case 'invalid-email':
+            errorText = invalidEmailErrorMessage;
+            break;
+          case 'email-already-in-use':
+            errorText = emailAlreadyInUseErrorMessage;
+            break;
+          case 'requires-recent-login':
+            errorText = requiresRecentLoginErrorMessage;
+            _showReauthenticateDialog();
             break;
           default:
             errorText = defaultErrorMessage;
@@ -150,6 +176,96 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
+  void _showReauthenticateDialog() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext ctx) => AlertDialog(
+        backgroundColor: Color(0xFFF9B152),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        insetPadding:
+            EdgeInsets.symmetric(horizontal: 0.1.wp, vertical: 0.1.hp),
+        title: Text(
+          'Para trocar email/senha, você precisa confirmar sua senha atual e tentar novamente',
+          style: GoogleFonts.montserrat(
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+            fontSize: 32.nsp,
+          ),
+        ),
+        content: Column(
+          children: [
+            CustomTextFormField(
+              labelText: '',
+              key: ValueKey('actualPass'),
+              controller: _actualPass,
+              isPassword: true,
+              validator: (String value) {
+                if (value.trim() == '') {
+                  setState(() =>
+                      _actualPassErrorMessage = 'Senha não pode ser vazia');
+                } else {
+                  setState(() => _actualPassErrorMessage = null);
+                }
+                return null;
+              },
+              errorText: _actualPassErrorMessage,
+              onSaved: (value) => _actualPass.text = value,
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 8),
+              child: ElevatedButton(
+                onPressed: () async {
+                  setState(() => _loading = true);
+                  try {
+                    await FirebaseAuth.instance.signInWithEmailAndPassword(
+                      email: _user.email,
+                      password: _actualPass.text,
+                    );
+                    setState(() => _loading = false);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        duration: Duration(seconds: 2),
+                        content: Text(
+                          'Senha confirmado, agora você já pode trocar seu email/senha',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    );
+                    Navigator.of(context).pop();
+                  } catch (error) {
+                    setState(() => _loading = true);
+                    print(error);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        duration: Duration(seconds: 2),
+                        backgroundColor: Theme.of(context).errorColor,
+                        content: Text(
+                          'Ocorreu um erro',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    );
+                  }
+                },
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 15),
+                  child: Text(
+                    'Confirmar',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 32.nsp,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -167,26 +283,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         builder: (ctx, constraint) => SingleChildScrollView(
           physics: ClampingScrollPhysics(),
           child: ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: 1.hp),
+            constraints: BoxConstraints(maxHeight: 0.9.hp),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Flexible(
                     flex: 1,
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          UserImagePicker(
-                            _pickedImage,
-                            image: widget.user.picture,
-                            editText: 'Editar',
-                          ),
-                        ],
-                      ),
+                    child: UserImagePicker(
+                      _pickedImage,
+                      image: widget.user.picture,
+                      editText: 'Editar',
                     ),
                   ),
                   SizedBox(height: 0.02.hp),
@@ -205,6 +314,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               focusNode: _focusNodeName,
                               key: ValueKey('name'),
                               controller: _name,
+                              textCapitalization: TextCapitalization.sentences,
                               validator: (String value) {
                                 if (value.trim() == '') {
                                   setState(() => _nameErrorMessage =
@@ -217,6 +327,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               errorText: _nameErrorMessage,
                               textInputAction: TextInputAction.next,
                               onSaved: (value) => _name.text = value,
+                              onFieldSubmitted: (_) => FocusScope.of(context)
+                                  .requestFocus(_focusNodeTel),
+                            ),
+                          ),
+                          Flexible(
+                            flex: 2,
+                            child: CustomTextFormField(
+                              labelText: 'Email:',
+                              focusNode: _focusNodeEmail,
+                              key: ValueKey('email'),
+                              controller: _email,
+                              validator: (String value) {
+                                if (value.trim() == '') {
+                                  setState(() => _emailErrorMessage =
+                                      'Email não pode ser vaizo');
+                                } else {
+                                  setState(() => _nameErrorMessage = null);
+                                }
+                                return null;
+                              },
+                              errorText: _emailErrorMessage,
+                              textInputAction: TextInputAction.next,
+                              onSaved: (value) => _email.text = value,
                               onFieldSubmitted: (_) => FocusScope.of(context)
                                   .requestFocus(_focusNodeTel),
                             ),
@@ -251,7 +384,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             child: Container(
                               child: CustomTextFormField(
                                 focusNode: _focusNodePass,
-                                labelText: 'Senha:',
+                                labelText: 'Nova senha:',
                                 controller: _pass,
                                 isPassword: true,
                                 onFieldSubmitted: (_) => FocusScope.of(context)
@@ -276,7 +409,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           Flexible(
                             flex: 2,
                             child: CustomTextFormField(
-                              labelText: 'Confimar Senha:',
+                              labelText: 'Confimar nova senha:',
                               focusNode: _focusNodeConfirmPass,
                               controller: _confirmPass,
                               isPassword: true,

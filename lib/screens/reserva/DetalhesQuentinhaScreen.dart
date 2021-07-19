@@ -1,9 +1,8 @@
 import 'dart:convert';
-
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
@@ -13,7 +12,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/order.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
-import 'package:rango/screens/main/tabs/OrderHistory.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
 import 'package:rango/utils/constants.dart';
 import 'package:rango/utils/string_formatters.dart';
@@ -22,11 +20,15 @@ class DetalhesQuentinhaScreen extends StatefulWidget {
   final Meal marmita;
   final Seller seller;
   final double tagM;
+  final bool isFromSellerScreen;
+  final PersistentTabController controller;
 
   DetalhesQuentinhaScreen({
     @required this.marmita,
     @required this.seller,
+    @required this.controller,
     this.tagM,
+    this.isFromSellerScreen = false,
   });
 
   static const routeName = '/detalhes-reserva-quentinha';
@@ -46,18 +48,26 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
     return Scaffold(
       appBar: AppBar(
         title: GestureDetector(
-          onTap: () => pushNewScreen(
-            context,
-            withNavBar: false,
-            screen: SellerProfile(widget.seller.id, widget.seller.name),
-            pageTransitionAnimation: PageTransitionAnimation.cupertino,
-          ),
+          onTap: widget.isFromSellerScreen
+              ? null
+              : () => pushNewScreen(
+                    context,
+                    withNavBar: false,
+                    screen: SellerProfile(
+                      widget.seller.id,
+                      widget.seller.name,
+                      widget.controller,
+                    ),
+                    pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                  ),
           child: AutoSizeText(
             widget.seller.name,
             style: GoogleFonts.montserrat(
               color: Theme.of(context).accentColor,
               fontSize: 40.nsp,
-              decoration: TextDecoration.underline,
+              decoration: widget.isFromSellerScreen
+                  ? TextDecoration.none
+                  : TextDecoration.underline,
             ),
           ),
         ),
@@ -79,10 +89,17 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                 ),
                 child: Hero(
                   tag: widget.marmita.hashCode * widget.tagM,
-                  child: FadeInImage(
-                    placeholder:
-                        AssetImage('assets/imgs/quentinha_placeholder.png'),
-                    image: FirebaseImage(widget.marmita.picture),
+                  child: CachedNetworkImage(
+                    fit: BoxFit.cover,
+                    imageUrl: widget.marmita.picture,
+                    placeholder: (ctx, url) => Image(
+                      image:
+                          AssetImage('assets/imgs/quentinha_placeholder.png'),
+                    ),
+                    errorWidget: (ctx, url, error) => Image(
+                      image:
+                          AssetImage('assets/imgs/quentinha_placeholder.png'),
+                    ),
                   ),
                 ),
               ),
@@ -139,12 +156,14 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                             alignment: Alignment.topLeft,
                             child: AutoSizeText(
                               widget.marmita.description,
-                              maxLines: 4,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 7,
                               style: GoogleFonts.montserratTextTheme(
                                       Theme.of(context).textTheme)
                                   .headline2
                                   .copyWith(
                                     fontSize: 35.nsp,
+                                    fontWeight: FontWeight.w500,
                                   ),
                             ),
                           ),
@@ -218,8 +237,9 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
       var data = (<String, String>{
         'id': '1',
         'channelId': '1',
-        'channelName': 'Teste',
-        'channelDescription': 'Canal de teste',
+        'channelName': 'Reservas',
+        'channelDescription':
+            'Canal usado para notificações reservas de quentinhas',
         'status': 'done',
         'description':
             '${FirebaseAuth.instance.currentUser.displayName} fez uma reserva com você',
@@ -257,9 +277,9 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                     actionsPadding: EdgeInsets.all(10),
                     contentPadding: EdgeInsets.only(
                       top: 20,
-                      left: 24,
-                      right: 24,
-                      bottom: 0,
+                      left: 14,
+                      right: 14,
+                      bottom: 32,
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
@@ -273,21 +293,18 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    content: Container(
-                      margin: EdgeInsets.only(bottom: 12),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SizedBox(
-                            width: 30,
-                            height: 30,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                            ),
+                    content: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   )
                 : AlertDialog(
@@ -319,7 +336,7 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                           'Quantas deseja reservar?',
                           style: GoogleFonts.montserrat(
                             color: Colors.white,
-                            fontSize: 28.nsp,
+                            fontSize: 32.nsp,
                           ),
                         ),
                         Padding(
@@ -328,16 +345,21 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              FloatingActionButton(
-                                onPressed: () {
-                                  setState(() {
-                                    if (_quantity > 1) {
-                                      _quantity -= 1;
-                                    }
-                                  });
-                                },
-                                child: Icon(Icons.remove, color: Colors.black),
-                                backgroundColor: Colors.white,
+                              Container(
+                                height: 50,
+                                width: 50,
+                                child: FloatingActionButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      if (_quantity > 1) {
+                                        _quantity -= 1;
+                                      }
+                                    });
+                                  },
+                                  child:
+                                      Icon(Icons.remove, color: Colors.black),
+                                  backgroundColor: Colors.white,
+                                ),
                               ),
                               Text(
                                 '$_quantity',
@@ -345,19 +367,23 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                                   fontSize: 80.nsp,
                                 ),
                               ),
-                              FloatingActionButton(
-                                onPressed: () {
-                                  setState(() {
-                                    if (_quantity < maxQuantity) {
-                                      _quantity += 1;
-                                    }
-                                  });
-                                },
-                                child: Icon(
-                                  Icons.add,
-                                  color: Colors.black,
+                              Container(
+                                height: 50,
+                                width: 50,
+                                child: FloatingActionButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      if (_quantity < maxQuantity) {
+                                        _quantity += 1;
+                                      }
+                                    });
+                                  },
+                                  child: Icon(
+                                    Icons.add,
+                                    color: Colors.black,
+                                  ),
+                                  backgroundColor: Colors.white,
                                 ),
-                                backgroundColor: Colors.white,
                               ),
                             ],
                           ),
@@ -385,6 +411,7 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                             decoration: TextDecoration.underline,
                             color: Colors.white,
                             fontSize: 34.nsp,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                         onPressed: () async {
@@ -405,32 +432,35 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                           );
                           try {
                             await Repository.instance.addOrder(order);
-                            if (widget.seller.deviceToken != null) {
+                            Navigator.of(ctx).pop();
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(
+                                  SnackBar(
+                                    backgroundColor: Theme.of(ctx).accentColor,
+                                    duration: Duration(seconds: 1),
+                                    content: Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      child: Text(
+                                        "Reserva feita com sucesso.",
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                .closed
+                                .then((_) => Navigator.of(context)
+                                    .popUntil(ModalRoute.withName("/")));
+
+                            if (widget.seller.deviceToken != null &&
+                                widget.seller.notificationSettings != null &&
+                                widget.seller.notificationSettings.orders ==
+                                    true) {
                               await _sendOrderNotification(
                                   widget.seller.deviceToken, ctx);
                             }
-                            Navigator.of(ctx).pop();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: Theme.of(ctx).accentColor,
-                                duration: Duration(seconds: 2),
-                                content: Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 20),
-                                  child: Text(
-                                    "Reserva feita com sucesso.",
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                            );
-                            Navigator.of(ctx).pop();
-                            pushNewScreen(
-                              context,
-                              screen: OrderHistoryScreen(),
-                              withNavBar: true,
-                              pageTransitionAnimation:
-                                  PageTransitionAnimation.cupertino,
-                            );
+
+                            setState(() => widget.controller.jumpToTab(2));
                           } catch (e) {
                             Navigator.of(ctx).pop();
                             ScaffoldMessenger.of(context).showSnackBar(

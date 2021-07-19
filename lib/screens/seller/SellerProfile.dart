@@ -21,8 +21,9 @@ import 'package:cloud_firestore/cloud_firestore.dart' show DocumentSnapshot;
 class SellerProfile extends StatefulWidget {
   final String sellerName;
   final String sellerId;
+  final PersistentTabController controller;
 
-  SellerProfile(this.sellerId, this.sellerName);
+  SellerProfile(this.sellerId, this.sellerName, this.controller);
 
   @override
   _SellerProfileState createState() => _SellerProfileState();
@@ -41,7 +42,7 @@ void _showShiftDialog(Seller seller, BuildContext context) async {
       content: Text(_retrieveSellerShift(seller),
           style: GoogleFonts.montserrat(
             color: Colors.white,
-            fontSize: 28.nsp,
+            fontSize: 32.nsp,
           )),
       actions: [
         TextButton(
@@ -52,6 +53,47 @@ void _showShiftDialog(Seller seller, BuildContext context) async {
               decoration: TextDecoration.underline,
               color: Colors.white,
               fontSize: 34.nsp,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        )
+      ],
+      backgroundColor: Color(0xFFF9B152),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      insetPadding: EdgeInsets.symmetric(horizontal: 0.1.wp),
+    ),
+  );
+}
+
+void _showPaymentsDialog(Seller seller, BuildContext context) async {
+  await showDialog(
+    context: context,
+    builder: (BuildContext ctx) => AlertDialog(
+      title: Text(
+        'Pagamentos aceitos',
+        style: GoogleFonts.montserrat(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 38.ssp,
+        ),
+      ),
+      content: Text(seller.paymentMethods,
+          style: GoogleFonts.montserrat(
+            color: Colors.white,
+            fontSize: 32.nsp,
+          )),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(ctx).pop(),
+          child: Text(
+            'Fechar',
+            style: GoogleFonts.montserrat(
+              decoration: TextDecoration.underline,
+              color: Colors.white,
+              fontSize: 34.nsp,
+              fontWeight: FontWeight.bold,
             ),
           ),
         )
@@ -181,6 +223,26 @@ class _SellerProfileState extends State<SellerProfile> {
                     ),
                   ),
                 ),
+              if (seller.paymentMethods != null)
+                Flexible(
+                  flex: 0,
+                  child: GestureDetector(
+                    onTap: () => _showPaymentsDialog(
+                      seller,
+                      context,
+                    ),
+                    child: Container(
+                      margin: EdgeInsets.only(top: 8),
+                      child: Text(
+                        'Pagamentos aceitos',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 30.nsp,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               if (seller.shift != null)
                 Flexible(
                   flex: 0,
@@ -213,97 +275,99 @@ class _SellerProfileState extends State<SellerProfile> {
                     ),
                   ),
                 ),
-              Flexible(
-                flex: 0,
-                child: Container(
-                  margin: EdgeInsets.symmetric(vertical: 5),
-                  child: Column(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(bottom: 5),
-                        child: GestureDetector(
-                          onTap: () => {
-                            Clipboard.setData(
-                              ClipboardData(text: seller.contact.phone),
-                            ),
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: Theme.of(context).accentColor,
-                                content: AutoSizeText(
-                                  'Número copiado para área de transferência',
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.montserrat(),
-                                ),
-                                duration: Duration(seconds: 2),
+              if (seller.contact != null && seller.contact.phone != null)
+                Flexible(
+                  flex: 0,
+                  child: Container(
+                    margin: EdgeInsets.symmetric(vertical: 5),
+                    child: Column(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(bottom: 5),
+                          child: GestureDetector(
+                            onTap: () => {
+                              Clipboard.setData(
+                                ClipboardData(text: seller.contact.phone),
                               ),
-                            )
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  backgroundColor:
+                                      Theme.of(context).accentColor,
+                                  content: AutoSizeText(
+                                    'Número copiado para área de transferência',
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.montserrat(),
+                                  ),
+                                  duration: Duration(seconds: 2),
+                                ),
+                              )
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(right: 1),
+                                  child: Icon(Icons.phone, size: 32.nsp),
+                                ),
+                                AutoSizeText(
+                                  seller.contact.phone,
+                                  maxLines: 1,
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 30.nsp,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            try {
+                              final Uri whatsAppUrl = Uri(
+                                scheme: 'http',
+                                path:
+                                    "wa.me/+55${seller.contact.phone.replaceAll('(', '').replaceAll(')', '')}",
+                              );
+                              launch(whatsAppUrl.toString());
+                            } catch (error) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  duration: Duration(seconds: 2),
+                                  content: Text(
+                                    'WhatsApp não instalado',
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.montserrat(),
+                                  ),
+                                ),
+                              );
+                            }
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Container(
-                                margin: EdgeInsets.only(right: 1),
-                                child: Icon(Icons.phone, size: 32.nsp),
-                              ),
                               AutoSizeText(
-                                seller.contact.phone,
-                                maxLines: 1,
+                                'Abrir no WhatsApp',
                                 style: GoogleFonts.montserrat(
                                   fontSize: 30.nsp,
                                   decoration: TextDecoration.underline,
                                 ),
                               ),
+                              Container(
+                                margin: EdgeInsets.only(left: 2),
+                                child: FaIcon(
+                                  FontAwesomeIcons.whatsapp,
+                                  size: 36.nsp,
+                                  color: Colors.green,
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          try {
-                            final Uri whatsAppUrl = Uri(
-                              scheme: 'http',
-                              path:
-                                  "wa.me/+55${seller.contact.phone.replaceAll('(', '').replaceAll(')', '')}",
-                            );
-                            launch(whatsAppUrl.toString());
-                          } catch (error) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                duration: Duration(seconds: 2),
-                                content: Text(
-                                  'WhatsApp não instalado',
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.montserrat(),
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            AutoSizeText(
-                              'Abrir no WhatsApp',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 30.nsp,
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(left: 2),
-                              child: FaIcon(
-                                FontAwesomeIcons.whatsapp,
-                                size: 36.nsp,
-                                color: Colors.green,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
               Flexible(
                 flex: 0,
                 child: Container(
@@ -312,6 +376,8 @@ class _SellerProfileState extends State<SellerProfile> {
                     title: 'Quentinhas disponíveis',
                     tagM: Random().nextDouble(),
                     meals: allCurrentMeals,
+                    isFromSellerScreen: true,
+                    controller: widget.controller,
                   ),
                 ),
               ),
@@ -370,6 +436,7 @@ class _SellerProfileState extends State<SellerProfile> {
                         screen: ChatScreen(
                           seller.id,
                           seller.name,
+                          key: chatScreenKey,
                         ),
                       );
                     }

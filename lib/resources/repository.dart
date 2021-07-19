@@ -25,6 +25,7 @@ const weekdayMap = {
 
 class Repository {
   final sellersRef = FirebaseFirestore.instance.collection('sellers');
+  final chatRef = FirebaseFirestore.instance.collection('chat');
   final clientsRef =
       FirebaseFirestore.instance.collection('clients').withConverter<Client>(
             fromFirestore: (snapshot, _) =>
@@ -128,27 +129,6 @@ class Repository {
         .where('clientId', isEqualTo: clientId)
         .orderBy('requestedAt', descending: true)
         .snapshots();
-  }
-
-  Future<List<DocumentSnapshot>> getFirstOrdersFromClient(
-      String clientId) async {
-    var querySnapshot = await ordersRef
-        .where('clientId', isEqualTo: clientId)
-        .orderBy('requestedAt', descending: true)
-        .limit(10)
-        .get();
-    return querySnapshot.docs;
-  }
-
-  Future<List<DocumentSnapshot>> getNextTenOrdersFromClient(
-      String clientId, DocumentSnapshot<Object> initalDocument) async {
-    var querySnapshot = await ordersRef
-        .where('clientId', isEqualTo: clientId)
-        .orderBy('requestedAt', descending: true)
-        .startAfterDocument(initalDocument)
-        .limit(10)
-        .get();
-    return querySnapshot.docs;
   }
 
   Future<Position> getUserLocation() {

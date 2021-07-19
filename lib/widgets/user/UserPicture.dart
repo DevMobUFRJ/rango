@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_image/firebase_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:rango/resources/repository.dart';
 
 class UserPicture extends StatefulWidget {
   final String picture;
@@ -13,7 +12,6 @@ class UserPicture extends StatefulWidget {
 }
 
 class _UserPictureState extends State<UserPicture> {
-  bool _hasInternet;
   @override
   void initState() {
     super.initState();
@@ -21,9 +19,6 @@ class _UserPictureState extends State<UserPicture> {
 
   @override
   Widget build(BuildContext context) {
-    if (_hasInternet == null) {
-      Repository.instance.checkInternetConnection(context);
-    }
     return Container(
       child: Stack(
         alignment: Alignment.center,
@@ -37,29 +32,35 @@ class _UserPictureState extends State<UserPicture> {
               color: Color(0xFFF9B152),
             ),
           ),
-          if (widget.picture == null)
+          if (widget.picture == null) ...{
             FittedBox(
               fit: BoxFit.cover,
               child: CircleAvatar(
                 backgroundColor: Theme.of(context).accentColor,
                 backgroundImage: AssetImage('assets/imgs/user_placeholder.png'),
-                radius: 70,
+                radius: 150.w,
               ),
             ),
-          if (widget.picture != null)
+          } else ...{
             ClipRRect(
               borderRadius: BorderRadius.circular(120),
               child: Container(
                 width: 150,
                 height: 150,
                 color: Theme.of(context).accentColor,
-                child: FadeInImage(
-                  placeholder: AssetImage('assets/imgs/user_placeholder.png'),
-                  image: FirebaseImage(widget.picture),
+                child: CachedNetworkImage(
                   fit: BoxFit.cover,
+                  imageUrl: widget.picture,
+                  placeholder: (ctx, url) => Image(
+                    image: AssetImage('assets/imgs/user_placeholder.png'),
+                  ),
+                  errorWidget: (ctx, url, error) => Image(
+                    image: AssetImage('assets/imgs/user_placeholder.png'),
+                  ),
                 ),
               ),
             ),
+          }
         ],
       ),
     );

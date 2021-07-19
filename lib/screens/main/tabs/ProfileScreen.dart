@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,12 +11,13 @@ import 'package:rango/screens/main/profile/EditProfileScreen.dart';
 import 'package:rango/screens/main/profile/ProfileSettings.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:rango/widgets/others/NoConecctionWidget.dart';
 import 'package:rango/widgets/user/UserPicture.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Client usuario;
-  ProfileScreen(this.usuario);
+  final PersistentTabController controller;
+  ProfileScreen(this.usuario, this.controller);
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -123,6 +125,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       style: GoogleFonts.montserrat(
                         color: yellow,
                         fontSize: 35.nsp,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     SizedBox(width: 2),
@@ -136,111 +139,117 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             Expanded(
-              flex: 7,
-              child: Container(
-                child: StreamBuilder(
-                  stream:
-                      Repository.instance.getClientStream(widget.usuario.id),
-                  builder: (context,
-                      AsyncSnapshot<DocumentSnapshot> clientSnapshot) {
-                    if (clientSnapshot.connectionState ==
-                        ConnectionState.waiting) {
-                      return Container(
-                        height: 0.4.hp,
-                        alignment: Alignment.center,
-                        child: SizedBox(
-                          height: 50,
-                          width: 50,
-                          child: CircularProgressIndicator(
-                            color: Theme.of(context).accentColor,
-                          ),
+              flex: 9,
+              child: StreamBuilder(
+                stream: Repository.instance.getClientStream(widget.usuario.id),
+                builder:
+                    (context, AsyncSnapshot<DocumentSnapshot> clientSnapshot) {
+                  if (clientSnapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return Container(
+                      height: 0.4.hp,
+                      alignment: Alignment.center,
+                      child: SizedBox(
+                        height: 50,
+                        width: 50,
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).accentColor,
                         ),
-                      );
-                    }
-                    var clientSnapshotdata =
-                        clientSnapshot.data.data() as Client;
-                    if (clientSnapshotdata.favoriteSellers == null ||
-                        clientSnapshotdata.favoriteSellers.length == 0) {
-                      return Container(
-                        margin: EdgeInsets.symmetric(
-                            horizontal: 0.03.wp, vertical: 15),
-                        child: AutoSizeText(
-                          'Você ainda não marcou vendedores como favoritos.',
-                          style: GoogleFonts.montserrat(
-                            color: yellow,
-                            fontSize: 45.nsp,
-                          ),
+                      ),
+                    );
+                  }
+                  var clientSnapshotdata = clientSnapshot.data.data() as Client;
+                  if (clientSnapshotdata.favoriteSellers == null ||
+                      clientSnapshotdata.favoriteSellers.length == 0) {
+                    return Container(
+                      margin: EdgeInsets.symmetric(
+                          horizontal: 0.03.wp, vertical: 15),
+                      child: AutoSizeText(
+                        'Você ainda não marcou vendedores como favoritos.',
+                        style: GoogleFonts.montserrat(
+                          color: yellow,
+                          fontSize: 45.nsp,
                         ),
-                      );
-                    }
-                    if (clientSnapshot.hasError) {
-                      return Container(
-                        margin: EdgeInsets.symmetric(
-                            horizontal: 0.03.wp, vertical: 15),
-                        child: AutoSizeText(
-                          clientSnapshot.error.toString(),
-                          style: GoogleFonts.montserrat(
-                            color: yellow,
-                            fontSize: 45.nsp,
-                          ),
+                      ),
+                    );
+                  }
+                  if (clientSnapshot.hasError) {
+                    return Container(
+                      margin: EdgeInsets.symmetric(
+                          horizontal: 0.03.wp, vertical: 15),
+                      child: AutoSizeText(
+                        clientSnapshot.error.toString(),
+                        style: GoogleFonts.montserrat(
+                          color: yellow,
+                          fontSize: 45.nsp,
                         ),
-                      );
-                    }
-                    final favoriteSellers =
-                        List<String>.from(clientSnapshotdata.favoriteSellers);
+                      ),
+                    );
+                  }
+                  final favoriteSellers =
+                      List<String>.from(clientSnapshotdata.favoriteSellers);
 
-                    // Um belo exemplo de list view! A busca pelo seller só acontece quando o elemento pode aparecer na tela.
-                    // Usa-se um StreamBuilder para aproveitar a cache do firestore
-                    return ListView.separated(
-                      separatorBuilder: (context, index) =>
-                          SizedBox(height: 0.01.hp),
-                      itemCount: favoriteSellers.length,
-                      physics: ClampingScrollPhysics(),
-                      itemBuilder: (ctx, index) => StreamBuilder(
-                        stream: Repository.instance
-                            .getSeller(favoriteSellers[index]),
-                        builder: (
-                          context,
-                          AsyncSnapshot<DocumentSnapshot> sellerSnapshot,
-                        ) {
-                          if (sellerSnapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Container(
-                              height: 0.3.hp,
-                              alignment: Alignment.center,
-                              child: SizedBox(
-                                height: 40,
-                                width: 40,
-                                child: CircularProgressIndicator(
-                                  color: Theme.of(context).accentColor,
-                                ),
+                  // Um belo exemplo de list view! A busca pelo seller só acontece quando o elemento pode aparecer na tela.
+                  // Usa-se um StreamBuilder para aproveitar a cache do firestore
+                  return ListView.separated(
+                    separatorBuilder: (context, index) =>
+                        SizedBox(height: 0.01.hp),
+                    itemCount: favoriteSellers.length,
+                    physics: ClampingScrollPhysics(),
+                    itemBuilder: (ctx, index) => StreamBuilder(
+                      stream:
+                          Repository.instance.getSeller(favoriteSellers[index]),
+                      builder: (
+                        context,
+                        AsyncSnapshot<DocumentSnapshot> sellerSnapshot,
+                      ) {
+                        if (sellerSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Container(
+                            height: 0.3.hp,
+                            alignment: Alignment.center,
+                            child: SizedBox(
+                              height: 40,
+                              width: 40,
+                              child: CircularProgressIndicator(
+                                color: Theme.of(context).accentColor,
                               ),
-                            );
-                          }
-                          if (sellerSnapshot.hasError) {
-                            return Container(
-                              height: 0.4.hp - 56,
-                              alignment: Alignment.center,
-                              child: AutoSizeText(
-                                sellerSnapshot.error.toString(),
-                                style: GoogleFonts.montserrat(
-                                    fontSize: 45.nsp,
-                                    color: Theme.of(context).accentColor),
-                              ),
-                            );
-                          }
-                          var sellerSnapshotdata = sellerSnapshot.data.data()
-                              as Map<String, dynamic>;
-                          Seller seller = Seller.fromJson(
-                            sellerSnapshotdata,
-                            id: sellerSnapshot.data.id,
+                            ),
                           );
+                        }
+                        if (sellerSnapshot.hasError) {
+                          return Container(
+                            height: 0.4.hp - 56,
+                            alignment: Alignment.center,
+                            child: AutoSizeText(
+                              sellerSnapshot.error.toString(),
+                              style: GoogleFonts.montserrat(
+                                  fontSize: 45.nsp,
+                                  color: Theme.of(context).accentColor),
+                            ),
+                          );
+                        }
+                        var sellerSnapshotdata =
+                            sellerSnapshot.data.data() as Map<String, dynamic>;
+                        Seller seller = Seller.fromJson(
+                          sellerSnapshotdata,
+                          id: sellerSnapshot.data.id,
+                        );
 
-                          return GestureDetector(
+                        return Material(
+                          borderRadius: BorderRadius.circular(
+                            12,
+                          ),
+                          elevation: 2,
+                          child: GestureDetector(
                             onTap: () => pushNewScreen(
                               context,
                               withNavBar: false,
-                              screen: SellerProfile(seller.id, seller.name),
+                              screen: SellerProfile(
+                                seller.id,
+                                seller.name,
+                                widget.controller,
+                              ),
                               pageTransitionAnimation:
                                   PageTransitionAnimation.cupertino,
                             ),
@@ -251,36 +260,77 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               decoration: BoxDecoration(
                                 color: Theme.of(context).accentColor,
                                 borderRadius: BorderRadius.circular(
-                                  ScreenUtil().setSp(22),
+                                  12,
                                 ),
                               ),
                               child: Row(
                                 children: [
-                                  CircleAvatar(
-                                    backgroundImage:
-                                        NetworkImage(seller.picture),
-                                    radius: ScreenUtil().setSp(50),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                      50,
+                                    ),
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                              60,
+                                            ),
+                                            color: Colors.white,
+                                          ),
+                                          width: 60,
+                                          height: 60,
+                                        ),
+                                        Center(
+                                          child: Container(
+                                            child: Icon(
+                                              Icons.store,
+                                              size: 38,
+                                              color:
+                                                  Theme.of(context).accentColor,
+                                            ),
+                                          ),
+                                        ),
+                                        if (seller.logo != null)
+                                          CachedNetworkImage(
+                                            imageUrl: seller.logo,
+                                            fit: BoxFit.cover,
+                                            width: 60,
+                                            height: 60,
+                                            placeholder: (ctx, url) => Image(
+                                                image: MemoryImage(
+                                                    kTransparentImage)),
+                                            errorWidget: (ctx, url, error) =>
+                                                Image(
+                                                    image: MemoryImage(
+                                                        kTransparentImage)),
+                                          ),
+                                      ],
+                                    ),
                                   ),
                                   SizedBox(width: 0.03.wp),
-                                  AutoSizeText(
-                                    seller.name,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.montserrat(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w300,
-                                      decoration: TextDecoration.underline,
-                                      fontSize: 32.nsp,
+                                  Container(
+                                    width: 0.5.wp,
+                                    child: AutoSizeText(
+                                      seller.name,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.montserrat(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 32.nsp,
+                                      ),
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
               ),
             ),
           ],

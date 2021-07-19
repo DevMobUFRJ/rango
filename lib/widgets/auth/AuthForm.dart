@@ -12,6 +12,7 @@ class AuthForm extends StatefulWidget {
     String name,
     File image,
     String password,
+    String phone,
     BuildContext ctx,
   }) submitForm;
   final bool _isLoading;
@@ -26,19 +27,22 @@ class AuthForm extends StatefulWidget {
 class _AuthFormState extends State<AuthForm> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _name = TextEditingController();
   final TextEditingController _email = TextEditingController();
+  final TextEditingController _name = TextEditingController();
+  final TextEditingController _phone = TextEditingController();
   final TextEditingController _pass = TextEditingController();
   final TextEditingController _confirmPass = TextEditingController();
 
   File _userImageFile;
   String _emailErrorMessage;
   String _nameErrorMessage;
+  String _phoneErrorMessage;
   String _passwordErrorMessage;
   String _confirmPasswordErrorMessage;
 
-  final _focusNodeName = FocusNode();
   final _focusNodeEmail = FocusNode();
+  final _focusNodeName = FocusNode();
+  final _focusNodePhone = FocusNode();
   final _focusNodePass = FocusNode();
   final _focusNodeConfirmPass = FocusNode();
 
@@ -52,7 +56,8 @@ class _AuthFormState extends State<AuthForm> {
           _emailErrorMessage == null &&
           _nameErrorMessage == null &&
           _passwordErrorMessage == null &&
-          _confirmPasswordErrorMessage == null) {
+          _confirmPasswordErrorMessage == null &&
+          _phoneErrorMessage == null) {
         _formKey.currentState.save();
         widget.submitForm(
           email: _email.text.trim(),
@@ -60,6 +65,7 @@ class _AuthFormState extends State<AuthForm> {
           password: _pass.text.trim(),
           ctx: context,
           image: _userImageFile,
+          phone: _phone.text.trim(),
         );
       }
     } catch (e) {
@@ -81,26 +87,40 @@ class _AuthFormState extends State<AuthForm> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (ctx, constraint) => SingleChildScrollView(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: 0.9.hp),
+        physics: ClampingScrollPhysics(),
+        child: Container(
+          constraints: BoxConstraints(minHeight: constraint.maxHeight),
           child: Padding(
             padding: EdgeInsets.all(16),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
               children: [
                 if (widget._isLogin)
-                  Flexible(
-                    flex: 3,
-                    child: Text(
-                      "RANGO",
-                      style: GoogleFonts.montserrat(
-                        fontSize: 80.nsp,
-                        color: Theme.of(context).accentColor,
-                      ),
+                  Container(
+                    child: Column(
+                      children: [
+                        Flexible(
+                          flex: 0,
+                          child: Image(
+                            image: AssetImage('assets/imgs/rango.png'),
+                            width: 0.5.wp,
+                          ),
+                        ),
+                        Flexible(
+                          flex: 0,
+                          child: Text(
+                            "RANGO",
+                            style: TextStyle(
+                              color: Theme.of(context).accentColor,
+                              fontSize: 80.nsp,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                Expanded(
-                  flex: widget._isLogin ? 3 : 6,
+                Container(
                   child: Form(
                     key: _formKey,
                     child: Center(
@@ -109,8 +129,8 @@ class _AuthFormState extends State<AuthForm> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           if (!widget._isLogin) UserImagePicker(_pickedImage),
-                          Flexible(
-                            flex: 2,
+                          Container(
+                            margin: EdgeInsets.only(bottom: 10),
                             child: CustomTextFormField(
                               labelText: 'Email:',
                               focusNode: _focusNodeEmail,
@@ -140,10 +160,10 @@ class _AuthFormState extends State<AuthForm> {
                             ),
                           ),
                           if (!widget._isLogin)
-                            Flexible(
-                              flex: 2,
+                            Container(
+                              margin: EdgeInsets.only(bottom: 10),
                               child: CustomTextFormField(
-                                labelText: 'Nome',
+                                labelText: 'Nome:',
                                 focusNode: _focusNodeName,
                                 errorText: _nameErrorMessage,
                                 key: ValueKey('name'),
@@ -161,12 +181,41 @@ class _AuthFormState extends State<AuthForm> {
                                   return null;
                                 },
                                 onFieldSubmitted: (_) => FocusScope.of(context)
-                                    .requestFocus(_focusNodePass),
+                                    .requestFocus(_focusNodePhone),
                                 textInputAction: TextInputAction.next,
                               ),
                             ),
-                          Flexible(
-                            flex: 2,
+                          if (!widget._isLogin)
+                            Container(
+                              margin: EdgeInsets.only(bottom: 10),
+                              child: CustomTextFormField(
+                                labelText: 'Telefone:',
+                                focusNode: _focusNodePhone,
+                                errorText: _phoneErrorMessage,
+                                maxLength: 11,
+                                key: ValueKey('phone'),
+                                onSaved: (value) => _phone.text = value,
+                                validator: (value) {
+                                  if (value.length > 0 && value.length != 11) {
+                                    setState(() {
+                                      _phoneErrorMessage =
+                                          'Telefone precisa de 11 números';
+                                    });
+                                  } else {
+                                    setState(() {
+                                      _phoneErrorMessage = null;
+                                    });
+                                  }
+                                  return null;
+                                },
+                                onFieldSubmitted: (_) => FocusScope.of(context)
+                                    .requestFocus(_focusNodePass),
+                                textInputAction: TextInputAction.next,
+                                keyboardType: TextInputType.phone,
+                              ),
+                            ),
+                          Container(
+                            margin: EdgeInsets.only(bottom: 10),
                             child: CustomTextFormField(
                               labelText: 'Senha:',
                               focusNode: _focusNodePass,
@@ -195,8 +244,8 @@ class _AuthFormState extends State<AuthForm> {
                             ),
                           ),
                           if (!widget._isLogin)
-                            Flexible(
-                              flex: 2,
+                            Container(
+                              margin: EdgeInsets.only(bottom: 10),
                               child: CustomTextFormField(
                                 labelText: 'Confirmar Senha:',
                                 controller: _confirmPass,
@@ -223,8 +272,8 @@ class _AuthFormState extends State<AuthForm> {
                               ),
                             ),
                           if (widget._isLogin)
-                            Expanded(
-                              flex: 1,
+                            Container(
+                              margin: EdgeInsets.only(bottom: 10),
                               child: TextButton(
                                 onPressed: () => Navigator.of(context)
                                     .pushNamed(ForgotPasswordScreen.routeName),
@@ -237,32 +286,29 @@ class _AuthFormState extends State<AuthForm> {
                                 ),
                               ),
                             ),
-                          Flexible(
-                            flex: 1,
-                            child: SizedBox(
-                              width: 0.5.wp,
-                              child: ElevatedButton(
-                                onPressed: widget._isLoading ? null : _submit,
-                                child: widget._isLoading
-                                    ? SizedBox(
-                                        child: CircularProgressIndicator(
-                                          valueColor:
-                                              new AlwaysStoppedAnimation<Color>(
-                                                  Colors.white),
-                                          strokeWidth: 3.0,
-                                        ),
-                                        height: 40.w,
-                                        width: 40.w,
-                                      )
-                                    : Container(
-                                        child: Text(
-                                          'Continuar',
-                                          style: GoogleFonts.montserrat(
-                                              color: Colors.white,
-                                              fontSize: 36.nsp),
-                                        ),
+                          SizedBox(
+                            width: 0.5.wp,
+                            child: ElevatedButton(
+                              onPressed: widget._isLoading ? null : _submit,
+                              child: widget._isLoading
+                                  ? SizedBox(
+                                      child: CircularProgressIndicator(
+                                        valueColor:
+                                            new AlwaysStoppedAnimation<Color>(
+                                                Colors.white),
+                                        strokeWidth: 3.0,
                                       ),
-                              ),
+                                      height: 40.w,
+                                      width: 40.w,
+                                    )
+                                  : Container(
+                                      child: Text(
+                                        'Continuar',
+                                        style: GoogleFonts.montserrat(
+                                            color: Colors.white,
+                                            fontSize: 36.nsp),
+                                      ),
+                                    ),
                             ),
                           ),
                         ],

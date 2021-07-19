@@ -56,7 +56,8 @@ dependencies:
     firebase_crashlytics: ^2.0.7
     http: ^0.13.3
     connectivity_plus: ^1.0.5
-    firebase_image: ^1.0.1
+    paginate_firestore: 1.0.0
+    cached_network_image: ^3.0.0
 
 # dev_dependencies:
 #     flutter_test:
@@ -79,6 +80,8 @@ flutter:
         - assets/imgs/logo_devmob.png
         - assets/imgs/user_placeholder.png
         - assets/imgs/iconeRoxo.png
+        - assets/imgs/app_icon.png
+        - assets/imgs/rango.png
     #   - images/a_dot_ham.jpeg
     # An image asset can refer to one or more resolution-specific "variants", see
     # https://flutter.dev/assets-and-images/#resolution-aware.

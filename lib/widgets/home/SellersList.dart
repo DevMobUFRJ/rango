@@ -1,10 +1,10 @@
-import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
@@ -14,11 +14,13 @@ class SellersList extends StatelessWidget {
   final List<Seller> sellerList;
   final AsyncSnapshot<Position> locationSnapshot;
   final String clientId;
+  final PersistentTabController controller;
 
   const SellersList(
     this.sellerList,
     this.locationSnapshot,
     this.clientId,
+    this.controller,
   );
 
   @override
@@ -66,6 +68,7 @@ class SellersList extends StatelessWidget {
           title: 'Vendedores',
           sellers: sellerList,
           userLocation: locationSnapshot.data,
+          controller: controller,
         );
       },
     );

@@ -19,25 +19,28 @@ class HomeHeader extends StatelessWidget {
           width: 1.wp,
         ),
         Container(
-          margin: EdgeInsets.only(top: 0.03.hp),
+          margin: EdgeInsets.only(
+              top: 0.04.hp, bottom: 0.01.hp, left: 0.04.wp, right: 0.04.wp),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 0.01.hp),
-              Container(
-                width: 0.7.wp,
-                padding: EdgeInsets.symmetric(
-                    horizontal: 0.04.wp, vertical: 0.01.hp),
-                child: AutoSizeText(
-                  'Olá, $userName!\nBateu a fome?',
-                  maxLines: 2,
-                  textAlign: TextAlign.start,
-                  style: GoogleFonts.montserratTextTheme(
-                          Theme.of(context).textTheme)
-                      .headline1,
-                ),
+              AutoSizeText(
+                "Olá, $userName!",
+                maxLines: 2,
+                minFontSize: 30,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.montserratTextTheme(
+                  Theme.of(context).textTheme,
+                ).headline1,
               ),
-              SizedBox(height: 0.06.hp),
+              AutoSizeText(
+                "Bateu a fome?",
+                maxLines: 1,
+                minFontSize: 30,
+                style: GoogleFonts.montserratTextTheme(
+                  Theme.of(context).textTheme,
+                ).headline1,
+              ),
             ],
           ),
         ),

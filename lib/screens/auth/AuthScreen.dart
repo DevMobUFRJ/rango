@@ -6,7 +6,6 @@ import 'package:rango/widgets/auth/AuthForm.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/services.dart';
 
 class AuthScreen extends StatefulWidget {
   static const routeName = '/auth-screen';
@@ -25,6 +24,7 @@ class _AuthScreenState extends State<AuthScreen> {
     String name,
     File image,
     String password,
+    String phone,
     BuildContext ctx,
   }) async {
     UserCredential authResult;
@@ -59,12 +59,14 @@ class _AuthScreenState extends State<AuthScreen> {
                 ScaffoldMessenger.of(ctx).showSnackBar(
                   SnackBar(
                     content: Text(
-                      'Você se conectou com um novo dispositivo! Novas notificações chegaram apenas a ele.',
+                      'Você se conectou com um novo dispositivo! Novas notificações chegarão apenas a ele.',
                       textAlign: TextAlign.center,
                     ),
                     backgroundColor: Theme.of(context).accentColor,
                   ),
                 );
+                userInstance.update(dataToUpdate);
+              } else if (oldDeviceToken == null) {
                 userInstance.update(dataToUpdate);
               }
             });
@@ -127,17 +129,15 @@ class _AuthScreenState extends State<AuthScreen> {
         setState(() => _isLoading = true);
         authResult = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
-        User user = _auth.currentUser;
-        user.updateDisplayName(name);
+        authResult.user.updateDisplayName(name);
 
         String url;
         if (image != null) {
           final ref = FirebaseStorage.instance
               .ref()
-              .child('user_image')
-              .child(authResult.user.uid + '.jpg');
+              .child('users/${authResult.user.uid}/picture.png');
           await ref.putFile(image).whenComplete(() => null);
-          url = 'gs://rango-ufrj.appspot.com/${ref.fullPath}';
+          url = await ref.getDownloadURL();
         }
         String deviceToken = await FirebaseMessaging.instance.getToken();
         await FirebaseFirestore.instance
@@ -149,6 +149,7 @@ class _AuthScreenState extends State<AuthScreen> {
             'email': email,
             'picture': url != null ? url : null,
             'deviceToken': deviceToken,
+            'phone': phone,
           },
         );
         Navigator.of(context).pop();

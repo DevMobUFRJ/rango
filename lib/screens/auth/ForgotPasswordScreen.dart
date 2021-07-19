@@ -30,23 +30,21 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       try {
         final firebaseAuth = FirebaseAuth.instance;
         await firebaseAuth.sendPasswordResetEmail(email: _email.text);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(
-              SnackBar(
-                duration: Duration(seconds: 2),
-                backgroundColor: Theme.of(ctx).accentColor,
-                content: Text(
-                  'Email enviado',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.montserrat(
-                    color: Colors.white,
-                    fontSize: 28.nsp,
-                  ),
-                ),
+        setState(() => _loading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            duration: Duration(seconds: 2),
+            backgroundColor: Theme.of(ctx).accentColor,
+            content: Text(
+              'Email enviado',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.montserrat(
+                color: Colors.white,
+                fontSize: 28.nsp,
               ),
-            )
-            .closed
-            .then((value) => Navigator.of(ctx).pop());
+            ),
+          ),
+        );
       } catch (error) {
         ScaffoldMessenger.of(ctx).showSnackBar(
           SnackBar(
@@ -82,17 +80,25 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
+            Flexible(
               flex: 1,
-              child: Container(
-                margin: EdgeInsets.only(top: 50, bottom: 20),
-                child: Text(
-                  "RANGO",
-                  style: GoogleFonts.montserrat(
-                    fontSize: 80.nsp,
-                    color: Theme.of(context).accentColor,
+              child: Column(
+                children: [
+                  Flexible(
+                    flex: 1,
+                    child: Image(image: AssetImage('assets/imgs/rango.png')),
                   ),
-                ),
+                  Flexible(
+                    flex: 1,
+                    child: Text(
+                      "RANGO",
+                      style: TextStyle(
+                        color: Theme.of(context).accentColor,
+                        fontSize: 80.nsp,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             Flexible(
