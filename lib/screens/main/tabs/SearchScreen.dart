@@ -22,6 +22,7 @@ import 'package:rango/widgets/others/ModalFilter.dart';
 
 class SearchScreen extends StatefulWidget {
   final Client usuario;
+  PersistentTabController controller;
   SearchScreen(this.usuario);
 
   @override
@@ -421,6 +422,7 @@ class _SearchScreenState extends State<SearchScreen> {
 }
 
 Widget _botaoVerVendedor(Seller seller, BuildContext context) {
+  PersistentTabController controller;
   return Container(
     margin: EdgeInsets.symmetric(vertical: 0.01.hp),
     width: 0.5.wp,
@@ -434,7 +436,7 @@ Widget _botaoVerVendedor(Seller seller, BuildContext context) {
         pushNewScreen(
           context,
           withNavBar: false,
-          screen: SellerProfile(seller.id, seller.name),
+          screen: SellerProfile(seller.id, seller.name, controller),
           pageTransitionAnimation: PageTransitionAnimation.cupertino,
         );
       },
