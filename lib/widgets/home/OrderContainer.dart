@@ -36,7 +36,7 @@ class _OrderContainerState extends State<OrderContainer>
   @override
   void initState() {
     super.initState();
-    _getClient(widget.pedido.sellerId);
+    _getClient();
     swipeRightController = AnimationController(
       duration: Duration(milliseconds: 400),
       vsync: this,
@@ -313,23 +313,30 @@ class _OrderContainerState extends State<OrderContainer>
     );
   }
 
-  Future<void> _getClient(String sellerId) async {
-    Client client = await Repository.instance.clientsRef
-        .doc(widget.pedido.clientId)
-        .get()
-        .then((value) => value.data());
-    setState(() => _client = client);
+  Future<void> _getClient() async {
+    var clientDoc = await Repository.instance.getClient(widget.pedido.clientId);
+    setState(() => _client = clientDoc.data());
   }
 
   void _showOrderUpdateNotification(String update) async {
+    print(FirebaseAuth.instance.currentUser.displayName);
+    if (_client.deviceToken == null ||
+        _client.clientNotificationSettings == null ||
+        _client.clientNotificationSettings.reservations == false) {
+      return;
+    }
+
     String titleMessage;
     String descriptionMessage;
     String sellerName = FirebaseAuth.instance.currentUser.displayName;
+    if (sellerName == '') {
+      sellerName = 'Um vendedor';
+    }
     String mealName = widget.pedido.mealName;
     switch (update) {
       case 'reservated':
         titleMessage = 'Sua reserva foi confirmada!';
-        descriptionMessage = '$sellerName confirmou sua reserva de $mealName';
+        descriptionMessage = '$sellerName confirmou sua reserva de $mealName.';
         break;
       case 'sold':
         titleMessage = 'Sua reserva foi finalizada!';
@@ -339,21 +346,21 @@ class _OrderContainerState extends State<OrderContainer>
       case 'undoReservate':
         titleMessage = 'Sua reserva foi desconfirmada!';
         descriptionMessage =
-            '$sellerName desconfirmou sua reserva de $mealName';
+            '$sellerName desconfirmou sua reserva de $mealName.';
         break;
       case 'undoSold':
         titleMessage = 'Sua reserva foi marcada como não vendida!';
         descriptionMessage =
-            '$sellerName desmarcou que sua reserva de $mealName foi vendida';
+            '$sellerName desmarcou que sua reserva de $mealName como vendida.';
         break;
-      case 'cancelled':
+      case 'canceled':
         titleMessage = 'Sua reserva foi cancelada!';
-        descriptionMessage = '$sellerName cancelou sua reserva de $mealName';
+        descriptionMessage = '$sellerName cancelou sua reserva de $mealName.';
         break;
       default:
         titleMessage = 'Sua reserva teve atualização!';
         descriptionMessage =
-            '$sellerName atualizou o estado da sua reserva de $mealName';
+            '$sellerName atualizou o estado da sua reserva de $mealName.';
         break;
     }
     try {
@@ -417,7 +424,7 @@ class _OrderContainerState extends State<OrderContainer>
               Navigator.of(ctx).pop();
               try {
                 await Repository.instance.cancelOrder(widget.pedido);
-                _showOrderUpdateNotification('cancelled');
+                _showOrderUpdateNotification('canceled');
               } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(

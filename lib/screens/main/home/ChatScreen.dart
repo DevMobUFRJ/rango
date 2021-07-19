@@ -35,22 +35,18 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
     userId = FirebaseAuth.instance.currentUser.uid;
     docId = '${widget.clientId}_$userId';
-    _getClient(userId);
+    _getClient();
     chatReference = db.collection('chat').doc(docId).collection('messages');
   }
 
-  Future<void> _getClient(String sellerId) async {
-    Client client = await Repository.instance.clientsRef
-        .doc(widget.clientId)
-        .get()
-        .then((value) => value.data());
-    setState(() => _client = client);
+  Future<void> _getClient() async {
+    var clientDoc = await Repository.instance.getClient(widget.clientId);
+    setState(() => _client = clientDoc.data());
   }
 
   Future<void> _addNewMessage(Message newMessage) async {
     try {
       chatReference.add(newMessage.toJson());
-      print(_client.clientNotificationSettings);
       if (_client.deviceToken != null &&
           _client.clientNotificationSettings != null &&
           _client.clientNotificationSettings.messages == true) {
@@ -73,6 +69,10 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<void> _sendNewMessageNotification() async {
+    var name = FirebaseAuth.instance.currentUser.displayName;
+    if (name == '') {
+      name = 'Um vendedor';
+    }
     try {
       var data = (<String, String>{
         'id': '2',
@@ -81,9 +81,9 @@ class _ChatScreenState extends State<ChatScreen> {
         'channelDescription': 'Canal usado para notificações do chat',
         'status': 'done',
         'description':
-            '${FirebaseAuth.instance.currentUser.displayName} te enviou uma mensagem no chat!',
+            '$name te enviou uma mensagem no chat.',
         'payload':
-            'chat/$userId/${FirebaseAuth.instance.currentUser.displayName}',
+            'chat/$userId/$name',
         'title': 'Você recebeu uma nova mensagem!',
       });
       await http.post(

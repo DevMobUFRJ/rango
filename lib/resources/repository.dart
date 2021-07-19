@@ -281,6 +281,10 @@ class Repository {
   }
 
   // Client
+  Future<DocumentSnapshot<Client>> getClient(String uid) async {
+    return clientsRef.doc(uid).get();
+  }
+
   Stream<DocumentSnapshot<Client>> getClientStream(String uid) {
     return clientsRef.doc(uid).snapshots();
   }

@@ -39,7 +39,7 @@ class Client {
         'name': name,
         'picture': picture,
         'favoriteSellers': favoriteSellers,
-        'ClientNotificationSettings': clientNotificationSettings,
+        'notifications': clientNotificationSettings,
         'deviceToken': deviceToken,
         'phone': phone
       };
