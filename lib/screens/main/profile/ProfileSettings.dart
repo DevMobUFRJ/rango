@@ -5,8 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:paginate_firestore/widgets/empty_separator.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/seller.dart';
+import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/main/profile/AboutScreen.dart';
 import 'package:rango/widgets/settings/CustomCheckBox.dart';
 
@@ -21,6 +23,7 @@ class ProfileSettings extends StatefulWidget {
 
 class _ProfileSettingsState extends State<ProfileSettings> {
   bool _switchValue = false;
+  bool _canReservateValue = false;
   bool _reservaValue = false;
   bool _newMessagesValue = false;
   bool _isLoading = false;
@@ -28,6 +31,11 @@ class _ProfileSettingsState extends State<ProfileSettings> {
   @override
   void initState() {
     setState(() {
+      if (widget.user.canReservate == null) {
+        _canReservateValue = true;
+      } else {
+        _canReservateValue = widget.user.canReservate;
+      }
       if (widget.user.notificationSettings == null) {
         _switchValue = false;
         _reservaValue = false;
@@ -163,7 +171,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                     child: CustomCheckBox(
                       changeValue: (value) =>
                           setState(() => _reservaValue = value),
-                      text: 'Reserva confirmada',
+                      text: 'Reservas',
                       value: _reservaValue,
                       isActive: _switchValue,
                     ),
@@ -177,6 +185,29 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                       value: _newMessagesValue,
                       isActive: _switchValue,
                     ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(right: 0.09.wp, left: 0.05.wp),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AutoSizeText(
+                    'Permitir reservas',
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      color: Theme.of(context).accentColor,
+                      fontSize: 38.nsp,
+                    ),
+                  ),
+                  Switch(
+                    value: _canReservateValue,
+                    activeColor: Theme.of(context).accentColor,
+                    onChanged: (value) => setState(() {
+                      _canReservateValue = value;
+                    }),
                   ),
                 ],
               ),
@@ -199,6 +230,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                           'Confirmar',
                           style: GoogleFonts.montserrat(
                             fontSize: 36.nsp,
+                            color: Colors.white,
                           ),
                         ),
                 ),
@@ -264,12 +296,9 @@ class _ProfileSettingsState extends State<ProfileSettings> {
         notifications['orders'] = _reservaValue;
         dataToUpdate['notificationSettings'] = notifications;
       }
-      final firebaseUser = FirebaseAuth.instance.currentUser;
+      dataToUpdate['canReservate'] = _canReservateValue;
       if (dataToUpdate.length > 0) {
-        await FirebaseFirestore.instance
-            .collection('sellers')
-            .doc(firebaseUser.uid)
-            .update(dataToUpdate);
+        await Repository.instance.updateSeller(widget.user.id, dataToUpdate);
       }
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -279,7 +308,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
           content: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Text(
-              "Configurações salvas com sucesso.",
+              "Configurações salvas com sucesso",
               textAlign: TextAlign.center,
             ),
           ),
