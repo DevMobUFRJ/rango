@@ -1,5 +1,4 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
@@ -39,248 +38,213 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
         height: 1.hp - 56,
-        child: StreamBuilder(
-          stream: Repository.instance.getSeller(widget.usuario.id),
-          builder: (context,
-              AsyncSnapshot<DocumentSnapshot<Seller>> sellerSnapshot) {
-            if (!sellerSnapshot.hasData ||
-                sellerSnapshot.connectionState == ConnectionState.waiting) {
-              return Container(
-                height: 0.5.hp,
-                alignment: Alignment.center,
-                child: SizedBox(
-                  height: 50,
-                  width: 50,
-                  child: CircularProgressIndicator(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Flexible(
+              flex: 5,
+              child: UserPicture(picture: widget.usuario.logo),
+            ),
+            Flexible(
+              flex: 1,
+              child: Container(
+                constraints: BoxConstraints(maxWidth: 0.6.wp),
+                margin: EdgeInsets.symmetric(vertical: 0.01.hp),
+                child: AutoSizeText(
+                  widget.usuario.name,
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.montserrat(
                     color: Theme.of(context).accentColor,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 35.ssp,
                   ),
                 ),
-              );
-            }
-
-            if (sellerSnapshot.hasError) {
-              return Container(
-                height: 0.6.hp - 56,
-                alignment: Alignment.center,
-                child: AutoSizeText(
-                  sellerSnapshot.error.toString(),
-                  style: GoogleFonts.montserrat(
-                      fontSize: 45.nsp, color: Theme.of(context).accentColor),
-                ),
-              );
-            }
-
-            Seller seller = sellerSnapshot.data.data();
-
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Flexible(
-                  flex: 5,
-                  child: UserPicture(picture: seller.logo),
-                ),
-                Flexible(
-                  flex: 1,
-                  child: Container(
-                    constraints: BoxConstraints(maxWidth: 0.6.wp),
-                    margin: EdgeInsets.symmetric(vertical: 0.01.hp),
-                    child: AutoSizeText(
-                      seller.name,
-                      maxLines: 2,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.montserrat(
-                        color: Theme.of(context).accentColor,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 35.ssp,
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: Container(
+                margin: EdgeInsets.symmetric(vertical: 0.01.hp),
+                width: 0.48.wp,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () => pushNewScreen(
+                        context,
+                        screen: EditProfileScreen(widget.usuario),
+                        withNavBar: false,
+                        pageTransitionAnimation:
+                        PageTransitionAnimation.cupertino,
+                      ),
+                      child: Icon(
+                        Icons.edit,
+                        color: yellow,
+                        size: ScreenUtil().setSp(48),
                       ),
                     ),
-                  ),
+                    GestureDetector(
+                      onTap: () => pushNewScreen(
+                        context,
+                        screen: ProfileSettings(widget.usuario),
+                        withNavBar: false,
+                        pageTransitionAnimation:
+                        PageTransitionAnimation.cupertino,
+                      ),
+                      child: Icon(
+                        Icons.settings,
+                        color: yellow,
+                        size: ScreenUtil().setSp(48),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => _showCloseStoreDialog(widget.usuario),
+                      child: Icon(
+                        Icons.power_settings_new,
+                        color: widget.usuario.active ? yellow : Colors.red[300],
+                        size: ScreenUtil().setSp(48),
+                      ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    margin: EdgeInsets.symmetric(vertical: 0.01.hp),
-                    width: 0.48.wp,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        GestureDetector(
-                          onTap: () => pushNewScreen(
-                            context,
-                            screen: EditProfileScreen(seller),
-                            withNavBar: false,
-                            pageTransitionAnimation:
-                                PageTransitionAnimation.cupertino,
+              ),
+            ),
+            Flexible(
+              flex: 3,
+              child: Container(
+                margin: EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(bottom: 5),
+                          child: IconButton(
+                            iconSize: ScreenUtil().setSp(75),
+                            icon: Icon(
+                              Icons.map,
+                              color: Colors.white,
+                            ),
+                            onPressed: () => pushNewScreen(
+                              context,
+                              screen: SetLocationScreen(),
+                              withNavBar: false,
+                            ),
                           ),
-                          child: Icon(
-                            Icons.edit,
+                          decoration: BoxDecoration(
+                            borderRadius:
+                            BorderRadius.all(Radius.circular(60)),
                             color: yellow,
-                            size: ScreenUtil().setSp(48),
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () => pushNewScreen(
-                            context,
-                            screen: ProfileSettings(seller),
-                            withNavBar: false,
-                            pageTransitionAnimation:
-                                PageTransitionAnimation.cupertino,
-                          ),
-                          child: Icon(
-                            Icons.settings,
+                        AutoSizeText(
+                          'Localização',
+                          style: GoogleFonts.montserrat(
                             color: yellow,
-                            size: ScreenUtil().setSp(48),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () => _showCloseStoreDialog(seller),
-                          child: Icon(
-                            Icons.store,
-                            color: seller.active ? yellow : Colors.red[300],
-                            size: ScreenUtil().setSp(48),
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
                     ),
-                  ),
-                ),
-                Flexible(
-                  flex: 3,
-                  child: Container(
-                    margin: EdgeInsets.symmetric(vertical: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              margin: EdgeInsets.only(bottom: 5),
-                              child: IconButton(
-                                iconSize: ScreenUtil().setSp(75),
-                                icon: Icon(
-                                  Icons.map,
-                                  color: Colors.white,
-                                ),
-                                onPressed: () => pushNewScreen(
-                                  context,
-                                  screen: SetLocationScreen(),
-                                  withNavBar: false,
-                                ),
-                              ),
-                              decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(60)),
-                                color: yellow,
-                              ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(bottom: 5),
+                          child: IconButton(
+                            iconSize: ScreenUtil().setSp(75),
+                            icon: Icon(
+                              Icons.schedule,
+                              color: Colors.white,
                             ),
-                            AutoSizeText(
-                              'Localização',
-                              style: GoogleFonts.montserrat(
-                                color: yellow,
-                                fontWeight: FontWeight.w500,
-                              ),
+                            onPressed: () => pushNewScreen(
+                              context,
+                              screen: HorariosScreen(widget.usuario),
+                              withNavBar: false,
                             ),
-                          ],
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(60),
+                            ),
+                            color: yellow,
+                          ),
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              margin: EdgeInsets.only(bottom: 5),
-                              child: IconButton(
-                                iconSize: ScreenUtil().setSp(75),
-                                icon: Icon(
-                                  Icons.schedule,
-                                  color: Colors.white,
-                                ),
-                                onPressed: () => pushNewScreen(
-                                  context,
-                                  screen: HorariosScreen(seller),
-                                  withNavBar: false,
-                                ),
-                              ),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(60),
-                                ),
-                                color: yellow,
-                              ),
-                            ),
-                            AutoSizeText(
-                              'Meus horários',
-                              style: GoogleFonts.montserrat(
-                                color: yellow,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
+                        AutoSizeText(
+                          'Meus horários',
+                          style: GoogleFonts.montserrat(
+                            color: yellow,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ],
                     ),
-                  ),
+                  ],
                 ),
-                Expanded(
-                  flex: 5,
-                  child: Container(
-                      width: 0.8.wp,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Flexible(
-                            flex: 1,
-                            child: AutoSizeText(
-                              "Nos últimos 7 dias:",
-                              maxLines: 1,
-                              style: GoogleFonts.montserrat(
-                                fontSize: 40.nsp,
-                                color: Theme.of(context).accentColor,
+              ),
+            ),
+            Expanded(
+              flex: 5,
+              child: Container(
+                  width: 0.8.wp,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        flex: 1,
+                        child: AutoSizeText(
+                          "Nos últimos 7 dias:",
+                          maxLines: 1,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 40.nsp,
+                            color: Theme.of(context).accentColor,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 0.01.hp),
+                      Flexible(
+                        flex: 1,
+                        child: AutoSizeText(
+                          "Você realizou um total de X vendas para Y clientes e vendeu um total de ZZ,ZZ reais",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 30.nsp,
+                            color: Theme.of(context).accentColor,
+                          ),
+                        ),
+                      ),
+                      Flexible(
+                        flex: 1,
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Container(
+                            width: 0.35.wp,
+                            child: ElevatedButton(
+                              child: AutoSizeText(
+                                "Ver mais",
+                                style: TextStyle(fontSize: 36.nsp),
+                              ),
+                              onPressed: () => pushNewScreen(
+                                context,
+                                screen: ReportsScreen(),
+                                withNavBar: false,
                               ),
                             ),
                           ),
-                          SizedBox(height: 0.01.hp),
-                          Flexible(
-                            flex: 1,
-                            child: AutoSizeText(
-                              "Você realizou um total de X vendas para Y clientes e vendeu um total de ZZ,ZZ reais",
-                              style: GoogleFonts.montserrat(
-                                fontSize: 30.nsp,
-                                color: Theme.of(context).accentColor,
-                              ),
-                            ),
-                          ),
-                          Flexible(
-                            flex: 1,
-                            child: Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Container(
-                                width: 0.35.wp,
-                                child: ElevatedButton(
-                                  child: AutoSizeText(
-                                    "Ver mais",
-                                    style: TextStyle(fontSize: 36.nsp),
-                                  ),
-                                  onPressed: () => pushNewScreen(
-                                    context,
-                                    screen: ReportsScreen(),
-                                    withNavBar: false,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      )),
-                ),
-              ],
-            );
-          },
+                        ),
+                      ),
+                    ],
+                  )),
+            ),
+          ],
         ),
       ),
     );
@@ -386,8 +350,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 )
               : Text(
                   seller.active
-                      ? 'Deseja realmente fechar a loja? Ela ficará fechada até ser aberta manualmente novamente'
-                      : 'Deseja realmente abrir a loja? Clientes poderão realizar reservas com você',
+                      ? 'Deseja realmente fechar a loja? Ela ficará fechada até ser aberta manualmente novamente.'
+                      : 'Deseja realmente abrir a loja? Clientes poderão realizar reservas com você.',
                   style: GoogleFonts.montserrat(
                     color: Colors.white,
                     fontSize: 28.nsp,
