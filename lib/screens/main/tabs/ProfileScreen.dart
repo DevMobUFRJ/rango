@@ -6,6 +6,7 @@ import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/main/profile/EditProfileScreen.dart';
 import 'package:rango/screens/main/profile/HorariosScreen.dart';
+import 'package:rango/screens/main/profile/OrderHistory.dart';
 import 'package:rango/screens/main/profile/ProfileSettings.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/screens/main/profile/ReportsScreen.dart';
@@ -182,6 +183,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         AutoSizeText(
                           'Meus horários',
+                          style: GoogleFonts.montserrat(
+                            color: yellow,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Flexible(
+              flex: 3,
+              child: Container(
+                margin: EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(bottom: 5),
+                          child: IconButton(
+                            iconSize: ScreenUtil().setSp(75),
+                            icon: Icon(
+                              Icons.history,
+                              color: Colors.white,
+                            ),
+                            onPressed: () => pushNewScreen(
+                              context,
+                              screen: OrderHistoryScreen(),
+                              withNavBar: false,
+                            ),
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius:
+                            BorderRadius.all(Radius.circular(60)),
+                            color: yellow,
+                          ),
+                        ),
+                        AutoSizeText(
+                          'Histórico',
                           style: GoogleFonts.montserrat(
                             color: yellow,
                             fontWeight: FontWeight.w500,
