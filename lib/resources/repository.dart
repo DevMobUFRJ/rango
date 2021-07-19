@@ -268,7 +268,15 @@ class Repository {
   Stream<QuerySnapshot<Order>> getOrdersFromSeller(String sellerId) {
     return ordersRef
         .where('sellerId', isEqualTo: sellerId)
-        .orderBy('requestedAt', descending: true)
+        .orderBy('requestedAt')
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot<Order>> getLastWeekOrders(String sellerId) {
+    return ordersRef
+        .where('sellerId', isEqualTo: sellerId)
+        .where('status', isEqualTo: 'sold')
+        .where('requestedAt', isGreaterThanOrEqualTo: DateTime.now().subtract(Duration(days: 7)))
         .snapshots();
   }
 
