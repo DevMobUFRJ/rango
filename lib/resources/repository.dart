@@ -9,22 +9,29 @@ import 'package:rango/models/seller.dart';
 import 'package:rango/utils/date_time.dart';
 
 class Repository {
-  final sellersRef = FirebaseFirestore.instance.collection('sellers').withConverter<Seller>(
-      fromFirestore: (snapshot, _) => Seller.fromJson(snapshot.data(), id: snapshot.id),
-      toFirestore: (seller, _) => seller.toJson()
-  );
-  final clientsRef = FirebaseFirestore.instance.collection('clients').withConverter<Client>(
-      fromFirestore: (snapshot, _) => Client.fromJson(snapshot.data(), id: snapshot.id),
-      toFirestore: (client, _) => client.toJson()
-  );
-  final ordersRef = FirebaseFirestore.instance.collection('orders').withConverter<Order>(
-      fromFirestore: (snapshot, _) => Order.fromJson(snapshot.data(), id: snapshot.id),
-      toFirestore: (order, _) => order.toJson()
-  );
-  CollectionReference<Meal> mealsRef(String sellerId) => sellersRef.doc(sellerId).collection('meals').withConverter<Meal>(
-      fromFirestore: (snapshot, _) => Meal.fromJson(snapshot.data(), id: snapshot.id),
-      toFirestore: (meal, _) => meal.toJson()
-  );
+  final sellersRef = FirebaseFirestore.instance
+      .collection('sellers')
+      .withConverter<Seller>(
+          fromFirestore: (snapshot, _) =>
+              Seller.fromJson(snapshot.data(), id: snapshot.id),
+          toFirestore: (seller, _) => seller.toJson());
+  final clientsRef = FirebaseFirestore.instance
+      .collection('clients')
+      .withConverter<Client>(
+          fromFirestore: (snapshot, _) =>
+              Client.fromJson(snapshot.data(), id: snapshot.id),
+          toFirestore: (client, _) => client.toJson());
+  final ordersRef = FirebaseFirestore.instance
+      .collection('orders')
+      .withConverter<Order>(
+          fromFirestore: (snapshot, _) =>
+              Order.fromJson(snapshot.data(), id: snapshot.id),
+          toFirestore: (order, _) => order.toJson());
+  CollectionReference<Meal> mealsRef(String sellerId) =>
+      sellersRef.doc(sellerId).collection('meals').withConverter<Meal>(
+          fromFirestore: (snapshot, _) =>
+              Meal.fromJson(snapshot.data(), id: snapshot.id),
+          toFirestore: (meal, _) => meal.toJson());
   final geo = Geoflutterfire();
   final auth = FirebaseAuth.instance;
 
@@ -49,7 +56,8 @@ class Repository {
     return sellersRef.doc(uid).get();
   }
 
-  Future<void> updateSeller(String uid, Map<String, dynamic> dataToUpdate) async {
+  Future<void> updateSeller(
+      String uid, Map<String, dynamic> dataToUpdate) async {
     return sellersRef.doc(uid).update(dataToUpdate);
   }
 
@@ -57,7 +65,8 @@ class Repository {
     return mealsRef(sellerId).snapshots();
   }
 
-  Stream<DocumentSnapshot<Meal>> getMealFromSeller(String mealUid, String sellerId) {
+  Stream<DocumentSnapshot<Meal>> getMealFromSeller(
+      String mealUid, String sellerId) {
     return mealsRef(sellerId).doc(mealUid).snapshots();
   }
 
@@ -68,15 +77,20 @@ class Repository {
     return Future.value(response.id);
   }
 
-  Future<void> updateMeal(String sellerId, String mealId, Map<String, dynamic> dataToUpdate) async {
-    return sellersRef.doc(sellerId).collection('meals').doc(mealId).update(dataToUpdate);
+  Future<void> updateMeal(
+      String sellerId, String mealId, Map<String, dynamic> dataToUpdate) async {
+    return sellersRef
+        .doc(sellerId)
+        .collection('meals')
+        .doc(mealId)
+        .update(dataToUpdate);
   }
 
   Future<void> deleteMeal(String sellerId, String mealId) async {
     try {
-      await sellersRef.doc(sellerId).update({
-        'currentMeals.$mealId': FieldValue.delete()
-      });
+      await sellersRef
+          .doc(sellerId)
+          .update({'currentMeals.$mealId': FieldValue.delete()});
       await sellersRef.doc(sellerId).collection('meals').doc(mealId).delete();
     } catch (e) {
       throw e;
@@ -86,9 +100,7 @@ class Repository {
   Future<void> addMealToCurrent(mealId, sellerId) async {
     try {
       await sellersRef.doc(sellerId).update({
-        'currentMeals.$mealId': {
-          'featured': false
-        }
+        'currentMeals.$mealId': {'featured': false}
       });
     } catch (e) {
       throw e;
@@ -97,9 +109,9 @@ class Repository {
 
   Future<void> removeMealFromCurrent(mealId, sellerId) async {
     try {
-      await sellersRef.doc(sellerId).update({
-        'currentMeals.$mealId': FieldValue.delete()
-      });
+      await sellersRef
+          .doc(sellerId)
+          .update({'currentMeals.$mealId': FieldValue.delete()});
     } catch (e) {
       throw e;
     }
@@ -122,7 +134,8 @@ class Repository {
         .where('requestedAt', isGreaterThanOrEqualTo: startOfDay())
         .where('requestedAt', isLessThanOrEqualTo: endOfDay())
         .where('status', whereIn: ['requested', 'reserved'])
-        .orderBy('requestedAt').snapshots();
+        .orderBy('requestedAt')
+        .snapshots();
   }
 
   Stream<QuerySnapshot<Order>> getClosedOrdersFromSeller(String sellerId) {
@@ -131,26 +144,25 @@ class Repository {
         .where('requestedAt', isGreaterThanOrEqualTo: startOfDay())
         .where('requestedAt', isLessThanOrEqualTo: endOfDay())
         .where('status', isEqualTo: 'sold')
-        .orderBy('requestedAt', descending: true).snapshots();
+        .orderBy('requestedAt', descending: true)
+        .snapshots();
   }
 
   Future<void> reserveOrderTransaction(Order order) async {
     try {
-      return await FirebaseFirestore.instance.runTransaction((transaction) async {
-        DocumentReference<Meal> mealRef = mealsRef(order.sellerId).doc(order.mealId);
+      return await FirebaseFirestore.instance
+          .runTransaction((transaction) async {
+        DocumentReference<Meal> mealRef =
+            mealsRef(order.sellerId).doc(order.mealId);
         DocumentReference<Order> orderRef = ordersRef.doc(order.id);
 
         DocumentSnapshot<Meal> snapshot = await transaction.get<Meal>(mealRef);
         int quantity = snapshot.data().quantity;
 
         if (quantity - order.quantity >= 0) {
-          transaction.update(mealRef, {
-            'quantity' : quantity - order.quantity
-          });
-          transaction.update(orderRef, {
-            'status': 'reserved',
-            'reservedAt': Timestamp.now()
-          });
+          transaction.update(mealRef, {'quantity': quantity - order.quantity});
+          transaction.update(
+              orderRef, {'status': 'reserved', 'reservedAt': Timestamp.now()});
         } else {
           switch (quantity) {
             case 0:
@@ -171,20 +183,18 @@ class Repository {
 
   Future<void> undoReserveOrderTransaction(Order order) async {
     try {
-      return await FirebaseFirestore.instance.runTransaction((transaction) async {
-        DocumentReference<Meal> mealRef = mealsRef(order.sellerId).doc(order.mealId);
+      return await FirebaseFirestore.instance
+          .runTransaction((transaction) async {
+        DocumentReference<Meal> mealRef =
+            mealsRef(order.sellerId).doc(order.mealId);
         DocumentReference<Order> orderRef = ordersRef.doc(order.id);
 
         DocumentSnapshot<Meal> snapshot = await transaction.get<Meal>(mealRef);
         int quantity = snapshot.data().quantity;
 
-        transaction.update(mealRef, {
-          'quantity' : quantity + order.quantity
-        });
-        transaction.update(orderRef, {
-          'status': 'requested',
-          'reservedAt': null
-        });
+        transaction.update(mealRef, {'quantity': quantity + order.quantity});
+        transaction
+            .update(orderRef, {'status': 'requested', 'reservedAt': null});
       });
     } catch (e) {
       throw e;
@@ -193,11 +203,9 @@ class Repository {
 
   Future<void> sellOrder(String orderUid) async {
     try {
-      ordersRef.doc(orderUid).update(
-          {
-            'status': 'sold',
-            'soldAt': Timestamp.now()
-          });
+      ordersRef
+          .doc(orderUid)
+          .update({'status': 'sold', 'soldAt': Timestamp.now()});
     } catch (e) {
       throw e;
     }
@@ -205,11 +213,29 @@ class Repository {
 
   Future<void> undoSellOrder(String orderUid) async {
     try {
-      ordersRef.doc(orderUid).update(
-          {
-            'status': 'reserved',
-            'soldAt': null
-          });
+      ordersRef.doc(orderUid).update({'status': 'reserved', 'soldAt': null});
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> openStore(String sellerId) async {
+    try {
+      DocumentReference<Seller> sellerRef = sellersRef.doc(sellerId);
+      Map<String, dynamic> dataToUpdate = {};
+      dataToUpdate['active'] = true;
+      sellerRef.update(dataToUpdate);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> closeStore(String sellerId) async {
+    try {
+      DocumentReference<Seller> sellerRef = sellersRef.doc(sellerId);
+      Map<String, dynamic> dataToUpdate = {};
+      dataToUpdate['active'] = false;
+      sellerRef.update(dataToUpdate);
     } catch (e) {
       throw e;
     }
@@ -217,34 +243,41 @@ class Repository {
 
   Future<void> cancelOrder(Order order) async {
     try {
-      return await FirebaseFirestore.instance.runTransaction((transaction) async {
+      return await FirebaseFirestore.instance
+          .runTransaction((transaction) async {
         DocumentReference<Order> orderRef = ordersRef.doc(order.id);
 
         if (order.status == 'reserved') {
-          DocumentReference<Meal> mealRef = mealsRef(order.sellerId).doc(order.mealId);
-          DocumentSnapshot<Meal> snapshot = await transaction.get<Meal>(mealRef);
+          DocumentReference<Meal> mealRef =
+              mealsRef(order.sellerId).doc(order.mealId);
+          DocumentSnapshot<Meal> snapshot =
+              await transaction.get<Meal>(mealRef);
           int quantity = snapshot.data().quantity;
 
-          transaction.update(mealRef, {
-            'quantity' : quantity + order.quantity
-          });
+          transaction.update(mealRef, {'quantity': quantity + order.quantity});
         }
 
-        transaction.update(orderRef, {
-          'status': 'canceled',
-          'canceledAt': Timestamp.now()
-        });
+        transaction.update(
+            orderRef, {'status': 'canceled', 'canceledAt': Timestamp.now()});
       });
     } catch (e) {
       throw e;
     }
   }
 
-  Stream<QuerySnapshot<Order>> getOrdersFromSeller(String sellerId, {int limit}) {
+  Stream<QuerySnapshot<Order>> getOrdersFromSeller(String sellerId,
+      {int limit}) {
     if (limit != null && limit > 0) {
-      return ordersRef.where('sellerId', isEqualTo: sellerId).orderBy('requestedAt', descending: true).limit(limit).snapshots();
+      return ordersRef
+          .where('sellerId', isEqualTo: sellerId)
+          .orderBy('requestedAt', descending: true)
+          .limit(limit)
+          .snapshots();
     }
-    return ordersRef.where('sellerId', isEqualTo: sellerId).orderBy('requestedAt', descending: true).snapshots();
+    return ordersRef
+        .where('sellerId', isEqualTo: sellerId)
+        .orderBy('requestedAt', descending: true)
+        .snapshots();
   }
 
   // Client

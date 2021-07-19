@@ -24,6 +24,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final yellow = Color(0xFFF9B152);
+  bool _loadingStore = false;
 
   @override
   Widget build(BuildContext context) {
@@ -40,10 +41,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         height: 1.hp - 56,
         child: StreamBuilder(
           stream: Repository.instance.getSeller(widget.usuario.id),
-          builder: (context, AsyncSnapshot<DocumentSnapshot<Seller>> sellerSnapshot) {
+          builder: (context,
+              AsyncSnapshot<DocumentSnapshot<Seller>> sellerSnapshot) {
             if (!sellerSnapshot.hasData ||
-                sellerSnapshot.connectionState ==
-                    ConnectionState.waiting) {
+                sellerSnapshot.connectionState == ConnectionState.waiting) {
               return Container(
                 height: 0.5.hp,
                 alignment: Alignment.center,
@@ -64,8 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: AutoSizeText(
                   sellerSnapshot.error.toString(),
                   style: GoogleFonts.montserrat(
-                      fontSize: 45.nsp,
-                      color: Theme.of(context).accentColor),
+                      fontSize: 45.nsp, color: Theme.of(context).accentColor),
                 ),
               );
             }
@@ -111,7 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             screen: EditProfileScreen(seller),
                             withNavBar: false,
                             pageTransitionAnimation:
-                            PageTransitionAnimation.cupertino,
+                                PageTransitionAnimation.cupertino,
                           ),
                           child: Icon(
                             Icons.edit,
@@ -125,7 +125,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             screen: ProfileSettings(seller),
                             withNavBar: false,
                             pageTransitionAnimation:
-                            PageTransitionAnimation.cupertino,
+                                PageTransitionAnimation.cupertino,
                           ),
                           child: Icon(
                             Icons.settings,
@@ -134,10 +134,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () => _showCloseStoreDialog(),
+                          onTap: () => _showCloseStoreDialog(seller),
                           child: Icon(
                             Icons.store,
-                            color: yellow,
+                            color: seller.active ? yellow : Colors.red[300],
                             size: ScreenUtil().setSp(48),
                           ),
                         ),
@@ -172,7 +172,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(Radius.circular(60)),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(60)),
                                 color: yellow,
                               ),
                             ),
@@ -285,63 +286,113 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _showCloseStoreDialog() => showDialog(
-    context: context,
-    builder: (BuildContext ctx) => AlertDialog(
-      insetPadding: EdgeInsets.symmetric(horizontal: 0.1.wp),
-      backgroundColor: Color(0xFFF9B152),
-      actionsPadding: EdgeInsets.all(10),
-      contentPadding: EdgeInsets.only(
-        top: 20,
-        left: 24,
-        right: 24,
-        bottom: 0,
-      ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(ctx).pop(),
-          child: Text(
-            'Cancelar',
-            style: GoogleFonts.montserrat(
-              decoration: TextDecoration.underline,
-              color: Colors.white,
-              fontSize: 34.nsp,
-            ),
+  void _showCloseStoreDialog(Seller seller) => showDialog(
+        context: context,
+        builder: (BuildContext ctx) => AlertDialog(
+          insetPadding: EdgeInsets.symmetric(horizontal: 0.1.wp),
+          backgroundColor: Color(0xFFF9B152),
+          actionsPadding: EdgeInsets.all(10),
+          contentPadding: EdgeInsets.only(
+            top: 20,
+            left: 24,
+            right: 24,
+            bottom: 0,
           ),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.of(ctx).pop();
-          },
-          child: Text(
-            'Fechar',
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Text(
+            !seller.active ? 'Abrindo a loja' : 'Fechando a loja',
             style: GoogleFonts.montserrat(
-              decoration: TextDecoration.underline,
               color: Colors.white,
               fontWeight: FontWeight.bold,
-              fontSize: 34.nsp,
+              fontSize: 38.ssp,
             ),
           ),
+          actions: _loadingStore
+              ? null
+              : [
+                  TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(),
+                    child: Text(
+                      'Cancelar',
+                      style: GoogleFonts.montserrat(
+                        decoration: TextDecoration.underline,
+                        color: Colors.white,
+                        fontSize: 34.nsp,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: seller.active
+                        ? () async {
+                            try {
+                              setState(() => _loadingStore = true);
+                              await Repository.instance.closeStore(seller.id);
+                              setState(() => _loadingStore = false);
+                              Navigator.of(ctx).pop();
+                            } catch (error) {
+                              setState(() => _loadingStore = false);
+                              Navigator.of(ctx).pop();
+                              ScaffoldMessenger.of(ctx).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Ocorreu um erro ao tentar fechar a loja, tente novamente',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  backgroundColor: Theme.of(context).errorColor,
+                                ),
+                              );
+                            }
+                          }
+                        : () async {
+                            try {
+                              setState(() => _loadingStore = true);
+                              await Repository.instance.openStore(seller.id);
+                              setState(() => _loadingStore = false);
+                              Navigator.of(ctx).pop();
+                            } catch (error) {
+                              setState(() => _loadingStore = false);
+                              Navigator.of(ctx).pop();
+                              ScaffoldMessenger.of(ctx).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Ocorreu um erro ao tentar fechar a loja, tente novamente',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  backgroundColor: Theme.of(context).errorColor,
+                                ),
+                              );
+                            }
+                          },
+                    child: Text(
+                      seller.active ? 'Fechar' : 'Abrir',
+                      style: GoogleFonts.montserrat(
+                        decoration: TextDecoration.underline,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 34.nsp,
+                      ),
+                    ),
+                  ),
+                ],
+          content: _loadingStore
+              ? SizedBox(
+                  width: 15,
+                  height: 15,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                  ),
+                )
+              : Text(
+                  seller.active
+                      ? 'Deseja realmente fechar a loja? Ela ficará fechada até ser aberta manualmente novamente'
+                      : 'Deseja realmente abrir a loja? Clientes poderão realizar reservas com você',
+                  style: GoogleFonts.montserrat(
+                    color: Colors.white,
+                    fontSize: 28.nsp,
+                  ),
+                ),
         ),
-      ],
-      title: Text(
-        'Fechando a loja',
-        style: GoogleFonts.montserrat(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 38.ssp,
-        ),
-      ),
-      content: Text(
-        'Deseja realmente fechar a loja? Ela ficará fechada até ser aberta manualmente novamente',
-        style: GoogleFonts.montserrat(
-          color: Colors.white,
-          fontSize: 28.nsp,
-        ),
-      ),
-    ),
-  );
+      );
 }

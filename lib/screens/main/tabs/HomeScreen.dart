@@ -133,7 +133,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                     style: GoogleFonts.montserrat(
                                       fontSize: 35.nsp,
                                       color: Colors.white,
-                                      decoration: TextDecoration.underline,
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
@@ -232,7 +231,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       'Olá,\n${widget.usuario.name}!',
                       maxLines: 3,
                       textAlign: TextAlign.start,
-                      minFontSize: 25,
+                      minFontSize: 28,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.montserrat(
                         color: Colors.deepOrange[300],
