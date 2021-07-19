@@ -67,6 +67,15 @@ class Seller {
 
   Map<String, dynamic> toJson() => {
         'name': name,
+        'meals': meals,
+        'currentMeals': currentMeals,
+        'sunday': shift==null ? null : shift.sunday,
+        'monday': shift==null ? null : shift.monday,
+        'tuesday': shift==null ? null : shift.tuesday,
+        'wednesday': shift==null ? null : shift.wednesday,
+        'thursday': shift==null ? null : shift.thursday,
+        'friday': shift==null ? null : shift.friday,
+        'saturday': shift==null ? null : shift.saturday
       };
 }
 
