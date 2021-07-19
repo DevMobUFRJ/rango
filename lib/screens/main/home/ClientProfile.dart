@@ -89,7 +89,7 @@ class _ClientProfileState extends State<ClientProfile> {
                         children: [
                           Icon(
                             Icons.phone,
-                            size: 38.nsp,
+                            size: 32.nsp,
                           ),
                           GestureDetector(
                             onTap: () => {
@@ -112,49 +112,57 @@ class _ClientProfileState extends State<ClientProfile> {
                                 client.phone,
                                 maxLines: 1,
                                 style: GoogleFonts.montserrat(
-                                  fontSize: 38.nsp,
+                                  fontSize: 30.nsp,
                                   decoration: TextDecoration.underline,
                                 ),
                               ),
                             ),
                           ),
-                          Container(
-                            margin: EdgeInsets.only(
-                              left: 4,
-                            ),
-                            child: GestureDetector(
-                              onTap: () {
-                                try {
-                                  final Uri teste = Uri(
-                                    scheme: 'http',
-                                    path:
-                                        "wa.me/+55${client.phone.replaceAll('(', '').replaceAll(')', '')}",
-                                  );
-                                  launch(teste.toString());
-                                } catch (error) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      duration: Duration(seconds: 2),
-                                      backgroundColor:
-                                          Theme.of(context).errorColor,
-                                      content: Text(
-                                        'WhatsApp não instalado!',
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.montserrat(),
-                                      ),
-                                    ),
-                                  );
-                                }
-                              },
-                              child: FaIcon(
-                                FontAwesomeIcons.whatsapp,
-                                color: Colors.green,
-                                size: 42.nsp,
+                        ],
+                      ),
+                    GestureDetector(
+                      onTap: () {
+                        try {
+                          final Uri whatsAppUrl = Uri(
+                            scheme: 'http',
+                            path:
+                                "wa.me/+55${client.phone.replaceAll('(', '').replaceAll(')', '')}",
+                          );
+                          launch(whatsAppUrl.toString());
+                        } catch (error) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              duration: Duration(seconds: 2),
+                              content: Text(
+                                'WhatsApp não instalado',
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.montserrat(),
                               ),
+                            ),
+                          );
+                        }
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AutoSizeText(
+                            'Abrir no WhatsApp',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 30.nsp,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.whatsapp,
+                              size: 36.nsp,
+                              color: Colors.green,
                             ),
                           ),
                         ],
                       ),
+                    ),
                     Container(
                       margin: EdgeInsets.symmetric(
                         horizontal: 0.2.wp,
