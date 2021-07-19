@@ -102,7 +102,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     GestureDetector(
                       onTap: () => _showCloseStoreDialog(widget.usuario),
                       child: Icon(
-                        Icons.power_settings_new,
+                        widget.usuario.active
+                            ? Icons.lock_open
+                            : Icons.lock,
                         color: widget.usuario.active ? yellow : Colors.red[300],
                         size: ScreenUtil().setSp(48),
                       ),
