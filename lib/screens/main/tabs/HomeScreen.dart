@@ -32,6 +32,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool _locationPermissionStatus;
   bool _locationPermissionLoading = false;
+  bool _showFillPerfil = true;
 
   void requestForPermission() async {
     try {
@@ -92,8 +93,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   initState() {
     checkForPermission();
     _checkInternet();
+    _checkFillPerfil();
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+  }
+
+  Future<void> _checkFillPerfil() async {
+    bool fillPerfil = await Repository.instance.showFillPerfil();
+    setState(() => _showFillPerfil = fillPerfil);
   }
 
   Future<void> _checkInternet() async {
@@ -306,6 +313,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
                                           return Column(
                                             children: [
+                                              _buildFillProfileSuggestions(),
                                               if (allMealsRequests.isNotEmpty)
                                                 _buildOrderAgain(
                                                   allMealsRequests,
@@ -413,6 +421,77 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         )
       ],
     );
+  }
+
+  Widget _buildFillProfileSuggestions() {
+    Client usuario = widget.usuario;
+    String textToShow = '';
+    if (usuario.picture == null || usuario.picture.isEmpty)
+      textToShow += '\n- Adicione uma foto de perfil;';
+    if (usuario.notificationSettings == null)
+      textToShow +=
+          '\n- Escolha as configurações de notificações no seu perfil;';
+    return textToShow.length == 0
+        ? SizedBox()
+        : FutureBuilder(
+            future: Repository.instance.showFillPerfil(),
+            builder: (ctx, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting ||
+                  snapshot.hasError) return SizedBox();
+              if (snapshot.hasData && snapshot.data == false) return SizedBox();
+              return Container(
+                margin: EdgeInsets.symmetric(horizontal: 10),
+                child: Stack(
+                  alignment: Alignment.topRight,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.symmetric(
+                          horizontal: 0.01.hp, vertical: 10),
+                      child: Material(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        color: Theme.of(context).accentColor,
+                        elevation: 5,
+                        child: Container(
+                          padding: EdgeInsets.all(12),
+                          child: Text(
+                            'Você ainda não completou seu perfil:$textToShow',
+                            style: GoogleFonts.montserrat(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 28.nsp,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Repository.instance.dontShowFillPerfill();
+                        Provider.of<RangeChangeNotifier>(context, listen: false)
+                            .triggerRefresh();
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: Colors.red[400],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Icon(
+                            Icons.close,
+                            size: 15,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
   }
 
   Widget _buildRequestForPermissionWidget() {

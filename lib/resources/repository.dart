@@ -210,6 +210,19 @@ class Repository {
     prefs.setDouble('seller_range', range);
   }
 
+  Future<bool> showFillPerfil() async {
+    var prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('fillPerfil') == null) {
+      return Future.value(true);
+    }
+    return Future.value(prefs.getBool('fillPerfil'));
+  }
+
+  dontShowFillPerfill() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('fillPerfil', false);
+  }
+
   setInternetConnection(bool hasInternet, BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool("hasInternet", hasInternet);
