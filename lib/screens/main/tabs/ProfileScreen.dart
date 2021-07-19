@@ -41,18 +41,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
-        padding: EdgeInsets.only(left: 0.1.wp, right: 0.1.wp),
+        padding: EdgeInsets.symmetric(horizontal: 0.1.wp),
         height: 1.hp - 56,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             Flexible(
               flex: 0,
               child: UserPicture(widget.usuario.picture),
             ),
             Flexible(
-              flex: 2,
+              flex: 0,
               child: Container(
                 margin: EdgeInsets.symmetric(vertical: 0.01.hp),
                 child: AutoSizeText(
@@ -66,8 +67,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             ),
-            Expanded(
-              flex: 1,
+            Flexible(
+              flex: 0,
               child: Container(
                 margin: EdgeInsets.symmetric(vertical: 0.01.hp),
                 width: 0.48.wp,
@@ -111,7 +112,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             Flexible(
-              flex: 1,
+              flex: 0,
               child: Container(
                 padding: EdgeInsets.symmetric(
                     horizontal: 0.03.wp, vertical: 0.01.hp),
@@ -139,7 +140,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             Expanded(
-              flex: 9,
+              flex: 5,
               child: StreamBuilder(
                 stream: Repository.instance.getClientStream(widget.usuario.id),
                 builder:
@@ -254,7 +255,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   PageTransitionAnimation.cupertino,
                             ),
                             child: Container(
-                              height: 120.h,
                               padding: EdgeInsets.symmetric(
                                   vertical: 0.01.hp, horizontal: 0.05.wp),
                               decoration: BoxDecoration(
@@ -267,46 +267,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 children: [
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(
-                                      50,
+                                      120,
                                     ),
-                                    child: Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                              60,
+                                    child: Container(
+                                      width: 100.h,
+                                      height: 100.h,
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                60,
+                                              ),
+                                              color: Colors.white,
                                             ),
-                                            color: Colors.white,
-                                          ),
-                                          width: 60,
-                                          height: 60,
-                                        ),
-                                        Center(
-                                          child: Container(
-                                            child: Icon(
-                                              Icons.store,
-                                              size: 38,
-                                              color:
-                                                  Theme.of(context).accentColor,
-                                            ),
-                                          ),
-                                        ),
-                                        if (seller.logo != null)
-                                          CachedNetworkImage(
-                                            imageUrl: seller.logo,
-                                            fit: BoxFit.cover,
                                             width: 60,
                                             height: 60,
-                                            placeholder: (ctx, url) => Image(
-                                                image: MemoryImage(
-                                                    kTransparentImage)),
-                                            errorWidget: (ctx, url, error) =>
-                                                Image(
-                                                    image: MemoryImage(
-                                                        kTransparentImage)),
                                           ),
-                                      ],
+                                          Center(
+                                            child: Container(
+                                              child: Icon(
+                                                Icons.store,
+                                                size: 38,
+                                                color: Theme.of(context)
+                                                    .accentColor,
+                                              ),
+                                            ),
+                                          ),
+                                          if (seller.logo != null)
+                                            CachedNetworkImage(
+                                              imageUrl: seller.logo,
+                                              fit: BoxFit.cover,
+                                              width: 60,
+                                              height: 60,
+                                              placeholder: (ctx, url) => Image(
+                                                  image: MemoryImage(
+                                                      kTransparentImage)),
+                                              errorWidget: (ctx, url, error) =>
+                                                  Image(
+                                                      image: MemoryImage(
+                                                          kTransparentImage)),
+                                            ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                   SizedBox(width: 0.03.wp),
