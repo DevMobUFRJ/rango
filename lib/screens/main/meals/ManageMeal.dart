@@ -26,7 +26,8 @@ class _ManageMealState extends State<ManageMeal> {
 
   bool _loading = false;
   TextEditingController _mealName = TextEditingController();
-  MoneyMaskedTextController _mealValue = MoneyMaskedTextController(leftSymbol: 'R\$ ');
+  MoneyMaskedTextController _mealValue =
+      MoneyMaskedTextController(leftSymbol: 'R\$ ');
   TextEditingController _mealDescription = TextEditingController();
   TextEditingController _mealQuantity = TextEditingController();
 
@@ -39,7 +40,8 @@ class _ManageMealState extends State<ManageMeal> {
         leftSymbol: 'R\$ ',
       );
       _mealDescription = TextEditingController(text: widget.meal.description);
-      _mealQuantity = TextEditingController(text: widget.meal.quantity.toString());
+      _mealQuantity =
+          TextEditingController(text: widget.meal.quantity.toString());
     }
     return Scaffold(
       appBar: AppBar(
@@ -82,6 +84,7 @@ class _ManageMealState extends State<ManageMeal> {
                         fontWeight: FontWeight.w500,
                         color: Theme.of(context).accentColor,
                       ),
+                      cursorColor: Theme.of(context).accentColor,
                       decoration: InputDecoration(
                         hintText: 'Nome do prato',
                         hintStyle: GoogleFonts.montserrat(
@@ -446,7 +449,8 @@ class _ManageMealState extends State<ManageMeal> {
                         FocusScope.of(context).unfocus();
                         Navigator.of(ctx).pop();
                         Navigator.of(context).pop();
-                        _showSnackbar(context, false, 'Quentinha excluída com sucesso.');
+                        _showSnackbar(
+                            context, false, 'Quentinha excluída com sucesso.');
                       } catch (e) {
                         Navigator.of(context).pop();
                         _showSnackbar(context, true, e.toString());

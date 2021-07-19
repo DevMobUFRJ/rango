@@ -173,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
           width: 1.wp,
         ),
         Container(
-          margin: EdgeInsets.only(top: 0.07.hp),
+          margin: EdgeInsets.only(top: 0.06.hp),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -182,16 +182,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Container(
                     width: 0.7.wp,
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 0.04.wp, vertical: 0.01.hp),
+                    padding: EdgeInsets.only(
+                        left: 0.04.wp, right: 0.04.wp, bottom: 0.01.hp),
                     child: AutoSizeText(
                       'Olá,\n${widget.usuario.name}!',
-                      maxLines: 2,
+                      maxLines: 3,
                       textAlign: TextAlign.start,
+                      minFontSize: 25,
+                      overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.montserrat(
                         color: Colors.deepOrange[300],
                         fontWeight: FontWeight.w500,
-                        fontSize: 60.nsp,
                       ),
                     ),
                   ),
