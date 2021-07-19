@@ -14,8 +14,9 @@ import 'package:rango/widgets/home/OrderContainer.dart';
 
 class HomeScreen extends StatefulWidget {
   final Seller usuario;
+  final PersistentTabController controller;
 
-  HomeScreen(this.usuario, {Key key}) : super(key: key);
+  HomeScreen(this.usuario, this.controller, {Key key}) : super(key: key);
   static const String name = 'homeScreen';
 
   @override
@@ -102,58 +103,107 @@ class _HomeScreenState extends State<HomeScreen> {
                 return Column(
                   children: [
                     _buildHeader(assetName, closedOrdersSnapshot.data.docs),
-                    Container(
-                      margin: EdgeInsets.only(
-                        left: 0.1.wp,
-                        right: 0.1.wp,
-                      ),
-                      alignment: Alignment.topLeft,
-                      child: closedOrdersSnapshot.data.docs.isNotEmpty &&
-                              openOrdersSnapshot.data.docs.isEmpty
-                          ? SizedBox()
-                          : AutoSizeText(
-                              "Pedidos do dia",
-                              style: GoogleFonts.montserrat(
-                                textStyle: TextStyle(
-                                  color: Theme.of(context).accentColor,
-                                  fontSize: 29.nsp,
-                                ),
+                    if (!widget.usuario.active) ...{
+                      Container(
+                        height: 0.6.hp - 56,
+                        margin: EdgeInsets.symmetric(horizontal: 10),
+                        alignment: Alignment.center,
+                        child: GestureDetector(
+                          onTap: () => widget.controller.jumpToTab(2),
+                          child: Material(
+                            color: Theme.of(context).accentColor,
+                            elevation: 3,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  AutoSizeText(
+                                    'Sua loja está fechada. Para receber pedidos marque ela como aberta!',
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 35.nsp,
+                                      color: Colors.white,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.symmetric(vertical: 10),
+                                    child: AutoSizeText(
+                                      'Ir para o perfil',
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 35.nsp,
+                                        color: Colors.white,
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: Container(
-                        child: closedOrdersSnapshot.data.docs.isNotEmpty &&
-                                openOrdersSnapshot.data.docs.isEmpty
-                            ? Container(
-                                alignment: Alignment.center,
-                                margin: EdgeInsets.symmetric(
-                                  horizontal: 15,
-                                  vertical: 20,
-                                ),
-                                child: AutoSizeText(
-                                  'Você não tem mais pedidos em aberto hoje! Para verificar os pedidos já fechados, clique acima no ícone de histórico.',
-                                  style: GoogleFonts.montserrat(
-                                    color: Theme.of(context).accentColor,
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 36.nsp,
-                                  ),
-                                ),
-                              )
-                            : ListView.builder(
-                                padding: EdgeInsets.only(top: 0),
-                                physics: ClampingScrollPhysics(),
-                                itemCount: openOrdersSnapshot.data.docs.length,
-                                itemBuilder: (ctx, index) {
-                                  return OrderContainer(
-                                      openOrdersSnapshot.data.docs[index]
-                                          .data(),
-                                      null);
-                                },
+                          ),
+                        ),
+                      )
+                    } else ...{
+                      if (closedOrdersSnapshot.data.docs.isNotEmpty &&
+                          openOrdersSnapshot.data.docs.isEmpty)
+                        Container(
+                          margin: EdgeInsets.only(
+                            left: 0.1.wp,
+                            right: 0.1.wp,
+                          ),
+                          alignment: Alignment.topLeft,
+                          child: AutoSizeText(
+                            "Pedidos do dia",
+                            style: GoogleFonts.montserrat(
+                              textStyle: TextStyle(
+                                color: Theme.of(context).accentColor,
+                                fontSize: 29.nsp,
                               ),
-                      ),
-                    ),
+                            ),
+                          ),
+                        ),
+                      if (widget.usuario.active)
+                        Flexible(
+                          flex: 1,
+                          child: Container(
+                            child: closedOrdersSnapshot.data.docs.isNotEmpty &&
+                                    openOrdersSnapshot.data.docs.isEmpty
+                                ? Container(
+                                    alignment: Alignment.center,
+                                    margin: EdgeInsets.symmetric(
+                                      horizontal: 15,
+                                      vertical: 20,
+                                    ),
+                                    child: AutoSizeText(
+                                      'Você não tem mais pedidos em aberto hoje! Para verificar os pedidos já fechados, clique acima no ícone de histórico.',
+                                      style: GoogleFonts.montserrat(
+                                        color: Theme.of(context).accentColor,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 36.nsp,
+                                      ),
+                                    ),
+                                  )
+                                : ListView.builder(
+                                    padding: EdgeInsets.only(top: 0),
+                                    physics: ClampingScrollPhysics(),
+                                    itemCount:
+                                        openOrdersSnapshot.data.docs.length,
+                                    itemBuilder: (ctx, index) {
+                                      return OrderContainer(
+                                          openOrdersSnapshot.data.docs[index]
+                                              .data(),
+                                          null);
+                                    },
+                                  ),
+                          ),
+                        ),
+                    }
                   ],
                 );
               },
@@ -188,7 +238,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       'Olá,\n${widget.usuario.name}!',
                       maxLines: 3,
                       textAlign: TextAlign.start,
-                      minFontSize: 25,
+                      minFontSize: 28,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.montserrat(
                         color: Colors.deepOrange[300],
