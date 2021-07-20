@@ -7,7 +7,7 @@ DateTime startOfDay() {
 
 DateTime endOfDay() {
   var now = DateTime.now();
-  return DateTime(now.year, now.month, now.day, 23, 59, 59);
+  return DateTime(now.year, now.month, now.day, 23, 59, 59, 999);
 }
 
 TimeOfDay intTimeToTimeOfDay(int time) {
