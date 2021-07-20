@@ -1,15 +1,15 @@
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:rango/models/contact.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/models/user_notification_settings.dart';
 import 'package:rango/resources/repository.dart';
+import 'package:rango/utils/constants.dart';
 import 'package:rango/widgets/auth/AuthForm.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthScreen extends StatefulWidget {
   static const routeName = '/auth-screen';
@@ -28,39 +28,101 @@ class _AuthScreenState extends State<AuthScreen> {
     String name,
     File image,
     String password,
+    String phone,
     BuildContext ctx,
   }) async {
     UserCredential authResult;
 
     try {
-      String actualDeviceToken = await FirebaseMessaging.instance.getToken();
       setState(() => _isLoading = true);
       if (_isLogin) {
-        authResult = await _auth.signInWithEmailAndPassword(
-            email: email, password: password);
-        Map<String, dynamic> dataToUpdate = {};
-        dataToUpdate['deviceToken'] = actualDeviceToken;
-        DocumentReference<Map<String, dynamic>> userInstance = FirebaseFirestore
-            .instance
-            .collection('sellers')
-            .doc(FirebaseAuth.instance.currentUser.uid);
-        userInstance.get().then((value) {
-          var oldDeviceToken = value.data()['deviceToken'];
-          if (oldDeviceToken != null && oldDeviceToken != actualDeviceToken) {
+        try {
+          var clients = await FirebaseFirestore.instance
+              .collection('clients')
+              .where('email', isEqualTo: email)
+              .limit(1)
+              .get();
+          bool isClient = clients.docs.isNotEmpty;
+          if (!isClient) {
+            authResult = await _auth.signInWithEmailAndPassword(
+              email: email,
+              password: password,
+            );
+            Map<String, dynamic> dataToUpdate = {};
+            String actualDeviceToken = await FirebaseMessaging.instance.getToken();
+            dataToUpdate['deviceToken'] = actualDeviceToken;
+            DocumentSnapshot<Seller> sellerDoc = await Repository.instance.getSellerFuture(FirebaseAuth.instance.currentUser.uid);
+            var oldDeviceToken = sellerDoc.data().deviceToken;
+            if (oldDeviceToken != null &&
+                oldDeviceToken != actualDeviceToken) {
+              ScaffoldMessenger.of(ctx).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Você se conectou com um novo dispositivo! Novas notificações chegarão apenas à ele.',
+                    textAlign: TextAlign.center,
+                  ),
+                  backgroundColor: Theme.of(context).accentColor,
+                ),
+              );
+              Repository.instance.updateSeller(FirebaseAuth.instance.currentUser.uid, dataToUpdate);
+            } else if (oldDeviceToken == null) {
+              Repository.instance.updateSeller(FirebaseAuth.instance.currentUser.uid, dataToUpdate);
+            }
+            Navigator.of(context).pop();
+          } else {
             ScaffoldMessenger.of(ctx).showSnackBar(
               SnackBar(
+                duration: Duration(seconds: 2),
                 content: Text(
-                  'Você se conectou com um novo dispositivo! Novas notificações chegarão apenas à ele',
+                  'Você tentou entrar com uma conta de cliente! Use o app do cliente para isso',
                   textAlign: TextAlign.center,
                 ),
-                backgroundColor: Theme.of(context).accentColor,
+                backgroundColor: Theme.of(context).errorColor,
               ),
             );
-            userInstance.update(dataToUpdate);
-          } else if (oldDeviceToken == null) {
-            userInstance.update(dataToUpdate);
           }
-        });
+        } on FirebaseAuthException catch (error) {
+          print(error.code);
+          String errorText;
+          switch (error.code) {
+            case 'too-many-requests':
+              errorText = tooManyRequestsErrorMessage;
+              break;
+            case 'user-not-found':
+              errorText = userNotFoundErrorMessage;
+              break;
+            case 'wrong-password':
+              errorText = wrongPasswordErrorMessage;
+              break;
+            case 'network-request-failed':
+              errorText = networkErrorMessage;
+              break;
+            default:
+              errorText = defaultErrorMessage;
+          }
+          ScaffoldMessenger.of(ctx).showSnackBar(
+            SnackBar(
+              duration: Duration(seconds: 2),
+              content: Text(
+                errorText,
+                textAlign: TextAlign.center,
+              ),
+              backgroundColor: Theme.of(context).errorColor,
+            ),
+          );
+        } catch (error) {
+          setState(() => _isLoading = false);
+          ScaffoldMessenger.of(ctx).showSnackBar(
+            SnackBar(
+              duration: Duration(seconds: 2),
+              content: Text(
+                'Ocorreu um erro',
+                textAlign: TextAlign.center,
+              ),
+              backgroundColor: Theme.of(context).errorColor,
+            ),
+          );
+        }
       } else {
         setState(() => _isLoading = true);
         authResult = await _auth.createUserWithEmailAndPassword(
@@ -74,6 +136,7 @@ class _AuthScreenState extends State<AuthScreen> {
           url = await ref.getDownloadURL();
         }
         authResult.user.updateDisplayName(name);
+        String deviceToken = await FirebaseMessaging.instance.getToken();
         var seller = Seller(
           id: authResult.user.uid,
           email: email,
@@ -84,7 +147,7 @@ class _AuthScreenState extends State<AuthScreen> {
           description: null,
           paymentMethods: null,
           location: null,
-          deviceToken: actualDeviceToken,
+          deviceToken: deviceToken,
           contact: Contact(
             name: null,
             phone: null,
@@ -98,24 +161,47 @@ class _AuthScreenState extends State<AuthScreen> {
           ),
         );
         await Repository.instance.createSeller(seller);
+        Navigator.of(context).pop();
       }
       setState(() => _isLoading = false);
-      Navigator.of(context).pop();
-    } on PlatformException catch (error) {
-      var message = 'Ocorreu um erro';
-      if (error.message != null) {
-        message = error.message;
+    } on FirebaseAuthException catch (error) {
+      setState(() => _isLoading = false);
+      print(error.code);
+      String errorText;
+      switch (error.code) {
+        case 'email-already-in-use':
+          errorText = emailAlreadyInUseErrorMessage;
+          break;
+        case 'too-many-requests':
+          errorText = tooManyRequestsErrorMessage;
+          break;
+        case 'network-request-failed':
+          errorText = networkErrorMessage;
+          break;
+        default:
+          errorText = defaultErrorMessage;
       }
       ScaffoldMessenger.of(ctx).showSnackBar(
         SnackBar(
-          content: Text(message),
+          duration: Duration(seconds: 2),
+          content: Text(
+            errorText,
+            textAlign: TextAlign.center,
+          ),
           backgroundColor: Theme.of(context).errorColor,
         ),
       );
-      setState(() => _isLoading = false);
     } catch (error) {
-      setState(() => _isLoading = false);
-      print(error);
+      ScaffoldMessenger.of(ctx).showSnackBar(
+        SnackBar(
+          duration: Duration(seconds: 2),
+          content: Text(
+            'Ocorreu um erro',
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
+      );
     }
   }
 

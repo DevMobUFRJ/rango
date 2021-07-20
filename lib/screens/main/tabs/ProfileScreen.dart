@@ -307,9 +307,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Flexible(
                     flex: 1,
                     child: AutoSizeText(
-                      'Você vendeu $numberOfSales quentinha${numberOfSales > 1? 's': ''}'
+                      numberOfSales > 0
+                          ? 'Você vendeu $numberOfSales quentinha${numberOfSales > 1? 's': ''}'
                           ' para $numberOfClients cliente${numberOfClients > 1? 's': ''}'
-                          ' e recebeu um total de ${intToCurrency(total)}.',
+                          ' e recebeu um total de ${intToCurrency(total)}.'
+                          : 'Você ainda não vendeu sua primeira quentinha.',
                       style: GoogleFonts.montserrat(
                         fontSize: 30.nsp,
                         color: Theme.of(context).accentColor,
