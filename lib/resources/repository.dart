@@ -7,31 +7,22 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/utils/date_time.dart';
+import 'package:rxdart/rxdart.dart';
 
 class Repository {
-  final sellersRef = FirebaseFirestore.instance
-      .collection('sellers')
-      .withConverter<Seller>(
-          fromFirestore: (snapshot, _) =>
-              Seller.fromJson(snapshot.data(), id: snapshot.id),
-          toFirestore: (seller, _) => seller.toJson());
-  final clientsRef = FirebaseFirestore.instance
-      .collection('clients')
-      .withConverter<Client>(
-          fromFirestore: (snapshot, _) =>
-              Client.fromJson(snapshot.data(), id: snapshot.id),
-          toFirestore: (client, _) => client.toJson());
-  final ordersRef = FirebaseFirestore.instance
-      .collection('orders')
-      .withConverter<Order>(
-          fromFirestore: (snapshot, _) =>
-              Order.fromJson(snapshot.data(), id: snapshot.id),
-          toFirestore: (order, _) => order.toJson());
-  CollectionReference<Meal> mealsRef(String sellerId) =>
-      sellersRef.doc(sellerId).collection('meals').withConverter<Meal>(
-          fromFirestore: (snapshot, _) =>
-              Meal.fromJson(snapshot.data(), id: snapshot.id),
-          toFirestore: (meal, _) => meal.toJson());
+  final sellersRef = FirebaseFirestore.instance.collection('sellers').withConverter<Seller>(
+      fromFirestore: (snapshot, _) => Seller.fromJson(snapshot.data(), id: snapshot.id),
+      toFirestore: (seller, _) => seller.toJson());
+  final clientsRef = FirebaseFirestore.instance.collection('clients').withConverter<Client>(
+      fromFirestore: (snapshot, _) => Client.fromJson(snapshot.data(), id: snapshot.id),
+      toFirestore: (client, _) => client.toJson());
+  final ordersRef = FirebaseFirestore.instance.collection('orders').withConverter<Order>(
+      fromFirestore: (snapshot, _) => Order.fromJson(snapshot.data(), id: snapshot.id),
+      toFirestore: (order, _) => order.toJson());
+  CollectionReference<Meal> mealsRef(String sellerId) => sellersRef.doc(sellerId)
+      .collection('meals').withConverter<Meal>(
+      fromFirestore: (snapshot, _) => Meal.fromJson(snapshot.data(), id: snapshot.id),
+      toFirestore: (meal, _) => meal.toJson());
   final geo = Geoflutterfire();
   final auth = FirebaseAuth.instance;
 
@@ -128,14 +119,33 @@ class Repository {
   }
 
   // Orders
-  Stream<QuerySnapshot<Order>> getOpenOrdersFromSeller(String sellerId) {
-    return ordersRef
+  CombineLatestStream<dynamic, List<QueryDocumentSnapshot<Order>>> getOpenOrdersFromSeller(String sellerId) {
+    // Retorna os pedidos em aberto do dia anterior também, caso haja um pedido perto de meia noite
+    var yesterday = ordersRef
+        .where('sellerId', isEqualTo: sellerId)
+        .where('requestedAt', isGreaterThanOrEqualTo: startOfDay().subtract(Duration(days: 1)))
+        .where('requestedAt', isLessThanOrEqualTo: endOfDay().subtract(Duration(days: 1)))
+        .where('status', whereIn: ['requested', 'reserved'])
+        .orderBy('requestedAt')
+        .snapshots();
+
+    var today = ordersRef
         .where('sellerId', isEqualTo: sellerId)
         .where('requestedAt', isGreaterThanOrEqualTo: startOfDay())
         .where('requestedAt', isLessThanOrEqualTo: endOfDay())
         .where('status', whereIn: ['requested', 'reserved'])
         .orderBy('requestedAt')
         .snapshots();
+
+    var combined = CombineLatestStream.combine2<
+        QuerySnapshot<Order>,
+        QuerySnapshot<Order>,
+        List<QueryDocumentSnapshot<Order>>
+    >(yesterday, today, (a, b) {
+      return a.docs + b.docs;
+    });
+
+    return combined;
   }
 
   Stream<QuerySnapshot<Order>> getClosedOrdersFromSeller(String sellerId) {

@@ -31,10 +31,8 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Container(
         height: 1.hp - 56,
         child: StreamBuilder(
-          stream:
-              Repository.instance.getOpenOrdersFromSeller(widget.usuario.id),
-          builder: (context,
-              AsyncSnapshot<QuerySnapshot<Order>> openOrdersSnapshot) {
+          stream: Repository.instance.getOpenOrdersFromSeller(widget.usuario.id),
+          builder: (context, AsyncSnapshot<List<QueryDocumentSnapshot<Order>>> openOrdersSnapshot) {
             if (!openOrdersSnapshot.hasData ||
                 openOrdersSnapshot.connectionState == ConnectionState.waiting) {
               return Container(
@@ -145,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       )
-                    } else if (openOrdersSnapshot.data.docs.isEmpty && closedOrdersSnapshot.data.docs.isEmpty)...{
+                    } else if (openOrdersSnapshot.data.isEmpty && closedOrdersSnapshot.data.docs.isEmpty)...{
                       Container(
                         alignment: Alignment.center,
                         margin: EdgeInsets.symmetric(
@@ -163,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       )
                     } else ...{
                       if (closedOrdersSnapshot.data.docs.isNotEmpty &&
-                          openOrdersSnapshot.data.docs.isEmpty)
+                          openOrdersSnapshot.data.isEmpty)
                         Container(
                           margin: EdgeInsets.only(
                             left: 0.1.wp,
@@ -185,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           flex: 1,
                           child: Container(
                             child: closedOrdersSnapshot.data.docs.isNotEmpty &&
-                                    openOrdersSnapshot.data.docs.isEmpty
+                                    openOrdersSnapshot.data.isEmpty
                                 ? Container(
                                     alignment: Alignment.center,
                                     margin: EdgeInsets.symmetric(
@@ -205,10 +203,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     padding: EdgeInsets.only(top: 0),
                                     physics: ClampingScrollPhysics(),
                                     itemCount:
-                                        openOrdersSnapshot.data.docs.length,
+                                        openOrdersSnapshot.data.length,
                                     itemBuilder: (ctx, index) {
                                       return OrderContainer(
-                                          openOrdersSnapshot.data.docs[index]
+                                          openOrdersSnapshot.data[index]
                                               .data(),
                                           null);
                                     },
