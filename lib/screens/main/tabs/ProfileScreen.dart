@@ -174,7 +174,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             onPressed: () => pushNewScreen(
                               context,
                               screen: HorariosScreen(widget.usuario),
-                              withNavBar: false,
+                              withNavBar: false
                             ),
                           ),
                           decoration: BoxDecoration(
@@ -221,6 +221,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               context,
                               screen: OrderHistoryScreen(),
                               withNavBar: false,
+                              pageTransitionAnimation: PageTransitionAnimation.cupertino,
                             ),
                           ),
                           decoration: BoxDecoration(
@@ -257,22 +258,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: StreamBuilder(
             stream: Repository.instance.getLastWeekOrders(seller.id),
             builder: (context, AsyncSnapshot<QuerySnapshot<Order>> ordersSnapshot) {
-              if (!ordersSnapshot.hasData) {
+              if (!ordersSnapshot.hasData || ordersSnapshot.hasError) {
                 return SizedBox();
-              }
-
-              if (ordersSnapshot.connectionState == ConnectionState.waiting) {
-                return Container(
-                  height: 0.5.hp,
-                  alignment: Alignment.center,
-                  child: SizedBox(
-                    height: 50,
-                    width: 50,
-                    child: CircularProgressIndicator(
-                      color: Theme.of(context).accentColor,
-                    ),
-                  ),
-                );
               }
 
               var numberOfSales = ordersSnapshot.data.docs
@@ -305,9 +292,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Flexible(
                     flex: 1,
                     child: AutoSizeText(
-                      "Você vendeu $numberOfSales quentinha${numberOfSales > 1? 's': ''}"
-                          " para $numberOfClients cliente${numberOfClients > 1? 's': ''}"
-                          " e recebeu um total de ${intToCurrency(total)}.",
+                      'Você vendeu $numberOfSales quentinha${numberOfSales > 1? 's': ''}'
+                          ' para $numberOfClients cliente${numberOfClients > 1? 's': ''}'
+                          ' e recebeu um total de ${intToCurrency(total)}.',
                       style: GoogleFonts.montserrat(
                         fontSize: 30.nsp,
                         color: Theme.of(context).accentColor,
