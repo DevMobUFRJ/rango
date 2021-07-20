@@ -1,7 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:rango/models/order.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/main/profile/EditProfileScreen.dart';
@@ -11,6 +13,7 @@ import 'package:rango/screens/main/profile/ProfileSettings.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/screens/main/profile/ReportsScreen.dart';
 import 'package:rango/screens/main/profile/SetLocationScreen.dart';
+import 'package:rango/utils/string_formatters.dart';
 import 'package:rango/widgets/user/UserPicture.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -171,7 +174,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             onPressed: () => pushNewScreen(
                               context,
                               screen: HorariosScreen(widget.usuario),
-                              withNavBar: false,
+                              withNavBar: false
                             ),
                           ),
                           decoration: BoxDecoration(
@@ -211,13 +214,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: IconButton(
                             iconSize: ScreenUtil().setSp(75),
                             icon: Icon(
-                              Icons.history,
+                              Icons.event_note,
                               color: Colors.white,
                             ),
                             onPressed: () => pushNewScreen(
                               context,
                               screen: OrderHistoryScreen(),
                               withNavBar: false,
+                              pageTransitionAnimation: PageTransitionAnimation.cupertino,
                             ),
                           ),
                           decoration: BoxDecoration(
@@ -239,61 +243,88 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             ),
-            Expanded(
-              flex: 5,
-              child: Container(
-                  width: 0.8.wp,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Flexible(
-                        flex: 1,
-                        child: AutoSizeText(
-                          "Nos últimos 7 dias:",
-                          maxLines: 1,
-                          style: GoogleFonts.montserrat(
-                            fontSize: 40.nsp,
-                            color: Theme.of(context).accentColor,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 0.01.hp),
-                      Flexible(
-                        flex: 1,
-                        child: AutoSizeText(
-                          "Você realizou um total de X vendas para Y clientes e vendeu um total de ZZ,ZZ reais",
-                          style: GoogleFonts.montserrat(
-                            fontSize: 30.nsp,
-                            color: Theme.of(context).accentColor,
-                          ),
-                        ),
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Container(
-                            width: 0.35.wp,
-                            child: ElevatedButton(
-                              child: AutoSizeText(
-                                "Ver mais",
-                                style: TextStyle(fontSize: 36.nsp),
-                              ),
-                              onPressed: () => pushNewScreen(
-                                context,
-                                screen: ReportsScreen(),
-                                withNavBar: false,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )),
-            ),
+            _buildReports(widget.usuario),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildReports(Seller seller) {
+    return Expanded(
+      flex: 5,
+      child: Container(
+          width: 0.8.wp,
+          child: StreamBuilder(
+            stream: Repository.instance.getLastWeekOrders(seller.id),
+            builder: (context, AsyncSnapshot<QuerySnapshot<Order>> ordersSnapshot) {
+              if (!ordersSnapshot.hasData || ordersSnapshot.hasError) {
+                return SizedBox();
+              }
+
+              var numberOfSales = ordersSnapshot.data.docs
+                  .map((e) => e.data().quantity)
+                  .fold(0, (p, c) => p + c);
+              var numberOfClients = ordersSnapshot.data.docs
+                  .map((e) => e.data().clientId)
+                  .toSet()
+                  .length;
+              var total = ordersSnapshot.data.docs
+                  .map((e) => e.data().quantity * e.data().price)
+                  .fold(0, (p, c) => p + c);
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Flexible(
+                    flex: 1,
+                    child: AutoSizeText(
+                      "Nos últimos 7 dias:",
+                      maxLines: 1,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 40.nsp,
+                        color: Theme.of(context).accentColor,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 0.01.hp),
+                  Flexible(
+                    flex: 1,
+                    child: AutoSizeText(
+                      'Você vendeu $numberOfSales quentinha${numberOfSales > 1? 's': ''}'
+                          ' para $numberOfClients cliente${numberOfClients > 1? 's': ''}'
+                          ' e recebeu um total de ${intToCurrency(total)}.',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 30.nsp,
+                        color: Theme.of(context).accentColor,
+                      ),
+                    ),
+                  ),
+                  Flexible(
+                    flex: 1,
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        width: 0.35.wp,
+                        child: ElevatedButton(
+                          child: AutoSizeText(
+                            "Ver mais",
+                            style: TextStyle(fontSize: 36.nsp),
+                          ),
+                          onPressed: () => pushNewScreen(
+                            context,
+                            screen: ReportsScreen(widget.usuario),
+                            withNavBar: false,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          )
       ),
     );
   }
