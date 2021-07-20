@@ -275,9 +275,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 );
               }
 
-              var numberOfSales = ordersSnapshot.data.docs.length;
-              var numberOfClients = ordersSnapshot.data.docs.map((e) => e.data().clientId).length;
-              var total = ordersSnapshot.data.docs.map((e) => e.data().quantity * e.data().price).fold(0, (p, c) => p + c);
+              var numberOfSales = ordersSnapshot.data.docs
+                  .map((e) => e.data().quantity)
+                  .fold(0, (p, c) => p + c);
+              var numberOfClients = ordersSnapshot.data.docs
+                  .map((e) => e.data().clientId)
+                  .toSet()
+                  .length;
+              var total = ordersSnapshot.data.docs
+                  .map((e) => e.data().quantity * e.data().price)
+                  .fold(0, (p, c) => p + c);
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -298,7 +305,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Flexible(
                     flex: 1,
                     child: AutoSizeText(
-                      "Você realizou $numberOfSales venda${numberOfSales > 1? 's': ''}"
+                      "Você vendeu $numberOfSales quentinha${numberOfSales > 1? 's': ''}"
                           " para $numberOfClients cliente${numberOfClients > 1? 's': ''}"
                           " e recebeu um total de ${intToCurrency(total)}.",
                       style: GoogleFonts.montserrat(
@@ -320,7 +327,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           onPressed: () => pushNewScreen(
                             context,
-                            screen: ReportsScreen(),
+                            screen: ReportsScreen(widget.usuario),
                             withNavBar: false,
                           ),
                         ),

@@ -265,9 +265,18 @@ class Repository {
     }
   }
 
-  Stream<QuerySnapshot<Order>> getOrdersFromSeller(String sellerId) {
+  Stream<QuerySnapshot<Order>> getSoldOrdersFromSeller(String sellerId, {int lastDays}) {
+    if (lastDays != null && lastDays > 0) {
+      return ordersRef
+          .where('sellerId', isEqualTo: sellerId)
+          .where('status', isEqualTo: 'sold')
+          .where('requestedAt', isGreaterThanOrEqualTo: DateTime.now().subtract(Duration(days: lastDays)))
+          .orderBy('requestedAt')
+          .snapshots();
+    }
     return ordersRef
         .where('sellerId', isEqualTo: sellerId)
+        .where('status', isEqualTo: 'sold')
         .orderBy('requestedAt')
         .snapshots();
   }
