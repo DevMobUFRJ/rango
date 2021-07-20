@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,18 +23,13 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   String _telefoneErrorMessage;
-  String _passwordErrorMessage;
   String _nameErrorMessage;
-  String _confirmPasswordErrorMessage;
-  TextEditingController _pass = TextEditingController();
-  TextEditingController _confirmPass = TextEditingController();
+
   TextEditingController _tel = TextEditingController();
   TextEditingController _name = TextEditingController();
   TextEditingController _description = TextEditingController();
   TextEditingController _payments = TextEditingController();
 
-  final _passFocusNode = FocusNode();
-  final _focusNodeConfirmPass = FocusNode();
   final _telFocusNode = FocusNode();
   final _descriptionFocusNode = FocusNode();
   final _paymentsFocusNode = FocusNode();
@@ -57,10 +53,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void _submit(BuildContext context) async {
     final isValid = _formKey.currentState.validate();
     FocusScope.of(context).unfocus();
-    if (isValid &&
-        _telefoneErrorMessage == null &&
-        _passwordErrorMessage == null &&
-        _confirmPasswordErrorMessage == null) {
+    if (isValid && _telefoneErrorMessage == null && _nameErrorMessage == null) {
       _formKey.currentState.save();
       setState(() => _loading = true);
       try {
@@ -75,6 +68,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         if (_name.text != '' &&
             _name.text != widget.user.name) {
           dataToUpdate['name'] = _name.text;
+          await FirebaseAuth.instance.currentUser.updateDisplayName(_name.text);
         }
         if (_description.text != '' &&
             _description.text != widget.user.description) {
@@ -96,8 +90,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           await Repository.instance.updateSeller(widget.user.id, dataToUpdate);
         }
         setState(() => _loading = false);
-        Navigator.of(context).pop();
-        //TODO: trocar senha e tratar erros
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            duration: Duration(seconds: 2),
+            backgroundColor: Theme.of(context).accentColor,
+            content: Text(
+              'Perfil atualizado com sucesso',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -151,14 +153,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                       ),
                       CustomTextFormField(
-                        labelText: 'Nome:',
+                        labelText: 'Nome',
                         textCapitalization: TextCapitalization.sentences,
                         key: ValueKey('name'),
                         controller: _name,
                         validator: (String value) {
+                          _nameErrorMessage = null;
                           if (value.trim() == '') {
-                            setState(() =>
-                            _nameErrorMessage = 'Nome não pode ser vazio!');
+                            _nameErrorMessage = 'Nome não pode ser vazio!';
                           }
                           return null;
                         },
@@ -168,7 +170,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             .requestFocus(_descriptionFocusNode),
                       ),
                       CustomTextFormField(
-                        labelText: 'Descrição:',
+                        labelText: 'Descrição',
                         textCapitalization: TextCapitalization.sentences,
                         key: ValueKey('description'),
                         controller: _description,
@@ -179,15 +181,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             FocusScope.of(context).requestFocus(_telFocusNode),
                       ),
                       CustomTextFormField(
-                        labelText: 'Celular com DDD:',
+                        labelText: 'Celular com DDD',
                         focusNode: _telFocusNode,
                         key: ValueKey('phone'),
                         controller: _tel,
                         maxLength: 11,
                         validator: (String value) {
+                          _telefoneErrorMessage = null;
                           if (value.trim() != '' && value.trim().length != 11) {
-                            setState(() => _telefoneErrorMessage =
-                            'Celular precisa ter 11 números');
+                            _telefoneErrorMessage = 'Celular precisa ter 11 números';
                           }
                           return null;
                         },
@@ -198,49 +200,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             FocusScope.of(context).requestFocus(_paymentsFocusNode),
                       ),
                       CustomTextFormField(
-                        labelText: 'Pagamentos aceitos:',
-                        textCapitalization: TextCapitalization.sentences,
-                        key: ValueKey('payments'),
+                        labelText: 'Pagamentos aceitos',
                         focusNode: _paymentsFocusNode,
                         controller: _payments,
+                        textCapitalization: TextCapitalization.sentences,
+                        key: ValueKey('payments'),
                         numberOfLines: 3,
-                        textInputAction: TextInputAction.next,
-                        onFieldSubmitted: (_) =>
-                            FocusScope.of(context).requestFocus(_passFocusNode),
-                      ),
-                      CustomTextFormField(
-                        labelText: 'Nova senha:',
-                        controller: _pass,
-                        focusNode: _passFocusNode,
-                        isPassword: true,
-                        onFieldSubmitted: (_) => FocusScope.of(context)
-                            .requestFocus(_focusNodeConfirmPass),
-                        textInputAction: TextInputAction.next,
-                        key: ValueKey('password'),
-                        validator: (String value) {
-                          if (value != '' && value.length < 7) {
-                            setState(() => _passwordErrorMessage =
-                            'Senha precisa ter pelo menos 7 caracteres');
-                          }
-                          return null;
-                        },
-                        errorText: _passwordErrorMessage,
-                      ),
-                      CustomTextFormField(
-                        labelText: 'Confirmar senha:',
-                        focusNode: _focusNodeConfirmPass,
-                        controller: _confirmPass,
-                        isPassword: true,
-                        key: ValueKey('confirmPassword'),
-                        validator: (String value) {
-                          if (value != '' && value.length < 7) {
-                            setState(() => _passwordErrorMessage =
-                            'Senha precisa ter pelo menos 7 caracteres');
-                          }
-                          return null;
-                        },
                         onFieldSubmitted: (_) => _submit(ctx),
-                        errorText: _passwordErrorMessage,
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(
@@ -251,8 +217,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             onPressed: _loading
                                 ? null
                                 : (_userImageFile != null ||
-                                (_pass.text != null &&
-                                    _confirmPass.text != null) ||
                                 _tel.text != null)
                                 ? () => _submit(ctx)
                                 : null,
@@ -263,8 +227,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     Colors.white),
                                 strokeWidth: 3.0,
                               ),
-                              height: 30.w,
-                              width: 30.w,
+                              width: 20,
+                              height: 20,
                             )
                                 : AutoSizeText(
                               'Salvar',

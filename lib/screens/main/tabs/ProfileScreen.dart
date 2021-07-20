@@ -6,6 +6,7 @@ import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/order.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
+import 'package:rango/screens/main/profile/EditAccountScreen.dart';
 import 'package:rango/screens/main/profile/EditProfileScreen.dart';
 import 'package:rango/screens/main/profile/HorariosScreen.dart';
 import 'package:rango/screens/main/profile/OrderHistory.dart';
@@ -99,6 +100,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       child: Icon(
                         Icons.settings,
+                        color: yellow,
+                        size: ScreenUtil().setSp(48),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => pushNewScreen(
+                        context,
+                        screen: EditAccountScreen(),
+                        withNavBar: false,
+                        pageTransitionAnimation:
+                        PageTransitionAnimation.cupertino,
+                      ),
+                      child: Icon(
+                        Icons.manage_accounts,
                         color: yellow,
                         size: ScreenUtil().setSp(48),
                       ),

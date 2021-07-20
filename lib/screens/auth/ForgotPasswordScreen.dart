@@ -129,7 +129,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   validator: (value) {
                     if (value.isEmpty || !value.contains('@')) {
                       setState(() {
-                        _emailErrorMessage = 'Coloque um email válido';
+                        _emailErrorMessage = 'Insira um email válido';
                       });
                     } else {
                       setState(() {
