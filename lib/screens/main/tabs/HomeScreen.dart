@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
         height: 1.hp - 56,
         child: StreamBuilder(
           stream: Repository.instance.getOpenOrdersFromSeller(widget.usuario.id),
-          builder: (context, AsyncSnapshot<List<QueryDocumentSnapshot<Order>>> openOrdersSnapshot) {
+          builder: (context, AsyncSnapshot<QuerySnapshot<Order>> openOrdersSnapshot) {
             if (!openOrdersSnapshot.hasData ||
                 openOrdersSnapshot.connectionState == ConnectionState.waiting) {
               return Container(
@@ -143,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       )
-                    } else if (openOrdersSnapshot.data.isEmpty && closedOrdersSnapshot.data.docs.isEmpty)...{
+                    } else if (openOrdersSnapshot.data.docs.isEmpty && closedOrdersSnapshot.data.docs.isEmpty)...{
                       Container(
                         alignment: Alignment.center,
                         margin: EdgeInsets.symmetric(
@@ -161,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       )
                     } else ...{
                       if (closedOrdersSnapshot.data.docs.isNotEmpty &&
-                          openOrdersSnapshot.data.isEmpty)
+                          openOrdersSnapshot.data.docs.isEmpty)
                         Container(
                           margin: EdgeInsets.only(
                             left: 0.1.wp,
@@ -183,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           flex: 1,
                           child: Container(
                             child: closedOrdersSnapshot.data.docs.isNotEmpty &&
-                                    openOrdersSnapshot.data.isEmpty
+                                    openOrdersSnapshot.data.docs.isEmpty
                                 ? Container(
                                     alignment: Alignment.center,
                                     margin: EdgeInsets.symmetric(
@@ -203,10 +203,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     padding: EdgeInsets.only(top: 0),
                                     physics: ClampingScrollPhysics(),
                                     itemCount:
-                                        openOrdersSnapshot.data.length,
+                                        openOrdersSnapshot.data.docs.length,
                                     itemBuilder: (ctx, index) {
                                       return OrderContainer(
-                                          openOrdersSnapshot.data[index]
+                                          openOrdersSnapshot.data.docs[index]
                                               .data(),
                                           null);
                                     },

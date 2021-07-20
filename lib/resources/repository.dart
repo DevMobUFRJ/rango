@@ -119,39 +119,24 @@ class Repository {
   }
 
   // Orders
-  CombineLatestStream<dynamic, List<QueryDocumentSnapshot<Order>>> getOpenOrdersFromSeller(String sellerId) {
-    // Retorna os pedidos em aberto do dia anterior também, caso haja um pedido perto de meia noite
-    var yesterday = ordersRef
-        .where('sellerId', isEqualTo: sellerId)
-        .where('requestedAt', isGreaterThanOrEqualTo: startOfDay().subtract(Duration(days: 1)))
-        .where('requestedAt', isLessThanOrEqualTo: endOfDay().subtract(Duration(days: 1)))
-        .where('status', whereIn: ['requested', 'reserved'])
-        .orderBy('requestedAt')
-        .snapshots();
+  Stream<QuerySnapshot<Order>>  getOpenOrdersFromSeller(String sellerId) {
+    // Retorna os pedidos abertos das últimas 2 horas também, caso haja um pedido perto de meia noite
 
-    var today = ordersRef
+    return ordersRef
         .where('sellerId', isEqualTo: sellerId)
-        .where('requestedAt', isGreaterThanOrEqualTo: startOfDay())
+        .where('requestedAt', isGreaterThanOrEqualTo: startOfDay().subtract(Duration(hours: 2)))
         .where('requestedAt', isLessThanOrEqualTo: endOfDay())
         .where('status', whereIn: ['requested', 'reserved'])
         .orderBy('requestedAt')
         .snapshots();
-
-    var combined = CombineLatestStream.combine2<
-        QuerySnapshot<Order>,
-        QuerySnapshot<Order>,
-        List<QueryDocumentSnapshot<Order>>
-    >(yesterday, today, (a, b) {
-      return a.docs + b.docs;
-    });
-
-    return combined;
   }
 
   Stream<QuerySnapshot<Order>> getClosedOrdersFromSeller(String sellerId) {
+    // Retorna os pedidos fechados das últimas 2 horas também, caso haja um pedido perto de meia noite
+
     return ordersRef
         .where('sellerId', isEqualTo: sellerId)
-        .where('requestedAt', isGreaterThanOrEqualTo: startOfDay())
+        .where('requestedAt', isGreaterThanOrEqualTo: startOfDay().subtract(Duration(hours: 2)))
         .where('requestedAt', isLessThanOrEqualTo: endOfDay())
         .where('status', isEqualTo: 'sold')
         .orderBy('requestedAt', descending: true)
