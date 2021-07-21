@@ -211,6 +211,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                             .getNearbySellersStream(
                                           locationSnapshot.data,
                                           rangeSnapshot.data,
+                                          //TODO Mudar para true quando acabar os testes
                                           queryByActive: false,
                                           queryByTime: false,
                                         ),
@@ -348,7 +349,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                                 SellersList(
                                                   sellerList,
                                                   locationSnapshot,
-                                                  widget.usuario.id,
+                                                  widget.usuario,
                                                   widget.controller,
                                                 ),
                                               if (sellerList.isEmpty)
