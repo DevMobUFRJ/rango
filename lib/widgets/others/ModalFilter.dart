@@ -134,6 +134,7 @@ class ModalFilterState extends State<ModalFilter> {
                   Navigator.pop(context, {
                     "vendedor": _buscaVendedor.text,
                     "quentinha": _buscaQuentinha.text,
+                    "filtrando": true,
                   });
                   print("buscando por" + _buscaVendedor.text);
                 },

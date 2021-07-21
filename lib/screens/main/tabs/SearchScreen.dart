@@ -32,6 +32,7 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   Completer<GoogleMapController> _controller = Completer();
+  bool _isFiltering = false;
   Set<Seller> allSellers = {};
   Set<Marker> _marcadores = {};
   int raio;
@@ -142,14 +143,28 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Widget _buildLoadingSpinner() {
     return Container(
-      height: 0.5.hp,
+      height: 1.hp - 56,
       alignment: Alignment.center,
-      child: SizedBox(
-        height: 50,
-        width: 50,
-        child: CircularProgressIndicator(
-          color: Theme.of(context).accentColor,
-        ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            _isFiltering ? 'Filtrando os vendedores' : 'Carregando o mapa',
+            style: GoogleFonts.montserrat(
+              color: Theme.of(context).accentColor,
+              fontSize: 35.nsp,
+            ),
+          ),
+          SizedBox(height: 10),
+          SizedBox(
+            height: 30,
+            width: 30,
+            child: CircularProgressIndicator(
+              color: Theme.of(context).accentColor,
+              strokeWidth: 3,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -325,6 +340,7 @@ class _SearchScreenState extends State<SearchScreen> {
     openSellers.addAll(closedSellers);
     allSellers = openSellers;
     if (allSellers.length == 0) {
+      _isFiltering = false;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -369,6 +385,7 @@ class _SearchScreenState extends State<SearchScreen> {
       print(value);
       nameSeller = value['vendedor'];
       setState(() {
+        _isFiltering = true;
         allSellers = {};
       });
     }
