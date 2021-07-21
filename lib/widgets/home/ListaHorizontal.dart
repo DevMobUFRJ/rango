@@ -56,7 +56,7 @@ class ListaHorizontal extends StatelessWidget {
                 meals[index].mealId,
                 meals[index].seller.id,
               ),
-              builder: (context, AsyncSnapshot<DocumentSnapshot> mealSnapshot) {
+              builder: (context, AsyncSnapshot<DocumentSnapshot<Meal>> mealSnapshot) {
                 if (mealSnapshot.connectionState == ConnectionState.waiting) {
                   return Container(
                     height: 0.2.hp,
@@ -144,12 +144,8 @@ class ListaHorizontal extends StatelessWidget {
                     ),
                   );
                 }
-                var mealSnapshotData =
-                    mealSnapshot.data.data() as Map<String, dynamic>;
-                Meal meal = Meal.fromJson(
-                  mealSnapshotData,
-                  id: meals[index].mealId,
-                );
+
+                final Meal meal = mealSnapshot.data.data();
                 return GestureDetector(
                   onTap: () => pushNewScreen(
                     context,
@@ -170,16 +166,19 @@ class ListaHorizontal extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8)),
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
-                      children: <Widget>[
+                      children: [
                         Flexible(
                           flex: 0,
                           child: Hero(
                             tag: meal.hashCode * tagM,
-                            child:
-                                Stack(alignment: Alignment.center, children: [
+                            child: Stack(alignment: Alignment.center, children: [
                               if (meal.picture != null) ...{
                                 _renderWithImage(),
                                 CachedNetworkImage(
+                                  color: meal.quantity > 0
+                                      ? Colors.transparent
+                                      : Colors.grey,
+                                  colorBlendMode: BlendMode.saturation,
                                   imageUrl: meal.picture,
                                   height: 170.h,
                                   width: 0.45.wp,
@@ -193,7 +192,7 @@ class ListaHorizontal extends StatelessWidget {
                                 _renderWithoutImage(ctx)
                               },
                             ]),
-                          ),
+                          )
                         ),
                         Flexible(
                           flex: 1,
@@ -220,7 +219,9 @@ class ListaHorizontal extends StatelessWidget {
                                 Flexible(
                                   flex: 1,
                                   child: AutoSizeText(
-                                    intToCurrency(meal.price),
+                                    meal.quantity > 0
+                                        ? intToCurrency(meal.price)
+                                        : 'Indisponível',
                                     textAlign: TextAlign.center,
                                     minFontSize: 15,
                                     style: GoogleFonts.montserrat(

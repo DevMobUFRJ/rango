@@ -47,44 +47,34 @@ class Repository {
   final auth = FirebaseAuth.instance;
   final currentUser = FirebaseAuth.instance.currentUser;
 
-  Stream<DocumentSnapshot> getSeller(String uid) {
-    return sellersRef.doc(uid).snapshots();
+  User getCurrentUser() {
+    return auth.currentUser;
   }
 
-  Stream<DocumentSnapshot> getMealFromSeller(String mealUid, String sellerUid) {
-    return sellersRef
-        .doc(sellerUid)
-        .collection("meals")
-        .doc(mealUid)
-        .snapshots();
+  // Seller
+  Stream<DocumentSnapshot<Seller>> getSeller(String uid) {
+    return sellersRef.doc(uid).snapshots();
   }
 
   Future<DocumentSnapshot<Seller>> getSellerFuture(String uid) {
     return sellersRef.doc(uid).get();
   }
 
-  User getCurrentUser() {
-    return auth.currentUser;
+  Stream<QuerySnapshot<Seller>> getFavoriteSellers(List<String> favorites) {
+    // Essa query whereIn tem o limite de 10 items
+    return sellersRef
+        .where(FieldPath.documentId, whereIn: favorites)
+        .snapshots();
   }
 
-  Stream<DocumentSnapshot> getClientStream(String uid) {
+  // Client
+  Stream<DocumentSnapshot<Client>> getClientStream(String uid) {
     return clientsRef.doc(uid).snapshots();
   }
 
   Future<void> updateClient(
       String uid, Map<String, dynamic> dataToUpdate) async {
     return clientsRef.doc(uid).update(dataToUpdate);
-  }
-
-  Stream<QuerySnapshot> getSellerCurrentMeals(String uid) {
-    return sellersRef.doc(uid).collection('currentMeals').snapshots();
-  }
-
-  Stream<QuerySnapshot> getFavoriteSellers(List<String> favorites) {
-    // Essa query whereIn tem o limite de 10 items
-    return sellersRef
-        .where(FieldPath.documentId, whereIn: favorites)
-        .snapshots();
   }
 
   Future<void> addSellerToClientFavorites(String clientId, String sellerId) {
@@ -100,36 +90,44 @@ class Repository {
     });
   }
 
-  Future<Client> getUserData() async {
-    DocumentSnapshot<Client> clientDocSnapshot =
-        await clientsRef.doc(currentUser.uid).get();
-    Client client = clientDocSnapshot.data();
-    return client;
-  }
-
-  Future<void> addOrder(Order order) async {
+  // Orders
+  Future<void> addOrderTransaction(Order order) async {
     try {
-      var mealDoc = await sellersRef
-          .doc(order.sellerId)
-          .collection('meals')
-          .doc(order.mealId)
-          .get(GetOptions(source: Source.server));
-      Meal meal = Meal.fromJson(mealDoc.data());
-      if (meal.quantity < order.quantity) {
-        throw ('Não há quentinhas suficientes para o seu pedido. Quantidade disponível: ${meal.quantity}.');
-      }
-      return ordersRef.add(order);
-    } on PlatformException catch (e) {
-      throw e;
+      return await FirebaseFirestore.instance.runTransaction((transaction) async {
+        DocumentReference<Meal> mealRef = mealsRef(order.sellerId).doc(order.mealId);
+        DocumentSnapshot<Meal> snapshot = await transaction.get<Meal>(mealRef);
+
+        int quantity = snapshot.data().quantity;
+        if (quantity < order.quantity) {
+          throw ('Não há quentinhas suficientes para o seu pedido. Quantidade disponível: $quantity');
+        } else {
+          await ordersRef.add(order);
+        }
+      });
     } catch (e) {
-      throw ("Serviço indisponível, tente novamente mais tarde.");
+      throw e;
     }
   }
 
-  Future<void> cancelOrder(String orderUid) async {
-    return ordersRef
-        .doc(orderUid)
-        .update({'status': 'canceled', 'canceledAt': Timestamp.now()});
+  Future<void> cancelOrderTransaction(Order order) async {
+    try {
+      return await FirebaseFirestore.instance.runTransaction((transaction) async {
+        DocumentReference<Order> orderRef = ordersRef.doc(order.id);
+
+        if (order.status == 'reserved') {
+          DocumentReference<Meal> mealRef = mealsRef(order.sellerId).doc(order.mealId);
+          DocumentSnapshot<Meal> snapshot = await transaction.get<Meal>(mealRef);
+          int quantity = snapshot.data().quantity;
+          transaction.update(mealRef, {'quantity': quantity + order.quantity});
+        }
+        transaction.update(
+          orderRef,
+          {'status': 'canceled', 'canceledAt': Timestamp.now()}
+        );
+      });
+    } catch (e) {
+      throw e;
+    }
   }
 
   Stream<QuerySnapshot> getOrdersFromClient(String clientId, {int limit}) {
@@ -144,6 +142,11 @@ class Repository {
         .where('clientId', isEqualTo: clientId)
         .orderBy('requestedAt', descending: true)
         .snapshots();
+  }
+
+  // Meals
+  Stream<DocumentSnapshot<Meal>> getMealFromSeller(String mealUid, String sellerUid) {
+    return mealsRef(sellerUid).doc(mealUid).snapshots();
   }
 
   Future<Position> getUserLocation() {
@@ -191,25 +194,6 @@ class Repository {
       return geo.collection(collectionRef: queryRef).within(
           center: center, radius: radius, field: "location", strictMode: true);
     }
-  }
-
-  Stream<List<QuerySnapshot>> getCurrentMealsStream(
-      List<DocumentSnapshot> sellerList,
-      {bool queryByFeatured = false,
-      int limit = -1}) {
-    List<Stream<QuerySnapshot>> streams = [];
-
-    for (var i = 0; i < sellerList.length; i++) {
-      var seller = sellerList[i];
-      var queryRef = seller.reference.collection("currentMeals").where("name");
-      if (queryByFeatured == true)
-        queryRef = queryRef.where("featured", isEqualTo: true);
-      if (limit != -1) queryRef = queryRef.limit(limit);
-
-      streams.add(queryRef.snapshots());
-    }
-
-    return CombineLatestStream.list<QuerySnapshot>(streams).asBroadcastStream();
   }
 
   Future<double> getSellerRange() async {

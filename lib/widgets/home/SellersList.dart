@@ -55,8 +55,8 @@ class SellersList extends StatelessWidget {
         }
 
         // Ordena por sellers favoritos
-        var clientSnapshotdata = clientSnapshot.data.data() as Client;
-        var favorites = clientSnapshotdata.favoriteSellers;
+        Client client = clientSnapshot.data.data();
+        var favorites = client.favoriteSellers;
         if (favorites != null) {
           sellerList.sort(
             (a, b) =>

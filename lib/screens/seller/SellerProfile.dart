@@ -193,10 +193,7 @@ class _SellerProfileState extends State<SellerProfile> {
             );
           }
 
-          Seller seller = Seller.fromJson(
-            snapshot.data.data(),
-            id: snapshot.data.id,
-          );
+          Seller seller = snapshot.data.data();
           var currentMeals = seller.currentMeals;
           List<MealRequest> allCurrentMeals = currentMeals.entries.map((meal) {
             return MealRequest(mealId: meal.key, seller: seller);
@@ -377,7 +374,7 @@ class _SellerProfileState extends State<SellerProfile> {
                     tagM: Random().nextDouble(),
                     meals: allCurrentMeals,
                     isFromSellerScreen: true,
-                    controller: widget.controller,
+                    controller: widget.controller
                   ),
                 ),
               ),
@@ -488,9 +485,9 @@ class _SellerProfileState extends State<SellerProfile> {
                 return SizedBox();
               }
               var isFavorite = false;
-              var clientSnapshotdata = clientSnapshot.data.data() as Client;
-              if (clientSnapshotdata.favoriteSellers != null) {
-                isFavorite = clientSnapshotdata.favoriteSellers
+              Client client = clientSnapshot.data.data();
+              if (client.favoriteSellers != null) {
+                isFavorite = client.favoriteSellers
                     .contains(widget.sellerId);
               }
               return Padding(
