@@ -52,55 +52,61 @@ class GridHorizontal extends StatelessWidget {
                     flex: currentMeals.length > 6 ? 3 : 4,
                     child: Stack(
                       children: [
-                        Shimmer.fromColors(
-                          baseColor: Color.fromRGBO(255, 175, 153, 1),
-                          highlightColor: Colors.white,
-                          child: Container(
-                            color: Colors.white,
-                            child: SizedBox(
-                              height: 170.h,
-                              width: 0.5.wp,
+                        if (meal.picture != null) ...{
+                          Shimmer.fromColors(
+                            baseColor: Color.fromRGBO(255, 175, 153, 1),
+                            highlightColor: Colors.white,
+                            child: Container(
+                              color: Colors.white,
+                              child: SizedBox(
+                                height: 170.h,
+                                width: 0.6.wp,
+                              ),
                             ),
                           ),
-                        ),
-                        Center(
-                          child: Icon(
-                            Icons.local_dining,
-                            size: 55,
-                            color: Colors.white,
+                          Center(
+                            child: Icon(
+                              Icons.local_dining,
+                              size: 55,
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                        Container(
-                          height: 170.h,
-                          width: 0.6.wp,
-                          child: meal.picture != null
-                              ? CachedNetworkImage(
-                                  placeholder: (context, url) => Image(
-                                      image: MemoryImage(kTransparentImage)),
-                                  errorWidget: (context, url, error) => Image(
-                                      image: MemoryImage(kTransparentImage)),
-                                  imageUrl: meal.picture,
-                                  fit: BoxFit.cover,
-                                )
-                              : Stack(
-                                  children: [
-                                    Container(
-                                      color: Theme.of(context).accentColor,
-                                      child: SizedBox(
-                                        height: 170.h,
-                                        width: 0.5.wp,
-                                      ),
-                                    ),
-                                    Center(
-                                      child: Icon(
-                                        Icons.local_dining,
-                                        size: 55,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ],
+                          Container(
+                            height: 170.h,
+                            width: 0.6.wp,
+                            child: CachedNetworkImage(
+                              placeholder: (context, url) =>
+                                  Image(image: MemoryImage(kTransparentImage)),
+                              errorWidget: (context, url, error) =>
+                                  Image(image: MemoryImage(kTransparentImage)),
+                              imageUrl: meal.picture,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        } else ...{
+                          Container(
+                            height: 170.h,
+                            width: 0.6.wp,
+                            child: Stack(
+                              children: [
+                                Container(
+                                  color: Theme.of(context).accentColor,
+                                  child: SizedBox(
+                                    height: 170.h,
+                                    width: 0.6.wp,
+                                  ),
                                 ),
-                        ),
+                                Center(
+                                  child: Icon(
+                                    Icons.local_dining,
+                                    size: 55,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        }
                       ],
                     ),
                   ),
