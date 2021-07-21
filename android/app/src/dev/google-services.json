@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "876055680086",
+    "project_id": "rango-ufrj-dev",
+    "storage_bucket": "rango-ufrj-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:876055680086:android:097bb45eb9593fb139d7f7",
+        "android_client_info": {
+          "package_name": "com.devmob.rango.client.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "876055680086-vspp9c3ehmrrahig7ar8u0jttjumdrog.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7emfcomzJ3dq1RKhKJwcW5bl3nVb5IO0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "876055680086-vspp9c3ehmrrahig7ar8u0jttjumdrog.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "876055680086-3mruh79ogj231binujii4mralokiv0ev.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.devmob.rango.seller.dev"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:876055680086:android:4051f20a4cb439b339d7f7",
+        "android_client_info": {
+          "package_name": "com.devmob.rango.seller.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "876055680086-vspp9c3ehmrrahig7ar8u0jttjumdrog.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7emfcomzJ3dq1RKhKJwcW5bl3nVb5IO0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "876055680086-vspp9c3ehmrrahig7ar8u0jttjumdrog.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "876055680086-3mruh79ogj231binujii4mralokiv0ev.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.devmob.rango.seller.dev"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
