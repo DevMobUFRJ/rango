@@ -40,12 +40,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<void> _getSeller(String sellerId) async {
-    var ref = await Repository.instance.sellersRef
-        .doc(sellerId)
-        .get()
-        .then((value) => value.data());
-    Seller seller = Seller.fromJson(ref);
-    setState(() => _seller = seller);
+    DocumentSnapshot<Seller> sellerDoc = await Repository.instance.getSellerFuture(sellerId);
+    setState(() => _seller = sellerDoc.data());
   }
 
   Future<void> _addNewMessage(Message newMessage) async {
@@ -63,7 +59,7 @@ class _ChatScreenState extends State<ChatScreen> {
           content: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Text(
-              'Ocorreu um erro ao enviar a mensagem.',
+              'Ocorreu um erro ao enviar a mensagem',
               textAlign: TextAlign.center,
             ),
           ),

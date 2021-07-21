@@ -36,12 +36,12 @@ class Client {
         deviceToken = json['deviceToken'];
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'email': email,
-        'name': name,
-        'picture': picture,
-        'phone': phone,
-        'favoriteSellers': favoriteSellers,
-        'notificationSettings': notificationSettings,
-      };
+    'email': email,
+    'name': name,
+    'picture': picture,
+    'favoriteSellers': favoriteSellers,
+    'notifications': notificationSettings,
+    'deviceToken': deviceToken,
+    'phone': phone
+  };
 }

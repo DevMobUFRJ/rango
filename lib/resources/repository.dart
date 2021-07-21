@@ -8,6 +8,7 @@ import 'package:rango/models/meals.dart';
 import 'package:rango/models/order.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:rango/models/seller.dart';
 import 'package:rango/resources/rangeChangeNotifier.dart';
 import 'dart:io';
 import 'package:rxdart/rxdart.dart';
@@ -24,15 +25,24 @@ const weekdayMap = {
 };
 
 class Repository {
-  final sellersRef = FirebaseFirestore.instance.collection('sellers');
+  final cleanSellersRef = FirebaseFirestore.instance.collection('sellers');
+  final sellersRef = FirebaseFirestore.instance.collection('sellers').withConverter<Seller>(
+    fromFirestore: (snapshot, _) => Seller.fromJson(snapshot.data(), id: snapshot.id),
+    toFirestore: (seller, _) => seller.toJson(),
+  );
+  final clientsRef = FirebaseFirestore.instance.collection('clients').withConverter<Client>(
+    fromFirestore: (snapshot, _) => Client.fromJson(snapshot.data(), id: snapshot.id),
+    toFirestore: (client, _) => client.toJson(),
+  );
+  final ordersRef = FirebaseFirestore.instance.collection('orders').withConverter<Order>(
+    fromFirestore: (snapshot, _) => Order.fromJson(snapshot.data(), id: snapshot.id),
+    toFirestore: (order, _) => order.toJson(),
+  );
+  CollectionReference<Meal> mealsRef(String sellerId) => sellersRef.doc(sellerId).collection('meals').withConverter<Meal>(
+    fromFirestore: (snapshot, _) => Meal.fromJson(snapshot.data(), id: snapshot.id),
+    toFirestore: (meal, _) => meal.toJson(),
+  );
   final chatRef = FirebaseFirestore.instance.collection('chat');
-  final clientsRef =
-      FirebaseFirestore.instance.collection('clients').withConverter<Client>(
-            fromFirestore: (snapshot, _) =>
-                Client.fromJson(snapshot.data(), id: snapshot.id),
-            toFirestore: (client, _) => client.toJson(),
-          );
-  final ordersRef = FirebaseFirestore.instance.collection('orders');
   final geo = Geoflutterfire();
   final auth = FirebaseAuth.instance;
   final currentUser = FirebaseAuth.instance.currentUser;
@@ -49,7 +59,7 @@ class Repository {
         .snapshots();
   }
 
-  Future<DocumentSnapshot> getSellerFuture(String uid) {
+  Future<DocumentSnapshot<Seller>> getSellerFuture(String uid) {
     return sellersRef.doc(uid).get();
   }
 
@@ -108,7 +118,7 @@ class Repository {
       if (meal.quantity < order.quantity) {
         throw ('Não há quentinhas suficientes para o seu pedido. Quantidade disponível: ${meal.quantity}.');
       }
-      return ordersRef.add(order.toJson());
+      return ordersRef.add(order);
     } on PlatformException catch (e) {
       throw e;
     } catch (e) {
@@ -169,7 +179,7 @@ class Repository {
     DateTime currentTime = DateTime.now();
     String weekday = weekdayMap[currentTime.weekday];
 
-    var queryRef = sellersRef.where("active");
+    var queryRef = cleanSellersRef.where("active");
     if (queryByActive) queryRef = queryRef.where("active", isEqualTo: true);
     if (queryByTime)
       queryRef = queryRef.where("shift.$weekday.open", isEqualTo: true);
