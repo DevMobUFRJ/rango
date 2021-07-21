@@ -11,7 +11,6 @@ import 'package:rango/models/client.dart';
 import 'package:rango/models/meal_request.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
-import 'package:rango/screens/main/tabs/SearchScreen.dart';
 import 'package:rango/screens/seller/ChatScreen.dart';
 import 'package:rango/widgets/home/ListaHorizontal.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -371,12 +370,11 @@ class _SellerProfileState extends State<SellerProfile> {
                 child: Container(
                   margin: EdgeInsets.only(bottom: 10),
                   child: ListaHorizontal(
-                    title: 'Quentinhas disponíveis',
-                    tagM: Random().nextDouble(),
-                    meals: allCurrentMeals,
-                    isFromSellerScreen: true,
-                    controller: widget.controller
-                  ),
+                      title: 'Quentinhas disponíveis',
+                      tagM: Random().nextDouble(),
+                      meals: allCurrentMeals,
+                      isFromSellerScreen: true,
+                      controller: widget.controller),
                 ),
               ),
               Flexible(
@@ -490,8 +488,7 @@ class _SellerProfileState extends State<SellerProfile> {
               var isFavorite = false;
               Client client = clientSnapshot.data.data();
               if (client.favoriteSellers != null) {
-                isFavorite = client.favoriteSellers
-                    .contains(widget.sellerId);
+                isFavorite = client.favoriteSellers.contains(widget.sellerId);
               }
               return Padding(
                 padding: EdgeInsets.only(

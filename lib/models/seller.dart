@@ -5,7 +5,6 @@ import 'package:rango/models/meals.dart';
 import 'package:rango/models/seller_notifications_settings.dart';
 import 'package:rango/models/shift.dart';
 import 'package:flutter/foundation.dart';
-import 'package:rango/models/user_notification_settings.dart';
 
 class Seller {
   String id;
@@ -50,7 +49,7 @@ class Seller {
         paymentMethods = json['paymentMethods'],
         name = json['name'],
         contact =
-        json['contact'] == null ? null : Contact.fromJson(json['contact']),
+            json['contact'] == null ? null : Contact.fromJson(json['contact']),
         canReservate = json['canReservate'],
         shift = json['shift'] == null ? null : Shift.fromJson(json['shift']),
         active = json['active'],
@@ -58,7 +57,7 @@ class Seller {
             ? null
             : Location.fromJson(json['location']),
         address =
-        json['address'] == null ? null : Address.fromJson(json['address']),
+            json['address'] == null ? null : Address.fromJson(json['address']),
         currentMeals = json['currentMeals'] == null
             ? null
             : currentMealsFromJson(json['currentMeals']),
@@ -68,23 +67,23 @@ class Seller {
             : SellerNotificationSettings.fromJson(json['notificationSettings']);
 
   Map<String, dynamic> toJson() => {
-    'name': name,
-    'email': email,
-    'active': active,
-    'canReservate': canReservate,
-    'logo': logo,
-    'description': description,
-    'paymentMethods': paymentMethods,
-    'location': location != null ? location.toJson() : null,
-    'contact': contact != null ? contact.toJson() : null,
-    'shift': shift != null ? shift.toJson() : null,
-    'address': address != null ? address.toJson() : null,
-    'currentMeals':
-    currentMeals != null ? currentMealsToJson(currentMeals) : null,
-    'deviceToken': deviceToken,
-    'notificationSettings':
-    notificationSettings != null ? notificationSettings.toJson() : null,
-  };
+        'name': name,
+        'email': email,
+        'active': active,
+        'canReservate': canReservate,
+        'logo': logo,
+        'description': description,
+        'paymentMethods': paymentMethods,
+        'location': location != null ? location.toJson() : null,
+        'contact': contact != null ? contact.toJson() : null,
+        'shift': shift != null ? shift.toJson() : null,
+        'address': address != null ? address.toJson() : null,
+        'currentMeals':
+            currentMeals != null ? currentMealsToJson(currentMeals) : null,
+        'deviceToken': deviceToken,
+        'notificationSettings':
+            notificationSettings != null ? notificationSettings.toJson() : null,
+      };
 }
 
 Map<String, dynamic> currentMealsToJson(Map<String, CurrentMeal> object) {
@@ -95,6 +94,6 @@ Map<String, dynamic> currentMealsToJson(Map<String, CurrentMeal> object) {
 
 Map<String, CurrentMeal> currentMealsFromJson(Map<String, dynamic> json) {
   Map<String, CurrentMeal> newMap =
-  json.map((key, value) => MapEntry(key, CurrentMeal.fromJson(value)));
+      json.map((key, value) => MapEntry(key, CurrentMeal.fromJson(value)));
   return newMap;
 }

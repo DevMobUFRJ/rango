@@ -12,7 +12,6 @@ import 'package:rango/models/seller.dart';
 import 'dart:io';
 import 'package:rango/resources/rangeChangeNotifier.dart';
 import 'package:rango/resources/repository.dart';
-import 'package:rango/screens/main/profile/ProfileSettings.dart';
 import 'package:rango/widgets/home/HomeHeader.dart';
 import 'package:rango/widgets/home/ListaHorizontal.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -94,8 +93,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   initState() {
     super.initState();
     checkForPermission();
-    _checkInternet();
     _checkFillPerfil();
+    _checkInternet();
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -315,7 +314,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
                                           return Column(
                                             children: [
-                                              _buildFillProfileSuggestions(),
+                                              if (_showFillPerfil)
+                                                _buildFillProfileSuggestions(),
                                               if (allMealsRequests.isNotEmpty)
                                                 _buildOrderAgain(
                                                   allMealsRequests,
@@ -474,8 +474,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     GestureDetector(
                       onTap: () {
                         Repository.instance.dontShowFillPerfill();
-                        Provider.of<RangeChangeNotifier>(context, listen: false)
-                            .triggerRefresh();
+                        setState(() => _showFillPerfil = false);
                       },
                       child: Container(
                         decoration: BoxDecoration(
