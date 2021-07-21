@@ -310,7 +310,7 @@ class _SearchScreenState extends State<SearchScreen> {
     Set<Seller> closedSellers = {};
     snapshotSeller.data.forEach((sel) {
       Seller sellerTemp = Seller.fromJson(sel.data(), id: sel.id);
-      if (sellerTemp.name.contains(nameSeller)) {
+      if (sellerTemp.name.toLowerCase().contains(nameSeller.toLowerCase())) {
         var openAtThisDay = _getOpenAtThisDay(sellerTemp);
         var openAtThisMoment = _getOpenAtThisMoment(sellerTemp);
         if (sellerTemp.active && openAtThisDay && openAtThisMoment) {
