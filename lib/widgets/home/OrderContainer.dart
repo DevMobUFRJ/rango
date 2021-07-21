@@ -178,7 +178,7 @@ class _OrderContainerState extends State<OrderContainer>
                                               .showSnackBar(
                                             SnackBar(
                                               content: Text(
-                                                e.toString(),
+                                                "Ocorreu um erro",
                                                 textAlign: TextAlign.center,
                                               ),
                                               backgroundColor:

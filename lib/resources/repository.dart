@@ -7,22 +7,32 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/utils/date_time.dart';
-import 'package:rxdart/rxdart.dart';
 
 class Repository {
-  final sellersRef = FirebaseFirestore.instance.collection('sellers').withConverter<Seller>(
-      fromFirestore: (snapshot, _) => Seller.fromJson(snapshot.data(), id: snapshot.id),
-      toFirestore: (seller, _) => seller.toJson());
-  final clientsRef = FirebaseFirestore.instance.collection('clients').withConverter<Client>(
-      fromFirestore: (snapshot, _) => Client.fromJson(snapshot.data(), id: snapshot.id),
-      toFirestore: (client, _) => client.toJson());
-  final ordersRef = FirebaseFirestore.instance.collection('orders').withConverter<Order>(
-      fromFirestore: (snapshot, _) => Order.fromJson(snapshot.data(), id: snapshot.id),
-      toFirestore: (order, _) => order.toJson());
-  CollectionReference<Meal> mealsRef(String sellerId) => sellersRef.doc(sellerId)
-      .collection('meals').withConverter<Meal>(
-      fromFirestore: (snapshot, _) => Meal.fromJson(snapshot.data(), id: snapshot.id),
-      toFirestore: (meal, _) => meal.toJson());
+  final sellersRef =
+      FirebaseFirestore.instance.collection('sellers').withConverter<Seller>(
+            fromFirestore: (snapshot, _) =>
+                Seller.fromJson(snapshot.data(), id: snapshot.id),
+            toFirestore: (seller, _) => seller.toJson(),
+          );
+  final clientsRef =
+      FirebaseFirestore.instance.collection('clients').withConverter<Client>(
+            fromFirestore: (snapshot, _) =>
+                Client.fromJson(snapshot.data(), id: snapshot.id),
+            toFirestore: (client, _) => client.toJson(),
+          );
+  final ordersRef =
+      FirebaseFirestore.instance.collection('orders').withConverter<Order>(
+            fromFirestore: (snapshot, _) =>
+                Order.fromJson(snapshot.data(), id: snapshot.id),
+            toFirestore: (order, _) => order.toJson(),
+          );
+  CollectionReference<Meal> mealsRef(String sellerId) =>
+      sellersRef.doc(sellerId).collection('meals').withConverter<Meal>(
+            fromFirestore: (snapshot, _) =>
+                Meal.fromJson(snapshot.data(), id: snapshot.id),
+            toFirestore: (meal, _) => meal.toJson(),
+          );
   final geo = Geoflutterfire();
   final auth = FirebaseAuth.instance;
 
@@ -119,12 +129,13 @@ class Repository {
   }
 
   // Orders
-  Stream<QuerySnapshot<Order>>  getOpenOrdersFromSeller(String sellerId) {
+  Stream<QuerySnapshot<Order>> getOpenOrdersFromSeller(String sellerId) {
     // Retorna os pedidos abertos das últimas 2 horas também, caso haja um pedido perto de meia noite
 
     return ordersRef
         .where('sellerId', isEqualTo: sellerId)
-        .where('requestedAt', isGreaterThanOrEqualTo: startOfDay().subtract(Duration(hours: 2)))
+        .where('requestedAt',
+            isGreaterThanOrEqualTo: startOfDay().subtract(Duration(hours: 2)))
         .where('requestedAt', isLessThanOrEqualTo: endOfDay())
         .where('status', whereIn: ['requested', 'reserved'])
         .orderBy('requestedAt')
@@ -136,7 +147,8 @@ class Repository {
 
     return ordersRef
         .where('sellerId', isEqualTo: sellerId)
-        .where('requestedAt', isGreaterThanOrEqualTo: startOfDay().subtract(Duration(hours: 2)))
+        .where('requestedAt',
+            isGreaterThanOrEqualTo: startOfDay().subtract(Duration(hours: 2)))
         .where('requestedAt', isLessThanOrEqualTo: endOfDay())
         .where('status', isEqualTo: 'sold')
         .orderBy('requestedAt', descending: true)
@@ -260,12 +272,15 @@ class Repository {
     }
   }
 
-  Stream<QuerySnapshot<Order>> getSoldOrdersFromSeller(String sellerId, {int lastDays}) {
+  Stream<QuerySnapshot<Order>> getSoldOrdersFromSeller(String sellerId,
+      {int lastDays}) {
     if (lastDays != null && lastDays > 0) {
       return ordersRef
           .where('sellerId', isEqualTo: sellerId)
           .where('status', isEqualTo: 'sold')
-          .where('requestedAt', isGreaterThanOrEqualTo: DateTime.now().subtract(Duration(days: lastDays)))
+          .where('requestedAt',
+              isGreaterThanOrEqualTo:
+                  DateTime.now().subtract(Duration(days: lastDays)))
           .orderBy('requestedAt')
           .snapshots();
     }
@@ -276,13 +291,17 @@ class Repository {
         .snapshots();
   }
 
-  Stream<QuerySnapshot<Order>> getSoldOrdersFromClient(String sellerId, String clientId, {int lastDays}) {
+  Stream<QuerySnapshot<Order>> getSoldOrdersFromClient(
+      String sellerId, String clientId,
+      {int lastDays}) {
     if (lastDays != null && lastDays > 0) {
       return ordersRef
           .where('sellerId', isEqualTo: sellerId)
           .where('clientId', isEqualTo: clientId)
           .where('status', isEqualTo: 'sold')
-          .where('requestedAt', isGreaterThanOrEqualTo: DateTime.now().subtract(Duration(days: lastDays)))
+          .where('requestedAt',
+              isGreaterThanOrEqualTo:
+                  DateTime.now().subtract(Duration(days: lastDays)))
           .snapshots();
     }
     return ordersRef
@@ -296,7 +315,8 @@ class Repository {
     return ordersRef
         .where('sellerId', isEqualTo: sellerId)
         .where('status', isEqualTo: 'sold')
-        .where('requestedAt', isGreaterThanOrEqualTo: DateTime.now().subtract(Duration(days: 7)))
+        .where('requestedAt',
+            isGreaterThanOrEqualTo: DateTime.now().subtract(Duration(days: 7)))
         .snapshots();
   }
 
