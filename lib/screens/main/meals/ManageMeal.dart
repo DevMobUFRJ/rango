@@ -102,7 +102,7 @@ class _ManageMealState extends State<ManageMeal> {
                       ),
                       cursorColor: Theme.of(context).accentColor,
                       textInputAction: TextInputAction.next,
-                      keyboardType: TextInputType.visiblePassword,
+                      keyboardType: TextInputType.text,
                       decoration: InputDecoration(
                         counterText: "",
                         hintText: 'Nome do prato',
@@ -151,7 +151,7 @@ class _ManageMealState extends State<ManageMeal> {
                           fontWeight: FontWeight.w500,
                           color: Theme.of(context).accentColor,
                         ),
-                        keyboardType: TextInputType.visiblePassword,
+                        keyboardType: TextInputType.text,
                         maxLines: 5,
                         minLines: 1,
                         textInputAction: TextInputAction.next,
