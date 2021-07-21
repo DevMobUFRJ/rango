@@ -187,7 +187,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         insetPadding:
             EdgeInsets.symmetric(horizontal: 0.1.wp, vertical: 0.1.hp),
         title: Text(
-          'Para trocar email/senha, você precisa confirmar sua senha atual e tentar novamente',
+          'Para trocar email ou senha, você precisa confirmar sua senha atual e tentar novamente',
           style: GoogleFonts.montserrat(
             color: Colors.white,
             fontWeight: FontWeight.w500,
@@ -228,7 +228,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       SnackBar(
                         duration: Duration(seconds: 2),
                         content: Text(
-                          'Senha confirmado, agora você já pode trocar seu email/senha',
+                          'Senha confirmada, agora você já pode trocar seu email ou senha',
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -310,7 +310,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           Flexible(
                             flex: 2,
                             child: CustomTextFormField(
-                              labelText: 'Nome:',
+                              labelText: 'Nome',
                               focusNode: _focusNodeName,
                               key: ValueKey('name'),
                               controller: _name,
@@ -334,7 +334,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           Flexible(
                             flex: 2,
                             child: CustomTextFormField(
-                              labelText: 'Email:',
+                              labelText: 'Email',
                               focusNode: _focusNodeEmail,
                               key: ValueKey('email'),
                               controller: _email,
@@ -357,7 +357,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           Flexible(
                             flex: 2,
                             child: CustomTextFormField(
-                              labelText: 'Telefone:',
+                              labelText: 'Telefone',
                               focusNode: _focusNodeTel,
                               key: ValueKey('phone'),
                               controller: _phone,
@@ -384,7 +384,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             child: Container(
                               child: CustomTextFormField(
                                 focusNode: _focusNodePass,
-                                labelText: 'Nova senha:',
+                                labelText: 'Nova senha',
                                 controller: _pass,
                                 isPassword: true,
                                 onFieldSubmitted: (_) => FocusScope.of(context)
@@ -409,7 +409,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           Flexible(
                             flex: 2,
                             child: CustomTextFormField(
-                              labelText: 'Confimar nova senha:',
+                              labelText: 'Confimar nova senha',
                               focusNode: _focusNodeConfirmPass,
                               controller: _confirmPass,
                               isPassword: true,

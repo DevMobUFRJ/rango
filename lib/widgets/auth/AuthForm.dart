@@ -132,7 +132,7 @@ class _AuthFormState extends State<AuthForm> {
                           Container(
                             margin: EdgeInsets.only(bottom: 10),
                             child: CustomTextFormField(
-                              labelText: 'Email:',
+                              labelText: 'Email',
                               focusNode: _focusNodeEmail,
                               key: ValueKey('email'),
                               validator: (value) {
@@ -163,7 +163,7 @@ class _AuthFormState extends State<AuthForm> {
                             Container(
                               margin: EdgeInsets.only(bottom: 10),
                               child: CustomTextFormField(
-                                labelText: 'Nome:',
+                                labelText: 'Nome',
                                 focusNode: _focusNodeName,
                                 errorText: _nameErrorMessage,
                                 key: ValueKey('name'),
@@ -189,7 +189,7 @@ class _AuthFormState extends State<AuthForm> {
                             Container(
                               margin: EdgeInsets.only(bottom: 10),
                               child: CustomTextFormField(
-                                labelText: 'Telefone:',
+                                labelText: 'Telefone',
                                 focusNode: _focusNodePhone,
                                 errorText: _phoneErrorMessage,
                                 maxLength: 11,
@@ -217,7 +217,7 @@ class _AuthFormState extends State<AuthForm> {
                           Container(
                             margin: EdgeInsets.only(bottom: 10),
                             child: CustomTextFormField(
-                              labelText: 'Senha:',
+                              labelText: 'Senha',
                               focusNode: _focusNodePass,
                               key: ValueKey('password'),
                               controller: _pass,
@@ -247,7 +247,7 @@ class _AuthFormState extends State<AuthForm> {
                             Container(
                               margin: EdgeInsets.only(bottom: 10),
                               child: CustomTextFormField(
-                                labelText: 'Confirmar Senha:',
+                                labelText: 'Confirmar Senha',
                                 controller: _confirmPass,
                                 key: ValueKey('confirmPassword'),
                                 focusNode: _focusNodeConfirmPass,

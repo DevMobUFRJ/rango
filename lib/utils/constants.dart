@@ -11,4 +11,4 @@ final wrongPasswordErrorMessage = 'Senha inválida';
 final invalidEmailErrorMessage = 'Email inválido';
 final emailAlreadyInUseErrorMessage = "Este email já está sendo usado";
 final requiresRecentLoginErrorMessage =
-    "Para trocar o email/senha, você precisa sair do aplicativo e entrar novamente";
+    "Para trocar o email ou senha, você precisa sair do aplicativo e entrar novamente";

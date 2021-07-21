@@ -56,7 +56,7 @@ class ModalFilterState extends State<ModalFilter> {
           Flexible(
             flex: 2,
             child: CustomTextFormField(
-              labelText: 'Buscar por vendedor:',
+              labelText: 'Buscar por vendedor',
               controller: _buscaVendedor,
               key: ValueKey('buscaVendedor'),
               validator: (String value) {
@@ -78,7 +78,7 @@ class ModalFilterState extends State<ModalFilter> {
           Flexible(
             flex: 2,
             child: CustomTextFormField(
-              labelText: 'Buscar por quentinha:',
+              labelText: 'Buscar por quentinha',
               controller: _buscaQuentinha,
               key: ValueKey('buscaQuentinha'),
               validator: (String value) {
