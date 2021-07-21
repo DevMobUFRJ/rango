@@ -78,28 +78,78 @@ class ModalFilterState extends State<ModalFilter> {
               ),
             ),
           ),
-          SizedBox(height: 10.0),
-          ElevatedButton(
-            onPressed: () {
-              print("filtrar");
-              print(_buscaQuentinha == null);
-              Navigator.pop(context, {
-                "vendedor": _buscaVendedor.text,
-                "quentinha": _buscaQuentinha.text
-              });
-              print("buscando por" + _buscaVendedor.text);
-            },
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 0.1.wp),
-              child: AutoSizeText(
-                'Filtrar',
-                style: GoogleFonts.montserrat(
-                  fontSize: 32.nsp,
-                ),
+          SizedBox(height: 5.0),
+          Flexible(
+            flex: 2,
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 15),
+              child: CustomTextFormField(
+                labelText: 'Buscar por quentinha',
+                controller: _buscaQuentinha,
+                key: ValueKey('buscaQuentinha'),
+                validator: (String value) {
+                  // if (value.trim() != '' && value.trim().length != 11) {
+                  //   setState(() => _telefoneErrorMessage =
+                  //       'Telefone precisa ter 11 números');
+                  // }
+                  return null;
+                },
+                errorText: _errorBuscaQuentinhaMessage,
+                focusNode: _focusNodeQuentinha,
+                keyboardType: TextInputType.text,
+                textInputAction: TextInputAction.next,
+                onSaved: (value) => _buscaQuentinha.text = value,
+                onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
               ),
             ),
           ),
-          SizedBox(height: 10)
+          SizedBox(height: 10.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  print("filtrar");
+                  print(_buscaQuentinha == null);
+                  Navigator.pop(context, {
+                    "vendedor": '',
+                    'quentinha': '',
+                  });
+                  print("buscando por" + _buscaVendedor.text);
+                },
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 0.1.wp),
+                  child: AutoSizeText(
+                    'Reiniciar filtro',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 32.nsp,
+                    ),
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  print("filtrar");
+                  print(_buscaQuentinha == null);
+                  Navigator.pop(context, {
+                    "vendedor": _buscaVendedor.text,
+                    "quentinha": _buscaQuentinha.text,
+                  });
+                  print("buscando por" + _buscaVendedor.text);
+                },
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 0.1.wp),
+                  child: AutoSizeText(
+                    'Filtrar',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 32.nsp,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12)
         ],
       ),
     ));

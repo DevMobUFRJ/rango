@@ -304,8 +304,10 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
-  Set<Seller> _getSellersOrdered(
-      AsyncSnapshot<List<DocumentSnapshot>> snapshotSeller, String nameSeller) {
+  void _getSellersOrdered(
+    AsyncSnapshot<List<DocumentSnapshot>> snapshotSeller,
+    String nameSeller,
+  ) {
     Set<Seller> openSellers = {};
     Set<Seller> closedSellers = {};
     snapshotSeller.data.forEach((sel) {
@@ -321,9 +323,21 @@ class _SearchScreenState extends State<SearchScreen> {
       }
     });
     openSellers.addAll(closedSellers);
-
     allSellers = openSellers;
-    return allSellers;
+    if (allSellers.length == 0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Nenhum vendedor encontrado!',
+              textAlign: TextAlign.center,
+            ),
+            backgroundColor: Theme.of(context).accentColor,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      });
+    }
   }
 
   Widget _menu(BuildContext contextGeral) {
@@ -351,6 +365,8 @@ class _SearchScreenState extends State<SearchScreen> {
     // print('modal closed ');
 
     if (value != null && value['vendedor'] != null) {
+      print('aqui:');
+      print(value);
       nameSeller = value['vendedor'];
       setState(() {
         allSellers = {};
