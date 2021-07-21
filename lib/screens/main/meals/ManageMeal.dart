@@ -97,13 +97,14 @@ class _ManageMealState extends State<ManageMeal> {
                       ),
                       cursorColor: Theme.of(context).accentColor,
                       textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.visiblePassword,
                       decoration: InputDecoration(
                         counterText: "",
                         hintText: 'Nome do prato',
                         hintStyle: GoogleFonts.montserrat(
                           fontSize: 38.nsp,
                           fontWeight: FontWeight.w500,
-                          color: Theme.of(context).accentColor,
+                          color: Color.fromRGBO(255, 175, 153, 1),
                         ),
                         isDense: true,
                         enabledBorder: UnderlineInputBorder(
@@ -145,11 +146,16 @@ class _ManageMealState extends State<ManageMeal> {
                           fontWeight: FontWeight.w500,
                           color: Theme.of(context).accentColor,
                         ),
+                        keyboardType: TextInputType.visiblePassword,
                         maxLines: 5,
                         minLines: 1,
-                        maxLength: 150,
                         textInputAction: TextInputAction.next,
                         decoration: InputDecoration(
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
                           hintText: 'Descrição',
                           counterText: "",
                           hintStyle: GoogleFonts.montserrat(
@@ -157,7 +163,6 @@ class _ManageMealState extends State<ManageMeal> {
                             color: Color(0xFFFC3C3C3),
                           ),
                           isDense: true,
-                          border: InputBorder.none,
                           contentPadding: EdgeInsets.symmetric(
                             horizontal: 15,
                             vertical: 5,
@@ -479,16 +484,14 @@ class _ManageMealState extends State<ManageMeal> {
                       setState(() => _loadingDelete = true);
                       try {
                         await Repository.instance.deleteMeal(sellerId, mealId);
-                        FocusScope.of(context).unfocus();
-                        Navigator.of(ctx).pop();
-                        Navigator.of(context).pop();
+                        FocusScope.of(ctx).unfocus();
                         setState(() => _loadingDelete = false);
                         showSnackbar(
-                            context, false, 'Quentinha excluída com sucesso');
+                            ctx, false, 'Quentinha excluída com sucesso');
+                        Navigator.of(ctx).pop();
                       } catch (e) {
                         setState(() => _loadingDelete = false);
-                        Navigator.of(context).pop();
-                        showSnackbar(context, true, e.toString());
+                        showSnackbar(ctx, true, e.toString());
                       }
                     },
                     child: Text(
