@@ -54,6 +54,7 @@ dependencies:
     cached_network_image: ^3.0.0
     paginate_firestore: 1.0.0
     syncfusion_flutter_charts: 19.2.47+1
+    firebase_crashlytics: ^2.0.7
 
 dev_dependencies:
     flutter_test:
