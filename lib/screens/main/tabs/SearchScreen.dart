@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:typed_data';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
-import 'package:rango/models/client.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
@@ -240,12 +238,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                   initialCameraPosition: _cameraPosition,
                                   onMapCreated:
                                       (GoogleMapController controller) {
-                                    //if (_controller.isCompleted) {
                                     if (widget.seller != null) {
                                       _returnOfSellerProfile(widget.seller);
                                     }
-                                    _controller.complete(controller);
-                                    //}
+                                    if (!_controller.isCompleted)
+                                      _controller.complete(controller);
                                   },
                                   zoomControlsEnabled: false,
                                   myLocationEnabled: true,
@@ -265,21 +262,12 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _botaoVerVendedor(Seller seller, BuildContext context, var isOpen) {
-    Color cor;
-    if (isOpen) {
-      cor = Theme.of(context).accentColor;
-    } else {
-      cor = Colors.grey;
-    }
     return Container(
       margin: EdgeInsets.symmetric(vertical: 0.01.hp),
       width: 0.5.wp,
-      child: RaisedButton(
-        padding: EdgeInsets.symmetric(vertical: 0.01.hp, horizontal: 0.1.wp),
-        elevation: 0,
-        color: cor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          primary: isOpen ? Theme.of(context).accentColor : Colors.grey,
         ),
         onPressed: () {
           pushNewScreen(
@@ -298,6 +286,7 @@ class _SearchScreenState extends State<SearchScreen> {
           'Ver Mais',
           style: GoogleFonts.montserrat(
             fontSize: 36.nsp,
+            color: isOpen ? null : Colors.white,
           ),
         ),
       ),
@@ -517,7 +506,7 @@ Widget _isOpen(Seller seller) {
       '${horaFormatada.substring(0, 2)}:${horaFormatada.substring(2, horaFormatada.length)}';
   return Container(
       child: Text(
-    "Fechado \u00B7 abre ${horaFormatada}",
+    "Fechado \u00B7 abre $horaFormatada",
     style: TextStyle(
         color: Colors.black54, fontSize: 22.0, fontWeight: FontWeight.bold),
   ));
