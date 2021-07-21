@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:provider/provider.dart';
 import 'package:rango/resources/rangeChangeNotifier.dart';
+import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/SplashScreen.dart';
 import 'package:rango/screens/auth/AuthScreen.dart';
 import 'package:rango/screens/auth/ForgotPasswordScreen.dart';
@@ -13,6 +15,8 @@ import 'package:rango/screens/main/NewTabsScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:rango/screens/seller/ChatScreen.dart';
+
+import 'models/client.dart';
 
 var currentKey = GlobalKey();
 
@@ -147,10 +151,34 @@ class MyApp extends StatelessWidget {
             if (userSnapshot.connectionState == ConnectionState.waiting) {
               return SplashScreen();
             }
+
+            if (userSnapshot.hasError) {
+              return LoginScreen();
+            }
+
             if (userSnapshot.hasData) {
-              return NewTabsScreen(
-                _controller,
-              );
+              return StreamBuilder(
+                stream: Repository.instance.getClientStream(userSnapshot.data.uid),
+                builder: (ctx, AsyncSnapshot<DocumentSnapshot<Client>> clientSnapshot) {
+                  if (!clientSnapshot.hasData ||
+                      clientSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                    return SplashScreen();
+                  }
+
+                  if (clientSnapshot.hasError) {
+                    return LoginScreen();
+                  }
+                  FirebaseMessaging.instance.onTokenRefresh
+                      .listen((newToken) async {
+                    Map<String, dynamic> dataToUpdate = {};
+                    Client client = clientSnapshot.data.data();
+                    dataToUpdate['deviceToken'] = newToken;
+                    await Repository.instance.updateClient(client.id, dataToUpdate);
+                  });
+
+                  return NewTabsScreen(clientSnapshot.data.data(), _controller);
+                });
             }
             return LoginScreen();
           },

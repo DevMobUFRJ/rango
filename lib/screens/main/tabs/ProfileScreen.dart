@@ -156,198 +156,155 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             Expanded(
               flex: 5,
-              child: StreamBuilder(
-                stream: Repository.instance.getClientStream(widget.usuario.id),
-                builder:
-                    (context, AsyncSnapshot<DocumentSnapshot> clientSnapshot) {
-                  if (clientSnapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return Container(
-                      height: 0.4.hp,
-                      alignment: Alignment.center,
-                      child: SizedBox(
-                        height: 50,
-                        width: 50,
-                        child: CircularProgressIndicator(
-                          color: Theme.of(context).accentColor,
-                        ),
-                      ),
-                    );
-                  }
-                  Client client = clientSnapshot.data.data();
-                  if (client.favoriteSellers == null ||
-                      client.favoriteSellers.length == 0) {
-                    return Container(
-                      margin: EdgeInsets.symmetric(
-                          horizontal: 0.03.wp, vertical: 15),
-                      child: AutoSizeText(
-                        'Você ainda não marcou vendedores como favoritos.',
-                        style: GoogleFonts.montserrat(
-                          color: yellow,
-                          fontSize: 45.nsp,
-                        ),
-                      ),
-                    );
-                  }
-                  if (clientSnapshot.hasError) {
-                    return Container(
-                      margin: EdgeInsets.symmetric(
-                          horizontal: 0.03.wp, vertical: 15),
-                      child: AutoSizeText(
-                        clientSnapshot.error.toString(),
-                        style: GoogleFonts.montserrat(
-                          color: yellow,
-                          fontSize: 45.nsp,
-                        ),
-                      ),
-                    );
-                  }
-                  final favoriteSellers =
-                      List<String>.from(client.favoriteSellers);
-
-                  // Um belo exemplo de list view! A busca pelo seller só acontece quando o elemento pode aparecer na tela.
-                  // Usa-se um StreamBuilder para aproveitar a cache do firestore
-                  return ListView.separated(
-                    separatorBuilder: (context, index) =>
-                        SizedBox(height: 0.01.hp),
-                    itemCount: favoriteSellers.length,
-                    physics: ClampingScrollPhysics(),
-                    itemBuilder: (ctx, index) => StreamBuilder(
-                      stream:
-                          Repository.instance.getSeller(favoriteSellers[index]),
-                      builder: (
-                        context,
-                        AsyncSnapshot<DocumentSnapshot<Seller>> sellerSnapshot,
+              child: (widget.usuario.favoriteSellers == null || widget.usuario.favoriteSellers.length == 0)
+              ? Container(
+                  margin: EdgeInsets.symmetric(
+                      horizontal: 0.03.wp, vertical: 15),
+                  child: AutoSizeText(
+                    'Você ainda não marcou vendedores como favoritos.',
+                    style: GoogleFonts.montserrat(
+                      color: yellow,
+                      fontSize: 45.nsp,
+                    ),
+                  ),
+                )
+              : ListView.separated(
+                separatorBuilder: (context, index) =>
+                    SizedBox(height: 0.01.hp),
+                itemCount: widget.usuario.favoriteSellers.length,
+                physics: ClampingScrollPhysics(),
+                itemBuilder: (ctx, index) => StreamBuilder(
+                  stream:
+                  Repository.instance.getSeller(widget.usuario.favoriteSellers[index]),
+                  builder: (
+                      context,
+                      AsyncSnapshot<DocumentSnapshot<Seller>> sellerSnapshot,
                       ) {
-                        if (sellerSnapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Container(
-                            height: 0.3.hp,
-                            alignment: Alignment.center,
-                            child: SizedBox(
-                              height: 40,
-                              width: 40,
-                              child: CircularProgressIndicator(
-                                color: Theme.of(context).accentColor,
-                              ),
-                            ),
-                          );
-                        }
-                        if (sellerSnapshot.hasError) {
-                          return Container(
-                            height: 0.4.hp - 56,
-                            alignment: Alignment.center,
-                            child: AutoSizeText(
-                              sellerSnapshot.error.toString(),
-                              style: GoogleFonts.montserrat(
-                                  fontSize: 45.nsp,
-                                  color: Theme.of(context).accentColor),
-                            ),
-                          );
-                        }
-
-                        Seller seller = sellerSnapshot.data.data();
-
-                        return Material(
-                          borderRadius: BorderRadius.circular(
-                            12,
+                    if (sellerSnapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return Container(
+                        height: 0.3.hp,
+                        alignment: Alignment.center,
+                        child: SizedBox(
+                          height: 40,
+                          width: 40,
+                          child: CircularProgressIndicator(
+                            color: Theme.of(context).accentColor,
                           ),
-                          elevation: 2,
-                          child: GestureDetector(
-                            onTap: () => pushNewScreen(
-                              context,
-                              withNavBar: false,
-                              screen: SellerProfile(
-                                seller.id,
-                                seller.name,
-                                widget.controller,
-                              ),
-                              pageTransitionAnimation:
-                                  PageTransitionAnimation.cupertino,
+                        ),
+                      );
+                    }
+                    if (sellerSnapshot.hasError) {
+                      return Container(
+                        height: 0.4.hp - 56,
+                        alignment: Alignment.center,
+                        child: AutoSizeText(
+                          sellerSnapshot.error.toString(),
+                          style: GoogleFonts.montserrat(
+                              fontSize: 45.nsp,
+                              color: Theme.of(context).accentColor),
+                        ),
+                      );
+                    }
+
+                    Seller seller = sellerSnapshot.data.data();
+
+                    return Material(
+                      borderRadius: BorderRadius.circular(12),
+                      elevation: 2,
+                      child: GestureDetector(
+                        onTap: () => pushNewScreen(
+                          context,
+                          withNavBar: false,
+                          screen: SellerProfile(
+                            seller.id,
+                            seller.name,
+                            widget.controller,
+                          ),
+                          pageTransitionAnimation:
+                          PageTransitionAnimation.cupertino,
+                        ),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 0.01.hp, horizontal: 0.05.wp),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).accentColor,
+                            borderRadius: BorderRadius.circular(
+                              12,
                             ),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 0.01.hp, horizontal: 0.05.wp),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).accentColor,
+                          ),
+                          child: Row(
+                            children: [
+                              ClipRRect(
                                 borderRadius: BorderRadius.circular(
-                                  12,
+                                  120,
                                 ),
-                              ),
-                              child: Row(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                      120,
-                                    ),
-                                    child: Container(
-                                      width: 100.h,
-                                      height: 100.h,
-                                      child: Stack(
-                                        alignment: Alignment.center,
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                60,
-                                              ),
-                                              color: Colors.white,
-                                            ),
-                                            width: 60,
-                                            height: 60,
+                                child: Container(
+                                  width: 100.h,
+                                  height: 100.h,
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(
+                                            60,
                                           ),
-                                          Center(
-                                            child: Container(
-                                              child: Icon(
-                                                Icons.store,
-                                                size: 38,
-                                                color: Theme.of(context)
-                                                    .accentColor,
-                                              ),
-                                            ),
+                                          color: Colors.white,
+                                        ),
+                                        width: 60,
+                                        height: 60,
+                                      ),
+                                      Center(
+                                        child: Container(
+                                          child: Icon(
+                                            Icons.store,
+                                            size: 38,
+                                            color: Theme.of(context)
+                                                .accentColor,
                                           ),
-                                          if (seller.logo != null)
-                                            CachedNetworkImage(
-                                              imageUrl: seller.logo,
-                                              fit: BoxFit.cover,
-                                              width: 60,
-                                              height: 60,
-                                              placeholder: (ctx, url) => Image(
+                                        ),
+                                      ),
+                                      if (seller.logo != null)
+                                        CachedNetworkImage(
+                                          imageUrl: seller.logo,
+                                          fit: BoxFit.cover,
+                                          width: 60,
+                                          height: 60,
+                                          placeholder: (ctx, url) => Image(
+                                              image: MemoryImage(
+                                                  kTransparentImage)),
+                                          errorWidget: (ctx, url, error) =>
+                                              Image(
                                                   image: MemoryImage(
                                                       kTransparentImage)),
-                                              errorWidget: (ctx, url, error) =>
-                                                  Image(
-                                                      image: MemoryImage(
-                                                          kTransparentImage)),
-                                            ),
-                                        ],
-                                      ),
-                                    ),
+                                        ),
+                                    ],
                                   ),
-                                  SizedBox(width: 0.03.wp),
-                                  Container(
-                                    width: 0.5.wp,
-                                    child: AutoSizeText(
-                                      seller.name,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.montserrat(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 32.nsp,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
-                            ),
+                              SizedBox(width: 0.03.wp),
+                              Container(
+                                width: 0.5.wp,
+                                child: AutoSizeText(
+                                  seller.name,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.montserrat(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 32.nsp,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              )
             ),
           ],
         ),

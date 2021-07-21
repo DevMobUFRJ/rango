@@ -13,64 +13,32 @@ import 'package:rango/widgets/home/SellerGridVertical.dart';
 class SellersList extends StatelessWidget {
   final List<Seller> sellerList;
   final AsyncSnapshot<Position> locationSnapshot;
-  final String clientId;
+  final Client client;
   final PersistentTabController controller;
 
   const SellersList(
     this.sellerList,
     this.locationSnapshot,
-    this.clientId,
+    this.client,
     this.controller,
   );
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: Repository.instance.getClientStream(clientId),
-      builder: (context, AsyncSnapshot<DocumentSnapshot> clientSnapshot) {
-        if (!clientSnapshot.hasData ||
-            clientSnapshot.connectionState == ConnectionState.waiting) {
-          return Container(
-            height: 0.5.hp,
-            alignment: Alignment.center,
-            child: SizedBox(
-              height: 50,
-              width: 50,
-              child: CircularProgressIndicator(
-                color: Theme.of(context).accentColor,
-              ),
-            ),
-          );
-        }
-        if (clientSnapshot.hasError) {
-          return Container(
-            height: 0.6.hp - 56,
-            alignment: Alignment.center,
-            child: AutoSizeText(
-              clientSnapshot.error.toString(),
-              style: GoogleFonts.montserrat(
-                  fontSize: 45.nsp, color: Theme.of(context).accentColor),
-            ),
-          );
-        }
-
-        // Ordena por sellers favoritos
-        Client client = clientSnapshot.data.data();
-        var favorites = client.favoriteSellers;
-        if (favorites != null) {
-          sellerList.sort(
+    // Ordena por sellers favoritos
+    var favorites = client.favoriteSellers;
+    if (favorites != null) {
+      sellerList.sort(
             (a, b) =>
-                favorites.indexOf(b.id).compareTo(favorites.indexOf(a.id)),
-          );
-        }
+            favorites.indexOf(b.id).compareTo(favorites.indexOf(a.id)),
+      );
+    }
 
-        return SellerGridVertical(
-          title: 'Vendedores',
-          sellers: sellerList,
-          userLocation: locationSnapshot.data,
-          controller: controller,
-        );
-      },
+    return SellerGridVertical(
+      title: 'Vendedores',
+      sellers: sellerList,
+      userLocation: locationSnapshot.data,
+      controller: controller,
     );
   }
 }

@@ -134,12 +134,14 @@ class Repository {
     if (limit != null && limit > 0) {
       return ordersRef
           .where('clientId', isEqualTo: clientId)
+          .where('status', isEqualTo: 'sold')
           .orderBy('requestedAt', descending: true)
           .limit(limit)
           .snapshots();
     }
     return ordersRef
         .where('clientId', isEqualTo: clientId)
+        .where('status', isEqualTo: 'sold')
         .orderBy('requestedAt', descending: true)
         .snapshots();
   }
