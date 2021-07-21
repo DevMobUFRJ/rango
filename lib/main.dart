@@ -91,7 +91,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Rango',
+      title: 'Rango Vendedor',
       theme: ThemeData(
         appBarTheme: AppBarTheme(
           elevation: 0,
@@ -162,7 +162,8 @@ class MyApp extends StatelessWidget {
                     Map<String, dynamic> dataToUpdate = {};
                     Seller seller = sellerSnapshot.data.data();
                     dataToUpdate['deviceToken'] = newToken;
-                    await Repository.instance.updateSeller(seller.id, dataToUpdate);
+                    await Repository.instance
+                        .updateSeller(seller.id, dataToUpdate);
                   });
 
                   return NewTabsScreen(sellerSnapshot.data.data(), _controller);
