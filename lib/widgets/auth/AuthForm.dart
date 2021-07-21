@@ -167,6 +167,8 @@ class _AuthFormState extends State<AuthForm> {
                                 focusNode: _focusNodeName,
                                 errorText: _nameErrorMessage,
                                 key: ValueKey('name'),
+                                keyboardType: TextInputType.text,
+                                textCapitalization: TextCapitalization.words,
                                 onSaved: (value) => _name.text = value,
                                 validator: (value) {
                                   if (value.isEmpty) {

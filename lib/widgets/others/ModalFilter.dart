@@ -66,7 +66,7 @@ class ModalFilterState extends State<ModalFilter> {
                 // }
                 return null;
               },
-               errorText: _errorBuscavendedorMessage,
+              errorText: _errorBuscavendedorMessage,
               focusNode: _focusNodeVendedor,
               keyboardType: TextInputType.text,
               textInputAction: TextInputAction.next,
@@ -88,7 +88,7 @@ class ModalFilterState extends State<ModalFilter> {
                 // }
                 return null;
               },
-               errorText: _errorBuscaQuentinhaMessage,
+              errorText: _errorBuscaQuentinhaMessage,
               focusNode: _focusNodeQuentinha,
               keyboardType: TextInputType.text,
               textInputAction: TextInputAction.next,

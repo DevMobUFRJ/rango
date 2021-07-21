@@ -61,6 +61,11 @@ class Repository {
     return clientsRef.doc(uid).snapshots();
   }
 
+  Future<void> updateClient(
+      String uid, Map<String, dynamic> dataToUpdate) async {
+    return clientsRef.doc(uid).update(dataToUpdate);
+  }
+
   Stream<QuerySnapshot> getSellerCurrentMeals(String uid) {
     return sellersRef.doc(uid).collection('currentMeals').snapshots();
   }
