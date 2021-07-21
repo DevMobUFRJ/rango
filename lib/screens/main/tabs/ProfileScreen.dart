@@ -19,8 +19,9 @@ import 'package:rango/widgets/user/UserPicture.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Seller usuario;
+  final PersistentTabController controller;
 
-  ProfileScreen(this.usuario);
+  ProfileScreen(this.usuario, this.controller);
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -82,7 +83,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         screen: EditProfileScreen(widget.usuario),
                         withNavBar: false,
                         pageTransitionAnimation:
-                        PageTransitionAnimation.cupertino,
+                            PageTransitionAnimation.cupertino,
                       ),
                       child: Icon(
                         Icons.edit,
@@ -93,10 +94,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     GestureDetector(
                       onTap: () => pushNewScreen(
                         context,
-                        screen: ProfileSettings(widget.usuario),
+                        screen:
+                            ProfileSettings(widget.usuario, widget.controller),
                         withNavBar: false,
                         pageTransitionAnimation:
-                        PageTransitionAnimation.cupertino,
+                            PageTransitionAnimation.cupertino,
                       ),
                       child: Icon(
                         Icons.settings,
@@ -110,7 +112,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         screen: EditAccountScreen(),
                         withNavBar: false,
                         pageTransitionAnimation:
-                        PageTransitionAnimation.cupertino,
+                            PageTransitionAnimation.cupertino,
                       ),
                       child: Icon(
                         Icons.manage_accounts,
@@ -121,9 +123,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     GestureDetector(
                       onTap: () => _showCloseStoreDialog(widget.usuario),
                       child: Icon(
-                        widget.usuario.active
-                            ? Icons.lock_open
-                            : Icons.lock,
+                        widget.usuario.active ? Icons.lock_open : Icons.lock,
                         color: widget.usuario.active ? yellow : Colors.red[300],
                         size: ScreenUtil().setSp(48),
                       ),
@@ -159,8 +159,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                           decoration: BoxDecoration(
-                            borderRadius:
-                            BorderRadius.all(Radius.circular(60)),
+                            borderRadius: BorderRadius.all(Radius.circular(60)),
                             color: yellow,
                           ),
                         ),
@@ -186,11 +185,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Icons.schedule,
                               color: Colors.white,
                             ),
-                            onPressed: () => pushNewScreen(
-                              context,
-                              screen: HorariosScreen(widget.usuario),
-                              withNavBar: false
-                            ),
+                            onPressed: () => pushNewScreen(context,
+                                screen: HorariosScreen(widget.usuario),
+                                withNavBar: false),
                           ),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.all(
@@ -236,12 +233,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               context,
                               screen: OrderHistoryScreen(),
                               withNavBar: false,
-                              pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                              pageTransitionAnimation:
+                                  PageTransitionAnimation.cupertino,
                             ),
                           ),
                           decoration: BoxDecoration(
-                            borderRadius:
-                            BorderRadius.all(Radius.circular(60)),
+                            borderRadius: BorderRadius.all(Radius.circular(60)),
                             color: yellow,
                           ),
                         ),
@@ -272,7 +269,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           width: 0.8.wp,
           child: StreamBuilder(
             stream: Repository.instance.getLastWeekOrders(seller.id),
-            builder: (context, AsyncSnapshot<QuerySnapshot<Order>> ordersSnapshot) {
+            builder:
+                (context, AsyncSnapshot<QuerySnapshot<Order>> ordersSnapshot) {
               if (!ordersSnapshot.hasData || ordersSnapshot.hasError) {
                 return SizedBox();
               }
@@ -308,9 +306,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     flex: 1,
                     child: AutoSizeText(
                       numberOfSales > 0
-                          ? 'Você vendeu $numberOfSales quentinha${numberOfSales > 1? 's': ''}'
-                          ' para $numberOfClients cliente${numberOfClients > 1? 's': ''}'
-                          ' e recebeu um total de ${intToCurrency(total)}.'
+                          ? 'Você vendeu $numberOfSales quentinha${numberOfSales > 1 ? 's' : ''}'
+                              ' para $numberOfClients cliente${numberOfClients > 1 ? 's' : ''}'
+                              ' e recebeu um total de ${intToCurrency(total)}.'
                           : 'Você ainda não vendeu sua primeira quentinha.',
                       style: GoogleFonts.montserrat(
                         fontSize: 30.nsp,
@@ -341,8 +339,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               );
             },
-          )
-      ),
+          )),
     );
   }
 

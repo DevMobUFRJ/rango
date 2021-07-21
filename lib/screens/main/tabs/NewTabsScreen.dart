@@ -50,7 +50,7 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
         screens: <Widget>[
           HomeScreen(widget.seller, widget.controller, key: currentKey),
           ManageMealsScreen(widget.seller),
-          ProfileScreen(widget.seller),
+          ProfileScreen(widget.seller, widget.controller),
         ],
         items: [
           PersistentBottomNavBarItem(
