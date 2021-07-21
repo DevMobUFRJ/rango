@@ -9,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/widgets/pickers/MealImagePicker.dart';
+import 'package:rango/utils/showSnackbar.dart';
 
 class ManageMeal extends StatefulWidget {
   final Meal meal;
@@ -319,7 +320,7 @@ class _ManageMealState extends State<ManageMeal> {
       if (_mealName.text != '') {
         dataToUpdate['name'] = _mealName.text;
       } else {
-        _showSnackbar(context, true, 'Você deve inserir o nome do prato');
+        showSnackbar(context, true, 'Você deve inserir o nome do prato');
         setState(() => _loading = false);
         return;
       }
@@ -327,7 +328,7 @@ class _ManageMealState extends State<ManageMeal> {
       if (_mealDescription.text != '') {
         dataToUpdate['description'] = _mealDescription.text;
       } else {
-        _showSnackbar(context, true, 'Você deve inserir a descrição do prato');
+        showSnackbar(context, true, 'Você deve inserir a descrição do prato');
         setState(() => _loading = false);
         return;
       }
@@ -335,7 +336,7 @@ class _ManageMealState extends State<ManageMeal> {
       if (_mealValue != null && _mealValue.numberValue != 0) {
         dataToUpdate['price'] = (_mealValue.numberValue * 100).round();
       } else {
-        _showSnackbar(context, true, 'Você deve inserir o preço do prato');
+        showSnackbar(context, true, 'Você deve inserir o preço do prato');
         setState(() => _loading = false);
         return;
       }
@@ -344,7 +345,7 @@ class _ManageMealState extends State<ManageMeal> {
       if (_mealQuantity != null && _mealQuantity.text != '') {
         dataToUpdate['quantity'] = int.parse(_mealQuantity.text);
       } else if (widget.seller.canReservate) {
-        _showSnackbar(context, true, 'Você deve inserir a quantidade');
+        showSnackbar(context, true, 'Você deve inserir a quantidade');
         setState(() => _loading = false);
         return;
       }
@@ -384,29 +385,14 @@ class _ManageMealState extends State<ManageMeal> {
       }
 
       FocusScope.of(context).unfocus();
-      _showSnackbar(context, false, 'Quentinha salva com sucesso');
+      showSnackbar(context, false, 'Quentinha salva com sucesso');
       setState(() => _loading = false);
       Navigator.of(context).pop();
     } catch (e) {
       setState(() => _loading = false);
-      _showSnackbar(context, true, 'Erro ao adicionar quentinha');
+      showSnackbar(context, true, 'Erro ao adicionar quentinha');
       print(e);
     }
-  }
-
-  void _showSnackbar(context, bool error, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        duration: Duration(seconds: 2),
-        backgroundColor: error == true
-            ? Theme.of(context).errorColor
-            : Theme.of(context).accentColor,
-        content: Text(
-          message,
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
   }
 
   void _showDeleteDialog(context, sellerId, mealId) async {
@@ -466,16 +452,19 @@ class _ManageMealState extends State<ManageMeal> {
                   ),
                   TextButton(
                     onPressed: () async {
+                      setState(() => _loadingDelete = true);
                       try {
                         await Repository.instance.deleteMeal(sellerId, mealId);
                         FocusScope.of(context).unfocus();
                         Navigator.of(ctx).pop();
                         Navigator.of(context).pop();
-                        _showSnackbar(
+                        setState(() => _loadingDelete = false);
+                        showSnackbar(
                             context, false, 'Quentinha excluída com sucesso');
                       } catch (e) {
+                        setState(() => _loadingDelete = false);
                         Navigator.of(context).pop();
-                        _showSnackbar(context, true, e.toString());
+                        showSnackbar(context, true, e.toString());
                       }
                     },
                     child: Text(

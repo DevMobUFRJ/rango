@@ -49,12 +49,13 @@ class _AuthScreenState extends State<AuthScreen> {
               password: password,
             );
             Map<String, dynamic> dataToUpdate = {};
-            String actualDeviceToken = await FirebaseMessaging.instance.getToken();
+            String actualDeviceToken =
+                await FirebaseMessaging.instance.getToken();
             dataToUpdate['deviceToken'] = actualDeviceToken;
-            DocumentSnapshot<Seller> sellerDoc = await Repository.instance.getSellerFuture(FirebaseAuth.instance.currentUser.uid);
+            DocumentSnapshot<Seller> sellerDoc = await Repository.instance
+                .getSellerFuture(FirebaseAuth.instance.currentUser.uid);
             var oldDeviceToken = sellerDoc.data().deviceToken;
-            if (oldDeviceToken != null &&
-                oldDeviceToken != actualDeviceToken) {
+            if (oldDeviceToken != null && oldDeviceToken != actualDeviceToken) {
               ScaffoldMessenger.of(ctx).showSnackBar(
                 SnackBar(
                   content: Text(
@@ -64,9 +65,11 @@ class _AuthScreenState extends State<AuthScreen> {
                   backgroundColor: Theme.of(context).accentColor,
                 ),
               );
-              Repository.instance.updateSeller(FirebaseAuth.instance.currentUser.uid, dataToUpdate);
+              Repository.instance.updateSeller(
+                  FirebaseAuth.instance.currentUser.uid, dataToUpdate);
             } else if (oldDeviceToken == null) {
-              Repository.instance.updateSeller(FirebaseAuth.instance.currentUser.uid, dataToUpdate);
+              Repository.instance.updateSeller(
+                  FirebaseAuth.instance.currentUser.uid, dataToUpdate);
             }
             Navigator.of(context).pop();
           } else {
@@ -192,6 +195,7 @@ class _AuthScreenState extends State<AuthScreen> {
         ),
       );
     } catch (error) {
+      setState(() => _isLoading = false);
       ScaffoldMessenger.of(ctx).showSnackBar(
         SnackBar(
           duration: Duration(seconds: 2),
