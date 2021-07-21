@@ -7,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/utils/date_time.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Repository {
   final sellersRef =
@@ -270,6 +271,24 @@ class Repository {
     } catch (e) {
       throw e;
     }
+  }
+
+  Future<bool> showFillPerfil() async {
+    var prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('fillPerfil') == null) {
+      return Future.value(true);
+    }
+    return Future.value(prefs.getBool('fillPerfil'));
+  }
+
+  dontShowFillPerfill() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('fillPerfil', false);
+  }
+
+  setShowFillPerfill() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('fillPerfil', true);
   }
 
   Stream<QuerySnapshot<Order>> getSoldOrdersFromSeller(String sellerId,
