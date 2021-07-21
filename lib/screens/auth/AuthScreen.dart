@@ -59,7 +59,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 ScaffoldMessenger.of(ctx).showSnackBar(
                   SnackBar(
                     content: Text(
-                      'Você se conectou com um novo dispositivo! Novas notificações chegarão apenas a ele.',
+                      'Você se conectou com um novo dispositivo! Novas notificações chegarão apenas à ele.',
                       textAlign: TextAlign.center,
                     ),
                     backgroundColor: Theme.of(context).accentColor,
