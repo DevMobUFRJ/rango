@@ -86,6 +86,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
             onPressed: () async {
               Navigator.of(ctx).pop();
               await FirebaseAuth.instance.signOut();
+              await Repository.instance.cleanCache();
               widget.controller.jumpToTab(0);
               Navigator.of(ctx).pop();
             },

@@ -281,14 +281,14 @@ class Repository {
     return Future.value(prefs.getBool('fillPerfil'));
   }
 
+  cleanCache() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+  }
+
   dontShowFillPerfill() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('fillPerfil', false);
-  }
-
-  setShowFillPerfill() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('fillPerfil', true);
   }
 
   Stream<QuerySnapshot<Order>> getSoldOrdersFromSeller(String sellerId,
