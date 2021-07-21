@@ -17,6 +17,8 @@ import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:rango/utils/constants.dart';
+import 'package:rango/utils/date_time.dart';
 import 'dart:ui' as ui;
 import 'package:rango/widgets/others/ModalFilter.dart';
 
@@ -61,7 +63,7 @@ class _SearchScreenState extends State<SearchScreen> {
               seller.location.geopoint.longitude.toString()),
           position: LatLng(seller.location.geopoint.latitude,
               seller.location.geopoint.longitude),
-          infoWindow: InfoWindow(title: seller.name, snippet: "sei lá"),
+          infoWindow: InfoWindow(title: seller.name, snippet: seller.description),
           icon: marMarkerCustom);
       marcadoresLocal.add(marcador);
     });
@@ -115,8 +117,6 @@ class _SearchScreenState extends State<SearchScreen> {
           target: LatLng(position.latitude, position.longitude), zoom: 16);
     });
     _movimentarCamera();
-
-    print("localizaçao inicial: " + position.toString());
   }
 
   @override
@@ -160,8 +160,10 @@ class _SearchScreenState extends State<SearchScreen> {
       child: FutureBuilder(
           future: Repository.instance.getSellerRange(),
           builder: (BuildContext context, AsyncSnapshot<double> range) {
-            raio = range.data.toInt();
-            print("RAIO eh " + raio.toString());
+            if (range.hasData) {
+              raio = range.data.toInt();
+            }
+
             return Container(
               height: 1.hp - 56,
               child: RefreshIndicator(
@@ -214,9 +216,6 @@ class _SearchScreenState extends State<SearchScreen> {
                             }
                             if (snapshotSeller.hasError) {
                               print(snapshotSeller.error);
-                              print(snapshotSeller.stackTrace);
-                              print(snapshotSeller.data);
-                              print(snapshotSeller.toString());
                               return Container(
                                 height: 0.6.hp - 56,
                                 alignment: Alignment.center,
@@ -261,20 +260,11 @@ class _SearchScreenState extends State<SearchScreen> {
     Set<Seller> openSellers = {};
     Set<Seller> closedSellers = {};
 
-    print("_getSellersOrdered");
     snapshotSeller.data.forEach((sel) {
-      print(sel['name']);
       Seller sellerTemp = Seller.fromJson(sel.data(), id: sel.id);
-      print(sellerTemp.name);
-      var openAtThisDay = _getOpenAtThisDay(sellerTemp);
       var openAtThisMoment = _getOpenAtThisMoment(sellerTemp);
-      print(sellerTemp.name +
-          " = " +
-          openAtThisDay.toString() +
-          " / " +
-          openAtThisMoment.toString());
-      print(sellerTemp.active);
-      if (sellerTemp.active && openAtThisDay && openAtThisMoment) {
+
+      if (sellerTemp.active && openAtThisMoment) {
         openSellers.add(sellerTemp);
       } else {
         closedSellers.add(sellerTemp);
@@ -306,9 +296,6 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void _closeModal(dynamic value) {
-    print('modal closed ');
-    print(value);
-    print(value['vendedor']);
     //getNearbySellersStream(userLocation, raio.toDouble(), value['vendedor']);
   }
 
@@ -379,10 +366,9 @@ class _SearchScreenState extends State<SearchScreen> {
     double lat = seller.location.geopoint.latitude;
     double long = seller.location.geopoint.longitude;
 
-    var openAtThisDay = _getOpenAtThisDay(seller);
     var openAtThisMoment = _getOpenAtThisMoment(seller);
     var isOpen;
-    if (seller.active && openAtThisDay && openAtThisMoment) {
+    if (seller.active && openAtThisMoment) {
       isOpen = true;
       return GestureDetector(
         onTap: () {
@@ -451,11 +437,8 @@ Widget _botaoVerVendedor(Seller seller, BuildContext context) {
 }
 
 Widget _isOpen(Seller seller) {
-  var json = seller.toJson();
-
-  var openAtThisDay = _getOpenAtThisDay(seller);
   var openAtThisMoment = _getOpenAtThisMoment(seller);
-  if (seller.active && openAtThisDay && openAtThisMoment) {
+  if (seller.active && openAtThisMoment) {
     return Container(
         child: Text(
       "Aberto",
@@ -463,85 +446,61 @@ Widget _isOpen(Seller seller) {
           color: Colors.black54, fontSize: 22.0, fontWeight: FontWeight.bold),
     ));
   }
-  String nextDayOfWeek = DateFormat('EEEE')
-      .format(DateTime.now().add(Duration(days: 1)))
-      .toLowerCase();
-  if (json[nextDayOfWeek] == null)
+
+  String thisWeekday = weekdayMap[DateTime.now().weekday];
+  List<String> weekdays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  List<String> weekdaysFromNow = weekdays.skip(weekdays.indexOf(thisWeekday)+1).toList() + weekdays;
+  bool found = false;
+  String weekdayFound = '';
+  String horaFormatada = '';
+
+  for (String day in weekdaysFromNow) {
+    if (seller.shift[day] != null &&
+        seller.shift[day].open &&
+        seller.shift[day].openingTime != null) {
+      found = true;
+      horaFormatada = seller.shift[day].openingTime.toString();
+      horaFormatada = horaFormatada.padLeft(4, '0');
+      horaFormatada = '${horaFormatada.substring(0, 2)}:${horaFormatada.substring(2, 4)}';
+      weekdayFound = weekdayTranslate[day];
+      break;
+    }
+  }
+
+  if (found == false && horaFormatada != '') {
     return Container(
         child: Text(
-      "Sem informação de horário",
-      style: TextStyle(
-          color: Colors.black54, fontSize: 22.0, fontWeight: FontWeight.bold),
-    ));
-  var horaFormatada = json[nextDayOfWeek].openingTime.toString();
-  horaFormatada = horaFormatada.padLeft(4, '0');
-  horaFormatada =
-      '${horaFormatada.substring(0, 2)}:${horaFormatada.substring(2, horaFormatada.length)}';
+          "Sem informação de horário",
+          style: TextStyle(
+              color: Colors.black54, fontSize: 22.0, fontWeight: FontWeight.bold),
+        ));
+  }
+
   return Container(
       child: Text(
-    "Fechado \u00B7 abre ${horaFormatada}",
+    "Fechado \u00B7 abre $weekdayFound $horaFormatada",
     style: TextStyle(
         color: Colors.black54, fontSize: 22.0, fontWeight: FontWeight.bold),
   ));
 }
 
 _getOpenAtThisMoment(Seller seller) {
-  var json = seller.toJson();
-  var date = DateTime.now();
-  String dayOfWeek = DateFormat('EEEE').format(date).toLowerCase();
+  DateTime now = DateTime.now();
+  String dayOfWeek = weekdayMap[now.weekday];
 
-  var ano = date.year;
-  var mes = date.month.toString();
-  if (mes.length == 1) {
-    mes = "0" + mes;
-  }
-  var dia = date.day.toString();
-  if (dia.length == 1) {
-    dia = "0" + dia;
-  }
+  if (seller.shift[dayOfWeek] == null) return false;
+  if (seller.shift[dayOfWeek].open == false) return false;
 
-  if (json[dayOfWeek] == null) return false;
+  TimeOfDay openingTime = intTimeToTimeOfDay(seller.shift[dayOfWeek].openingTime);
+  TimeOfDay closingTime = intTimeToTimeOfDay(seller.shift[dayOfWeek].closingTime);
 
-  var dataString = json[dayOfWeek].openingTime.toString();
-  dataString = dataString.padLeft(4, '0');
-  String diaHoraFormatado =
-      '${dataString.substring(0, 2)}:${dataString.substring(2, dataString.length)}';
+  if (openingTime == null || closingTime == null) return false;
 
-  var dataStringfechamento = json[dayOfWeek].closingTime.toString();
-  dataStringfechamento = dataStringfechamento.padLeft(4, '0');
-  String diaHoraFechamentoFormatado =
-      '${dataStringfechamento.substring(0, 2)}:${dataStringfechamento.substring(2, dataStringfechamento.length)}';
+  DateTime openingDate = DateTime(now.year, now.month, now.day, openingTime.hour, openingTime.minute);
+  DateTime closingDate = DateTime(now.year, now.month, now.day, closingTime.hour, closingTime.minute);
+  print(seller.name);
+  print(openingDate);
+  print(closingDate);
 
-  String strDateAbertura = ano.toString() +
-      "-" +
-      mes +
-      "-" +
-      dia.toString() +
-      " " +
-      diaHoraFormatado +
-      ":00";
-  DateTime parseDateAbre = DateTime.parse(strDateAbertura);
-
-  String strDateFechamento = ano.toString() +
-      "-" +
-      mes +
-      "-" +
-      dia.toString() +
-      " " +
-      diaHoraFechamentoFormatado +
-      ":00";
-
-  DateTime parseDateFecha = DateTime.parse(strDateFechamento);
-  var openAtThisMoment =
-      date.isAfter(parseDateAbre) && date.isBefore(parseDateFecha);
-
-  return openAtThisMoment;
-}
-
-_getOpenAtThisDay(Seller seller) {
-  var json = seller.toJson();
-  var date = DateTime.now();
-  String dayOfWeek = DateFormat('EEEE').format(date).toLowerCase();
-  var openAtThisDay = json[dayOfWeek] == null ? false : json[dayOfWeek].open;
-  return openAtThisDay;
+  return now.isAfter(openingDate) && now.isBefore(closingDate);
 }

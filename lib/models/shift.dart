@@ -12,9 +12,9 @@ class Weekday {
   });
 
   Weekday.fromJson(Map<String, dynamic> json)
-      : openingTime = json['openingTime'],
-        closingTime = json['closingTime'],
-        open = json['open'];
+      : openingTime = json['openingTime'] != null? json['openingTime']: null,
+        closingTime = json['closingTime'] != null? json['closingTime']: null,
+        open = json['open'] != null? json['open']: null;
 
   Map<String, dynamic> toJson() => {
     'openingTime': openingTime,
@@ -41,6 +41,10 @@ class Shift {
     @required this.friday,
     @required this.saturday,
   });
+
+  Weekday operator [](String weekday) {
+    return Weekday.fromJson(this.toJson()[weekday]);
+  }
 
   Shift.fromJson(Map<String, dynamic> json)
       : sunday = Weekday.fromJson(json['sunday']),
