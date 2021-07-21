@@ -21,9 +21,12 @@ import 'dart:ui' as ui;
 import 'package:rango/widgets/others/ModalFilter.dart';
 
 class SearchScreen extends StatefulWidget {
-  final Client usuario;
-  PersistentTabController controller;
-  SearchScreen(this.usuario);
+  final PersistentTabController controller;
+  final Seller seller;
+  SearchScreen(
+    this.controller, {
+    this.seller,
+  });
 
   @override
   _SearchScreenState createState() => _SearchScreenState();
@@ -39,7 +42,7 @@ class _SearchScreenState extends State<SearchScreen> {
   CameraPosition _cameraPosition;
   String nameSeller = "";
   final geo = Geoflutterfire();
-  
+
   void _setCustomMarkers() async {
     // getBytesFromAsset('assets/imgs/map2.png', 64)
     //     .then((value) => {marMarkerCustom = BitmapDescriptor.fromBytes(value)});
@@ -55,7 +58,7 @@ class _SearchScreenState extends State<SearchScreen> {
       Seller seller = Seller.fromJson(sellerTemp.data(), id: sellerTemp.id);
       Marker marcador = Marker(
           onTap: () {
-            print("la");
+            // print("la");
           },
           markerId: MarkerId(seller.location.geopoint.latitude.toString() +
               seller.location.geopoint.longitude.toString()),
@@ -115,7 +118,7 @@ class _SearchScreenState extends State<SearchScreen> {
     });
     _movimentarCamera();
 
-    print("localizaçao inicial: " + position.toString());
+    //  print("localizaçao inicial: " + position.toString());
   }
 
   @override
@@ -123,6 +126,7 @@ class _SearchScreenState extends State<SearchScreen> {
     super.initState();
     _setCustomMarkers();
     _recuperarLocalizacaoAtual();
+    if (widget.seller != null) _returnOfSellerProfile(widget.seller);
   }
 
   @override
@@ -160,7 +164,7 @@ class _SearchScreenState extends State<SearchScreen> {
           future: Repository.instance.getSellerRange(),
           builder: (BuildContext context, AsyncSnapshot<double> range) {
             if (range != null && range.data != null) raio = range.data.toInt();
-            print("RAIO eh " + raio.toString());
+            //     print("RAIO eh " + raio.toString());
             return Container(
               height: 1.hp - 56,
               child: RefreshIndicator(
@@ -212,10 +216,10 @@ class _SearchScreenState extends State<SearchScreen> {
                               return _buildLoadingSpinner();
                             }
                             if (snapshotSeller.hasError) {
-                              print(snapshotSeller.error);
-                              print(snapshotSeller.stackTrace);
-                              print(snapshotSeller.data);
-                              print(snapshotSeller.toString());
+                              //print(snapshotSeller.error);
+                              //print(snapshotSeller.stackTrace);
+                              //print(snapshotSeller.data);
+                              //print(snapshotSeller.toString());
                               return Container(
                                 height: 0.6.hp - 56,
                                 alignment: Alignment.center,
@@ -237,6 +241,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                   onMapCreated:
                                       (GoogleMapController controller) {
                                     //if (_controller.isCompleted) {
+                                    if (widget.seller != null) {
+                                      _returnOfSellerProfile(widget.seller);
+                                    }
                                     _controller.complete(controller);
                                     //}
                                   },
@@ -258,7 +265,6 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _botaoVerVendedor(Seller seller, BuildContext context, var isOpen) {
-    PersistentTabController controller;
     Color cor;
     if (isOpen) {
       cor = Theme.of(context).accentColor;
@@ -279,7 +285,12 @@ class _SearchScreenState extends State<SearchScreen> {
           pushNewScreen(
             context,
             withNavBar: false,
-            screen: SellerProfile(seller.id, seller.name, controller),
+            screen: SellerProfile(
+              seller.id,
+              seller.name,
+              widget.controller,
+              fromMap: true,
+            ),
             pageTransitionAnimation: PageTransitionAnimation.cupertino,
           ).then((value) => _returnOfSellerProfile(value));
         },
@@ -348,9 +359,9 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void _closeModal(dynamic value) {
-    print('modal closed ');
-    
-    if(value!=null && value['vendedor']!=null){
+    // print('modal closed ');
+
+    if (value != null && value['vendedor'] != null) {
       nameSeller = value['vendedor'];
       setState(() {
         allSellers = {};

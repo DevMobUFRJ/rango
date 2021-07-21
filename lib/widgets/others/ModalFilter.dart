@@ -105,8 +105,11 @@ class ModalFilterState extends State<ModalFilter> {
             onPressed: () {
               print("filtrar");
               print(_buscaQuentinha == null);
-              Navigator.pop(context, {"vendedor": _buscaVendedor.text, "quentinha": _buscaQuentinha.text});
-               print("buscando por" + _buscaVendedor.text);
+              Navigator.pop(context, {
+                "vendedor": _buscaVendedor.text,
+                "quentinha": _buscaQuentinha.text
+              });
+              print("buscando por" + _buscaVendedor.text);
             },
             child: AutoSizeText(
               'Filtrar',

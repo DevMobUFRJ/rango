@@ -11,6 +11,7 @@ import 'package:rango/models/client.dart';
 import 'package:rango/models/meal_request.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
+import 'package:rango/screens/main/tabs/SearchScreen.dart';
 import 'package:rango/screens/seller/ChatScreen.dart';
 import 'package:rango/widgets/home/ListaHorizontal.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -22,8 +23,14 @@ class SellerProfile extends StatefulWidget {
   final String sellerName;
   final String sellerId;
   final PersistentTabController controller;
+  final bool fromMap;
 
-  SellerProfile(this.sellerId, this.sellerName, this.controller);
+  SellerProfile(
+    this.sellerId,
+    this.sellerName,
+    this.controller, {
+    this.fromMap = false,
+  });
 
   @override
   _SellerProfileState createState() => _SellerProfileState();
@@ -370,11 +377,12 @@ class _SellerProfileState extends State<SellerProfile> {
                 child: Container(
                   margin: EdgeInsets.only(bottom: 10),
                   child: ListaHorizontal(
-                      title: 'Quentinhas disponíveis',
-                      tagM: Random().nextDouble(),
-                      meals: allCurrentMeals,
-                      isFromSellerScreen: true,
-                      controller: widget.controller),
+                    title: 'Quentinhas disponíveis',
+                    tagM: Random().nextDouble(),
+                    meals: allCurrentMeals,
+                    isFromSellerScreen: true,
+                    controller: widget.controller,
+                  ),
                 ),
               ),
               Flexible(
@@ -437,7 +445,18 @@ class _SellerProfileState extends State<SellerProfile> {
                       );
                     }
                     if (index == 1) {
-                      Navigator.pop(context, seller);
+                      if (widget.fromMap)
+                        Navigator.pop(context, seller);
+                      else {
+                        pushNewScreen(
+                          context,
+                          screen: SearchScreen(
+                            widget.controller,
+                            seller: seller,
+                          ),
+                          withNavBar: true,
+                        );
+                      }
                     }
                   },
                   color: Theme.of(context).accentColor,

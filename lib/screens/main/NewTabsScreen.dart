@@ -52,7 +52,7 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
           ),
           screens: <Widget>[
             HomeScreen(widget.client, widget.controller, key: currentKey),
-            SearchScreen(widget.client),
+            SearchScreen(widget.controller),
             OrderHistoryScreen(widget.controller),
             ProfileScreen(widget.client, widget.controller),
           ],
