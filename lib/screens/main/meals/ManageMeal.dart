@@ -28,6 +28,12 @@ class _ManageMealState extends State<ManageMeal> {
 
   bool _loading = false;
   bool _loadingDelete = false;
+
+  FocusNode _nameFocusNode = FocusNode();
+  FocusNode _descriptionFocusNode = FocusNode();
+  FocusNode _valueFocusNode = FocusNode();
+  FocusNode _quantityFocusNode = FocusNode();
+
   TextEditingController _mealName = TextEditingController();
   MoneyMaskedTextController _mealValue =
       MoneyMaskedTextController(leftSymbol: 'R\$ ');
@@ -78,17 +84,21 @@ class _ManageMealState extends State<ManageMeal> {
                     ),
                     constraints: BoxConstraints(maxWidth: 0.8.wp),
                     child: TextFormField(
+                      focusNode: _nameFocusNode,
                       textCapitalization: TextCapitalization.sentences,
                       maxLines: 5,
                       minLines: 1,
                       controller: _mealName,
+                      maxLength: 50,
                       style: GoogleFonts.montserrat(
                         fontSize: 38.nsp,
                         fontWeight: FontWeight.w500,
                         color: Theme.of(context).accentColor,
                       ),
                       cursorColor: Theme.of(context).accentColor,
+                      textInputAction: TextInputAction.next,
                       decoration: InputDecoration(
+                        counterText: "",
                         hintText: 'Nome do prato',
                         hintStyle: GoogleFonts.montserrat(
                           fontSize: 38.nsp,
@@ -111,6 +121,8 @@ class _ManageMealState extends State<ManageMeal> {
                           vertical: 0,
                         ),
                       ),
+                      onFieldSubmitted: (_) => FocusScope.of(context)
+                          .requestFocus(_descriptionFocusNode),
                     ),
                   ),
                   SizedBox(
@@ -126,6 +138,7 @@ class _ManageMealState extends State<ManageMeal> {
                       elevation: 5,
                       child: TextFormField(
                         textCapitalization: TextCapitalization.sentences,
+                        focusNode: _descriptionFocusNode,
                         controller: _mealDescription,
                         style: GoogleFonts.montserrat(
                           fontSize: 35.nsp,
@@ -134,8 +147,11 @@ class _ManageMealState extends State<ManageMeal> {
                         ),
                         maxLines: 5,
                         minLines: 1,
+                        maxLength: 150,
+                        textInputAction: TextInputAction.next,
                         decoration: InputDecoration(
                           hintText: 'Descrição',
+                          counterText: "",
                           hintStyle: GoogleFonts.montserrat(
                             fontSize: 38.nsp,
                             color: Color(0xFFFC3C3C3),
@@ -147,6 +163,8 @@ class _ManageMealState extends State<ManageMeal> {
                             vertical: 5,
                           ),
                         ),
+                        onFieldSubmitted: (_) => FocusScope.of(context)
+                            .requestFocus(_valueFocusNode),
                       ),
                     ),
                   ),
@@ -167,6 +185,7 @@ class _ManageMealState extends State<ManageMeal> {
                               ),
                               elevation: 5,
                               child: TextFormField(
+                                focusNode: _valueFocusNode,
                                 textAlign: TextAlign.center,
                                 controller: _mealValue,
                                 style: GoogleFonts.montserrat(
@@ -174,6 +193,7 @@ class _ManageMealState extends State<ManageMeal> {
                                   fontWeight: FontWeight.w500,
                                   color: Theme.of(context).accentColor,
                                 ),
+                                textInputAction: TextInputAction.next,
                                 keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                   hintText: 'Valor',
@@ -189,6 +209,8 @@ class _ManageMealState extends State<ManageMeal> {
                                     vertical: 5,
                                   ),
                                 ),
+                                onFieldSubmitted: (_) => FocusScope.of(context)
+                                    .requestFocus(_quantityFocusNode),
                               ),
                             ),
                           ),
@@ -204,6 +226,7 @@ class _ManageMealState extends State<ManageMeal> {
                                 ),
                                 elevation: 5,
                                 child: TextFormField(
+                                  focusNode: _quantityFocusNode,
                                   controller: _mealQuantity,
                                   keyboardType: TextInputType.number,
                                   textAlign: TextAlign.center,
@@ -226,6 +249,7 @@ class _ManageMealState extends State<ManageMeal> {
                                       vertical: 5,
                                     ),
                                   ),
+                                  onFieldSubmitted: (_) => _upsertMeal(context),
                                 ),
                               ),
                             ),
