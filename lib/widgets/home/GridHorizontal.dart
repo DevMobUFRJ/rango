@@ -85,7 +85,7 @@ class GridHorizontal extends StatelessWidget {
                               : Stack(
                                   children: [
                                     Container(
-                                      color: Color.fromRGBO(255, 175, 153, 1),
+                                      color: Theme.of(context).accentColor,
                                       child: SizedBox(
                                         height: 170.h,
                                         width: 0.5.wp,
