@@ -107,7 +107,9 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                           ),
                         ),
                         Container(
-                          constraints: BoxConstraints(maxHeight: 280.h),
+                          constraints: BoxConstraints(
+                            maxHeight: 300.h,
+                          ),
                           child: GridHorizontal(
                             seller: seller,
                             currentMeals: currentMeals,
@@ -161,6 +163,7 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                                             return;
                                           }
                                           try {
+                                            setState(() => null);
                                             if (value) {
                                               Repository.instance
                                                   .addMealToCurrent(

@@ -41,7 +41,8 @@ class _ManageMealState extends State<ManageMeal> {
   TextEditingController _mealQuantity = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
+  initState() {
+    super.initState();
     if (widget.meal != null) {
       _mealName = TextEditingController(text: widget.meal.name);
       _mealValue = MoneyMaskedTextController(
@@ -52,6 +53,10 @@ class _ManageMealState extends State<ManageMeal> {
       _mealQuantity =
           TextEditingController(text: widget.meal.quantity.toString());
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
