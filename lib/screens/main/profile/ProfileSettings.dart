@@ -1,18 +1,22 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:paginate_firestore/widgets/empty_separator.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/seller.dart';
+import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/main/profile/AboutScreen.dart';
 import 'package:rango/widgets/settings/CustomCheckBox.dart';
 
 class ProfileSettings extends StatefulWidget {
   final Seller user;
+  final PersistentTabController controller;
 
-  ProfileSettings(this.user);
+  ProfileSettings(this.user, this.controller);
 
   @override
   _ProfileSettingsState createState() => _ProfileSettingsState();
@@ -20,30 +24,32 @@ class ProfileSettings extends StatefulWidget {
 
 class _ProfileSettingsState extends State<ProfileSettings> {
   bool _switchValue = false;
-  bool _attValue = false;
+  bool _canReservateValue = false;
   bool _reservaValue = false;
   bool _newMessagesValue = false;
-  bool _promotionsValue = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
     setState(() {
-      _attValue = widget.user.notificationSettings != null &&
-              widget.user.notificationSettings.favoriteSellers != null
-          ? widget.user.notificationSettings.favoriteSellers
-          : false;
-      _reservaValue = widget.user.notificationSettings != null &&
-              widget.user.notificationSettings.reservations != null
-          ? widget.user.notificationSettings.reservations
-          : false;
-      _newMessagesValue = widget.user.notificationSettings != null &&
-              widget.user.notificationSettings.messages != null
-          ? widget.user.notificationSettings.messages
-          : false;
-      _promotionsValue = widget.user.notificationSettings != null &&
-              widget.user.notificationSettings.discounts != null
-          ? widget.user.notificationSettings.discounts
-          : false;
+      if (widget.user.canReservate == null) {
+        _canReservateValue = true;
+      } else {
+        _canReservateValue = widget.user.canReservate;
+      }
+      if (widget.user.notificationSettings == null) {
+        _switchValue = false;
+        _reservaValue = false;
+        _newMessagesValue = false;
+      } else {
+        _switchValue = true;
+        _reservaValue = widget.user.notificationSettings.orders != null
+            ? widget.user.notificationSettings.orders
+            : false;
+        _newMessagesValue = widget.user.notificationSettings.messages != null
+            ? widget.user.notificationSettings.messages
+            : false;
+      }
     });
     super.initState();
   }
@@ -59,19 +65,16 @@ class _ProfileSettingsState extends State<ProfileSettings> {
           top: 20,
           left: 24,
           right: 24,
-          bottom: 0,
+          bottom: 20,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
         actions: [
           TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              FirebaseAuth.instance.signOut();
-            },
+            onPressed: () => Navigator.of(ctx).pop(),
             child: Text(
-              'Sair',
+              'Voltar',
               style: GoogleFonts.montserrat(
                 decoration: TextDecoration.underline,
                 color: Colors.white,
@@ -80,13 +83,20 @@ class _ProfileSettingsState extends State<ProfileSettings> {
             ),
           ),
           TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
+            onPressed: () async {
+              Navigator.of(ctx).pop();
+              await FirebaseAuth.instance.signOut();
+              await Repository.instance.cleanCache();
+              widget.controller.jumpToTab(0);
+              Navigator.of(ctx).pop();
+            },
             child: Text(
-              'Cancelar',
+              'Sair',
               style: GoogleFonts.montserrat(
                 decoration: TextDecoration.underline,
                 color: Colors.white,
                 fontSize: 34.nsp,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
@@ -112,8 +122,6 @@ class _ProfileSettingsState extends State<ProfileSettings> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
-    const orange = Color(0xFFFC744F);
     const green = Color(0xFF609B90);
     return Scaffold(
       appBar: AppBar(
@@ -127,11 +135,11 @@ class _ProfileSettingsState extends State<ProfileSettings> {
       ),
       body: Container(
         padding: EdgeInsets.only(top: 0.02.hp),
-        margin: EdgeInsets.symmetric(horizontal: 10),
+        margin: EdgeInsets.symmetric(horizontal: 0.08.wp),
         child: Column(
           children: [
             Container(
-              width: 0.8.wp,
+              padding: EdgeInsets.only(right: 0.09.wp, left: 0.05.wp),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -139,20 +147,18 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                     'Notificações',
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                      color: orange,
+                      color: Theme.of(context).accentColor,
                       fontSize: 38.nsp,
                     ),
                   ),
                   Switch(
                     value: _switchValue,
-                    activeColor: Color(0xFF609B90),
+                    activeColor: Theme.of(context).accentColor,
                     onChanged: (value) => setState(() {
                       _switchValue = value;
                       if (value == false) {
-                        _attValue = false;
                         _reservaValue = false;
                         _newMessagesValue = false;
-                        _promotionsValue = false;
                       }
                     }),
                   ),
@@ -164,15 +170,17 @@ class _ProfileSettingsState extends State<ProfileSettings> {
               child: Column(
                 children: [
                   Container(
+                    height: 0.07.hp,
                     child: CustomCheckBox(
                       changeValue: (value) =>
                           setState(() => _reservaValue = value),
-                      text: 'Reserva confirmada',
+                      text: 'Reservas',
                       value: _reservaValue,
                       isActive: _switchValue,
                     ),
                   ),
                   Container(
+                    height: 0.07.hp,
                     child: CustomCheckBox(
                       changeValue: (value) =>
                           setState(() => _newMessagesValue = value),
@@ -185,24 +193,49 @@ class _ProfileSettingsState extends State<ProfileSettings> {
               ),
             ),
             Container(
-              width: 0.6.wp,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                onPressed: () {},
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: 0.01.hp, horizontal: 0.1.wp),
-                  child: AutoSizeText(
-                    'Confirmar',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 36.nsp,
+              padding: EdgeInsets.only(right: 0.09.wp, left: 0.05.wp),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AutoSizeText(
+                    'Permitir reservas',
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      color: Theme.of(context).accentColor,
+                      fontSize: 38.nsp,
                     ),
                   ),
+                  Switch(
+                    value: _canReservateValue,
+                    activeColor: Theme.of(context).accentColor,
+                    onChanged: (value) => setState(() {
+                      _canReservateValue = value;
+                    }),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 0.01.hp),
+              width: 0.5.wp,
+              child: ElevatedButton(
+                onPressed: _isLoading ? null : () => _saveSettings(context),
+                child: Container(
+                  child: _isLoading
+                      ? SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                          ),
+                        )
+                      : AutoSizeText(
+                          'Confirmar',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 36.nsp,
+                            color: Colors.white,
+                          ),
+                        ),
                 ),
               ),
             ),
@@ -249,5 +282,54 @@ class _ProfileSettingsState extends State<ProfileSettings> {
         ),
       ),
     );
+  }
+
+  void _saveSettings(context) async {
+    setState(() => _isLoading = true);
+    try {
+      Map<String, dynamic> dataToUpdate = {};
+      if (_switchValue == false) {
+        Map<String, dynamic> notifications = {};
+        notifications['messages'] = false;
+        notifications['orders'] = false;
+        dataToUpdate['notificationSettings'] = notifications;
+      } else {
+        Map<String, dynamic> notifications = {};
+        notifications['messages'] = _newMessagesValue;
+        notifications['orders'] = _reservaValue;
+        dataToUpdate['notificationSettings'] = notifications;
+      }
+      dataToUpdate['canReservate'] = _canReservateValue;
+      if (dataToUpdate.length > 0) {
+        await Repository.instance.updateSeller(widget.user.id, dataToUpdate);
+      }
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: Duration(seconds: 2),
+          backgroundColor: Theme.of(context).accentColor,
+          content: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              "Configurações salvas com sucesso",
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      );
+    } catch (e) {
+      print(e);
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: Duration(seconds: 2),
+          content: Text(
+            e.toString(),
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
+      );
+    }
   }
 }

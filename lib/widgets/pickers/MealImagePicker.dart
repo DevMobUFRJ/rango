@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -5,10 +6,12 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
 class MealImagePicker extends StatefulWidget {
+  final Function(File pickedImage) _imagePickFn;
   final String image;
   final String editText;
 
-  MealImagePicker({
+  MealImagePicker(
+    this._imagePickFn, {
     this.image,
     this.editText,
   });
@@ -25,12 +28,12 @@ class _MealImagePickerState extends State<MealImagePicker> {
     await showDialog(
         context: context,
         builder: (BuildContext ctx) => AlertDialog(
-              backgroundColor: Theme.of(ctx).backgroundColor,
+              backgroundColor: Color(0xFFF9B152),
               actionsPadding: EdgeInsets.all(10),
               title: Text(
                 'Escolha de onde pegar a imagem',
                 style: GoogleFonts.montserrat(
-                  color: Theme.of(context).accentColor,
+                  color: Colors.white,
                   fontSize: 38.nsp,
                 ),
               ),
@@ -38,28 +41,58 @@ class _MealImagePickerState extends State<MealImagePicker> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   TextButton(
-                    onPressed: () {
-                      pickImgFromGallery = true;
+                    onPressed: () async {
+                      try {
+                        //await Permission.photosAddOnly.request();
+                        pickImgFromGallery = true;
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: Theme.of(context).errorColor,
+                            content: Text(
+                              'Ocorreu um erro ao escolher a foto, tente novamente',
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      }
                       Navigator.of(ctx).pop();
                     },
                     child: Text(
                       'Galeria',
                       style: GoogleFonts.montserrat(
-                        color: Theme.of(context).accentColor,
+                        color: Colors.white,
                         fontSize: 36.nsp,
+                        fontWeight: FontWeight.w600,
+                        decoration: TextDecoration.underline,
                       ),
                     ),
                   ),
                   TextButton(
-                    onPressed: () {
-                      pickImgFromGallery = false;
+                    onPressed: () async {
+                      try {
+                        //await Permission.camera.request();
+                        pickImgFromGallery = false;
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: Theme.of(context).errorColor,
+                            content: Text(
+                              'Ocorreu um erro ao escolher a foto, tente novamente',
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      }
                       Navigator.of(ctx).pop();
                     },
                     child: Text(
                       'Câmera',
                       style: GoogleFonts.montserrat(
-                        color: Theme.of(context).accentColor,
+                        color: Colors.white,
                         fontSize: 36.nsp,
+                        fontWeight: FontWeight.w600,
+                        decoration: TextDecoration.underline,
                       ),
                     ),
                   ),
@@ -73,19 +106,23 @@ class _MealImagePickerState extends State<MealImagePicker> {
       try {
         final pickedImage = await picker.getImage(
           source: pickImgFromGallery ? ImageSource.gallery : ImageSource.camera,
-          imageQuality: 85,
-          maxWidth: 0.9.wp,
-          maxHeight: 0.7.hp,
+          imageQuality: 50,
         );
         if (pickedImage != null) {
           final pickedImageFile = File(pickedImage.path);
+          widget._imagePickFn(pickedImageFile);
           setState(() => _pickedImage = pickedImageFile);
         }
-      } catch (error) {
+      } catch (e) {
+        print(e);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text('Ocorreu um erro ao escolher a foto, tente novmanete'),
+            duration: Duration(seconds: 2),
+            backgroundColor: Theme.of(context).errorColor,
+            content: Text(
+              'Ocorreu um erro ao escolher a foto, tente novamente',
+              textAlign: TextAlign.center,
+            ),
           ),
         );
       }
@@ -114,16 +151,13 @@ class _MealImagePickerState extends State<MealImagePicker> {
                 Container(
                   margin: EdgeInsets.symmetric(vertical: 10),
                   constraints:
-                      BoxConstraints(maxHeight: 0.7.hp, maxWidth: 0.9.wp),
+                      BoxConstraints(maxHeight: 0.4.hp, maxWidth: 0.9.wp),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(6),
-                    child: Image(
-                      image: _pickedImage != null
-                          ? FileImage(_pickedImage)
-                          : NetworkImage(widget.image),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+                      borderRadius: BorderRadius.circular(6),
+                      child: _pickedImage != null
+                          ? Image(image: FileImage(_pickedImage))
+                          : CachedNetworkImage(
+                              fit: BoxFit.cover, imageUrl: widget.image)),
                 ),
               if (_pickedImage == null && widget.image == null)
                 Container(

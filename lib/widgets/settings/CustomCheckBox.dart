@@ -17,9 +17,6 @@ class CustomCheckBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
-    const orange = Color(0xFFFC744F);
-    const yellow = Color(0xFFF9B152);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -31,14 +28,16 @@ class CustomCheckBox extends StatelessWidget {
               text,
               overflow: TextOverflow.clip,
               style: TextStyle(
-                  color: isActive ? orange : Colors.grey, fontSize: 32.nsp),
+                color: isActive ? Theme.of(context).accentColor : Colors.grey,
+                fontSize: 32.nsp,
+              ),
             ),
           ),
         ),
         Flexible(
           flex: 2,
           child: Checkbox(
-            activeColor: yellow,
+            activeColor: Theme.of(context).accentColor,
             value: value,
             onChanged: isActive ? changeValue : null,
           ),

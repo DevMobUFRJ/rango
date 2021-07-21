@@ -68,224 +68,202 @@ class _AuthFormState extends State<AuthForm> {
     return LayoutBuilder(
       builder: (ctx, constraint) => SingleChildScrollView(
         child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: 0.9.hp),
+          constraints: BoxConstraints(minHeight: constraint.maxHeight),
           child: Padding(
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.symmetric(horizontal: 16),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (widget._isLogin)
-                  Flexible(
-                    flex: 3,
-                    child: Text(
-                      "RANGO",
-                      style: GoogleFonts.montserrat(
-                        fontSize: 80.nsp,
-                        color: Theme.of(context).accentColor,
-                      ),
+                  Container(
+                    child: Column(
+                      children: [
+                        Flexible(
+                          flex: 0,
+                          child: Image(
+                            image: AssetImage('assets/imgs/rango.png'),
+                            width: 0.5.wp,
+                          ),
+                        ),
+                        Flexible(
+                          flex: 0,
+                          child: Text(
+                            "RANGO",
+                            style: TextStyle(
+                              color: Theme.of(context).accentColor,
+                              fontSize: 80.nsp,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                Expanded(
-                  flex: widget._isLogin ? 3 : 6,
-                  child: Form(
-                    key: _formKey,
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          if (!widget._isLogin) UserImagePicker(_pickedImage),
-                          Flexible(
-                            flex: 2,
-                            child: CustomTextFormField(
-                              labelText: 'Email:',
-                              key: ValueKey('email'),
-                              controller: _emailController,
-                              onChanged: (value) => {
+                Form(
+                  key: _formKey,
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        if (!widget._isLogin) UserImagePicker(_pickedImage),
+                        CustomTextFormField(
+                          labelText: 'Email',
+                          key: ValueKey('email'),
+                          controller: _emailController,
+                          onChanged: (value) => {
+                            setState(
+                              () => _email = value,
+                            )
+                          },
+                          validator: (value) {
+                            if (value.isEmpty || !value.contains('@')) {
+                              setState(() {
+                                _emailErrorMessage = 'Insira um email válido';
+                              });
+                            } else {
+                              setState(() {
+                                _emailErrorMessage = null;
+                              });
+                            }
+                            return null;
+                          },
+                          onSaved: (value) => setState(() => _email = value),
+                          keyboardType: TextInputType.emailAddress,
+                          onFieldSubmitted: (_) => FocusScope.of(context)
+                              .requestFocus(!widget._isLogin
+                                  ? _focusNodeName
+                                  : _focusNodePass),
+                          textInputAction: TextInputAction.next,
+                          errorText: _emailErrorMessage,
+                        ),
+                        if (!widget._isLogin)
+                          CustomTextFormField(
+                            labelText: 'Nome',
+                            textCapitalization: TextCapitalization.sentences,
+                            errorText: _nameErrorMessage,
+                            focusNode: _focusNodeName,
+                            onChanged: (value) =>
+                                {setState(() => _name = value)},
+                            key: ValueKey('name'),
+                            onSaved: (value) => _name = value,
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                setState(() {
+                                  _nameErrorMessage = 'Digite seu nome';
+                                });
+                              } else {
+                                setState(() {
+                                  _nameErrorMessage = null;
+                                });
+                              }
+                              return null;
+                            },
+                            onFieldSubmitted: (_) => FocusScope.of(context)
+                                .requestFocus(_focusNodePass),
+                            textInputAction: TextInputAction.next,
+                          ),
+                        CustomTextFormField(
+                          labelText: 'Senha',
+                          key: ValueKey('password'),
+                          controller: _pass,
+                          focusNode: _focusNodePass,
+                          onChanged: (value) => {
+                            setState(
+                              () => _password = value,
+                            )
+                          },
+                          validator: (value) {
+                            if (value.isEmpty || value.length < 7) {
+                              setState(() => _passwordErrorMessage =
+                                  'Senha precisa ter no mínimo 7 caracteres');
+                            } else {
+                              setState(() => _passwordErrorMessage = null);
+                            }
+                            return null;
+                          },
+                          onSaved: (value) =>
+                              {setState(() => _password = value)},
+                          errorText: _passwordErrorMessage,
+                          isPassword: true,
+                          textInputAction: !widget._isLogin
+                              ? TextInputAction.next
+                              : TextInputAction.done,
+                          onFieldSubmitted: !widget._isLogin
+                              ? (_) => FocusScope.of(context)
+                                  .requestFocus(_focusNodeConfirmPass)
+                              : (_) => _submit(),
+                        ),
+                        if (!widget._isLogin)
+                          CustomTextFormField(
+                            labelText: 'Confirmar Senha',
+                            controller: _confirmPass,
+                            onChanged: (value) =>
+                                setState(() => _confirmPassword = value),
+                            key: ValueKey('confirmPassword'),
+                            focusNode: _focusNodeConfirmPass,
+                            validator: (value) {
+                              if (value.isEmpty ||
+                                  value.length < 7 ||
+                                  value != _pass.text) {
+                                setState(() => _confirmPasswordErrorMessage =
+                                    'Senhas não conferem');
+                              } else {
                                 setState(
-                                  () => _email = value,
-                                )
-                              },
-                              validator: (value) {
-                                if (value.isEmpty || !value.contains('@')) {
-                                  setState(() {
-                                    _emailErrorMessage =
-                                        'Coloque um email válido';
-                                  });
-                                } else {
-                                  setState(() {
-                                    _emailErrorMessage = null;
-                                  });
-                                }
-                                return null;
-                              },
-                              onSaved: (value) =>
-                                  setState(() => _email = value),
-                              keyboardType: TextInputType.emailAddress,
-                              onFieldSubmitted: (_) => FocusScope.of(context)
-                                  .requestFocus(!widget._isLogin
-                                      ? _focusNodeName
-                                      : _focusNodePass),
-                              textInputAction: TextInputAction.next,
-                              errorText: _emailErrorMessage,
+                                    () => _confirmPasswordErrorMessage = null);
+                              }
+                              return null;
+                            },
+                            onFieldSubmitted: (_) => _submit(),
+                            errorText: _confirmPasswordErrorMessage,
+                            isPassword: true,
+                          ),
+                        if (widget._isLogin)
+                          TextButton(
+                            onPressed: () => Navigator.of(context)
+                                .pushNamed(ForgotPasswordScreen.routeName),
+                            child: Text(
+                              'Esqueceu a senha?',
+                              style: GoogleFonts.montserrat(
+                                decoration: TextDecoration.underline,
+                                color: Color(0xFF72A69C),
+                              ),
                             ),
                           ),
-                          if (!widget._isLogin)
-                            Flexible(
-                              flex: 2,
-                              child: CustomTextFormField(
-                                labelText: 'Nome',
-                                errorText: _nameErrorMessage,
-                                focusNode: _focusNodeName,
-                                onChanged: (value) =>
-                                    {setState(() => _name = value)},
-                                key: ValueKey('name'),
-                                onSaved: (value) => _name = value,
-                                validator: (value) {
-                                  if (value.isEmpty) {
-                                    setState(() {
-                                      _nameErrorMessage = 'Digite seu nome';
-                                    });
-                                  } else {
-                                    setState(() {
-                                      _nameErrorMessage = null;
-                                    });
-                                  }
-                                  return null;
-                                },
-                                onFieldSubmitted: (_) => FocusScope.of(context)
-                                    .requestFocus(_focusNodePass),
-                                textInputAction: TextInputAction.next,
-                              ),
-                            ),
-                          Flexible(
-                            flex: 2,
-                            child: CustomTextFormField(
-                              labelText: 'Senha:',
-                              key: ValueKey('password'),
-                              controller: _pass,
-                              focusNode: _focusNodePass,
-                              onChanged: (value) => {
-                                setState(
-                                  () => _password = value,
-                                )
-                              },
-                              validator: (value) {
-                                if (value.isEmpty || value.length < 7) {
-                                  setState(() => _passwordErrorMessage =
-                                      'Senha precisa ter no mínimo 7 caracteres');
-                                } else {
-                                  setState(() => _passwordErrorMessage = null);
-                                }
-                                return null;
-                              },
-                              onSaved: (value) =>
-                                  {setState(() => _password = value)},
-                              errorText: _passwordErrorMessage,
-                              isPassword: true,
-                              textInputAction: !widget._isLogin
-                                  ? TextInputAction.next
-                                  : TextInputAction.done,
-                              onFieldSubmitted: !widget._isLogin
-                                  ? (_) => FocusScope.of(context)
-                                      .requestFocus(_focusNodeConfirmPass)
-                                  : null,
-                            ),
-                          ),
-                          if (!widget._isLogin)
-                            Flexible(
-                              flex: 2,
-                              child: CustomTextFormField(
-                                labelText: 'Confirmar Senha:',
-                                controller: _confirmPass,
-                                onChanged: (value) =>
-                                    setState(() => _confirmPassword = value),
-                                key: ValueKey('confirmPassword'),
-                                focusNode: _focusNodeConfirmPass,
-                                validator: (value) {
-                                  if (value.isEmpty ||
-                                      value.length < 7 ||
-                                      value != _pass.text) {
-                                    setState(() =>
-                                        _confirmPasswordErrorMessage =
-                                            'Senhas não conferem');
-                                  } else {
-                                    setState(() =>
-                                        _confirmPasswordErrorMessage = null);
-                                  }
-                                  return null;
-                                },
-                                errorText: _confirmPasswordErrorMessage,
-                                isPassword: true,
-                              ),
-                            ),
-                          if (widget._isLogin)
-                            Expanded(
-                              flex: 1,
-                              child: TextButton(
-                                onPressed: () => Navigator.of(context)
-                                    .pushNamed(ForgotPasswordScreen.routeName),
-                                child: Text(
-                                  'Esqueceu a senha?',
-                                  style: GoogleFonts.montserrat(
-                                    decoration: TextDecoration.underline,
-                                    color: Color(0xFF72A69C),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          Flexible(
-                            flex: 1,
-                            child: SizedBox(
-                              width: 0.7.wp,
-                              child: ElevatedButton(
-                                onPressed: widget._isLoading
-                                    ? () => {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(SnackBar(
-                                                  content: Text(
-                                                      'Carregando, aguarde.')))
-                                        }
-                                    : (widget._isLogin &&
-                                                (_email.isEmpty ||
-                                                    _password.isEmpty)) ||
-                                            (!widget._isLogin &&
-                                                (_email.isEmpty ||
-                                                    _password.isEmpty ||
-                                                    _name.isEmpty ||
-                                                    _confirmPassword.isEmpty))
-                                        ? null
-                                        : _submit,
-                                child: widget._isLoading
-                                    ? Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 0.02.wp),
-                                        child: SizedBox(
-                                          child: CircularProgressIndicator(
-                                            valueColor:
-                                                new AlwaysStoppedAnimation<
-                                                    Color>(Colors.white),
-                                            strokeWidth: 3.0,
-                                          ),
-                                          height: 30.w,
-                                          width: 30.w,
-                                        ),
-                                      )
-                                    : Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 0.02.wp),
-                                        child: Text(
-                                          'Continuar',
-                                          style: GoogleFonts.montserrat(
-                                              color: Colors.white,
-                                              fontSize: 36.nsp),
-                                        ),
+                        SizedBox(
+                          width: 0.5.wp,
+                          child: ElevatedButton(
+                            onPressed: widget._isLoading
+                                ? null
+                                : (widget._isLogin &&
+                                            (_email.isEmpty ||
+                                                _password.isEmpty)) ||
+                                        (!widget._isLogin &&
+                                            (_email.isEmpty ||
+                                                _password.isEmpty ||
+                                                _name.isEmpty ||
+                                                _confirmPassword.isEmpty))
+                                    ? null
+                                    : _submit,
+                            child: widget._isLoading
+                                ? SizedBox(
+                                    child: CircularProgressIndicator(
+                                      valueColor:
+                                          new AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
                                       ),
-                              ),
-                            ),
+                                      strokeWidth: 3.0,
+                                    ),
+                                    height: 30.w,
+                                    width: 30.w,
+                                  )
+                                : Text(
+                                    'Continuar',
+                                    style: GoogleFonts.montserrat(
+                                        color: Colors.white, fontSize: 36.nsp),
+                                  ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

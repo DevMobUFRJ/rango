@@ -2,36 +2,49 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:rango/models/dayShift.dart';
+import 'package:rango/models/seller.dart';
 import 'package:rango/models/shift.dart';
 import 'package:intl/intl.dart';
+import 'package:rango/resources/repository.dart';
 import 'package:rango/widgets/profile/HorarioRow.dart';
 
 class HorariosScreen extends StatefulWidget {
+  final Seller usuario;
+
+  HorariosScreen(this.usuario);
+
   @override
   _HorariosScreenState createState() => _HorariosScreenState();
 }
 
 class _HorariosScreenState extends State<HorariosScreen> {
-  Shift _horariosFuncionamento = Shift(
-    friday: DayShift(open: true, openingTime: '10:00', closingTime: '18:00'),
-    monday: DayShift(open: true, openingTime: '10:00', closingTime: '18:00'),
-    saturday: DayShift(open: false),
-    sunday: DayShift(open: false),
-    thursday: DayShift(open: true, openingTime: '12:00', closingTime: '18:00'),
-    tuesday: DayShift(open: true, openingTime: '10:00', closingTime: '18:00'),
-    wednesday: DayShift(open: true, openingTime: '12:00', closingTime: '18:00'),
-  );
+  Shift _horariosFuncionamento;
+  bool _loading = false;
   final _formKey = GlobalKey<FormState>();
 
-  String _handleSelectedSchedule(TimeOfDay initialHorario) {
+  int _handleSelectedSchedule(TimeOfDay initialHorario) {
     String stringHorario = initialHorario.format(context);
     if (stringHorario.contains('AM') || stringHorario.contains("PM")) {
-      return DateFormat("HH:mm")
+      stringHorario = DateFormat("HH:mm")
           .format(DateFormat("hh:mm a").parse(stringHorario));
-    } else {
-      return stringHorario;
     }
+    return int.parse(stringHorario.replaceAll(':', ''));
+  }
+
+  @override
+  void initState() {
+    _horariosFuncionamento = widget.usuario.shift;
+    if (_horariosFuncionamento == null) {
+      _horariosFuncionamento = Shift(
+          sunday: Weekday(open: false),
+          monday: Weekday(open: false),
+          tuesday: Weekday(open: false),
+          wednesday: Weekday(open: false),
+          thursday: Weekday(open: false),
+          friday: Weekday(open: false),
+          saturday: Weekday(open: false));
+    }
+    super.initState();
   }
 
   @override
@@ -56,7 +69,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
               Flexible(
                 flex: 2,
                 child: AutoSizeText(
-                  'Selecione as caixas referentes aos dias de funcionamento e então selecione os horários de abertura/fechamento',
+                  'Marque as caixas referentes aos dias de funcionamento e então escolha os horários de abertura/fechamento.',
                   style: GoogleFonts.montserrat(fontSize: 30.nsp),
                 ),
               ),
@@ -145,7 +158,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                 ),
               ),
               HorarioRow(
-                day: 'Ter',
+                day: 'Sáb',
                 switchOpen: (value) => setState(
                     () => _horariosFuncionamento.saturday.open = value),
                 horarioDia: _horariosFuncionamento.saturday,
@@ -163,13 +176,75 @@ class _HorariosScreenState extends State<HorariosScreen> {
                 child: Container(
                   width: 0.3.wp,
                   child: ElevatedButton(
-                    onPressed: () {},
-                    child: AutoSizeText(
-                      'Salvar',
-                      style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(fontSize: 36.nsp),
-                      ),
-                    ),
+                    onPressed: _loading
+                        ? null
+                        : () async {
+                            setState(() => _loading = true);
+                            try {
+                              for (var weekday
+                                  in _horariosFuncionamento.toJson().values) {
+                                if (weekday['open'] == true &&
+                                    (weekday['openingTime'] == null ||
+                                        weekday['closingTime'] == null)) {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    duration: Duration(seconds: 2),
+                                    backgroundColor:
+                                        Theme.of(context).errorColor,
+                                    content: Text(
+                                      'Complete os horários de funcionamento',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ));
+                                  setState(() => _loading = false);
+                                  return;
+                                }
+                              }
+                              Repository.instance.updateSeller(
+                                  widget.usuario.id,
+                                  {'shift': _horariosFuncionamento.toJson()});
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  duration: Duration(seconds: 2),
+                                  backgroundColor:
+                                      Theme.of(context).accentColor,
+                                  content: Text(
+                                    'Horários salvos com sucesso',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              );
+                              setState(() => _loading = false);
+                            } catch (e) {
+                              setState(() => _loading = false);
+                              print(e);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  duration: Duration(seconds: 2),
+                                  backgroundColor: Theme.of(context).errorColor,
+                                  content: Text(
+                                    'Erro ao salvar horários',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                    child: _loading
+                        ? SizedBox(
+                            width: 15,
+                            height: 15,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 3,
+                            ),
+                          )
+                        : AutoSizeText(
+                            'Salvar',
+                            style: GoogleFonts.montserrat(
+                              textStyle: TextStyle(fontSize: 36.nsp),
+                            ),
+                          ),
                   ),
                 ),
               ),

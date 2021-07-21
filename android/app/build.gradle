@@ -23,6 +23,7 @@ if (flutterVersionName == null) {
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
@@ -52,6 +53,26 @@ android {
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
             minifyEnabled true
+        }
+    }
+
+    flavorDimensions "mode"
+    productFlavors {
+        dev {
+            dimension "mode"
+            applicationId "com.devmob.rango.seller.dev"
+            minSdkVersion 23
+            targetSdkVersion 29
+            versionCode flutterVersionCode.toInteger()
+            versionName flutterVersionName
+        }
+        prod {
+            dimension "mode"
+            applicationId "com.devmob.rango.seller"
+            minSdkVersion 23
+            targetSdkVersion 29
+            versionCode flutterVersionCode.toInteger()
+            versionName flutterVersionName
         }
     }
 }

@@ -1,10 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/models/message.dart';
 
 class NewMessage extends StatefulWidget {
   final Function addNewMessage;
-
   NewMessage(this.addNewMessage);
 
   @override
@@ -18,22 +18,15 @@ class _NewMessageState extends State<NewMessage> {
   void _sendMessage() async {
     widget.addNewMessage(Message(
       text: _controller.text.trim(),
-      sender: 'client',
+      sender: 'seller',
+      sentAt: new Timestamp.fromDate(new DateTime.now()),
     ));
-    setState(() => {_enteredMessage = '', _controller.clear()});
-    //TODO Implementação do Chat
-    // final user = await FirebaseAuth.instance.currentUser();
-    // final userData =
-    //     await Firestore.instance.collection('users').document(user.uid).get();
-    // Firestore.instance.collection('chat').add({
-    //   'text': _enteredMessage,
-    //   'createdAt': Timestamp.now(),
-    //   'userId': user.uid,
-    //   'username': userData['username'],
-    //   'userImage': userData['image_url'],
-    // });
-    // setState(() => _enteredMessage = '');
-    // _controller.clear();
+    setState(
+      () => {
+        _enteredMessage = '',
+        _controller.clear(),
+      },
+    );
   }
 
   @override
@@ -57,6 +50,8 @@ class _NewMessageState extends State<NewMessage> {
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
                 controller: _controller,
+                textCapitalization: TextCapitalization.sentences,
+                cursorColor: Theme.of(context).accentColor,
                 decoration: InputDecoration(
                   hintText: 'Digite aqui...',
                   border: InputBorder.none,

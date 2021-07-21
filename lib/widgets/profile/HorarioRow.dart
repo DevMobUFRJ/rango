@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:rango/models/dayShift.dart';
+import 'package:rango/models/shift.dart';
+import 'package:rango/utils/date_time.dart';
+import 'package:rango/utils/string_formatters.dart';
 
 class HorarioRow extends StatefulWidget {
   final String day;
-  final DayShift horarioDia;
+  final Weekday horarioDia;
   final void Function(bool value) switchOpen;
   final void Function(TimeOfDay hour) changeOpeningHour;
   final void Function(TimeOfDay hour) changeClosingHour;
@@ -57,7 +59,7 @@ class _HorarioRowState extends State<HorarioRow> {
                   : () => {
                         showTimePicker(
                           context: context,
-                          initialTime: TimeOfDay.now(),
+                          initialTime: intTimeToTimeOfDay(widget.horarioDia.openingTime),
                           cancelText: 'Cancelar',
                           confirmText: 'Confirmar',
                           helpText: 'Horário de abertura',
@@ -67,15 +69,33 @@ class _HorarioRowState extends State<HorarioRow> {
                                       .copyWith(alwaysUse24HourFormat: true),
                                   child: child),
                         ).then(
-                          (value) => value == null
-                              ? null
-                              : widget.changeOpeningHour(value),
+                          (TimeOfDay value) {
+                            if (value != null) {
+                              if (widget.horarioDia.closingTime != null
+                                  && value.hour * 100 + value.minute > widget.horarioDia.closingTime) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    duration: Duration(seconds: 3),
+                                    backgroundColor: Theme.of(context).errorColor,
+                                    content: Text(
+                                      'O horário de abertura deve ser antes do horário de fechamento',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                widget.changeOpeningHour(value);
+                              }
+                            }
+                          }
                         ),
                       },
               child: Material(
-                shape: RoundedRectangleBorder(),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                elevation: 2,
                 color: widget.horarioDia.open ? Colors.white : Colors.grey[200],
-                elevation: 1,
                 child: TextFormField(
                   enabled: false,
                   textAlign: TextAlign.center,
@@ -83,7 +103,7 @@ class _HorarioRowState extends State<HorarioRow> {
                     errorStyle: GoogleFonts.montserrat(fontSize: 22.nsp),
                     border: InputBorder.none,
                     hintText: widget.horarioDia.open
-                        ? widget.horarioDia.openingTime
+                        ? formatTime(widget.horarioDia.openingTime)
                         : null,
                   ),
                 ),
@@ -98,7 +118,7 @@ class _HorarioRowState extends State<HorarioRow> {
                   : () => {
                         showTimePicker(
                           context: context,
-                          initialTime: TimeOfDay.now(),
+                          initialTime: intTimeToTimeOfDay(widget.horarioDia.closingTime),
                           cancelText: 'Cancelar',
                           confirmText: 'Confirmar',
                           helpText: 'Horário de fechamento',
@@ -108,15 +128,33 @@ class _HorarioRowState extends State<HorarioRow> {
                                       .copyWith(alwaysUse24HourFormat: true),
                                   child: child),
                         ).then(
-                          (value) => value == null
-                              ? null
-                              : widget.changeClosingHour(value),
+                          (TimeOfDay value) {
+                            if (value != null) {
+                              if (widget.horarioDia.openingTime != null
+                                  && value.hour * 100 + value.minute < widget.horarioDia.openingTime) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    duration: Duration(seconds: 3),
+                                    backgroundColor: Theme.of(context).errorColor,
+                                    content: Text(
+                                      'O horário de fechamento deve ser depois do horário de abertura',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                widget.changeClosingHour(value);
+                              }
+                            }
+                          },
                         ),
                       },
               child: Material(
-                shape: RoundedRectangleBorder(),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                elevation: 2,
                 color: widget.horarioDia.open ? Colors.white : Colors.grey[200],
-                elevation: 1,
                 child: TextFormField(
                   enabled: false,
                   textAlign: TextAlign.center,
@@ -124,7 +162,7 @@ class _HorarioRowState extends State<HorarioRow> {
                     errorStyle: GoogleFonts.montserrat(fontSize: 22.nsp),
                     border: InputBorder.none,
                     hintText: widget.horarioDia.open
-                        ? widget.horarioDia.closingTime
+                        ? formatTime(widget.horarioDia.closingTime)
                         : null,
                   ),
                 ),
