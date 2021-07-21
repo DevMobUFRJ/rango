@@ -174,9 +174,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     );
                   }
-                  var clientSnapshotdata = clientSnapshot.data.data() as Client;
-                  if (clientSnapshotdata.favoriteSellers == null ||
-                      clientSnapshotdata.favoriteSellers.length == 0) {
+                  Client client = clientSnapshot.data.data();
+                  if (client.favoriteSellers == null ||
+                      client.favoriteSellers.length == 0) {
                     return Container(
                       margin: EdgeInsets.symmetric(
                           horizontal: 0.03.wp, vertical: 15),
@@ -203,7 +203,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     );
                   }
                   final favoriteSellers =
-                      List<String>.from(clientSnapshotdata.favoriteSellers);
+                      List<String>.from(client.favoriteSellers);
 
                   // Um belo exemplo de list view! A busca pelo seller só acontece quando o elemento pode aparecer na tela.
                   // Usa-se um StreamBuilder para aproveitar a cache do firestore
@@ -217,7 +217,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Repository.instance.getSeller(favoriteSellers[index]),
                       builder: (
                         context,
-                        AsyncSnapshot<DocumentSnapshot> sellerSnapshot,
+                        AsyncSnapshot<DocumentSnapshot<Seller>> sellerSnapshot,
                       ) {
                         if (sellerSnapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -245,12 +245,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           );
                         }
-                        var sellerSnapshotdata =
-                            sellerSnapshot.data.data() as Map<String, dynamic>;
-                        Seller seller = Seller.fromJson(
-                          sellerSnapshotdata,
-                          id: sellerSnapshot.data.id,
-                        );
+
+                        Seller seller = sellerSnapshot.data.data();
 
                         return Material(
                           borderRadius: BorderRadius.circular(

@@ -10,4 +10,6 @@ class SellerNotificationSettings {
   SellerNotificationSettings.fromJson(Map<String, dynamic> json)
       : orders = json['orders'],
         messages = json['messages'];
+
+  Map<String, dynamic> toJson() => {'messages': messages, 'orders': orders};
 }

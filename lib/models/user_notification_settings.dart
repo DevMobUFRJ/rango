@@ -10,4 +10,7 @@ class UserNotificationSettings {
   UserNotificationSettings.fromJson(Map<String, dynamic> json)
       : reservations = json['reservations'],
         messages = json['messages'];
+
+  Map<String, dynamic> toJson() =>
+      {'messages': messages, 'reservations': reservations};
 }

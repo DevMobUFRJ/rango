@@ -6,12 +6,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:rango/main.dart';
 import 'package:rango/models/meals.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/order.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
+import 'package:rango/screens/seller/ChatScreen.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
 import 'package:rango/utils/constants.dart';
 import 'package:rango/utils/string_formatters.dart';
@@ -44,7 +46,6 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
   @override
   Widget build(BuildContext context) {
     String price = intToCurrency(widget.marmita.price);
-    if (price.length == 6 && price.contains(',')) price = '${price}0';
     return Scaffold(
       appBar: AppBar(
         title: GestureDetector(
@@ -90,6 +91,10 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                 child: Hero(
                   tag: widget.marmita.hashCode * widget.tagM,
                   child: CachedNetworkImage(
+                    color: widget.marmita.quantity > 0
+                        ? Colors.transparent
+                        : Colors.grey,
+                    colorBlendMode: BlendMode.saturation,
                     fit: BoxFit.cover,
                     imageUrl: widget.marmita.picture,
                     placeholder: (ctx, url) => Image(
@@ -125,6 +130,7 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                                   Theme.of(context).textTheme)
                               .headline2
                               .copyWith(
+                                color: widget.marmita.quantity > 0 ? null: Colors.grey,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 38.nsp,
                               ),
@@ -147,6 +153,7 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                                       Theme.of(context).textTheme)
                                   .headline2
                                   .copyWith(
+                                    color: widget.marmita.quantity > 0 ? null: Colors.grey,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 35.nsp,
                                   ),
@@ -162,6 +169,7 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                                       Theme.of(context).textTheme)
                                   .headline2
                                   .copyWith(
+                                    color: widget.marmita.quantity > 0 ? null: Colors.grey,
                                     fontSize: 35.nsp,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -181,7 +189,10 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                           style: GoogleFonts.montserratTextTheme(
                                   Theme.of(context).textTheme)
                               .headline2
-                              .copyWith(fontWeight: FontWeight.bold),
+                              .copyWith(
+                              color: widget.marmita.quantity > 0 ? null: Colors.grey,
+                              fontWeight: FontWeight.bold
+                          ),
                         ),
                       ),
                     ),
@@ -198,29 +209,70 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
 
   Widget _buildReservate(context) {
     if (widget.seller.canReservate) {
-      return Flexible(
-        flex: 3,
-        child: Container(
-          width: 0.4.wp,
-          child: ElevatedButton(
-            onPressed: () => _showOrderDialog(context, widget.marmita.quantity),
-            child: AutoSizeText(
-              'Reservar',
-              maxLines: 1,
-              style:
-                  GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
-                      .button,
+      if (widget.marmita.quantity > 0) {
+        return Flexible(
+          flex: 3,
+          child: Container(
+            width: 0.4.wp,
+            child: ElevatedButton(
+              onPressed: () => _showOrderDialog(context, widget.marmita.quantity),
+              child: AutoSizeText(
+                'Reservar',
+                maxLines: 1,
+                style:
+                GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
+                    .button,
+              ),
             ),
           ),
-        ),
-      );
+        );
+      } else {
+        return Flexible(
+          flex: 3,
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.only(bottom: 10),
+                width: 0.7.wp,
+                child: AutoSizeText(
+                  'Infelizmente essa quentinha acabou... Você pode enviar uma mensagem para o vendedor e pedir mais.',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
+                      .headline2
+                      .copyWith(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 32.nsp),
+                ),
+              ),
+              Container(
+                width: 0.4.wp,
+                child: ElevatedButton(
+                  onPressed: () => pushNewScreen(
+                    context,
+                    screen: ChatScreen(
+                      widget.seller.id,
+                      widget.seller.name,
+                      key: chatScreenKey,
+                    ),
+                  ),
+                  child: AutoSizeText(
+                    'Chat',
+                    maxLines: 1,
+                    style:
+                    GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
+                        .button,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
     } else {
       return Flexible(
         flex: 3,
         child: Container(
           width: 0.6.wp,
           child: AutoSizeText(
-            "Esse vendedor não está trabalhando com reservas, mas você ainda pode ver o cardápio atual.",
+            'Esse vendedor não está trabalhando com reservas, mas você ainda pode ver o cardápio atual.',
             textAlign: TextAlign.center,
             style: GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
                 .headline2
@@ -431,7 +483,7 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                             status: "requested",
                           );
                           try {
-                            await Repository.instance.addOrder(order);
+                            await Repository.instance.addOrderTransaction(order);
                             Navigator.of(ctx).pop();
                             ScaffoldMessenger.of(context)
                                 .showSnackBar(
@@ -460,12 +512,16 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                                   widget.seller.deviceToken, ctx);
                             }
 
-                            setState(() => widget.controller.jumpToTab(2));
+                            setState(() {
+                              _doingOrder = true;
+                              widget.controller.jumpToTab(2);
+                            });
                           } catch (e) {
+                            setState(() => _doingOrder = false);
                             Navigator.of(ctx).pop();
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                duration: Duration(seconds: 2),
+                                duration: Duration(seconds: 4),
                                 content: Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 20),
                                   child: Text(

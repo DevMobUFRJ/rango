@@ -64,7 +64,7 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
                       snapshot.data.data == null) {
                     return SplashScreen();
                   }
-                  Client cliente = snapshot.data.data() as Client;
+                  Client cliente = snapshot.data.data();
                   FirebaseMessaging.instance.onTokenRefresh
                       .listen((newToken) async {
                     Map<String, dynamic> dataToUpdate = {};

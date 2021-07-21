@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -129,7 +130,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
               ),
               itemBuilderType: PaginateBuilderType.listView,
               itemBuilder: (index, context, snapshot) {
-                final order = new Order.fromJson(snapshot.data());
+                final Order order = snapshot.data();
                 return Card(
                   child: ListTile(
                     contentPadding: EdgeInsets.symmetric(
@@ -193,7 +194,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   Widget buildTrailing(context, Order order, String orderUid) {
     if (order.status != 'sold' && order.status != 'canceled') {
       return IconButton(
-          onPressed: () => _showCancelDialog(context, order, orderUid),
+          onPressed: () => _showCancelDialog(context, order),
           icon: Icon(Icons.highlight_remove),
           color: Colors.red);
     }
@@ -243,7 +244,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   }
 
   void _showCancelDialog(
-      BuildContext context, Order order, String orderUid) async {
+      BuildContext context, Order order) async {
     await showDialog(
       context: context,
       builder: (BuildContext ctx) {
@@ -295,7 +296,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
               ),
               onPressed: () async {
                 try {
-                  await Repository.instance.cancelOrder(orderUid);
+                  await Repository.instance.cancelOrderTransaction(order);
                   Navigator.of(ctx).pop();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -310,15 +311,12 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                       ),
                     ),
                   );
-                  var ref = await Repository.instance.sellersRef
-                      .doc(order.sellerId)
-                      .get()
-                      .then((value) => value.data());
-                  Seller seller = Seller.fromJson(ref);
-                  if (seller.deviceToken != null &&
-                      seller.notificationSettings != null &&
-                      seller.notificationSettings.orders == true) {
-                    _sendCancelOrderNotification(seller.deviceToken, ctx);
+
+                  DocumentSnapshot<Seller> sellerDoc = await Repository.instance.getSellerFuture(order.sellerId);
+                  if (sellerDoc.data().deviceToken != null &&
+                      sellerDoc.data().notificationSettings != null &&
+                      sellerDoc.data().notificationSettings.orders == true) {
+                    _sendCancelOrderNotification(sellerDoc.data().deviceToken, ctx);
                   }
                 } catch (e) {
                   Navigator.of(ctx).pop();

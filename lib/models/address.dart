@@ -28,4 +28,15 @@ class Address {
         city = json['city'],
         state = json['state'],
         zipCode = json['zipCode'];
+
+  Map<String, dynamic> toJson() => {
+    'street': street,
+    'number': number,
+    'complement': complement,
+    'reference': reference,
+    'district': district,
+    'city': city,
+    'state': state,
+    'zipCode': zipCode
+  };
 }
