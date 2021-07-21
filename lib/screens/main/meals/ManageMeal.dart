@@ -26,6 +26,7 @@ class _ManageMealState extends State<ManageMeal> {
   void _pickedImage(File image) => setState(() => _mealImageFile = image);
 
   bool _loading = false;
+  bool _loadingDelete = false;
   TextEditingController _mealName = TextEditingController();
   MoneyMaskedTextController _mealValue =
       MoneyMaskedTextController(leftSymbol: 'R\$ ');
@@ -243,7 +244,9 @@ class _ManageMealState extends State<ManageMeal> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                       ),
-                      onPressed: _loading ? null : () => _upsertMeal(context),
+                      onPressed: _loading || _loadingDelete
+                          ? null
+                          : () => _upsertMeal(context),
                       child: _loading
                           ? SizedBox(
                               width: 20,
@@ -274,17 +277,29 @@ class _ManageMealState extends State<ManageMeal> {
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        onPressed: _loading
+                        onPressed: _loading || _loadingDelete
                             ? null
                             : () => _showDeleteDialog(
-                                context, widget.seller.id, widget.meal.id),
-                        child: AutoSizeText(
-                          "Excluir",
-                          style: GoogleFonts.montserrat(
-                            fontSize: 34.nsp,
-                            color: Colors.white,
-                          ),
-                        ),
+                                  context,
+                                  widget.seller.id,
+                                  widget.meal.id,
+                                ),
+                        child: _loadingDelete
+                            ? SizedBox(
+                                width: 15,
+                                height: 15,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 3,
+                                ),
+                              )
+                            : AutoSizeText(
+                                "Excluir",
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 34.nsp,
+                                  color: Colors.white,
+                                ),
+                              ),
                       ),
                     ),
                 ],
@@ -352,8 +367,8 @@ class _ManageMealState extends State<ManageMeal> {
         await Repository.instance
             .updateMeal(widget.seller.id, widget.meal.id, dataToUpdate);
       } else {
-        String createdMealId =
-            await Repository.instance.createMeal(widget.seller.id, dataToUpdate);
+        String createdMealId = await Repository.instance
+            .createMeal(widget.seller.id, dataToUpdate);
 
         if (_mealImageFile != null) {
           final ref = FirebaseStorage.instance
@@ -403,10 +418,9 @@ class _ManageMealState extends State<ManageMeal> {
           backgroundColor: Color(0xFFF9B152),
           actionsPadding: EdgeInsets.all(10),
           contentPadding: EdgeInsets.only(
-            top: 24,
+            top: 12,
             left: 24,
             right: 24,
-            bottom: 10,
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
@@ -419,20 +433,24 @@ class _ManageMealState extends State<ManageMeal> {
               fontSize: 32.ssp,
             ),
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Essa quentinha será excluída para sempre.',
-                style: GoogleFonts.montserrat(
-                  color: Colors.white,
-                  fontSize: 28.nsp,
+          content: _loadingDelete
+              ? SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                  ),
+                )
+              : Text(
+                  'Deseja realmente excluir essa quentinha? Ela será excluída para sempre.',
+                  style: GoogleFonts.montserrat(
+                    color: Colors.white,
+                    fontSize: 32.nsp,
+                  ),
                 ),
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
+          actions: _loadingDelete
+              ? null
+              : [
                   TextButton(
                     onPressed: () {
                       Navigator.of(ctx).pop();
@@ -469,11 +487,8 @@ class _ManageMealState extends State<ManageMeal> {
                         fontSize: 34.nsp,
                       ),
                     ),
-                  ),
+                  )
                 ],
-              )
-            ],
-          ),
         );
       },
     );
