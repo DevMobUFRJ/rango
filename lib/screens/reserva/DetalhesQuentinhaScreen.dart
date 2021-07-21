@@ -75,41 +75,68 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
       ),
       body: Column(
         children: <Widget>[
-          Expanded(
-            flex: 0,
-            child: Card(
-              margin: EdgeInsets.only(top: 10),
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Container(
-                constraints: BoxConstraints(
-                  maxHeight: 0.4.hp,
-                  maxWidth: 0.8.wp,
-                ),
-                child: Hero(
-                  tag: widget.marmita.hashCode * widget.tagM,
-                  child: CachedNetworkImage(
+          if (widget.marmita.picture == null) ...{
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
                     color: widget.marmita.quantity > 0
-                        ? Colors.transparent
+                        ? Theme.of(context).accentColor
                         : Colors.grey,
-                    colorBlendMode: BlendMode.saturation,
-                    fit: BoxFit.cover,
-                    imageUrl: widget.marmita.picture,
-                    placeholder: (ctx, url) => Image(
-                      image:
-                          AssetImage('assets/imgs/quentinha_placeholder.png'),
-                    ),
-                    errorWidget: (ctx, url, error) => Image(
-                      image:
-                          AssetImage('assets/imgs/quentinha_placeholder.png'),
+                  ),
+                  child: SizedBox(
+                    height: 0.2.hp,
+                    width: 0.6.wp,
+                  ),
+                ),
+                Center(
+                  child: Icon(
+                    Icons.local_dining,
+                    size: 55,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            )
+          } else ...{
+            Expanded(
+              flex: 0,
+              child: Card(
+                margin: EdgeInsets.only(top: 10),
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxHeight: 0.4.hp,
+                    maxWidth: 0.8.wp,
+                  ),
+                  child: Hero(
+                    tag: widget.marmita.hashCode * widget.tagM,
+                    child: CachedNetworkImage(
+                      color: widget.marmita.quantity > 0
+                          ? Colors.transparent
+                          : Colors.grey,
+                      colorBlendMode: BlendMode.saturation,
+                      fit: BoxFit.cover,
+                      imageUrl: widget.marmita.picture,
+                      placeholder: (ctx, url) => Image(
+                        image:
+                            AssetImage('assets/imgs/quentinha_placeholder.png'),
+                      ),
+                      errorWidget: (ctx, url, error) => Image(
+                        image:
+                            AssetImage('assets/imgs/quentinha_placeholder.png'),
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
+          },
           Flexible(
             flex: 0,
             child: Container(
@@ -130,7 +157,9 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                                   Theme.of(context).textTheme)
                               .headline2
                               .copyWith(
-                                color: widget.marmita.quantity > 0 ? null: Colors.grey,
+                                color: widget.marmita.quantity > 0
+                                    ? null
+                                    : Colors.grey,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 38.nsp,
                               ),
@@ -153,7 +182,9 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                                       Theme.of(context).textTheme)
                                   .headline2
                                   .copyWith(
-                                    color: widget.marmita.quantity > 0 ? null: Colors.grey,
+                                    color: widget.marmita.quantity > 0
+                                        ? null
+                                        : Colors.grey,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 35.nsp,
                                   ),
@@ -169,7 +200,9 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                                       Theme.of(context).textTheme)
                                   .headline2
                                   .copyWith(
-                                    color: widget.marmita.quantity > 0 ? null: Colors.grey,
+                                    color: widget.marmita.quantity > 0
+                                        ? null
+                                        : Colors.grey,
                                     fontSize: 35.nsp,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -190,9 +223,10 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                                   Theme.of(context).textTheme)
                               .headline2
                               .copyWith(
-                              color: widget.marmita.quantity > 0 ? null: Colors.grey,
-                              fontWeight: FontWeight.bold
-                          ),
+                                  color: widget.marmita.quantity > 0
+                                      ? null
+                                      : Colors.grey,
+                                  fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
@@ -215,13 +249,14 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
           child: Container(
             width: 0.4.wp,
             child: ElevatedButton(
-              onPressed: () => _showOrderDialog(context, widget.marmita.quantity),
+              onPressed: () =>
+                  _showOrderDialog(context, widget.marmita.quantity),
               child: AutoSizeText(
                 'Reservar',
                 maxLines: 1,
                 style:
-                GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
-                    .button,
+                    GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
+                        .button,
               ),
             ),
           ),
@@ -237,9 +272,13 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                 child: AutoSizeText(
                   'Infelizmente essa quentinha acabou... Você pode enviar uma mensagem para o vendedor e pedir mais.',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
+                  style: GoogleFonts.montserratTextTheme(
+                          Theme.of(context).textTheme)
                       .headline2
-                      .copyWith(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 32.nsp),
+                      .copyWith(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 32.nsp),
                 ),
               ),
               Container(
@@ -256,8 +295,8 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                   child: AutoSizeText(
                     'Chat',
                     maxLines: 1,
-                    style:
-                    GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
+                    style: GoogleFonts.montserratTextTheme(
+                            Theme.of(context).textTheme)
                         .button,
                   ),
                 ),
@@ -483,7 +522,8 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                             status: "requested",
                           );
                           try {
-                            await Repository.instance.addOrderTransaction(order);
+                            await Repository.instance
+                                .addOrderTransaction(order);
                             Navigator.of(ctx).pop();
                             ScaffoldMessenger.of(context)
                                 .showSnackBar(
@@ -517,8 +557,7 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                               widget.controller.jumpToTab(2);
                             });
                           } catch (e) {
-                            setState(() => _doingOrder = false);
-                            Navigator.of(ctx).pop();
+                            Navigator.of(context).pop();
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 duration: Duration(seconds: 4),
