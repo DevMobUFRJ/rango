@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:rango/resources/repository.dart';
 import 'package:rango/utils/constants.dart';
 import 'package:rango/widgets/auth/AuthForm.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -40,36 +41,14 @@ class _AuthScreenState extends State<AuthScreen> {
               .get();
           bool isSeller = sellers.docs.isNotEmpty;
           if (!isSeller) {
-            authResult = await _auth.signInWithEmailAndPassword(
+            await _auth.signInWithEmailAndPassword(
               email: email,
               password: password,
             );
             Map<String, dynamic> dataToUpdate = {};
-            String actualDeviceToken =
-                await FirebaseMessaging.instance.getToken();
-            dataToUpdate['deviceToken'] = actualDeviceToken;
-            DocumentReference<Map<String, dynamic>> userInstance =
-                FirebaseFirestore.instance
-                    .collection('clients')
-                    .doc(FirebaseAuth.instance.currentUser.uid);
-            userInstance.get().then((value) {
-              var oldDeviceToken = value.data()['deviceToken'];
-              if (oldDeviceToken != null &&
-                  oldDeviceToken != actualDeviceToken) {
-                ScaffoldMessenger.of(ctx).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Você se conectou com um novo dispositivo! Novas notificações chegarão apenas à ele.',
-                      textAlign: TextAlign.center,
-                    ),
-                    backgroundColor: Theme.of(context).accentColor,
-                  ),
-                );
-                userInstance.update(dataToUpdate);
-              } else if (oldDeviceToken == null) {
-                userInstance.update(dataToUpdate);
-              }
-            });
+            dataToUpdate['deviceToken'] = await FirebaseMessaging.instance.getToken();
+            Repository.instance.updateClient(
+                FirebaseAuth.instance.currentUser.uid, dataToUpdate);
             Navigator.of(context).pop();
           } else {
             ScaffoldMessenger.of(ctx).showSnackBar(
