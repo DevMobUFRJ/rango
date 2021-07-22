@@ -255,7 +255,6 @@ class _HomeScreenState extends State<HomeScreen> {
     if (user.logo == null) fillPerfilText += '\nEscolha uma foto de perfil;';
     if (user.paymentMethods == null)
       fillPerfilText += '\nDiga as formas de pagamento aceitas;';
-    if (user.address == null) fillPerfilText += '\nEscolha um endereço;';
     if (user.location == null)
       fillPerfilText +=
           '\nDefina uma localização para os clientes acharem você no mapa;';
