@@ -11,6 +11,7 @@ import 'package:rango/models/client.dart';
 import 'package:rango/models/meal_request.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
+import 'package:rango/screens/main/tabs/SearchScreen.dart';
 import 'package:rango/screens/seller/ChatScreen.dart';
 import 'package:rango/utils/constants.dart';
 import 'package:rango/utils/date_time.dart';
@@ -24,8 +25,14 @@ class SellerProfile extends StatefulWidget {
   final String sellerName;
   final String sellerId;
   final PersistentTabController controller;
+  final bool fromMap;
 
-  SellerProfile(this.sellerId, this.sellerName, this.controller);
+  SellerProfile(
+    this.sellerId,
+    this.sellerName,
+    this.controller, {
+    this.fromMap = false,
+  });
 
   @override
   _SellerProfileState createState() => _SellerProfileState();
@@ -519,8 +526,7 @@ class _SellerProfileState extends State<SellerProfile> {
               var isFavorite = false;
               Client client = clientSnapshot.data.data();
               if (client.favoriteSellers != null) {
-                isFavorite = client.favoriteSellers
-                    .contains(widget.sellerId);
+                isFavorite = client.favoriteSellers.contains(widget.sellerId);
               }
               return Padding(
                 padding: EdgeInsets.only(
