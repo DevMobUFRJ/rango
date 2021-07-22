@@ -15,6 +15,7 @@ import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:custom_info_window/custom_info_window.dart';
 import 'package:rango/utils/constants.dart';
 import 'dart:ui' as ui;
 import 'package:rango/widgets/others/ModalFilter.dart';
@@ -39,6 +40,11 @@ class _SearchScreenState extends State<SearchScreen> {
   final ItemPositionsListener itemPositionsListener =
       ItemPositionsListener.create();
   bool _isFiltering = false;
+  CustomInfoWindowController _customInfoWindowController =
+      CustomInfoWindowController();
+  double _customInfoWindowHeight = 100;
+  double _customInfoWindowWidth = 150;
+
   Set<Seller> allSellers = {};
   Set<Marker> _marcadores;
   int raio;
@@ -53,24 +59,109 @@ class _SearchScreenState extends State<SearchScreen> {
         ImageConfiguration(), 'assets/imgs/pinMapa.png');
   }
 
+  @override
+  void dispose() {
+    _customInfoWindowController.dispose();
+    super.dispose();
+  }
+
   _carregarMarcadores(Set<Seller> sellers) async {
     Set<Marker> marcadoresLocal = {};
-    sellers.toList().asMap().forEach((index, seller) {
+    sellers.toList().asMap().forEach(
+      (index, seller) {
         Marker marcador = Marker(
           onTap: () async {
-            itemScrollController.scrollTo(
+            await itemScrollController.scrollTo(
               index: index,
               curve: Curves.easeOut,
               duration: Duration(milliseconds: 300),
+            );
+            await _gotoLocation(
+              seller.location.geopoint.latitude,
+              seller.location.geopoint.longitude,
+              zoom: 16,
+            );
+            _customInfoWindowController.addInfoWindow(
+              GestureDetector(
+                onTap: () {
+                  pushNewScreen(
+                    context,
+                    withNavBar: false,
+                    screen: SellerProfile(
+                      seller.id,
+                      seller.name,
+                      widget.controller,
+                      fromMap: true,
+                    ),
+                    pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                  ).then((value) => _returnOfSellerProfile(value));
+                },
+                child: Material(
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  color: Theme.of(context).accentColor,
+                  child: Container(
+                    constraints: BoxConstraints(
+                      maxHeight: _customInfoWindowHeight,
+                      maxWidth: _customInfoWindowWidth,
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 3),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Flexible(
+                          flex: 3,
+                          child: AutoSizeText(
+                            seller.name,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.montserrat(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 32.nsp,
+                            ),
+                          ),
+                        ),
+                        if (seller.description != null) ...{
+                          SizedBox(height: 5),
+                          Flexible(
+                            flex: 2,
+                            child: AutoSizeText(
+                              seller.description,
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.montserrat(
+                                color: Colors.white,
+                                fontSize: 28.nsp,
+                              ),
+                            ),
+                          ),
+                        }
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              LatLng(
+                seller.location.geopoint.latitude,
+                seller.location.geopoint.longitude,
+              ),
             );
           },
           markerId: MarkerId(seller.location.geopoint.latitude.toString() +
               seller.location.geopoint.longitude.toString()),
           position: LatLng(seller.location.geopoint.latitude,
               seller.location.geopoint.longitude),
-          infoWindow:
-              InfoWindow(title: seller.name, snippet: seller.description),
+          // infoWindow: InfoWindow(
+          //   title: seller.name,
+          //   snippet: seller.description,
+          //   onTap: () {
+          //     print('oi');
+          //   },
+          // ),
           icon: customMarkerIcon,
+          consumeTapEvents: true,
         );
         marcadoresLocal.add(marcador);
       },
@@ -84,7 +175,8 @@ class _SearchScreenState extends State<SearchScreen> {
         .animateCamera(CameraUpdate.newCameraPosition(_cameraPosition));
   }
 
-  Stream<List<DocumentSnapshot>> getNearbySellersStream(Position userLocation, double radius) {
+  Stream<List<DocumentSnapshot>> getNearbySellersStream(
+      Position userLocation, double radius) {
     return Repository.instance.getNearbySellersStream(
       userLocation,
       radius,
@@ -194,7 +286,8 @@ class _SearchScreenState extends State<SearchScreen> {
             child: FutureBuilder(
               future: Repository.instance.getUserLocation(),
               builder: (context, AsyncSnapshot<Position> locationSnapshot) {
-                if (locationSnapshot.connectionState == ConnectionState.waiting) {
+                if (locationSnapshot.connectionState ==
+                    ConnectionState.waiting) {
                   return _buildLoadingSpinner();
                 }
 
@@ -205,9 +298,12 @@ class _SearchScreenState extends State<SearchScreen> {
                 userLocation = locationSnapshot.data;
 
                 return StreamBuilder(
-                  stream: getNearbySellersStream(locationSnapshot.data, rangeSnapshot.data),
-                  builder: (context, AsyncSnapshot<List<DocumentSnapshot>> snapshotSeller) {
-                    if (snapshotSeller.connectionState == ConnectionState.waiting) {
+                  stream: getNearbySellersStream(
+                      locationSnapshot.data, rangeSnapshot.data),
+                  builder: (context,
+                      AsyncSnapshot<List<DocumentSnapshot>> snapshotSeller) {
+                    if (snapshotSeller.connectionState ==
+                        ConnectionState.waiting) {
                       return _buildLoadingSpinner();
                     }
 
@@ -215,24 +311,39 @@ class _SearchScreenState extends State<SearchScreen> {
                       _buildError(snapshotSeller.error);
                     }
 
-                    Set<Seller> orderedSellers = _getSellersOrdered(snapshotSeller, nameSeller);
+                    Set<Seller> orderedSellers =
+                        _getSellersOrdered(snapshotSeller, nameSeller);
                     _carregarMarcadores(orderedSellers);
                     return Stack(
                       children: [
                         GoogleMap(
                           mapType: MapType.normal,
                           initialCameraPosition: _cameraPosition,
+                          onCameraMove: (pos) {
+                            _customInfoWindowController.onCameraMove();
+                          },
                           onMapCreated: (GoogleMapController controller) {
                             if (widget.seller != null) {
                               _returnOfSellerProfile(widget.seller);
                             }
                             if (!_controller.isCompleted)
                               _controller.complete(controller);
+                            _customInfoWindowController.googleMapController =
+                                controller;
+                          },
+                          onTap: (_) {
+                            _customInfoWindowController.hideInfoWindow();
                           },
                           zoomControlsEnabled: false,
                           myLocationButtonEnabled: false,
                           myLocationEnabled: true,
                           markers: _marcadores,
+                        ),
+                        CustomInfoWindow(
+                          controller: _customInfoWindowController,
+                          height: _customInfoWindowHeight,
+                          width: _customInfoWindowWidth,
+                          offset: 50,
                         ),
                         _cardsSellers(allSellers, contextGeral),
                         _menu(contextGeral)
@@ -248,13 +359,15 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Set<Seller> _getSellersOrdered(AsyncSnapshot<List<DocumentSnapshot>> snapshotSeller, String nameSeller) {
+  Set<Seller> _getSellersOrdered(
+      AsyncSnapshot<List<DocumentSnapshot>> snapshotSeller, String nameSeller) {
     Set<Seller> openSellers = {};
     Set<Seller> closedSellers = {};
 
     snapshotSeller.data.forEach((sel) {
       Seller sellerTemp = Seller.fromJson(sel.data(), id: sel.id);
-      if (sellerTemp.name.toLowerCase().contains(nameSeller.toLowerCase())) { // Filtro
+      if (sellerTemp.name.toLowerCase().contains(nameSeller.toLowerCase())) {
+        // Filtro
         if (sellerTemp.isOpen()) {
           openSellers.add(sellerTemp);
         } else {
@@ -294,8 +407,9 @@ class _SearchScreenState extends State<SearchScreen> {
           itemPositionsListener: itemPositionsListener,
           itemBuilder: (context, index) {
             return Padding(
-              padding: const EdgeInsets.only(top: 8, right: 8, bottom: 8, left: 8),
-              child: _boxes(sellers.elementAt(index), contextGeral),
+              padding:
+                  const EdgeInsets.only(top: 8, right: 8, bottom: 8, left: 8),
+              child: _boxes(sellers.elementAt(index), contextGeral, index),
             );
           },
         ),
@@ -303,13 +417,71 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _boxes(Seller seller, BuildContext context) {
+  Widget _boxes(Seller seller, BuildContext context, int index) {
     double lat = seller.location.geopoint.latitude;
     double long = seller.location.geopoint.longitude;
 
     return GestureDetector(
-      onTap: () {
-        _gotoLocation(lat, long);
+      onTap: () async {
+        _customInfoWindowController.hideInfoWindow();
+        await _gotoLocation(lat, long);
+        _customInfoWindowController.addInfoWindow(
+          Material(
+            elevation: 3,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            color: Theme.of(context).accentColor,
+            child: Container(
+              constraints: BoxConstraints(
+                maxHeight: _customInfoWindowHeight,
+                maxWidth: _customInfoWindowWidth,
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 3),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Flexible(
+                    flex: 3,
+                    child: AutoSizeText(
+                      seller.name,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.montserrat(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 32.nsp,
+                      ),
+                    ),
+                  ),
+                  if (seller.description != null) ...{
+                    SizedBox(height: 5),
+                    Flexible(
+                      flex: 2,
+                      child: AutoSizeText(
+                        seller.description,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.montserrat(
+                          color: Colors.white,
+                          fontSize: 28.nsp,
+                        ),
+                      ),
+                    ),
+                  }
+                ],
+              ),
+            ),
+          ),
+          LatLng(
+            seller.location.geopoint.latitude,
+            seller.location.geopoint.longitude,
+          ),
+        );
+        await itemScrollController.scrollTo(
+          index: index,
+          curve: Curves.easeOut,
+          duration: Duration(milliseconds: 300),
+        );
       },
       child: _box(seller, context, seller.isOpen()),
     );
@@ -317,7 +489,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future<void> _gotoLocation(double lat, double long, {double zoom}) async {
     final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(
+    await controller.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
           target: LatLng(lat, long),
@@ -325,6 +497,7 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
       ),
     );
+    ;
   }
 
   Widget _box(Seller seller, BuildContext context, bool isOpen) {
@@ -356,61 +529,61 @@ class _SearchScreenState extends State<SearchScreen> {
                     colorFilter: ColorFilter.mode(cor, BlendMode.saturation),
                     child: seller.logo == null
                         ? Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          height: 200,
-                          color: Theme.of(context).accentColor,
-                        ),
-                        Center(
-                          child: Icon(
-                            Icons.store,
-                            size: 100,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    )
+                            alignment: Alignment.center,
+                            children: [
+                              Container(
+                                height: 200,
+                                color: Theme.of(context).accentColor,
+                              ),
+                              Center(
+                                child: Icon(
+                                  Icons.store,
+                                  size: 100,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          )
                         : CachedNetworkImage(
-                      imageUrl: seller.logo,
-                      fit: BoxFit.cover,
-                      placeholder: (ctx, url) => Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Shimmer.fromColors(
-                            baseColor: Color.fromRGBO(255, 175, 153, 1),
-                            highlightColor: Colors.white,
-                            child: Container(
-                              height: 200,
-                              color: Colors.white,
+                            imageUrl: seller.logo,
+                            fit: BoxFit.cover,
+                            placeholder: (ctx, url) => Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Shimmer.fromColors(
+                                  baseColor: Color.fromRGBO(255, 175, 153, 1),
+                                  highlightColor: Colors.white,
+                                  child: Container(
+                                    height: 200,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                Center(
+                                  child: Icon(
+                                    Icons.store,
+                                    size: 100,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            errorWidget: (ctx, url, error) => Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Container(
+                                  height: 200,
+                                  color: Theme.of(context).accentColor,
+                                ),
+                                Center(
+                                  child: Icon(
+                                    Icons.store,
+                                    size: 75,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          Center(
-                            child: Icon(
-                              Icons.store,
-                              size: 100,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                      errorWidget: (ctx, url, error) => Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Container(
-                            height: 200,
-                            color: Theme.of(context).accentColor,
-                          ),
-                          Center(
-                            child: Icon(
-                              Icons.store,
-                              size: 75,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   ),
                 ),
               ),
@@ -450,10 +623,10 @@ class _SearchScreenState extends State<SearchScreen> {
     if (seller.isOpen()) {
       return Container(
           child: Text(
-            "Aberto",
-            style: TextStyle(
-                color: Colors.black54, fontSize: 22.0, fontWeight: FontWeight.bold),
-          ));
+        "Aberto",
+        style: TextStyle(
+            color: Colors.black54, fontSize: 22.0, fontWeight: FontWeight.bold),
+      ));
     }
 
     String thisWeekday = weekdayMap[DateTime.now().weekday];
@@ -480,7 +653,7 @@ class _SearchScreenState extends State<SearchScreen> {
         horaFormatada = seller.shift[day].openingTime.toString();
         horaFormatada = horaFormatada.padLeft(4, '0');
         horaFormatada =
-        '${horaFormatada.substring(0, 2)}:${horaFormatada.substring(2, 4)}';
+            '${horaFormatada.substring(0, 2)}:${horaFormatada.substring(2, 4)}';
         weekdayFound = weekdayTranslate[day];
         break;
       }
@@ -489,10 +662,10 @@ class _SearchScreenState extends State<SearchScreen> {
     if (found == false && horaFormatada != '') {
       return Container(
           child: Text(
-            "Sem informação de horário",
-            style: TextStyle(
-                color: Colors.black54, fontSize: 22.0, fontWeight: FontWeight.bold),
-          ));
+        "Sem informação de horário",
+        style: TextStyle(
+            color: Colors.black54, fontSize: 22.0, fontWeight: FontWeight.bold),
+      ));
     }
 
     return Container(
@@ -548,11 +721,14 @@ class _SearchScreenState extends State<SearchScreen> {
       child: Column(
         children: [
           GestureDetector(
-            onTap: () => _gotoLocation(
-              userLocation.latitude,
-              userLocation.longitude,
-              zoom: 16,
-            ),
+            onTap: () {
+              _gotoLocation(
+                userLocation.latitude,
+                userLocation.longitude,
+                zoom: 16,
+              );
+              _customInfoWindowController.hideInfoWindow();
+            },
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(50),
