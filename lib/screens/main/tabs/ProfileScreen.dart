@@ -164,11 +164,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             color: yellow,
                           ),
                         ),
-                        AutoSizeText(
-                          'Localização',
-                          style: GoogleFonts.montserrat(
-                            color: yellow,
-                            fontWeight: FontWeight.w500,
+                        Container(
+                          child: AutoSizeText(
+                            'Localização da loja',
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.montserrat(
+                              color: yellow,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ],

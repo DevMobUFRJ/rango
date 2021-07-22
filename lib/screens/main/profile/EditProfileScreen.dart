@@ -151,7 +151,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                       ),
                       CustomTextFormField(
-                        labelText: 'Nome',
+                        labelText: 'Nome*',
                         textCapitalization: TextCapitalization.sentences,
                         key: ValueKey('name'),
                         controller: _name,
@@ -168,20 +168,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             .requestFocus(_descriptionFocusNode),
                       ),
                       CustomTextFormField(
-                        labelText: 'Descrição',
+                        labelText: 'Descrição*',
                         textCapitalization: TextCapitalization.sentences,
                         hintText:
                             "Use para detalhar sua localização, biografia da empresa, o estilo da sua culinária ...",
                         key: ValueKey('description'),
                         controller: _description,
-                        numberOfLines: 3,
+                        numberOfLines: _description.text.length == 0 ? 3 : null,
                         focusNode: _descriptionFocusNode,
                         textInputAction: TextInputAction.next,
                         onFieldSubmitted: (_) =>
                             FocusScope.of(context).requestFocus(_telFocusNode),
                       ),
                       CustomTextFormField(
-                        labelText: 'Celular com DDD',
+                        labelText: 'Celular com DDD*',
                         focusNode: _telFocusNode,
                         key: ValueKey('phone'),
                         controller: _tel,
@@ -201,7 +201,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             .requestFocus(_paymentsFocusNode),
                       ),
                       CustomTextFormField(
-                        labelText: 'Pagamentos aceitos',
+                        labelText: 'Pagamentos aceitos*',
                         hintText:
                             "Dinheiro, cartão de crédito, cartão de débito ...",
                         focusNode: _paymentsFocusNode,
