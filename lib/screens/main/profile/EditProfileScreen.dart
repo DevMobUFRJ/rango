@@ -60,13 +60,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         Map<String, dynamic> dataToUpdate = {};
         if (_tel.text != '' && _tel.text != widget.user.contact.phone) {
           Contact contato = Contact(
-            name: widget.user.contact.name, // TODO De onde pega?
-            phone: _tel.text
-          );
+              name: widget.user.contact.name, // TODO De onde pega?
+              phone: _tel.text);
           dataToUpdate['contact'] = contato.toJson();
         }
-        if (_name.text != '' &&
-            _name.text != widget.user.name) {
+        if (_name.text != '' && _name.text != widget.user.name) {
           dataToUpdate['name'] = _name.text;
           await FirebaseAuth.instance.currentUser.updateDisplayName(_name.text);
         }
@@ -132,8 +130,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
       body: LayoutBuilder(
         builder: (ctx, constraint) => Scrollbar(
-          isAlwaysShown: true,
-          child: SingleChildScrollView(
+            isAlwaysShown: true,
+            child: SingleChildScrollView(
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 22),
                 child: Form(
@@ -172,6 +170,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       CustomTextFormField(
                         labelText: 'Descrição',
                         textCapitalization: TextCapitalization.sentences,
+                        hintText:
+                            "Use para detalhar sua localização, biografia da empresa, o estilo da sua culinária ...",
                         key: ValueKey('description'),
                         controller: _description,
                         numberOfLines: 3,
@@ -189,18 +189,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         validator: (String value) {
                           _telefoneErrorMessage = null;
                           if (value.trim() != '' && value.trim().length != 11) {
-                            _telefoneErrorMessage = 'Celular precisa ter 11 números';
+                            _telefoneErrorMessage =
+                                'Celular precisa ter 11 números';
                           }
                           return null;
                         },
                         errorText: _telefoneErrorMessage,
                         keyboardType: TextInputType.number,
                         textInputAction: TextInputAction.next,
-                        onFieldSubmitted: (_) =>
-                            FocusScope.of(context).requestFocus(_paymentsFocusNode),
+                        onFieldSubmitted: (_) => FocusScope.of(context)
+                            .requestFocus(_paymentsFocusNode),
                       ),
                       CustomTextFormField(
                         labelText: 'Pagamentos aceitos',
+                        hintText:
+                            "Dinheiro, cartão de crédito, cartão de débito ...",
                         focusNode: _paymentsFocusNode,
                         controller: _payments,
                         textCapitalization: TextCapitalization.sentences,
@@ -208,6 +211,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         numberOfLines: 3,
                         onFieldSubmitted: (_) => _submit(ctx),
                       ),
+                      Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Container(
+                            width: 0.85.wp,
+                            child: AutoSizeText(
+                              "*Dados visíveis para o cliente",
+                              style: TextStyle(fontSize: 16.nsp),
+                            ),
+                          )),
                       Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: 0.05.wp, vertical: 0.01.hp),
@@ -216,27 +228,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           child: ElevatedButton(
                             onPressed: _loading
                                 ? null
-                                : (_userImageFile != null ||
-                                _tel.text != null)
-                                ? () => _submit(ctx)
-                                : null,
+                                : (_userImageFile != null || _tel.text != null)
+                                    ? () => _submit(ctx)
+                                    : null,
                             child: _loading
                                 ? SizedBox(
-                              child: CircularProgressIndicator(
-                                valueColor: new AlwaysStoppedAnimation<Color>(
-                                    Colors.white),
-                                strokeWidth: 3.0,
-                              ),
-                              width: 20,
-                              height: 20,
-                            )
+                                    child: CircularProgressIndicator(
+                                      valueColor:
+                                          new AlwaysStoppedAnimation<Color>(
+                                              Colors.white),
+                                      strokeWidth: 3.0,
+                                    ),
+                                    width: 20,
+                                    height: 20,
+                                  )
                                 : AutoSizeText(
-                              'Salvar',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 38.nsp,
-                              ),
-                            ),
+                                    'Salvar',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 38.nsp,
+                                    ),
+                                  ),
                           ),
                         ),
                       ),
@@ -244,8 +256,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                 ),
               ),
-            )
-        ),
+            )),
       ),
     );
   }

@@ -50,6 +50,7 @@ dependencies:
     shimmer: ^2.0.0
     transparent_image: ^2.0.0
     url_launcher: ^6.0.5
+    geocoder: ^0.2.1
     flutter_masked_text: ^0.8.0
     cached_network_image: ^3.0.0
     paginate_firestore: 1.0.0
@@ -87,6 +88,7 @@ flutter:
         - assets/imgs/user_placeholder.png
         - assets/imgs/logo_devmob.png
         - assets/imgs/rango.png
+        - assets/imgs/pinMapa.png
     #   - images/a_dot_ham.jpeg
     # An image asset can refer to one or more resolution-specific "variants", see
     # https://flutter.dev/assets-and-images/#resolution-aware.

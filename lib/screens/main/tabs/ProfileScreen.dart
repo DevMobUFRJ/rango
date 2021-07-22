@@ -154,7 +154,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             onPressed: () => pushNewScreen(
                               context,
-                              screen: SetLocationScreen(),
+                              screen: SetLocationScreen(widget.usuario),
                               withNavBar: false,
                             ),
                           ),
