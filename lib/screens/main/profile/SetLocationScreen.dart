@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -23,6 +24,7 @@ class _SetLocationScreen extends State<SetLocationScreen> {
   BitmapDescriptor marMarkerCustom;
   GeoPoint positionGlobal;
   Position userLocation;
+  final _geoFlutterFire = Geoflutterfire();
 
   @override
   void initState() {
@@ -335,17 +337,25 @@ class _SetLocationScreen extends State<SetLocationScreen> {
   _submit() async {
     try {
       Map<String, dynamic> dataToUpdate = {};
-      Map<String, dynamic> localizacao = {};
-      GeoPoint geo =
-          new GeoPoint(positionGlobal.latitude, positionGlobal.longitude);
-      localizacao['geohash'] = geo.hashCode.toString();
-      localizacao['geopoint'] = geo;
-      dataToUpdate['location'] = localizacao;
+      GeoFirePoint location = _geoFlutterFire.point(
+        latitude: positionGlobal.latitude,
+        longitude: positionGlobal.longitude,
+      );
+      dataToUpdate['location'] = location.data;
       await Repository.instance.updateSeller(widget.user.id, dataToUpdate);
       _recuperarLocalizacaoAtual();
     } catch (e) {
       print(e);
-      openMenssage(e.toString());
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: Duration(seconds: 3),
+          backgroundColor: Theme.of(context).errorColor,
+          content: Text(
+            'Ocorreu um erro ao definir a localização',
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
     }
     openMenssage("Atualizado com sucesso");
   }
