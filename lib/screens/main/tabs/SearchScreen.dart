@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,9 +16,10 @@ import 'package:rango/screens/seller/SellerProfile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/utils/constants.dart';
-import 'package:rango/utils/date_time.dart';
 import 'dart:ui' as ui;
 import 'package:rango/widgets/others/ModalFilter.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class SearchScreen extends StatefulWidget {
   final PersistentTabController controller;
@@ -45,8 +46,6 @@ class _SearchScreenState extends State<SearchScreen> {
   final geo = Geoflutterfire();
 
   void _setCustomMarkers() async {
-    // getBytesFromAsset('assets/imgs/map2.png', 64)
-    //     .then((value) => {marMarkerCustom = BitmapDescriptor.fromBytes(value)});
     marMarkerCustom = await BitmapDescriptor.fromAssetImage(
         ImageConfiguration(), 'assets/imgs/pinMapa.png');
   }
@@ -75,12 +74,14 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future<void> _gotoLocation(double lat, double long, {double zoom}) async {
     final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-      target: LatLng(lat, long),
-      zoom: zoom != null ? zoom : 15,
-      //    tilt: 50.0,
-      // bearing: 45.0,
-    )));
+    controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: LatLng(lat, long),
+          zoom: zoom != null ? zoom : 15,
+        ),
+      ),
+    );
   }
 
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
@@ -112,7 +113,6 @@ class _SearchScreenState extends State<SearchScreen> {
   _recuperarLocalizacaoAtual() async {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best);
-
     setState(() {
       _cameraPosition = CameraPosition(
           target: LatLng(position.latitude, position.longitude), zoom: 16);
@@ -276,7 +276,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget _botaoVerVendedor(Seller seller, BuildContext context, var isOpen) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 0.01.hp),
-      width: 0.5.wp,
+      width: 0.4.wp,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           primary: isOpen ? Theme.of(context).accentColor : Colors.grey,
@@ -297,7 +297,7 @@ class _SearchScreenState extends State<SearchScreen> {
         child: AutoSizeText(
           'Ver Mais',
           style: GoogleFonts.montserrat(
-            fontSize: 36.nsp,
+            fontSize: 38.nsp,
             color: isOpen ? null : Colors.white,
           ),
         ),
@@ -326,11 +326,10 @@ class _SearchScreenState extends State<SearchScreen> {
     snapshotSeller.data.forEach((sel) {
       Seller sellerTemp = Seller.fromJson(sel.data(), id: sel.id);
       if (sellerTemp.name.toLowerCase().contains(nameSeller.toLowerCase())) {
-
-      if (sellerTemp.isOpen()) {
-        openSellers.add(sellerTemp);
-      } else {
-        closedSellers.add(sellerTemp);
+        if (sellerTemp.isOpen()) {
+          openSellers.add(sellerTemp);
+        } else {
+          closedSellers.add(sellerTemp);
         }
       }
     });
@@ -447,7 +446,6 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Widget _box(Seller seller, BuildContext context, var isOpen) {
     String name = seller.name;
-    String _image = seller.logo;
     Color cor;
     Color corTexto;
     if (isOpen) {
@@ -458,8 +456,8 @@ class _SearchScreenState extends State<SearchScreen> {
       corTexto = Colors.grey;
     }
     return Container(
-        child: new FittedBox(
-      child: Material(
+      child: new FittedBox(
+        child: Material(
           color: Colors.white,
           elevation: 14.0,
           borderRadius: BorderRadius.circular(24.0),
@@ -473,11 +471,65 @@ class _SearchScreenState extends State<SearchScreen> {
                 child: ClipRRect(
                   borderRadius: new BorderRadius.circular(24.0),
                   child: ColorFiltered(
-                      colorFilter: ColorFilter.mode(cor, BlendMode.saturation),
-                      child: Image(
-                        fit: BoxFit.fill,
-                        image: NetworkImage(_image),
-                      )),
+                    colorFilter: ColorFilter.mode(cor, BlendMode.saturation),
+                    child: seller.logo == null
+                        ? Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Container(
+                                height: 200,
+                                color: Theme.of(context).accentColor,
+                              ),
+                              Center(
+                                child: Icon(
+                                  Icons.store,
+                                  size: 100,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          )
+                        : CachedNetworkImage(
+                            imageUrl: seller.logo,
+                            fit: BoxFit.cover,
+                            placeholder: (ctx, url) => Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Shimmer.fromColors(
+                                  baseColor: Color.fromRGBO(255, 175, 153, 1),
+                                  highlightColor: Colors.white,
+                                  child: Container(
+                                    height: 200,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                Center(
+                                  child: Icon(
+                                    Icons.store,
+                                    size: 100,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            errorWidget: (ctx, url, error) => Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Container(
+                                  height: 200,
+                                  color: Theme.of(context).accentColor,
+                                ),
+                                Center(
+                                  child: Icon(
+                                    Icons.store,
+                                    size: 75,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                  ),
                 ),
               ),
               Container(
@@ -506,8 +558,10 @@ class _SearchScreenState extends State<SearchScreen> {
                     )),
               ),
             ],
-          )),
-    ));
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _boxes(Seller seller, BuildContext context) {
@@ -565,8 +619,17 @@ Widget _isOpen(Seller seller) {
   }
 
   String thisWeekday = weekdayMap[DateTime.now().weekday];
-  List<String> weekdays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-  List<String> weekdaysFromNow = weekdays.skip(weekdays.indexOf(thisWeekday)+1).toList() + weekdays;
+  List<String> weekdays = [
+    'sunday',
+    'monday',
+    'tuesday',
+    'wednesday',
+    'thursday',
+    'friday',
+    'saturday'
+  ];
+  List<String> weekdaysFromNow =
+      weekdays.skip(weekdays.indexOf(thisWeekday) + 1).toList() + weekdays;
   bool found = false;
   String weekdayFound = '';
   String horaFormatada = '';
@@ -578,7 +641,8 @@ Widget _isOpen(Seller seller) {
       found = true;
       horaFormatada = seller.shift[day].openingTime.toString();
       horaFormatada = horaFormatada.padLeft(4, '0');
-      horaFormatada = '${horaFormatada.substring(0, 2)}:${horaFormatada.substring(2, 4)}';
+      horaFormatada =
+          '${horaFormatada.substring(0, 2)}:${horaFormatada.substring(2, 4)}';
       weekdayFound = weekdayTranslate[day];
       break;
     }
@@ -587,16 +651,21 @@ Widget _isOpen(Seller seller) {
   if (found == false && horaFormatada != '') {
     return Container(
         child: Text(
-          "Sem informação de horário",
-          style: TextStyle(
-              color: Colors.black54, fontSize: 22.0, fontWeight: FontWeight.bold),
-        ));
+      "Sem informação de horário",
+      style: TextStyle(
+          color: Colors.black54, fontSize: 22.0, fontWeight: FontWeight.bold),
+    ));
   }
 
   return Container(
-      child: Text(
-    "Fechado \u00B7 abre $weekdayFound $horaFormatada",
-    style: TextStyle(
-        color: Colors.black54, fontSize: 22.0, fontWeight: FontWeight.bold),
-  ));
+    child: Text(
+      "Fechado\nAbre $weekdayFound às $horaFormatada",
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        color: Colors.black54,
+        fontSize: 22.0,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+  );
 }
