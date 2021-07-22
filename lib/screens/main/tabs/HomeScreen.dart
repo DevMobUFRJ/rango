@@ -3,14 +3,16 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:geolocator/geolocator.dart' hide openAppSettings;
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/models/meal_request.dart';
 import 'package:rango/models/seller.dart';
 import 'dart:io';
 import 'package:rango/resources/rangeChangeNotifier.dart';
 import 'package:rango/resources/repository.dart';
+import 'package:rango/screens/main/profile/ProfileSettings.dart';
 import 'package:rango/widgets/home/HomeHeader.dart';
 import 'package:rango/widgets/home/ListaHorizontal.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,8 +22,8 @@ import 'package:rango/widgets/home/SellersList.dart';
 
 class HomeScreen extends StatefulWidget {
   final Client usuario;
-
-  HomeScreen(this.usuario);
+  final PersistentTabController controller;
+  HomeScreen(this.usuario, this.controller, {Key key}) : super(key: key);
   static const String name = 'homeScreen';
 
   @override
@@ -31,6 +33,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool _locationPermissionStatus;
   bool _locationPermissionLoading = false;
+  bool _showFillPerfil = true;
 
   void requestForPermission() async {
     try {
@@ -90,8 +93,29 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   initState() {
     checkForPermission();
+    _checkInternet();
+    _checkFillPerfil();
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+  }
+
+  Future<void> _checkFillPerfil() async {
+    bool fillPerfil = await Repository.instance.showFillPerfil();
+    setState(() => _showFillPerfil = fillPerfil);
+  }
+
+  Future<void> _checkInternet() async {
+    try {
+      final result = await InternetAddress.lookup('example.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        Repository.instance.setInternetConnection(true, context);
+        return true;
+      } else
+        return false;
+    } on SocketException catch (_) {
+      Repository.instance.setInternetConnection(false, context);
+      return true;
+    }
   }
 
   @override
@@ -119,7 +143,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       physics: ClampingScrollPhysics(),
                       child: Column(
                         children: [
-                          HomeHeader(widget.usuario.name.split(" ")[0]),
+                          HomeHeader(
+                            widget.usuario.name.contains(' ')
+                                ? widget.usuario.name.split(' ')[0]
+                                : widget.usuario.name,
+                          ),
                           FutureBuilder(
                             future: Repository.instance.getUserLocation(),
                             builder: (
@@ -183,11 +211,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                             .getNearbySellersStream(
                                           locationSnapshot.data,
                                           rangeSnapshot.data,
-                                          queryByActive: true,
-                                          queryByTime: true,
+                                          //TODO Mudar para true quando acabar os testes
+                                          queryByActive: false,
+                                          queryByTime: false,
                                         ),
                                         builder: (
-                                          context,
+                                          ctxNearbySellers,
                                           AsyncSnapshot<List<DocumentSnapshot>>
                                               snapshot,
                                         ) {
@@ -202,9 +231,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                               child: AutoSizeText(
                                                 snapshot.error.toString(),
                                                 style: GoogleFonts.montserrat(
-                                                    fontSize: 45.nsp,
-                                                    color: Theme.of(context)
-                                                        .accentColor),
+                                                  fontSize: 45.nsp,
+                                                  color:
+                                                      Theme.of(ctxNearbySellers)
+                                                          .accentColor,
+                                                ),
                                               ),
                                             );
                                           }
@@ -218,11 +249,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                           snapshot.data.forEach(
                                             (sellerDoc) {
                                               Seller seller = Seller.fromJson(
-                                                sellerDoc.data,
-                                                id: sellerDoc.documentID,
+                                                sellerDoc.data(),
+                                                id: sellerDoc.id,
                                               );
                                               sellerList.add(seller);
-                                              var filterByFeatured = false;
+                                              var filterByFeatured = true;
                                               var mealsLimit = 0;
                                               var currentMeals =
                                                   seller.currentMeals;
@@ -272,23 +303,24 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                               height: 0.7.wp - 56,
                                               alignment: Alignment.center,
                                               child: AutoSizeText(
-                                                'Sem sugestões ou vendedores próximos abertos.Você pode aumentar o alcance ou fazer pedidos para receber sugestões!',
+                                                'Sem sugestões ou vendedores próximos abertos. Você pode aumentar o alcance ou fazer pedidos para receber sugestões!',
                                                 style: GoogleFonts.montserrat(
                                                   fontSize: 45.nsp,
-                                                  color: Theme.of(context)
-                                                      .accentColor,
+                                                  color:
+                                                      Theme.of(ctxNearbySellers)
+                                                          .accentColor,
                                                 ),
                                               ),
                                             );
 
                                           return Column(
                                             children: [
+                                              _buildFillProfileSuggestions(),
                                               if (allMealsRequests.isNotEmpty)
                                                 _buildOrderAgain(
                                                   allMealsRequests,
                                                   widget.usuario.id,
                                                 ),
-                                              SizedBox(height: 0.02.hp),
                                               if (filteredMealsRequests
                                                   .isNotEmpty)
                                                 _buildSuggestions(
@@ -306,7 +338,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                                     style:
                                                         GoogleFonts.montserrat(
                                                       fontSize: 45.nsp,
-                                                      color: Theme.of(context)
+                                                      color: Theme.of(
+                                                              ctxNearbySellers)
                                                           .accentColor,
                                                     ),
                                                   ),
@@ -314,9 +347,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                               SizedBox(height: 0.02.hp),
                                               if (sellerList.isNotEmpty)
                                                 SellersList(
-                                                    sellerList,
-                                                    locationSnapshot,
-                                                    widget.usuario.id),
+                                                  sellerList,
+                                                  locationSnapshot,
+                                                  widget.usuario,
+                                                  widget.controller,
+                                                ),
                                               if (sellerList.isEmpty)
                                                 Container(
                                                   margin: EdgeInsets.symmetric(
@@ -328,7 +363,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                                     style:
                                                         GoogleFonts.montserrat(
                                                       fontSize: 45.nsp,
-                                                      color: Theme.of(context)
+                                                      color: Theme.of(
+                                                              ctxNearbySellers)
                                                           .accentColor,
                                                     ),
                                                   ),
@@ -369,7 +405,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        HomeHeader(widget.usuario.name.split(" ")[0]),
+        HomeHeader(
+          widget.usuario.name.contains(' ')
+              ? widget.usuario.name.split(' ')[0]
+              : widget.usuario.name,
+        ),
         Container(
           height: 0.5.hp,
           alignment: Alignment.center,
@@ -385,11 +425,89 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
+  Widget _buildFillProfileSuggestions() {
+    Client usuario = widget.usuario;
+    String textToShow = '';
+    if (usuario.picture == null || usuario.picture.isEmpty)
+      textToShow += '\n- Adicione uma foto de perfil;';
+    if (usuario.notificationSettings == null)
+      textToShow +=
+          '\n- Escolha as configurações de notificações no seu perfil;';
+    return textToShow.length == 0
+        ? SizedBox()
+        : FutureBuilder(
+            future: Repository.instance.showFillPerfil(),
+            builder: (ctx, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting ||
+                  snapshot.hasError) return SizedBox();
+              if (snapshot.hasData && snapshot.data == false) return SizedBox();
+              return Container(
+                margin: EdgeInsets.symmetric(horizontal: 10),
+                child: Stack(
+                  alignment: Alignment.topRight,
+                  children: [
+                    GestureDetector(
+                      onTap: () => widget.controller.jumpToTab(3),
+                      child: Container(
+                        margin: EdgeInsets.symmetric(
+                            horizontal: 0.01.hp, vertical: 10),
+                        child: Material(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          color: Theme.of(context).accentColor,
+                          elevation: 5,
+                          child: Container(
+                            padding: EdgeInsets.all(12),
+                            child: Text(
+                              'Você ainda não completou seu perfil:$textToShow',
+                              style: GoogleFonts.montserrat(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 28.nsp,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Repository.instance.dontShowFillPerfill();
+                        Provider.of<RangeChangeNotifier>(context, listen: false)
+                            .triggerRefresh();
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: Colors.red[400],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Icon(
+                            Icons.close,
+                            size: 15,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+  }
+
   Widget _buildRequestForPermissionWidget() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        HomeHeader(widget.usuario.name.split(" ")[0]),
+        HomeHeader(
+          widget.usuario.name.contains(' ')
+              ? widget.usuario.name.split(' ')[0]
+              : widget.usuario.name,
+        ),
         SizedBox(height: 0.1.hp),
         AutoSizeText(
           'É necessário dar permissão de localização para utilizar o aplicativo',
@@ -407,18 +525,24 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 : () => requestForPermission(),
             child: _locationPermissionLoading
                 ? Container(
-                    margin: EdgeInsets.symmetric(horizontal: 40),
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
+                    margin: EdgeInsets.symmetric(horizontal: 0.15.wp),
+                    child: SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
                     ),
-                    width: 18,
-                    height: 18,
                   )
-                : AutoSizeText(
-                    'Dar permissão',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 35.nsp,
+                : Container(
+                    width: 0.4.wp,
+                    child: AutoSizeText(
+                      'Dar permissão',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 35.nsp,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
           ),
@@ -432,6 +556,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       title: 'Sugestões',
       tagM: Random().nextDouble(),
       meals: meals,
+      controller: widget.controller,
     );
   }
 
@@ -452,7 +577,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             ),
           );
         }
-        if (orderSnapshot.data.documents.isEmpty) {
+        if (orderSnapshot.data.docs.isEmpty) {
           return Container();
         }
         if (orderSnapshot.hasError) {
@@ -467,23 +592,27 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           );
         }
 
-        var mealIds = orderSnapshot.data.documents
-            .map((order) => order.data["mealId"])
+        var mealIds = orderSnapshot.data.docs
+            .map((order) => order.get("mealId"))
             .toSet()
             .toList();
         meals.removeWhere(
           (meal) => !mealIds.contains(meal.mealId),
         );
-
-        return Column(
-          children: [
-            ListaHorizontal(
-              title: 'Peça Novamente',
-              tagM: Random().nextDouble(),
-              meals: meals,
-            ),
-          ],
-        );
+        if (meals.isNotEmpty) {
+          return Column(
+            children: [
+              ListaHorizontal(
+                title: 'Peça Novamente',
+                tagM: Random().nextDouble(),
+                meals: meals,
+                controller: widget.controller,
+              ),
+              SizedBox(height: 0.02.hp),
+            ],
+          );
+        } else
+          return Container();
       },
     );
   }

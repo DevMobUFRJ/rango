@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,11 +18,15 @@ class ListaHorizontal extends StatelessWidget {
   final String title;
   final double tagM;
   final List<MealRequest> meals;
+  final bool isFromSellerScreen;
+  final PersistentTabController controller;
 
   ListaHorizontal({
     @required this.title,
     @required this.tagM,
     @required this.meals,
+    @required this.controller,
+    this.isFromSellerScreen = false,
   });
 
   @override
@@ -51,7 +56,7 @@ class ListaHorizontal extends StatelessWidget {
                 meals[index].mealId,
                 meals[index].seller.id,
               ),
-              builder: (context, AsyncSnapshot<DocumentSnapshot> mealSnapshot) {
+              builder: (context, AsyncSnapshot<DocumentSnapshot<Meal>> mealSnapshot) {
                 if (mealSnapshot.connectionState == ConnectionState.waiting) {
                   return Container(
                     height: 0.2.hp,
@@ -140,10 +145,7 @@ class ListaHorizontal extends StatelessWidget {
                   );
                 }
 
-                Meal meal = Meal.fromJson(
-                  mealSnapshot.data.data,
-                  id: meals[index].mealId,
-                );
+                final Meal meal = mealSnapshot.data.data();
                 return GestureDetector(
                   onTap: () => pushNewScreen(
                     context,
@@ -151,6 +153,8 @@ class ListaHorizontal extends StatelessWidget {
                       marmita: meal,
                       seller: meals[index].seller,
                       tagM: tagM,
+                      isFromSellerScreen: isFromSellerScreen,
+                      controller: controller,
                     ),
                     withNavBar: false,
                     pageTransitionAnimation: PageTransitionAnimation.cupertino,
@@ -162,42 +166,33 @@ class ListaHorizontal extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8)),
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
-                      children: <Widget>[
+                      children: [
                         Flexible(
                           flex: 0,
                           child: Hero(
                             tag: meal.hashCode * tagM,
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Shimmer.fromColors(
-                                  baseColor: Color.fromRGBO(255, 175, 153, 1),
-                                  highlightColor: Colors.white,
-                                  child: Container(
-                                    color: Colors.white,
-                                    child: SizedBox(
-                                      height: 170.h,
-                                      width: 0.45.wp,
-                                    ),
-                                  ),
-                                ),
-                                Center(
-                                  child: Icon(
-                                    Icons.local_dining,
-                                    size: 55,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                FadeInImage.memoryNetwork(
-                                  placeholder: kTransparentImage,
-                                  image: meal.picture,
-                                  fit: BoxFit.cover,
+                            child: Stack(alignment: Alignment.center, children: [
+                              if (meal.picture != null) ...{
+                                _renderWithImage(),
+                                CachedNetworkImage(
+                                  color: meal.quantity > 0
+                                      ? Colors.transparent
+                                      : Colors.grey,
+                                  colorBlendMode: BlendMode.saturation,
+                                  imageUrl: meal.picture,
                                   height: 170.h,
                                   width: 0.45.wp,
+                                  fit: BoxFit.cover,
+                                  placeholder: (ctx, url) => Image(
+                                      image: MemoryImage(kTransparentImage)),
+                                  errorWidget: (ctx, url, error) => Image(
+                                      image: MemoryImage(kTransparentImage)),
                                 ),
-                              ],
-                            ),
-                          ),
+                              } else ...{
+                                _renderWithoutImage(ctx)
+                              },
+                            ]),
+                          )
                         ),
                         Flexible(
                           flex: 1,
@@ -224,7 +219,9 @@ class ListaHorizontal extends StatelessWidget {
                                 Flexible(
                                   flex: 1,
                                   child: AutoSizeText(
-                                    intToCurrency(meal.price),
+                                    meal.quantity > 0
+                                        ? intToCurrency(meal.price)
+                                        : 'Indisponível',
                                     textAlign: TextAlign.center,
                                     minFontSize: 15,
                                     style: GoogleFonts.montserrat(
@@ -244,6 +241,54 @@ class ListaHorizontal extends StatelessWidget {
             ),
           ),
         )
+      ],
+    );
+  }
+
+  Widget _renderWithoutImage(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+          color: Theme.of(context).accentColor,
+          child: SizedBox(
+            height: 170.h,
+            width: 0.45.wp,
+          ),
+        ),
+        Center(
+          child: Icon(
+            Icons.local_dining,
+            size: 55,
+            color: Colors.white,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _renderWithImage() {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Shimmer.fromColors(
+          baseColor: Color.fromRGBO(255, 175, 153, 1),
+          highlightColor: Colors.white,
+          child: Container(
+            color: Colors.white,
+            child: SizedBox(
+              height: 170.h,
+              width: 0.45.wp,
+            ),
+          ),
+        ),
+        Center(
+          child: Icon(
+            Icons.local_dining,
+            size: 55,
+            color: Colors.white,
+          ),
+        ),
       ],
     );
   }

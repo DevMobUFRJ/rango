@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/models/message.dart';
@@ -18,6 +19,7 @@ class _NewMessageState extends State<NewMessage> {
     widget.addNewMessage(Message(
       text: _controller.text.trim(),
       sender: 'client',
+      sentAt: new Timestamp.fromDate(new DateTime.now()),
     ));
     setState(
       () => {
@@ -25,19 +27,6 @@ class _NewMessageState extends State<NewMessage> {
         _controller.clear(),
       },
     );
-    //TODO implementação do chat
-    // final user = await FirebaseAuth.instance.currentUser();
-    // final userData =
-    //     await Firestore.instance.collection('users').document(user.uid).get();
-    // Firestore.instance.collection('chat').add({
-    //   'text': _enteredMessage,
-    //   'createdAt': Timestamp.now(),
-    //   'userId': user.uid,
-    //   'username': userData['username'],
-    //   'userImage': userData['image_url'],
-    // });
-    // setState(() => _enteredMessage = '');
-    // _controller.clear();
   }
 
   @override
@@ -60,6 +49,7 @@ class _NewMessageState extends State<NewMessage> {
               child: TextField(
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
+                textCapitalization: TextCapitalization.sentences,
                 controller: _controller,
                 decoration: InputDecoration(
                   hintText: 'Digite aqui...',

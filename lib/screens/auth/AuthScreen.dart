@@ -1,10 +1,11 @@
 import 'dart:io';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:rango/utils/constants.dart';
 import 'package:rango/widgets/auth/AuthForm.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/services.dart';
 
 class AuthScreen extends StatefulWidget {
   static const routeName = '/auth-screen';
@@ -23,27 +24,57 @@ class _AuthScreenState extends State<AuthScreen> {
     String name,
     File image,
     String password,
+    String phone,
     BuildContext ctx,
   }) async {
-    AuthResult authResult;
+    UserCredential authResult;
 
     try {
       setState(() => _isLoading = true);
       if (_isLogin) {
         try {
-          var sellers = await Firestore.instance
+          var sellers = await FirebaseFirestore.instance
               .collection('sellers')
               .where('email', isEqualTo: email)
               .limit(1)
-              .getDocuments();
-          bool isSeller = sellers.documents.isNotEmpty;
+              .get();
+          bool isSeller = sellers.docs.isNotEmpty;
           if (!isSeller) {
             authResult = await _auth.signInWithEmailAndPassword(
-                email: email, password: password);
+              email: email,
+              password: password,
+            );
+            Map<String, dynamic> dataToUpdate = {};
+            String actualDeviceToken =
+                await FirebaseMessaging.instance.getToken();
+            dataToUpdate['deviceToken'] = actualDeviceToken;
+            DocumentReference<Map<String, dynamic>> userInstance =
+                FirebaseFirestore.instance
+                    .collection('clients')
+                    .doc(FirebaseAuth.instance.currentUser.uid);
+            userInstance.get().then((value) {
+              var oldDeviceToken = value.data()['deviceToken'];
+              if (oldDeviceToken != null &&
+                  oldDeviceToken != actualDeviceToken) {
+                ScaffoldMessenger.of(ctx).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Você se conectou com um novo dispositivo! Novas notificações chegarão apenas à ele.',
+                      textAlign: TextAlign.center,
+                    ),
+                    backgroundColor: Theme.of(context).accentColor,
+                  ),
+                );
+                userInstance.update(dataToUpdate);
+              } else if (oldDeviceToken == null) {
+                userInstance.update(dataToUpdate);
+              }
+            });
             Navigator.of(context).pop();
           } else {
             ScaffoldMessenger.of(ctx).showSnackBar(
               SnackBar(
+                duration: Duration(seconds: 2),
                 content: Text(
                   'Você tentou entrar com uma conta de vendedor! Use o app do vendedor para isso.',
                   textAlign: TextAlign.center,
@@ -52,27 +83,28 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
             );
           }
-        } on PlatformException catch (error) {
+        } on FirebaseAuthException catch (error) {
+          print(error.code);
           String errorText;
           switch (error.code) {
-            case 'ERROR_TOO_MANY_REQUESTS':
-              errorText =
-                  'Acesso a conta bloqueado, tente mais tarde ou resete sua senha.';
+            case 'too-many-requests':
+              errorText = tooManyRequestsErrorMessage;
               break;
-            case 'ERROR_WRONG_PASSWORD':
-              errorText = 'Senha incorreta';
+            case 'user-not-found':
+              errorText = userNotFoundErrorMessage;
               break;
-            case 'ERROR_USER_NOT_FOUND':
-              errorText = 'Usuário não encontrado';
+            case 'wrong-password':
+              errorText = wrongPasswordErrorMessage;
+              break;
+            case 'network-request-failed':
+              errorText = networkErrorMessage;
               break;
             default:
-              errorText = 'Ocorreu um erro, tente novamente.';
-              break;
+              errorText = defaultErrorMessage;
           }
-          print(error);
-          setState(() => _isLoading = false);
           ScaffoldMessenger.of(ctx).showSnackBar(
             SnackBar(
+              duration: Duration(seconds: 2),
               content: Text(
                 errorText,
                 textAlign: TextAlign.center,
@@ -82,57 +114,83 @@ class _AuthScreenState extends State<AuthScreen> {
           );
         } catch (error) {
           setState(() => _isLoading = false);
-          print(error);
+          ScaffoldMessenger.of(ctx).showSnackBar(
+            SnackBar(
+              duration: Duration(seconds: 2),
+              content: Text(
+                'Ocorreu um erro',
+                textAlign: TextAlign.center,
+              ),
+              backgroundColor: Theme.of(context).errorColor,
+            ),
+          );
         }
       } else {
         setState(() => _isLoading = true);
         authResult = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
-        FirebaseUser user = await _auth.currentUser();
-        UserUpdateInfo updateInfo = UserUpdateInfo();
-        updateInfo.displayName = name;
-        user.updateProfile(updateInfo);
+        authResult.user.updateDisplayName(name);
 
         String url;
         if (image != null) {
           final ref = FirebaseStorage.instance
               .ref()
-              .child('user_image')
-              .child(authResult.user.uid + '.jpg');
-          await ref.putFile(image).onComplete;
+              .child('users/${authResult.user.uid}/picture.png');
+          await ref.putFile(image).whenComplete(() => null);
           url = await ref.getDownloadURL();
         }
-        await Firestore.instance
+        String deviceToken = await FirebaseMessaging.instance.getToken();
+        await FirebaseFirestore.instance
             .collection('clients')
-            .document(authResult.user.uid)
-            .setData(
+            .doc(authResult.user.uid)
+            .set(
           {
             'name': name,
             'email': email,
             'picture': url != null ? url : null,
+            'deviceToken': deviceToken,
+            'phone': phone,
           },
         );
         Navigator.of(context).pop();
       }
       setState(() => _isLoading = false);
-    } on PlatformException catch (error) {
-      var message = 'Ocorreu um erro';
-      if (error.message != null) {
-        message = error.message;
+    } on FirebaseAuthException catch (error) {
+      setState(() => _isLoading = false);
+      if (error.code == 'network-request-failed') {
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          SnackBar(
+            duration: Duration(seconds: 2),
+            content: Text(
+              networkErrorMessage,
+              textAlign: TextAlign.center,
+            ),
+            backgroundColor: Theme.of(context).errorColor,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          SnackBar(
+            duration: Duration(seconds: 2),
+            content: Text(
+              error.message,
+              textAlign: TextAlign.center,
+            ),
+            backgroundColor: Theme.of(context).errorColor,
+          ),
+        );
       }
+    } catch (error) {
       ScaffoldMessenger.of(ctx).showSnackBar(
         SnackBar(
+          duration: Duration(seconds: 2),
           content: Text(
-            message,
+            'Ocorreu um erro',
             textAlign: TextAlign.center,
           ),
           backgroundColor: Theme.of(context).errorColor,
         ),
       );
-      setState(() => _isLoading = false);
-    } catch (error) {
-      setState(() => _isLoading = false);
-      print(error);
     }
   }
 

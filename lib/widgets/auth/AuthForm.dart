@@ -12,6 +12,7 @@ class AuthForm extends StatefulWidget {
     String name,
     File image,
     String password,
+    String phone,
     BuildContext ctx,
   }) submitForm;
   final bool _isLoading;
@@ -25,19 +26,23 @@ class AuthForm extends StatefulWidget {
 
 class _AuthFormState extends State<AuthForm> {
   final _formKey = GlobalKey<FormState>();
+
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _name = TextEditingController();
+  final TextEditingController _phone = TextEditingController();
   final TextEditingController _pass = TextEditingController();
   final TextEditingController _confirmPass = TextEditingController();
 
-  String _name = '';
-  String _email = '';
-  String _password = '';
   File _userImageFile;
   String _emailErrorMessage;
   String _nameErrorMessage;
+  String _phoneErrorMessage;
   String _passwordErrorMessage;
   String _confirmPasswordErrorMessage;
 
+  final _focusNodeEmail = FocusNode();
   final _focusNodeName = FocusNode();
+  final _focusNodePhone = FocusNode();
   final _focusNodePass = FocusNode();
   final _focusNodeConfirmPass = FocusNode();
 
@@ -51,46 +56,71 @@ class _AuthFormState extends State<AuthForm> {
           _emailErrorMessage == null &&
           _nameErrorMessage == null &&
           _passwordErrorMessage == null &&
-          _confirmPasswordErrorMessage == null) {
+          _confirmPasswordErrorMessage == null &&
+          _phoneErrorMessage == null) {
         _formKey.currentState.save();
         widget.submitForm(
-          email: _email.trim(),
-          name: _name.trim(),
-          password: _password.trim(),
+          email: _email.text.trim(),
+          name: _name.text.trim(),
+          password: _pass.text.trim(),
           ctx: context,
           image: _userImageFile,
+          phone: _phone.text.trim(),
         );
       }
     } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: Duration(seconds: 2),
+          content: Text(
+            e.toString(),
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
+      );
       print(e);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
     return LayoutBuilder(
       builder: (ctx, constraint) => SingleChildScrollView(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: 0.9.hp),
+        physics: ClampingScrollPhysics(),
+        child: Container(
+          constraints: BoxConstraints(minHeight: constraint.maxHeight),
           child: Padding(
             padding: EdgeInsets.all(16),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
               children: [
                 if (widget._isLogin)
-                  Flexible(
-                    flex: 3,
-                    child: Text(
-                      "RANGO",
-                      style: GoogleFonts.montserrat(
-                        fontSize: 80.nsp,
-                        color: Theme.of(context).accentColor,
-                      ),
+                  Container(
+                    child: Column(
+                      children: [
+                        Flexible(
+                          flex: 0,
+                          child: Image(
+                            image: AssetImage('assets/imgs/rango.png'),
+                            width: 0.5.wp,
+                          ),
+                        ),
+                        Flexible(
+                          flex: 0,
+                          child: Text(
+                            "RANGO",
+                            style: TextStyle(
+                              color: Theme.of(context).accentColor,
+                              fontSize: 80.nsp,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                Expanded(
-                  flex: widget._isLogin ? 3 : 6,
+                Container(
                   child: Form(
                     key: _formKey,
                     child: Center(
@@ -99,10 +129,11 @@ class _AuthFormState extends State<AuthForm> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           if (!widget._isLogin) UserImagePicker(_pickedImage),
-                          Flexible(
-                            flex: 2,
+                          Container(
+                            margin: EdgeInsets.only(bottom: 10),
                             child: CustomTextFormField(
-                              labelText: 'Email:',
+                              labelText: 'Email',
+                              focusNode: _focusNodeEmail,
                               key: ValueKey('email'),
                               validator: (value) {
                                 if (value.isEmpty || !value.contains('@')) {
@@ -117,25 +148,28 @@ class _AuthFormState extends State<AuthForm> {
                                 }
                                 return null;
                               },
-                              onSaved: (value) => _email = value,
+                              onSaved: (value) => _email.text = value,
                               keyboardType: TextInputType.emailAddress,
                               onFieldSubmitted: (_) => !widget._isLogin
                                   ? FocusScope.of(context)
                                       .requestFocus(_focusNodeName)
-                                  : FocusScope.of(context).nextFocus(),
+                                  : FocusScope.of(context)
+                                      .requestFocus(_focusNodePass),
                               textInputAction: TextInputAction.next,
                               errorText: _emailErrorMessage,
                             ),
                           ),
                           if (!widget._isLogin)
-                            Flexible(
-                              flex: 2,
+                            Container(
+                              margin: EdgeInsets.only(bottom: 10),
                               child: CustomTextFormField(
                                 labelText: 'Nome',
                                 focusNode: _focusNodeName,
                                 errorText: _nameErrorMessage,
                                 key: ValueKey('name'),
-                                onSaved: (value) => _name = value,
+                                keyboardType: TextInputType.text,
+                                textCapitalization: TextCapitalization.words,
+                                onSaved: (value) => _name.text = value,
                                 validator: (value) {
                                   if (value.isEmpty) {
                                     setState(() {
@@ -149,14 +183,43 @@ class _AuthFormState extends State<AuthForm> {
                                   return null;
                                 },
                                 onFieldSubmitted: (_) => FocusScope.of(context)
-                                    .requestFocus(_focusNodePass),
+                                    .requestFocus(_focusNodePhone),
                                 textInputAction: TextInputAction.next,
                               ),
                             ),
-                          Flexible(
-                            flex: 2,
+                          if (!widget._isLogin)
+                            Container(
+                              margin: EdgeInsets.only(bottom: 10),
+                              child: CustomTextFormField(
+                                labelText: 'Telefone',
+                                focusNode: _focusNodePhone,
+                                errorText: _phoneErrorMessage,
+                                maxLength: 11,
+                                key: ValueKey('phone'),
+                                onSaved: (value) => _phone.text = value,
+                                validator: (value) {
+                                  if (value.length > 0 && value.length != 11) {
+                                    setState(() {
+                                      _phoneErrorMessage =
+                                          'Telefone precisa de 11 números';
+                                    });
+                                  } else {
+                                    setState(() {
+                                      _phoneErrorMessage = null;
+                                    });
+                                  }
+                                  return null;
+                                },
+                                onFieldSubmitted: (_) => FocusScope.of(context)
+                                    .requestFocus(_focusNodePass),
+                                textInputAction: TextInputAction.next,
+                                keyboardType: TextInputType.phone,
+                              ),
+                            ),
+                          Container(
+                            margin: EdgeInsets.only(bottom: 10),
                             child: CustomTextFormField(
-                              labelText: 'Senha:',
+                              labelText: 'Senha',
                               focusNode: _focusNodePass,
                               key: ValueKey('password'),
                               controller: _pass,
@@ -170,7 +233,7 @@ class _AuthFormState extends State<AuthForm> {
                                 return null;
                               },
                               onSaved: (value) =>
-                                  {setState(() => _password = value)},
+                                  {setState(() => _pass.text = value)},
                               errorText: _passwordErrorMessage,
                               isPassword: true,
                               textInputAction: !widget._isLogin
@@ -179,14 +242,14 @@ class _AuthFormState extends State<AuthForm> {
                               onFieldSubmitted: !widget._isLogin
                                   ? (_) => FocusScope.of(context)
                                       .requestFocus(_focusNodeConfirmPass)
-                                  : null,
+                                  : (_) => _submit(),
                             ),
                           ),
                           if (!widget._isLogin)
-                            Flexible(
-                              flex: 2,
+                            Container(
+                              margin: EdgeInsets.only(bottom: 10),
                               child: CustomTextFormField(
-                                labelText: 'Confirmar Senha:',
+                                labelText: 'Confirmar Senha',
                                 controller: _confirmPass,
                                 key: ValueKey('confirmPassword'),
                                 focusNode: _focusNodeConfirmPass,
@@ -204,12 +267,15 @@ class _AuthFormState extends State<AuthForm> {
                                   return null;
                                 },
                                 errorText: _confirmPasswordErrorMessage,
+                                onSaved: (value) =>
+                                    {setState(() => _confirmPass.text = value)},
                                 isPassword: true,
+                                onFieldSubmitted: (_) => _submit(),
                               ),
                             ),
                           if (widget._isLogin)
-                            Expanded(
-                              flex: 1,
+                            Container(
+                              margin: EdgeInsets.only(bottom: 10),
                               child: TextButton(
                                 onPressed: () => Navigator.of(context)
                                     .pushNamed(ForgotPasswordScreen.routeName),
@@ -222,34 +288,29 @@ class _AuthFormState extends State<AuthForm> {
                                 ),
                               ),
                             ),
-                          Flexible(
-                            flex: 1,
-                            child: SizedBox(
-                              width: 0.7.wp,
-                              child: ElevatedButton(
-                                onPressed: widget._isLoading ? null : _submit,
-                                child: widget._isLoading
-                                    ? SizedBox(
-                                        child: CircularProgressIndicator(
-                                          valueColor:
-                                              new AlwaysStoppedAnimation<Color>(
-                                                  Colors.white),
-                                          strokeWidth: 3.0,
-                                        ),
-                                        height: 30.w,
-                                        width: 30.w,
-                                      )
-                                    : Container(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 0.02.wp),
-                                        child: Text(
-                                          'Continuar',
-                                          style: GoogleFonts.montserrat(
-                                              color: Colors.white,
-                                              fontSize: 36.nsp),
-                                        ),
+                          SizedBox(
+                            width: 0.5.wp,
+                            child: ElevatedButton(
+                              onPressed: widget._isLoading ? null : _submit,
+                              child: widget._isLoading
+                                  ? SizedBox(
+                                      child: CircularProgressIndicator(
+                                        valueColor:
+                                            new AlwaysStoppedAnimation<Color>(
+                                                Colors.white),
+                                        strokeWidth: 3.0,
                                       ),
-                              ),
+                                      height: 40.w,
+                                      width: 40.w,
+                                    )
+                                  : Container(
+                                      child: Text(
+                                        'Continuar',
+                                        style: GoogleFonts.montserrat(
+                                            color: Colors.white,
+                                            fontSize: 36.nsp),
+                                      ),
+                                    ),
                             ),
                           ),
                         ],

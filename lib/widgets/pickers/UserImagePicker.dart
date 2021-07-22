@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -27,13 +28,13 @@ class _UserImagePickerState extends State<UserImagePicker> {
     await showDialog(
         context: context,
         builder: (BuildContext ctx) => AlertDialog(
-              backgroundColor: Theme.of(ctx).backgroundColor,
+              backgroundColor: Color(0xFFF9B152),
               actionsPadding: EdgeInsets.all(10),
               title: Text(
                 'Escolha de onde pegar a imagem',
                 style: GoogleFonts.montserrat(
-                  color: Theme.of(context).accentColor,
                   fontSize: 38.nsp,
+                  color: Colors.white,
                 ),
               ),
               content: Row(
@@ -47,9 +48,10 @@ class _UserImagePickerState extends State<UserImagePicker> {
                     child: Text(
                       'Galeria',
                       style: GoogleFonts.montserrat(
-                        color: Theme.of(context).accentColor,
-                        fontSize: 36.nsp,
-                      ),
+                          fontSize: 36.nsp,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                          decoration: TextDecoration.underline),
                     ),
                   ),
                   TextButton(
@@ -60,9 +62,10 @@ class _UserImagePickerState extends State<UserImagePicker> {
                     child: Text(
                       'Câmera',
                       style: GoogleFonts.montserrat(
-                        color: Theme.of(context).accentColor,
-                        fontSize: 36.nsp,
-                      ),
+                          fontSize: 36.nsp,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                          decoration: TextDecoration.underline),
                     ),
                   ),
                 ],
@@ -76,7 +79,6 @@ class _UserImagePickerState extends State<UserImagePicker> {
         final pickedImage = await picker.getImage(
           source: pickImgFromGallery ? ImageSource.gallery : ImageSource.camera,
           imageQuality: 50,
-          maxWidth: 150,
         );
         if (pickedImage != null) {
           final pickedImageFile = File(pickedImage.path);
@@ -86,6 +88,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
+            duration: Duration(seconds: 2),
             backgroundColor: Theme.of(context).errorColor,
             content: Text(
               'Ocorreu um erro ao escolher a foto, tente novamente',
@@ -99,7 +102,6 @@ class _UserImagePickerState extends State<UserImagePicker> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
     return GestureDetector(
       onTap: _pickImage,
       child: Container(
@@ -109,20 +111,31 @@ class _UserImagePickerState extends State<UserImagePicker> {
             Stack(
               alignment: Alignment.center,
               children: <Widget>[
-                CircleAvatar(
-                  radius: 120.w,
-                  backgroundImage: _pickedImage != null
-                      ? FileImage(_pickedImage)
-                      : widget.image != null
-                          ? NetworkImage(widget.image)
-                          : null,
-                  backgroundColor: Theme.of(context).accentColor,
-                ),
-                if (_pickedImage == null && widget.image == null)
-                  Icon(
-                    Icons.person,
-                    color: Theme.of(context).backgroundColor,
-                    size: 160.nsp,
+                if (_pickedImage != null)
+                  CircleAvatar(
+                    radius: 120.w,
+                    backgroundImage: FileImage(_pickedImage),
+                    backgroundColor: Theme.of(context).accentColor,
+                  ),
+                if (_pickedImage == null)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(120.w),
+                    child: CachedNetworkImage(
+                      width: 120,
+                      height: 120,
+                      imageUrl: widget.image,
+                      fit: BoxFit.cover,
+                      placeholder: (ctx, url) => CircleAvatar(
+                        backgroundColor: Theme.of(context).accentColor,
+                        backgroundImage:
+                            AssetImage('assets/imgs/user_placeholder.png'),
+                      ),
+                      errorWidget: (ctx, url, error) => CircleAvatar(
+                        backgroundColor: Theme.of(context).accentColor,
+                        backgroundImage:
+                            AssetImage('assets/imgs/user_placeholder.png'),
+                      ),
+                    ),
                   ),
               ],
             ),

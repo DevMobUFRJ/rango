@@ -13,8 +13,12 @@ class CustomTextFormField extends StatefulWidget {
   final TextInputType keyboardType;
   final String errorText;
   final bool isPassword;
+  final Function(String) onChanged;
   final TextEditingController controller;
   final FocusNode focusNode;
+  final int numberOfLines;
+  final int maxLength;
+  final TextCapitalization textCapitalization;
 
   CustomTextFormField({
     @required this.labelText,
@@ -22,12 +26,16 @@ class CustomTextFormField extends StatefulWidget {
     this.onFieldSubmitted,
     @required this.key,
     @required this.validator,
+    this.onChanged,
     this.onSaved,
     this.keyboardType,
     @required this.errorText,
     this.isPassword = false,
     this.controller,
     this.focusNode,
+    this.numberOfLines = 1,
+    this.maxLength,
+    this.textCapitalization = TextCapitalization.none,
   });
 
   @override
@@ -54,45 +62,49 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             ),
           ),
         ),
-        Flexible(
-          flex: 1,
-          child: Material(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+        Material(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          elevation: 5,
+          child: TextFormField(
+            focusNode: widget.focusNode != null ? widget.focusNode : null,
+            controller: widget.controller,
+            textInputAction: widget.textInputAction,
+            onFieldSubmitted: widget.onFieldSubmitted,
+            key: widget.key,
+            textCapitalization: widget.textCapitalization,
+            validator: widget.validator,
+            onSaved: widget.onSaved,
+            maxLength: widget.maxLength,
+            minLines: 1,
+            cursorColor: Theme.of(context).accentColor,
+            onChanged: widget.onChanged,
+            maxLines: widget.numberOfLines,
+            obscureText: widget.isPassword != null && !widget.isPassword
+                ? false
+                : !_showPassword,
+            decoration: InputDecoration(
+              errorStyle: TextStyle(fontSize: 22.nsp),
+              counterText: '',
+              border: InputBorder.none,
+              contentPadding: widget.isPassword != null && widget.isPassword
+                  ? EdgeInsets.all(15)
+                  : EdgeInsets.only(left: 15),
+              suffixIcon: widget.isPassword != null && widget.isPassword
+                  ? IconButton(
+                      icon: Icon(
+                        !_showPassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: Theme.of(context).accentColor,
+                      ),
+                      onPressed: () =>
+                          {setState(() => _showPassword = !_showPassword)},
+                    )
+                  : null,
             ),
-            elevation: 5,
-            child: TextFormField(
-              focusNode: widget.focusNode != null ? widget.focusNode : null,
-              controller: widget.controller,
-              textInputAction: widget.textInputAction,
-              onFieldSubmitted: widget.onFieldSubmitted,
-              key: widget.key,
-              validator: widget.validator,
-              onSaved: widget.onSaved,
-              obscureText: widget.isPassword != null && !widget.isPassword
-                  ? false
-                  : !_showPassword,
-              decoration: InputDecoration(
-                errorStyle: TextStyle(fontSize: 22.nsp),
-                border: InputBorder.none,
-                contentPadding: widget.isPassword != null && widget.isPassword
-                    ? EdgeInsets.all(15)
-                    : EdgeInsets.only(left: 15),
-                suffixIcon: widget.isPassword != null && widget.isPassword
-                    ? IconButton(
-                        icon: Icon(
-                          !_showPassword
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                          color: Theme.of(context).accentColor,
-                        ),
-                        onPressed: () =>
-                            {setState(() => _showPassword = !_showPassword)},
-                      )
-                    : null,
-              ),
-              keyboardType: widget.keyboardType,
-            ),
+            keyboardType: widget.keyboardType,
           ),
         ),
         if (widget.errorText != null) ErrorMessageText(widget.errorText),

@@ -10,12 +10,21 @@ class SplashScreen extends StatelessWidget {
       body: Container(
         color: Theme.of(context).primaryColor,
         child: Center(
-          child: Text(
-            "RANGO",
-            style: GoogleFonts.montserrat(
-              fontSize: 80.nsp,
-              color: Theme.of(context).accentColor,
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image(
+                image: AssetImage('assets/imgs/rango.png'),
+                width: 0.5.wp,
+              ),
+              Text(
+                "RANGO",
+                style: GoogleFonts.montserrat(
+                  fontSize: 80.nsp,
+                  color: Colors.white,
+                ),
+              ),
+            ],
           ),
         ),
       ),

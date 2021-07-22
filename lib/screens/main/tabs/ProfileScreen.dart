@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,22 +7,28 @@ import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
+import 'package:rango/screens/main/profile/EditAccountScreen.dart';
 import 'package:rango/screens/main/profile/EditProfileScreen.dart';
 import 'package:rango/screens/main/profile/ProfileSettings.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/widgets/user/UserPicture.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Client usuario;
-
-  ProfileScreen(this.usuario);
+  final PersistentTabController controller;
+  ProfileScreen(this.usuario, this.controller);
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  void initState() {
+    super.initState();
+  }
+
   final yellow = Color(0xFFF9B152);
   @override
   Widget build(BuildContext context) {
@@ -35,18 +42,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
-        padding: EdgeInsets.only(left: 0.1.wp, right: 0.1.wp),
+        padding: EdgeInsets.symmetric(horizontal: 0.1.wp),
         height: 1.hp - 56,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             Flexible(
               flex: 0,
               child: UserPicture(widget.usuario.picture),
             ),
             Flexible(
-              flex: 2,
+              flex: 0,
               child: Container(
                 margin: EdgeInsets.symmetric(vertical: 0.01.hp),
                 child: AutoSizeText(
@@ -60,8 +68,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             ),
-            Expanded(
-              flex: 1,
+            Flexible(
+              flex: 0,
               child: Container(
                 margin: EdgeInsets.symmetric(vertical: 0.01.hp),
                 width: 0.48.wp,
@@ -78,6 +86,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       child: Icon(
                         Icons.edit,
+                        color: yellow,
+                        size: ScreenUtil().setSp(48),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => pushNewScreen(
+                        context,
+                        screen: EditAccountScreen(),
+                        withNavBar: false,
+                        pageTransitionAnimation:
+                        PageTransitionAnimation.cupertino,
+                      ),
+                      child: Icon(
+                        Icons.manage_accounts,
                         color: yellow,
                         size: ScreenUtil().setSp(48),
                       ),
@@ -105,7 +127,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             Flexible(
-              flex: 1,
+              flex: 0,
               child: Container(
                 padding: EdgeInsets.symmetric(
                     horizontal: 0.03.wp, vertical: 0.01.hp),
@@ -119,6 +141,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       style: GoogleFonts.montserrat(
                         color: yellow,
                         fontSize: 35.nsp,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     SizedBox(width: 2),
@@ -132,149 +155,156 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             Expanded(
-              flex: 7,
-              child: Container(
-                child: StreamBuilder(
+              flex: 5,
+              child: (widget.usuario.favoriteSellers == null || widget.usuario.favoriteSellers.length == 0)
+              ? Container(
+                  margin: EdgeInsets.symmetric(
+                      horizontal: 0.03.wp, vertical: 15),
+                  child: AutoSizeText(
+                    'Você ainda não marcou vendedores como favoritos.',
+                    style: GoogleFonts.montserrat(
+                      color: yellow,
+                      fontSize: 45.nsp,
+                    ),
+                  ),
+                )
+              : ListView.separated(
+                separatorBuilder: (context, index) =>
+                    SizedBox(height: 0.01.hp),
+                itemCount: widget.usuario.favoriteSellers.length,
+                physics: ClampingScrollPhysics(),
+                itemBuilder: (ctx, index) => StreamBuilder(
                   stream:
-                      Repository.instance.getClientStream(widget.usuario.id),
-                  builder: (context,
-                      AsyncSnapshot<DocumentSnapshot> clientSnapshot) {
-                    if (clientSnapshot.connectionState ==
+                  Repository.instance.getSeller(widget.usuario.favoriteSellers[index]),
+                  builder: (
+                      context,
+                      AsyncSnapshot<DocumentSnapshot<Seller>> sellerSnapshot,
+                      ) {
+                    if (sellerSnapshot.connectionState ==
                         ConnectionState.waiting) {
                       return Container(
-                        height: 0.4.hp,
+                        height: 0.3.hp,
                         alignment: Alignment.center,
                         child: SizedBox(
-                          height: 50,
-                          width: 50,
+                          height: 40,
+                          width: 40,
                           child: CircularProgressIndicator(
                             color: Theme.of(context).accentColor,
                           ),
                         ),
                       );
                     }
-                    if (clientSnapshot.data.data['favoriteSellers'] == null ||
-                        clientSnapshot.data.data['favoriteSellers'].length ==
-                            0) {
+                    if (sellerSnapshot.hasError) {
                       return Container(
-                        margin: EdgeInsets.symmetric(
-                            horizontal: 0.03.wp, vertical: 15),
+                        height: 0.4.hp - 56,
+                        alignment: Alignment.center,
                         child: AutoSizeText(
-                          'Você ainda não marcou vendedores como favoritos.',
+                          sellerSnapshot.error.toString(),
                           style: GoogleFonts.montserrat(
-                            color: yellow,
-                            fontSize: 45.nsp,
-                          ),
+                              fontSize: 45.nsp,
+                              color: Theme.of(context).accentColor),
                         ),
                       );
                     }
-                    if (clientSnapshot.hasError) {
-                      return Container(
-                        margin: EdgeInsets.symmetric(
-                            horizontal: 0.03.wp, vertical: 15),
-                        child: AutoSizeText(
-                          clientSnapshot.error.toString(),
-                          style: GoogleFonts.montserrat(
-                            color: yellow,
-                            fontSize: 45.nsp,
-                          ),
-                        ),
-                      );
-                    }
-                    final favoriteSellers = List<String>.from(
-                        clientSnapshot.data.data['favoriteSellers']);
 
-                    // Um belo exemplo de list view! A busca pelo seller só acontece quando o elemento pode aparecer na tela.
-                    // Usa-se um StreamBuilder para aproveitar a cache do firestore
-                    return ListView.separated(
-                      separatorBuilder: (context, index) =>
-                          SizedBox(height: 0.01.hp),
-                      itemCount: favoriteSellers.length,
-                      physics: ClampingScrollPhysics(),
-                      itemBuilder: (ctx, index) => StreamBuilder(
-                        stream: Repository.instance
-                            .getSeller(favoriteSellers[index]),
-                        builder: (
+                    Seller seller = sellerSnapshot.data.data();
+
+                    return Material(
+                      borderRadius: BorderRadius.circular(12),
+                      elevation: 2,
+                      child: GestureDetector(
+                        onTap: () => pushNewScreen(
                           context,
-                          AsyncSnapshot<DocumentSnapshot> sellerSnapshot,
-                        ) {
-                          if (sellerSnapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Container(
-                              height: 0.3.hp,
-                              alignment: Alignment.center,
-                              child: SizedBox(
-                                height: 40,
-                                width: 40,
-                                child: CircularProgressIndicator(
-                                  color: Theme.of(context).accentColor,
-                                ),
-                              ),
-                            );
-                          }
-                          if (sellerSnapshot.hasError) {
-                            return Container(
-                              height: 0.4.hp - 56,
-                              alignment: Alignment.center,
-                              child: AutoSizeText(
-                                sellerSnapshot.error.toString(),
-                                style: GoogleFonts.montserrat(
-                                    fontSize: 45.nsp,
-                                    color: Theme.of(context).accentColor),
-                              ),
-                            );
-                          }
-
-                          Seller seller = Seller.fromJson(
-                              sellerSnapshot.data.data,
-                              id: sellerSnapshot.data.documentID);
-
-                          return GestureDetector(
-                            onTap: () => pushNewScreen(
-                              context,
-                              withNavBar: false,
-                              screen: SellerProfile(seller.id, seller.name),
-                              pageTransitionAnimation:
-                                  PageTransitionAnimation.cupertino,
+                          withNavBar: false,
+                          screen: SellerProfile(
+                            seller.id,
+                            seller.name,
+                            widget.controller,
+                          ),
+                          pageTransitionAnimation:
+                          PageTransitionAnimation.cupertino,
+                        ),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 0.01.hp, horizontal: 0.05.wp),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).accentColor,
+                            borderRadius: BorderRadius.circular(
+                              12,
                             ),
-                            child: Container(
-                              height: 120.h,
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 0.01.hp, horizontal: 0.05.wp),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).accentColor,
+                          ),
+                          child: Row(
+                            children: [
+                              ClipRRect(
                                 borderRadius: BorderRadius.circular(
-                                  ScreenUtil().setSp(22),
+                                  120,
+                                ),
+                                child: Container(
+                                  width: 100.h,
+                                  height: 100.h,
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(
+                                            60,
+                                          ),
+                                          color: Colors.white,
+                                        ),
+                                        width: 60,
+                                        height: 60,
+                                      ),
+                                      Center(
+                                        child: Container(
+                                          child: Icon(
+                                            Icons.store,
+                                            size: 38,
+                                            color: Theme.of(context)
+                                                .accentColor,
+                                          ),
+                                        ),
+                                      ),
+                                      if (seller.logo != null)
+                                        CachedNetworkImage(
+                                          imageUrl: seller.logo,
+                                          fit: BoxFit.cover,
+                                          width: 60,
+                                          height: 60,
+                                          placeholder: (ctx, url) => Image(
+                                              image: MemoryImage(
+                                                  kTransparentImage)),
+                                          errorWidget: (ctx, url, error) =>
+                                              Image(
+                                                  image: MemoryImage(
+                                                      kTransparentImage)),
+                                        ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                              child: Row(
-                                children: [
-                                  CircleAvatar(
-                                    backgroundImage:
-                                        NetworkImage(seller.picture),
-                                    radius: ScreenUtil().setSp(50),
+                              SizedBox(width: 0.03.wp),
+                              Container(
+                                width: 0.5.wp,
+                                child: AutoSizeText(
+                                  seller.name,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.montserrat(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 32.nsp,
                                   ),
-                                  SizedBox(width: 0.03.wp),
-                                  AutoSizeText(
-                                    seller.name,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.montserrat(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w300,
-                                      decoration: TextDecoration.underline,
-                                      fontSize: 32.nsp,
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
+                            ],
+                          ),
+                        ),
                       ),
                     );
                   },
                 ),
-              ),
+              )
             ),
           ],
         ),
