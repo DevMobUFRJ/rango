@@ -13,7 +13,7 @@ import 'package:rango/utils/string_formatters.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-class GridHorizontal extends StatelessWidget {
+class GridHorizontal extends StatefulWidget {
   final Seller seller;
   final List<Meal> currentMeals;
 
@@ -23,20 +23,25 @@ class GridHorizontal extends StatelessWidget {
   });
 
   @override
+  _GridHorizontalState createState() => _GridHorizontalState();
+}
+
+class _GridHorizontalState extends State<GridHorizontal> {
+  @override
   Widget build(BuildContext context) {
     return StaggeredGridView.countBuilder(
         scrollDirection: Axis.horizontal,
-        crossAxisCount: currentMeals.length > 6 ? 2 : 1,
+        crossAxisCount: 1,
         mainAxisSpacing: 0,
         crossAxisSpacing: 0,
         padding: EdgeInsets.all(0),
-        itemCount: currentMeals.length,
+        itemCount: widget.currentMeals.length,
         itemBuilder: (ctx, index) {
-          Meal meal = currentMeals[index];
+          Meal meal = widget.currentMeals[index];
           return GestureDetector(
             onTap: () => pushNewScreen(context,
                 screen: ManageMeal(
-                  seller,
+                  widget.seller,
                   meal: meal,
                 ),
                 withNavBar: false,
@@ -49,63 +54,69 @@ class GridHorizontal extends StatelessWidget {
               child: Column(
                 children: <Widget>[
                   Expanded(
-                    flex: currentMeals.length > 6 ? 3 : 4,
+                    flex: 4,
                     child: Stack(
                       children: [
-                        Shimmer.fromColors(
-                          baseColor: Color.fromRGBO(255, 175, 153, 1),
-                          highlightColor: Colors.white,
-                          child: Container(
-                            color: Colors.white,
-                            child: SizedBox(
-                              height: 170.h,
-                              width: 0.5.wp,
+                        if (meal.picture != null) ...{
+                          Shimmer.fromColors(
+                            baseColor: Color.fromRGBO(255, 175, 153, 1),
+                            highlightColor: Colors.white,
+                            child: Container(
+                              color: Colors.white,
+                              child: SizedBox(
+                                height: 190.h,
+                                width: 0.6.wp,
+                              ),
                             ),
                           ),
-                        ),
-                        Center(
-                          child: Icon(
-                            Icons.local_dining,
-                            size: 55,
-                            color: Colors.white,
+                          Center(
+                            child: Icon(
+                              Icons.local_dining,
+                              size: 55,
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                        Container(
-                          height: 170.h,
-                          width: 0.6.wp,
-                          child: meal.picture != null
-                              ? CachedNetworkImage(
-                                  placeholder: (context, url) => Image(
-                                      image: MemoryImage(kTransparentImage)),
-                                  errorWidget: (context, url, error) => Image(
-                                      image: MemoryImage(kTransparentImage)),
-                                  imageUrl: meal.picture,
-                                  fit: BoxFit.cover,
-                                )
-                              : Stack(
-                                  children: [
-                                    Container(
-                                      color: Color.fromRGBO(255, 175, 153, 1),
-                                      child: SizedBox(
-                                        height: 170.h,
-                                        width: 0.5.wp,
-                                      ),
-                                    ),
-                                    Center(
-                                      child: Icon(
-                                        Icons.local_dining,
-                                        size: 55,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ],
+                          Container(
+                            height: 190.h,
+                            width: 0.6.wp,
+                            child: CachedNetworkImage(
+                              placeholder: (context, url) =>
+                                  Image(image: MemoryImage(kTransparentImage)),
+                              errorWidget: (context, url, error) =>
+                                  Image(image: MemoryImage(kTransparentImage)),
+                              imageUrl: meal.picture,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        } else ...{
+                          Container(
+                            height: 190.h,
+                            width: 0.6.wp,
+                            child: Stack(
+                              children: [
+                                Container(
+                                  color: Theme.of(context).accentColor,
+                                  child: SizedBox(
+                                    height: 190.h,
+                                    width: 0.6.wp,
+                                  ),
                                 ),
-                        ),
+                                Center(
+                                  child: Icon(
+                                    Icons.local_dining,
+                                    size: 55,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        }
                       ],
                     ),
                   ),
                   Expanded(
-                    flex: 3,
+                    flex: 2,
                     child: Container(
                       alignment: Alignment.center,
                       padding: EdgeInsets.symmetric(vertical: 5),
@@ -121,10 +132,10 @@ class GridHorizontal extends StatelessWidget {
                                 meal.name,
                                 textAlign: TextAlign.center,
                                 maxLines: 1,
+                                minFontSize: 16,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.montserrat(
-                                  fontSize:
-                                      currentMeals.length > 6 ? 25.nsp : 30.nsp,
+                                  fontSize: 18,
                                 ),
                               ),
                             ),
@@ -136,8 +147,7 @@ class GridHorizontal extends StatelessWidget {
                               child: Text(
                                 intToCurrency(meal.price),
                                 style: GoogleFonts.montserrat(
-                                  fontSize:
-                                      currentMeals.length > 6 ? 25.nsp : 28.nsp,
+                                  fontSize: 32.nsp,
                                 ),
                               ),
                             ),
@@ -151,8 +161,6 @@ class GridHorizontal extends StatelessWidget {
             ),
           );
         },
-        staggeredTileBuilder: (index) => currentMeals.length > 6
-            ? StaggeredTile.count(1, 1.2)
-            : StaggeredTile.count(1, 1.2));
+        staggeredTileBuilder: (index) => StaggeredTile.count(1, 1.2));
   }
 }

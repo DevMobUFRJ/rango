@@ -19,6 +19,7 @@ class CustomTextFormField extends StatefulWidget {
   final num numberOfLines;
   final int maxLength;
   final TextCapitalization textCapitalization;
+  final String hintText;
 
   CustomTextFormField({
     @required this.labelText,
@@ -35,6 +36,7 @@ class CustomTextFormField extends StatefulWidget {
     this.onChanged,
     this.numberOfLines = 1,
     this.maxLength,
+    this.hintText,
     this.textCapitalization = TextCapitalization.none,
   });
 
@@ -87,6 +89,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                   ? false
                   : !_showPassword,
               decoration: InputDecoration(
+                hintText: widget.hintText,
                 counterText: "",
                 errorStyle: TextStyle(fontSize: 22.nsp),
                 border: InputBorder.none,

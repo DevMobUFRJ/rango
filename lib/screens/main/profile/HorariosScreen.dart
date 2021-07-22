@@ -19,6 +19,7 @@ class HorariosScreen extends StatefulWidget {
 
 class _HorariosScreenState extends State<HorariosScreen> {
   Shift _horariosFuncionamento;
+  bool _loading = false;
   final _formKey = GlobalKey<FormState>();
 
   int _handleSelectedSchedule(TimeOfDay initialHorario) {
@@ -41,8 +42,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
           wednesday: Weekday(open: false),
           thursday: Weekday(open: false),
           friday: Weekday(open: false),
-          saturday: Weekday(open: false)
-      );
+          saturday: Weekday(open: false));
     }
     super.initState();
   }
@@ -176,57 +176,75 @@ class _HorariosScreenState extends State<HorariosScreen> {
                 child: Container(
                   width: 0.3.wp,
                   child: ElevatedButton(
-                    onPressed: () async {
-                      try {
-                        for (var weekday in _horariosFuncionamento.toJson().values) {
-                          if (weekday['open'] == true && (weekday['openingTime'] == null || weekday['closingTime'] == null)) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                duration: Duration(seconds: 2),
-                                backgroundColor: Theme.of(context).errorColor,
-                                content: Text(
-                                  'Complete os horários de funcionamento',
-                                  textAlign: TextAlign.center,
+                    onPressed: _loading
+                        ? null
+                        : () async {
+                            setState(() => _loading = true);
+                            try {
+                              for (var weekday
+                                  in _horariosFuncionamento.toJson().values) {
+                                if (weekday['open'] == true &&
+                                    (weekday['openingTime'] == null ||
+                                        weekday['closingTime'] == null)) {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    duration: Duration(seconds: 2),
+                                    backgroundColor:
+                                        Theme.of(context).errorColor,
+                                    content: Text(
+                                      'Complete os horários de funcionamento',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ));
+                                  setState(() => _loading = false);
+                                  return;
+                                }
+                              }
+                              Repository.instance.updateSeller(
+                                  widget.usuario.id,
+                                  {'shift': _horariosFuncionamento.toJson()});
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  duration: Duration(seconds: 2),
+                                  backgroundColor:
+                                      Theme.of(context).accentColor,
+                                  content: Text(
+                                    'Horários salvos com sucesso',
+                                    textAlign: TextAlign.center,
+                                  ),
                                 ),
-                              )
-                            );
-                            return;
-                          }
-                        }
-                        Repository.instance.updateSeller(
-                            widget.usuario.id,
-                            {'shift': _horariosFuncionamento.toJson()}
-                        );
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            duration: Duration(seconds: 2),
-                            backgroundColor: Theme.of(context).accentColor,
-                            content: Text(
-                              'Horários salvos com sucesso',
-                              textAlign: TextAlign.center,
+                              );
+                              setState(() => _loading = false);
+                            } catch (e) {
+                              setState(() => _loading = false);
+                              print(e);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  duration: Duration(seconds: 2),
+                                  backgroundColor: Theme.of(context).errorColor,
+                                  content: Text(
+                                    'Erro ao salvar horários',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                    child: _loading
+                        ? SizedBox(
+                            width: 15,
+                            height: 15,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 3,
+                            ),
+                          )
+                        : AutoSizeText(
+                            'Salvar',
+                            style: GoogleFonts.montserrat(
+                              textStyle: TextStyle(fontSize: 36.nsp),
                             ),
                           ),
-                        );
-                      } catch (e) {
-                        print(e);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            duration: Duration(seconds: 2),
-                            backgroundColor: Theme.of(context).errorColor,
-                            content: Text(
-                              'Erro ao salvar horários',
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                    child: AutoSizeText(
-                      'Salvar',
-                      style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(fontSize: 36.nsp),
-                      ),
-                    ),
                   ),
                 ),
               ),

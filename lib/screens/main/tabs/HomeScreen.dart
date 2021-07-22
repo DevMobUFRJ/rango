@@ -5,8 +5,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:provider/provider.dart';
 import 'package:rango/models/order.dart';
 import 'package:rango/models/seller.dart';
+import 'package:rango/resources/rangeChangeNotifier.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/main/home/OrdersHistory.dart';
 import 'package:rango/widgets/home/OrderContainer.dart';
@@ -23,7 +25,20 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool _showFillPerfil = true;
   final String assetName = 'assets/imgs/curva_principal.svg';
+
+  @override
+  initState() {
+    _checkFillPerfil();
+    super.initState();
+  }
+
+  Future<void> _checkFillPerfil() async {
+    bool fillPerfil = await Repository.instance.showFillPerfil();
+    setState(() => _showFillPerfil = fillPerfil);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,7 +112,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 return Column(
                   children: [
                     _buildHeader(assetName, closedOrdersSnapshot.data.docs),
-                    if (!widget.usuario.active || !widget.usuario.canReservate) ...{
+                    if (_showFillPerfil) _buildFillPerfil(),
+                    if (!widget.usuario.active ||
+                        !widget.usuario.canReservate) ...{
                       Container(
                         height: 0.6.hp - 56,
                         margin: EdgeInsets.symmetric(horizontal: 10),
@@ -145,19 +162,23 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       )
-                    } else if (openOrdersSnapshot.data.docs.isEmpty && closedOrdersSnapshot.data.docs.isEmpty)...{
-                      Container(
-                        alignment: Alignment.center,
-                        margin: EdgeInsets.symmetric(
-                          vertical: 0.2.hp,
-                          horizontal: 0.05.wp,
-                        ),
-                        child: AutoSizeText(
-                          'Você ainda não recebeu pedidos hoje!\n\nAproveite para gerenciar suas quentinhas e o cardápio de hoje na aba de quentinhas ou configurar horário de funcionamento, localização e outras opções na aba de perfil!',
-                          style: GoogleFonts.montserrat(
-                            color: Theme.of(context).accentColor,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 36.nsp,
+                    } else if (openOrdersSnapshot.data.docs.isEmpty &&
+                        closedOrdersSnapshot.data.docs.isEmpty) ...{
+                      SizedBox(height: 20),
+                      Flexible(
+                        flex: 1,
+                        child: Container(
+                          alignment: Alignment.center,
+                          margin: EdgeInsets.symmetric(
+                            horizontal: 0.05.wp,
+                          ),
+                          child: AutoSizeText(
+                            'Você ainda não recebeu pedidos hoje!\n\nAproveite para gerenciar suas quentinhas e o cardápio de hoje na aba de quentinhas ou configurar horário de funcionamento, localização e outras opções na aba de perfil!',
+                            style: GoogleFonts.montserrat(
+                              color: Theme.of(context).accentColor,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 36.nsp,
+                            ),
                           ),
                         ),
                       )
@@ -224,6 +245,102 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildFillPerfil() {
+    Seller user = widget.usuario;
+    String fillPerfilText = '';
+    if (user.notificationSettings == null)
+      fillPerfilText += '\nDefina as configurações de notificação;';
+    if (user.logo == null) fillPerfilText += '\nEscolha uma foto de perfil;';
+    if (user.paymentMethods == null)
+      fillPerfilText += '\nDiga as formas de pagamento aceitas;';
+    if (user.location == null)
+      fillPerfilText +=
+          '\nDefina uma localização para os clientes acharem você no mapa;';
+    if (user.shift == null)
+      fillPerfilText += '\nConfigure o horário de funcionamento;';
+    if (user.description == null)
+      fillPerfilText += '\nAdicione uma descrição ao seu perfil;';
+    if (fillPerfilText.length == 0) {
+      return SizedBox();
+    } else {
+      return FutureBuilder(
+        future: Repository.instance.showFillPerfil(),
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting ||
+              snapshot.hasError) return SizedBox();
+          if (snapshot.hasData && snapshot.data == false) return SizedBox();
+          return Container(
+            margin: EdgeInsets.symmetric(horizontal: 10),
+            child: Stack(
+              alignment: Alignment.topRight,
+              children: [
+                GestureDetector(
+                  onTap: () => widget.controller.jumpToTab(2),
+                  child: Container(
+                    margin:
+                        EdgeInsets.symmetric(horizontal: 0.01.hp, vertical: 10),
+                    child: Material(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      color: Theme.of(context).accentColor,
+                      elevation: 5,
+                      child: Container(
+                        padding: EdgeInsets.all(12),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Você ainda não completou seu perfil:$fillPerfilText',
+                              style: GoogleFonts.montserrat(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 28.nsp,
+                              ),
+                            ),
+                            SizedBox(height: 5),
+                            AutoSizeText(
+                              'Ir para o perfil',
+                              style: GoogleFonts.montserrat(
+                                decoration: TextDecoration.underline,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 28.nsp,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Repository.instance.dontShowFillPerfill();
+                    setState(() => _showFillPerfil = false);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: Colors.red[400],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Icon(
+                        Icons.close,
+                        size: 15,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
   }
 
   Widget _buildHeader(String assetName, List<DocumentSnapshot> closedOrders) {

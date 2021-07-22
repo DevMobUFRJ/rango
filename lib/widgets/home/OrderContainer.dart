@@ -178,7 +178,9 @@ class _OrderContainerState extends State<OrderContainer>
                                               .showSnackBar(
                                             SnackBar(
                                               content: Text(
-                                                e.toString(),
+                                                e.toString().contains('possui')
+                                                    ? e.toString()
+                                                    : "Ocorreu um erro",
                                                 textAlign: TextAlign.center,
                                               ),
                                               backgroundColor:
@@ -319,7 +321,6 @@ class _OrderContainerState extends State<OrderContainer>
   }
 
   void _showOrderUpdateNotification(String update) async {
-    print(FirebaseAuth.instance.currentUser.displayName);
     if (_client.deviceToken == null ||
         _client.clientNotificationSettings == null ||
         _client.clientNotificationSettings.reservations == false) {

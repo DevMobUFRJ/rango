@@ -9,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/widgets/pickers/MealImagePicker.dart';
+import 'package:rango/utils/showSnackbar.dart';
 
 class ManageMeal extends StatefulWidget {
   final Meal meal;
@@ -26,6 +27,13 @@ class _ManageMealState extends State<ManageMeal> {
   void _pickedImage(File image) => setState(() => _mealImageFile = image);
 
   bool _loading = false;
+  bool _loadingDelete = false;
+
+  FocusNode _nameFocusNode = FocusNode();
+  FocusNode _descriptionFocusNode = FocusNode();
+  FocusNode _valueFocusNode = FocusNode();
+  FocusNode _quantityFocusNode = FocusNode();
+
   TextEditingController _mealName = TextEditingController();
   MoneyMaskedTextController _mealValue =
       MoneyMaskedTextController(leftSymbol: 'R\$ ');
@@ -33,7 +41,8 @@ class _ManageMealState extends State<ManageMeal> {
   TextEditingController _mealQuantity = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
+  initState() {
+    super.initState();
     if (widget.meal != null) {
       _mealName = TextEditingController(text: widget.meal.name);
       _mealValue = MoneyMaskedTextController(
@@ -44,6 +53,10 @@ class _ManageMealState extends State<ManageMeal> {
       _mealQuantity =
           TextEditingController(text: widget.meal.quantity.toString());
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
@@ -76,22 +89,27 @@ class _ManageMealState extends State<ManageMeal> {
                     ),
                     constraints: BoxConstraints(maxWidth: 0.8.wp),
                     child: TextFormField(
+                      focusNode: _nameFocusNode,
                       textCapitalization: TextCapitalization.sentences,
                       maxLines: 5,
                       minLines: 1,
                       controller: _mealName,
+                      maxLength: 50,
                       style: GoogleFonts.montserrat(
                         fontSize: 38.nsp,
                         fontWeight: FontWeight.w500,
                         color: Theme.of(context).accentColor,
                       ),
                       cursorColor: Theme.of(context).accentColor,
+                      textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.text,
                       decoration: InputDecoration(
+                        counterText: "",
                         hintText: 'Nome do prato',
                         hintStyle: GoogleFonts.montserrat(
                           fontSize: 38.nsp,
                           fontWeight: FontWeight.w500,
-                          color: Theme.of(context).accentColor,
+                          color: Color.fromRGBO(255, 175, 153, 1),
                         ),
                         isDense: true,
                         enabledBorder: UnderlineInputBorder(
@@ -109,6 +127,8 @@ class _ManageMealState extends State<ManageMeal> {
                           vertical: 0,
                         ),
                       ),
+                      onFieldSubmitted: (_) => FocusScope.of(context)
+                          .requestFocus(_descriptionFocusNode),
                     ),
                   ),
                   SizedBox(
@@ -124,27 +144,37 @@ class _ManageMealState extends State<ManageMeal> {
                       elevation: 5,
                       child: TextFormField(
                         textCapitalization: TextCapitalization.sentences,
+                        focusNode: _descriptionFocusNode,
                         controller: _mealDescription,
                         style: GoogleFonts.montserrat(
                           fontSize: 35.nsp,
                           fontWeight: FontWeight.w500,
                           color: Theme.of(context).accentColor,
                         ),
+                        keyboardType: TextInputType.text,
                         maxLines: 5,
                         minLines: 1,
+                        textInputAction: TextInputAction.next,
                         decoration: InputDecoration(
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
                           hintText: 'Descrição',
+                          counterText: "",
                           hintStyle: GoogleFonts.montserrat(
                             fontSize: 38.nsp,
                             color: Color(0xFFFC3C3C3),
                           ),
                           isDense: true,
-                          border: InputBorder.none,
                           contentPadding: EdgeInsets.symmetric(
                             horizontal: 15,
                             vertical: 5,
                           ),
                         ),
+                        onFieldSubmitted: (_) => FocusScope.of(context)
+                            .requestFocus(_valueFocusNode),
                       ),
                     ),
                   ),
@@ -165,6 +195,7 @@ class _ManageMealState extends State<ManageMeal> {
                               ),
                               elevation: 5,
                               child: TextFormField(
+                                focusNode: _valueFocusNode,
                                 textAlign: TextAlign.center,
                                 controller: _mealValue,
                                 style: GoogleFonts.montserrat(
@@ -172,6 +203,7 @@ class _ManageMealState extends State<ManageMeal> {
                                   fontWeight: FontWeight.w500,
                                   color: Theme.of(context).accentColor,
                                 ),
+                                textInputAction: TextInputAction.next,
                                 keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                   hintText: 'Valor',
@@ -187,6 +219,8 @@ class _ManageMealState extends State<ManageMeal> {
                                     vertical: 5,
                                   ),
                                 ),
+                                onFieldSubmitted: (_) => FocusScope.of(context)
+                                    .requestFocus(_quantityFocusNode),
                               ),
                             ),
                           ),
@@ -202,6 +236,7 @@ class _ManageMealState extends State<ManageMeal> {
                                 ),
                                 elevation: 5,
                                 child: TextFormField(
+                                  focusNode: _quantityFocusNode,
                                   controller: _mealQuantity,
                                   keyboardType: TextInputType.number,
                                   textAlign: TextAlign.center,
@@ -224,6 +259,7 @@ class _ManageMealState extends State<ManageMeal> {
                                       vertical: 5,
                                     ),
                                   ),
+                                  onFieldSubmitted: (_) => _upsertMeal(context),
                                 ),
                               ),
                             ),
@@ -243,7 +279,9 @@ class _ManageMealState extends State<ManageMeal> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                       ),
-                      onPressed: _loading ? null : () => _upsertMeal(context),
+                      onPressed: _loading || _loadingDelete
+                          ? null
+                          : () => _upsertMeal(context),
                       child: _loading
                           ? SizedBox(
                               width: 20,
@@ -274,17 +312,29 @@ class _ManageMealState extends State<ManageMeal> {
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        onPressed: _loading
+                        onPressed: _loading || _loadingDelete
                             ? null
                             : () => _showDeleteDialog(
-                                context, widget.seller.id, widget.meal.id),
-                        child: AutoSizeText(
-                          "Excluir",
-                          style: GoogleFonts.montserrat(
-                            fontSize: 34.nsp,
-                            color: Colors.white,
-                          ),
-                        ),
+                                  context,
+                                  widget.seller.id,
+                                  widget.meal.id,
+                                ),
+                        child: _loadingDelete
+                            ? SizedBox(
+                                width: 15,
+                                height: 15,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 3,
+                                ),
+                              )
+                            : AutoSizeText(
+                                "Excluir",
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 34.nsp,
+                                  color: Colors.white,
+                                ),
+                              ),
                       ),
                     ),
                 ],
@@ -304,7 +354,7 @@ class _ManageMealState extends State<ManageMeal> {
       if (_mealName.text != '') {
         dataToUpdate['name'] = _mealName.text;
       } else {
-        _showSnackbar(context, true, 'Você deve inserir o nome do prato');
+        showSnackbar(context, true, 'Você deve inserir o nome do prato');
         setState(() => _loading = false);
         return;
       }
@@ -312,7 +362,7 @@ class _ManageMealState extends State<ManageMeal> {
       if (_mealDescription.text != '') {
         dataToUpdate['description'] = _mealDescription.text;
       } else {
-        _showSnackbar(context, true, 'Você deve inserir a descrição do prato');
+        showSnackbar(context, true, 'Você deve inserir a descrição do prato');
         setState(() => _loading = false);
         return;
       }
@@ -320,7 +370,7 @@ class _ManageMealState extends State<ManageMeal> {
       if (_mealValue != null && _mealValue.numberValue != 0) {
         dataToUpdate['price'] = (_mealValue.numberValue * 100).round();
       } else {
-        _showSnackbar(context, true, 'Você deve inserir o preço do prato');
+        showSnackbar(context, true, 'Você deve inserir o preço do prato');
         setState(() => _loading = false);
         return;
       }
@@ -329,7 +379,7 @@ class _ManageMealState extends State<ManageMeal> {
       if (_mealQuantity != null && _mealQuantity.text != '') {
         dataToUpdate['quantity'] = int.parse(_mealQuantity.text);
       } else if (widget.seller.canReservate) {
-        _showSnackbar(context, true, 'Você deve inserir a quantidade');
+        showSnackbar(context, true, 'Você deve inserir a quantidade');
         setState(() => _loading = false);
         return;
       }
@@ -352,8 +402,8 @@ class _ManageMealState extends State<ManageMeal> {
         await Repository.instance
             .updateMeal(widget.seller.id, widget.meal.id, dataToUpdate);
       } else {
-        String createdMealId =
-            await Repository.instance.createMeal(widget.seller.id, dataToUpdate);
+        String createdMealId = await Repository.instance
+            .createMeal(widget.seller.id, dataToUpdate);
 
         if (_mealImageFile != null) {
           final ref = FirebaseStorage.instance
@@ -369,29 +419,14 @@ class _ManageMealState extends State<ManageMeal> {
       }
 
       FocusScope.of(context).unfocus();
-      _showSnackbar(context, false, 'Quentinha salva com sucesso');
+      showSnackbar(context, false, 'Quentinha salva com sucesso');
       setState(() => _loading = false);
       Navigator.of(context).pop();
     } catch (e) {
       setState(() => _loading = false);
-      _showSnackbar(context, true, 'Erro ao adicionar quentinha');
+      showSnackbar(context, true, 'Erro ao adicionar quentinha');
       print(e);
     }
-  }
-
-  void _showSnackbar(context, bool error, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        duration: Duration(seconds: 2),
-        backgroundColor: error == true
-            ? Theme.of(context).errorColor
-            : Theme.of(context).accentColor,
-        content: Text(
-          message,
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
   }
 
   void _showDeleteDialog(context, sellerId, mealId) async {
@@ -403,10 +438,9 @@ class _ManageMealState extends State<ManageMeal> {
           backgroundColor: Color(0xFFF9B152),
           actionsPadding: EdgeInsets.all(10),
           contentPadding: EdgeInsets.only(
-            top: 24,
+            top: 12,
             left: 24,
             right: 24,
-            bottom: 10,
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
@@ -419,20 +453,24 @@ class _ManageMealState extends State<ManageMeal> {
               fontSize: 32.ssp,
             ),
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Essa quentinha será excluída para sempre.',
-                style: GoogleFonts.montserrat(
-                  color: Colors.white,
-                  fontSize: 28.nsp,
+          content: _loadingDelete
+              ? SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                  ),
+                )
+              : Text(
+                  'Deseja realmente excluir essa quentinha? Ela será excluída para sempre.',
+                  style: GoogleFonts.montserrat(
+                    color: Colors.white,
+                    fontSize: 32.nsp,
+                  ),
                 ),
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
+          actions: _loadingDelete
+              ? null
+              : [
                   TextButton(
                     onPressed: () {
                       Navigator.of(ctx).pop();
@@ -448,16 +486,17 @@ class _ManageMealState extends State<ManageMeal> {
                   ),
                   TextButton(
                     onPressed: () async {
+                      setState(() => _loadingDelete = true);
                       try {
                         await Repository.instance.deleteMeal(sellerId, mealId);
-                        FocusScope.of(context).unfocus();
+                        FocusScope.of(ctx).unfocus();
+                        setState(() => _loadingDelete = false);
+                        showSnackbar(
+                            ctx, false, 'Quentinha excluída com sucesso');
                         Navigator.of(ctx).pop();
-                        Navigator.of(context).pop();
-                        _showSnackbar(
-                            context, false, 'Quentinha excluída com sucesso');
                       } catch (e) {
-                        Navigator.of(context).pop();
-                        _showSnackbar(context, true, e.toString());
+                        setState(() => _loadingDelete = false);
+                        showSnackbar(ctx, true, e.toString());
                       }
                     },
                     child: Text(
@@ -469,11 +508,8 @@ class _ManageMealState extends State<ManageMeal> {
                         fontSize: 34.nsp,
                       ),
                     ),
-                  ),
+                  )
                 ],
-              )
-            ],
-          ),
         );
       },
     );

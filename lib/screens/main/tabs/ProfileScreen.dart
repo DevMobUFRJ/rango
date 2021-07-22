@@ -6,6 +6,7 @@ import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/order.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
+import 'package:rango/screens/main/profile/EditAccountScreen.dart';
 import 'package:rango/screens/main/profile/EditProfileScreen.dart';
 import 'package:rango/screens/main/profile/HorariosScreen.dart';
 import 'package:rango/screens/main/profile/OrderHistory.dart';
@@ -18,8 +19,9 @@ import 'package:rango/widgets/user/UserPicture.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Seller usuario;
+  final PersistentTabController controller;
 
-  ProfileScreen(this.usuario);
+  ProfileScreen(this.usuario, this.controller);
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -40,18 +42,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
       backgroundColor: Theme.of(context).backgroundColor,
-      body: Container(
-        height: 1.hp - 56,
+      body: SingleChildScrollView(
+          child: Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Flexible(
-              flex: 5,
+              flex: 0,
               child: UserPicture(picture: widget.usuario.logo),
             ),
             Flexible(
-              flex: 1,
+              flex: 0,
               child: Container(
                 constraints: BoxConstraints(maxWidth: 0.6.wp),
                 margin: EdgeInsets.symmetric(vertical: 0.01.hp),
@@ -68,7 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             Expanded(
-              flex: 1,
+              flex: 0,
               child: Container(
                 margin: EdgeInsets.symmetric(vertical: 0.01.hp),
                 width: 0.48.wp,
@@ -81,7 +83,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         screen: EditProfileScreen(widget.usuario),
                         withNavBar: false,
                         pageTransitionAnimation:
-                        PageTransitionAnimation.cupertino,
+                            PageTransitionAnimation.cupertino,
                       ),
                       child: Icon(
                         Icons.edit,
@@ -92,10 +94,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     GestureDetector(
                       onTap: () => pushNewScreen(
                         context,
-                        screen: ProfileSettings(widget.usuario),
+                        screen:
+                            ProfileSettings(widget.usuario, widget.controller),
                         withNavBar: false,
                         pageTransitionAnimation:
-                        PageTransitionAnimation.cupertino,
+                            PageTransitionAnimation.cupertino,
                       ),
                       child: Icon(
                         Icons.settings,
@@ -104,11 +107,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     GestureDetector(
+                      onTap: () => pushNewScreen(
+                        context,
+                        screen: EditAccountScreen(),
+                        withNavBar: false,
+                        pageTransitionAnimation:
+                            PageTransitionAnimation.cupertino,
+                      ),
+                      child: Icon(
+                        Icons.manage_accounts,
+                        color: yellow,
+                        size: ScreenUtil().setSp(48),
+                      ),
+                    ),
+                    GestureDetector(
                       onTap: () => _showCloseStoreDialog(widget.usuario),
                       child: Icon(
-                        widget.usuario.active
-                            ? Icons.lock_open
-                            : Icons.lock,
+                        widget.usuario.active ? Icons.lock_open : Icons.lock,
                         color: widget.usuario.active ? yellow : Colors.red[300],
                         size: ScreenUtil().setSp(48),
                       ),
@@ -118,7 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             Flexible(
-              flex: 3,
+              flex: 0,
               child: Container(
                 margin: EdgeInsets.symmetric(vertical: 10),
                 child: Row(
@@ -139,21 +154,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             onPressed: () => pushNewScreen(
                               context,
-                              screen: SetLocationScreen(),
+                              screen: SetLocationScreen(widget.usuario),
                               withNavBar: false,
                             ),
                           ),
                           decoration: BoxDecoration(
-                            borderRadius:
-                            BorderRadius.all(Radius.circular(60)),
+                            borderRadius: BorderRadius.all(Radius.circular(60)),
                             color: yellow,
                           ),
                         ),
-                        AutoSizeText(
-                          'Localização',
-                          style: GoogleFonts.montserrat(
-                            color: yellow,
-                            fontWeight: FontWeight.w500,
+                        Container(
+                          child: AutoSizeText(
+                            'Localização da loja',
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.montserrat(
+                              color: yellow,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ],
@@ -171,11 +188,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Icons.schedule,
                               color: Colors.white,
                             ),
-                            onPressed: () => pushNewScreen(
-                              context,
-                              screen: HorariosScreen(widget.usuario),
-                              withNavBar: false
-                            ),
+                            onPressed: () => pushNewScreen(context,
+                                screen: HorariosScreen(widget.usuario),
+                                withNavBar: false),
                           ),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.all(
@@ -198,9 +213,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             Flexible(
-              flex: 3,
+              flex: 0,
               child: Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
+                margin: EdgeInsets.only(top: 10, bottom: 5),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
@@ -221,12 +236,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               context,
                               screen: OrderHistoryScreen(),
                               withNavBar: false,
-                              pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                              pageTransitionAnimation:
+                                  PageTransitionAnimation.cupertino,
                             ),
                           ),
                           decoration: BoxDecoration(
-                            borderRadius:
-                            BorderRadius.all(Radius.circular(60)),
+                            borderRadius: BorderRadius.all(Radius.circular(60)),
                             color: yellow,
                           ),
                         ),
@@ -246,85 +261,75 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _buildReports(widget.usuario),
           ],
         ),
-      ),
+      )),
     );
   }
 
   Widget _buildReports(Seller seller) {
-    return Expanded(
-      flex: 5,
-      child: Container(
-          width: 0.8.wp,
-          child: StreamBuilder(
-            stream: Repository.instance.getLastWeekOrders(seller.id),
-            builder: (context, AsyncSnapshot<QuerySnapshot<Order>> ordersSnapshot) {
-              if (!ordersSnapshot.hasData || ordersSnapshot.hasError) {
-                return SizedBox();
-              }
+    return Container(
+      margin: EdgeInsets.only(top: 10),
+      width: 0.8.wp,
+      child: StreamBuilder(
+        stream: Repository.instance.getLastWeekOrders(seller.id),
+        builder: (context, AsyncSnapshot<QuerySnapshot<Order>> ordersSnapshot) {
+          if (!ordersSnapshot.hasData || ordersSnapshot.hasError) {
+            return SizedBox();
+          }
 
-              var numberOfSales = ordersSnapshot.data.docs
-                  .map((e) => e.data().quantity)
-                  .fold(0, (p, c) => p + c);
-              var numberOfClients = ordersSnapshot.data.docs
-                  .map((e) => e.data().clientId)
-                  .toSet()
-                  .length;
-              var total = ordersSnapshot.data.docs
-                  .map((e) => e.data().quantity * e.data().price)
-                  .fold(0, (p, c) => p + c);
+          var numberOfSales = ordersSnapshot.data.docs
+              .map((e) => e.data().quantity)
+              .fold(0, (p, c) => p + c);
+          var numberOfClients = ordersSnapshot.data.docs
+              .map((e) => e.data().clientId)
+              .toSet()
+              .length;
+          var total = ordersSnapshot.data.docs
+              .map((e) => e.data().quantity * e.data().price)
+              .fold(0, (p, c) => p + c);
 
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Flexible(
-                    flex: 1,
+          return Column(
+            children: [
+              AutoSizeText(
+                "Nos últimos 7 dias:",
+                maxLines: 1,
+                style: GoogleFonts.montserrat(
+                  fontSize: 40.nsp,
+                  color: Theme.of(context).accentColor,
+                ),
+              ),
+              SizedBox(height: 5),
+              AutoSizeText(
+                numberOfSales > 0
+                    ? 'Você vendeu $numberOfSales quentinha${numberOfSales > 1 ? 's' : ''}'
+                        ' para $numberOfClients cliente${numberOfClients > 1 ? 's' : ''}'
+                        ' e recebeu um total de ${intToCurrency(total)}.'
+                    : 'Você ainda não vendeu sua primeira quentinha.',
+                style: GoogleFonts.montserrat(
+                  fontSize: 30.nsp,
+                  color: Theme.of(context).accentColor,
+                ),
+              ),
+              SizedBox(height: 10),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  width: 0.35.wp,
+                  child: ElevatedButton(
                     child: AutoSizeText(
-                      "Nos últimos 7 dias:",
-                      maxLines: 1,
-                      style: GoogleFonts.montserrat(
-                        fontSize: 40.nsp,
-                        color: Theme.of(context).accentColor,
-                      ),
+                      "Ver mais",
+                      style: TextStyle(fontSize: 36.nsp),
+                    ),
+                    onPressed: () => pushNewScreen(
+                      context,
+                      screen: ReportsScreen(widget.usuario),
+                      withNavBar: false,
                     ),
                   ),
-                  SizedBox(height: 0.01.hp),
-                  Flexible(
-                    flex: 1,
-                    child: AutoSizeText(
-                      'Você vendeu $numberOfSales quentinha${numberOfSales > 1? 's': ''}'
-                          ' para $numberOfClients cliente${numberOfClients > 1? 's': ''}'
-                          ' e recebeu um total de ${intToCurrency(total)}.',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 30.nsp,
-                        color: Theme.of(context).accentColor,
-                      ),
-                    ),
-                  ),
-                  Flexible(
-                    flex: 1,
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Container(
-                        width: 0.35.wp,
-                        child: ElevatedButton(
-                          child: AutoSizeText(
-                            "Ver mais",
-                            style: TextStyle(fontSize: 36.nsp),
-                          ),
-                          onPressed: () => pushNewScreen(
-                            context,
-                            screen: ReportsScreen(widget.usuario),
-                            withNavBar: false,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
-          )
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

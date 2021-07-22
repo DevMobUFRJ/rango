@@ -107,7 +107,7 @@ class _AuthFormState extends State<AuthForm> {
                       children: <Widget>[
                         if (!widget._isLogin) UserImagePicker(_pickedImage),
                         CustomTextFormField(
-                          labelText: 'Email:',
+                          labelText: 'Email',
                           key: ValueKey('email'),
                           controller: _emailController,
                           onChanged: (value) => {
@@ -118,7 +118,7 @@ class _AuthFormState extends State<AuthForm> {
                           validator: (value) {
                             if (value.isEmpty || !value.contains('@')) {
                               setState(() {
-                                _emailErrorMessage = 'Coloque um email válido';
+                                _emailErrorMessage = 'Insira um email válido';
                               });
                             } else {
                               setState(() {
@@ -163,7 +163,7 @@ class _AuthFormState extends State<AuthForm> {
                             textInputAction: TextInputAction.next,
                           ),
                         CustomTextFormField(
-                          labelText: 'Senha:',
+                          labelText: 'Senha',
                           key: ValueKey('password'),
                           controller: _pass,
                           focusNode: _focusNodePass,
@@ -195,7 +195,7 @@ class _AuthFormState extends State<AuthForm> {
                         ),
                         if (!widget._isLogin)
                           CustomTextFormField(
-                            labelText: 'Confirmar Senha:',
+                            labelText: 'Confirmar Senha',
                             controller: _confirmPass,
                             onChanged: (value) =>
                                 setState(() => _confirmPassword = value),
