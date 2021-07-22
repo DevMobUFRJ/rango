@@ -2,6 +2,9 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:rango/resources/rangeChangeNotifier.dart';
+import 'package:rango/resources/repository.dart';
 import 'package:rango/widgets/auth/CustomTextFormField.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -128,9 +131,14 @@ class ModalFilterState extends State<ModalFilter> {
                 ),
               ),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   print("filtrar");
                   print(_buscaQuentinha == null);
+                  if (raio != widget.range) {
+                    await Repository.instance.setSellerRange(raio.toDouble());
+                    Provider.of<RangeChangeNotifier>(context, listen: false)
+                        .triggerRefresh();
+                  }
                   Navigator.pop(context, {
                     "vendedor": _buscaVendedor.text,
                     "quentinha": _buscaQuentinha.text,
