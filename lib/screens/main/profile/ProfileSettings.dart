@@ -16,8 +16,9 @@ import 'package:rango/widgets/settings/CustomCheckBox.dart';
 class ProfileSettings extends StatefulWidget {
   final Client user;
   final double sellerRange;
+  final PersistentTabController controller;
 
-  ProfileSettings(this.user, this.sellerRange);
+  ProfileSettings(this.user, this.sellerRange, this.controller);
 
   @override
   _ProfileSettingsState createState() => _ProfileSettingsState();
@@ -85,6 +86,8 @@ class _ProfileSettingsState extends State<ProfileSettings> {
             onPressed: () async {
               Navigator.of(ctx).pop();
               await FirebaseAuth.instance.signOut();
+              widget.controller.jumpToTab(0);
+              await Repository.instance.cleanCache();
               Navigator.of(ctx).pop();
             },
             child: Text(

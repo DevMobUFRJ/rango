@@ -96,7 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         screen: EditAccountScreen(),
                         withNavBar: false,
                         pageTransitionAnimation:
-                        PageTransitionAnimation.cupertino,
+                            PageTransitionAnimation.cupertino,
                       ),
                       child: Icon(
                         Icons.manage_accounts,
@@ -111,7 +111,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         return pushNewScreen(
                           context,
                           withNavBar: false,
-                          screen: ProfileSettings(widget.usuario, sellerRange),
+                          screen: ProfileSettings(
+                              widget.usuario, sellerRange, widget.controller),
                           pageTransitionAnimation:
                               PageTransitionAnimation.cupertino,
                         );
@@ -155,157 +156,160 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             Expanded(
-              flex: 5,
-              child: (widget.usuario.favoriteSellers == null || widget.usuario.favoriteSellers.length == 0)
-              ? Container(
-                  margin: EdgeInsets.symmetric(
-                      horizontal: 0.03.wp, vertical: 15),
-                  child: AutoSizeText(
-                    'Você ainda não marcou vendedores como favoritos.',
-                    style: GoogleFonts.montserrat(
-                      color: yellow,
-                      fontSize: 45.nsp,
-                    ),
-                  ),
-                )
-              : ListView.separated(
-                separatorBuilder: (context, index) =>
-                    SizedBox(height: 0.01.hp),
-                itemCount: widget.usuario.favoriteSellers.length,
-                physics: ClampingScrollPhysics(),
-                itemBuilder: (ctx, index) => StreamBuilder(
-                  stream:
-                  Repository.instance.getSeller(widget.usuario.favoriteSellers[index]),
-                  builder: (
-                      context,
-                      AsyncSnapshot<DocumentSnapshot<Seller>> sellerSnapshot,
-                      ) {
-                    if (sellerSnapshot.connectionState ==
-                        ConnectionState.waiting) {
-                      return Container(
-                        height: 0.3.hp,
-                        alignment: Alignment.center,
-                        child: SizedBox(
-                          height: 40,
-                          width: 40,
-                          child: CircularProgressIndicator(
-                            color: Theme.of(context).accentColor,
-                          ),
-                        ),
-                      );
-                    }
-                    if (sellerSnapshot.hasError) {
-                      return Container(
-                        height: 0.4.hp - 56,
-                        alignment: Alignment.center,
+                flex: 5,
+                child: (widget.usuario.favoriteSellers == null ||
+                        widget.usuario.favoriteSellers.length == 0)
+                    ? Container(
+                        margin: EdgeInsets.symmetric(
+                            horizontal: 0.03.wp, vertical: 15),
                         child: AutoSizeText(
-                          sellerSnapshot.error.toString(),
+                          'Você ainda não marcou vendedores como favoritos.',
                           style: GoogleFonts.montserrat(
-                              fontSize: 45.nsp,
-                              color: Theme.of(context).accentColor),
-                        ),
-                      );
-                    }
-
-                    Seller seller = sellerSnapshot.data.data();
-
-                    return Material(
-                      borderRadius: BorderRadius.circular(12),
-                      elevation: 2,
-                      child: GestureDetector(
-                        onTap: () => pushNewScreen(
-                          context,
-                          withNavBar: false,
-                          screen: SellerProfile(
-                            seller.id,
-                            seller.name,
-                            widget.controller,
+                            color: yellow,
+                            fontSize: 45.nsp,
                           ),
-                          pageTransitionAnimation:
-                          PageTransitionAnimation.cupertino,
                         ),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 0.01.hp, horizontal: 0.05.wp),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).accentColor,
-                            borderRadius: BorderRadius.circular(
-                              12,
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(
-                                  120,
+                      )
+                    : ListView.separated(
+                        separatorBuilder: (context, index) =>
+                            SizedBox(height: 0.01.hp),
+                        itemCount: widget.usuario.favoriteSellers.length,
+                        physics: ClampingScrollPhysics(),
+                        itemBuilder: (ctx, index) => StreamBuilder(
+                          stream: Repository.instance
+                              .getSeller(widget.usuario.favoriteSellers[index]),
+                          builder: (
+                            context,
+                            AsyncSnapshot<DocumentSnapshot<Seller>>
+                                sellerSnapshot,
+                          ) {
+                            if (sellerSnapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Container(
+                                height: 0.3.hp,
+                                alignment: Alignment.center,
+                                child: SizedBox(
+                                  height: 40,
+                                  width: 40,
+                                  child: CircularProgressIndicator(
+                                    color: Theme.of(context).accentColor,
+                                  ),
+                                ),
+                              );
+                            }
+                            if (sellerSnapshot.hasError) {
+                              return Container(
+                                height: 0.4.hp - 56,
+                                alignment: Alignment.center,
+                                child: AutoSizeText(
+                                  sellerSnapshot.error.toString(),
+                                  style: GoogleFonts.montserrat(
+                                      fontSize: 45.nsp,
+                                      color: Theme.of(context).accentColor),
+                                ),
+                              );
+                            }
+
+                            Seller seller = sellerSnapshot.data.data();
+
+                            return Material(
+                              borderRadius: BorderRadius.circular(12),
+                              elevation: 2,
+                              child: GestureDetector(
+                                onTap: () => pushNewScreen(
+                                  context,
+                                  withNavBar: false,
+                                  screen: SellerProfile(
+                                    seller.id,
+                                    seller.name,
+                                    widget.controller,
+                                  ),
+                                  pageTransitionAnimation:
+                                      PageTransitionAnimation.cupertino,
                                 ),
                                 child: Container(
-                                  width: 100.h,
-                                  height: 100.h,
-                                  child: Stack(
-                                    alignment: Alignment.center,
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 0.01.hp, horizontal: 0.05.wp),
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).accentColor,
+                                    borderRadius: BorderRadius.circular(
+                                      12,
+                                    ),
+                                  ),
+                                  child: Row(
                                     children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius.circular(
-                                            60,
-                                          ),
-                                          color: Colors.white,
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(
+                                          120,
                                         ),
-                                        width: 60,
-                                        height: 60,
-                                      ),
-                                      Center(
                                         child: Container(
-                                          child: Icon(
-                                            Icons.store,
-                                            size: 38,
-                                            color: Theme.of(context)
-                                                .accentColor,
+                                          width: 100.h,
+                                          height: 100.h,
+                                          child: Stack(
+                                            alignment: Alignment.center,
+                                            children: [
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                    60,
+                                                  ),
+                                                  color: Colors.white,
+                                                ),
+                                                width: 60,
+                                                height: 60,
+                                              ),
+                                              Center(
+                                                child: Container(
+                                                  child: Icon(
+                                                    Icons.store,
+                                                    size: 38,
+                                                    color: Theme.of(context)
+                                                        .accentColor,
+                                                  ),
+                                                ),
+                                              ),
+                                              if (seller.logo != null)
+                                                CachedNetworkImage(
+                                                  imageUrl: seller.logo,
+                                                  fit: BoxFit.cover,
+                                                  width: 60,
+                                                  height: 60,
+                                                  placeholder: (ctx, url) =>
+                                                      Image(
+                                                          image: MemoryImage(
+                                                              kTransparentImage)),
+                                                  errorWidget: (ctx, url,
+                                                          error) =>
+                                                      Image(
+                                                          image: MemoryImage(
+                                                              kTransparentImage)),
+                                                ),
+                                            ],
                                           ),
                                         ),
                                       ),
-                                      if (seller.logo != null)
-                                        CachedNetworkImage(
-                                          imageUrl: seller.logo,
-                                          fit: BoxFit.cover,
-                                          width: 60,
-                                          height: 60,
-                                          placeholder: (ctx, url) => Image(
-                                              image: MemoryImage(
-                                                  kTransparentImage)),
-                                          errorWidget: (ctx, url, error) =>
-                                              Image(
-                                                  image: MemoryImage(
-                                                      kTransparentImage)),
+                                      SizedBox(width: 0.03.wp),
+                                      Container(
+                                        width: 0.5.wp,
+                                        child: AutoSizeText(
+                                          seller.name,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.montserrat(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 32.nsp,
+                                          ),
                                         ),
+                                      ),
                                     ],
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 0.03.wp),
-                              Container(
-                                width: 0.5.wp,
-                                child: AutoSizeText(
-                                  seller.name,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.montserrat(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 32.nsp,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            );
+                          },
                         ),
-                      ),
-                    );
-                  },
-                ),
-              )
-            ),
+                      )),
           ],
         ),
       ),

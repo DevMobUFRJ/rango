@@ -56,7 +56,8 @@ class ListaHorizontal extends StatelessWidget {
                 meals[index].mealId,
                 meals[index].seller.id,
               ),
-              builder: (context, AsyncSnapshot<DocumentSnapshot<Meal>> mealSnapshot) {
+              builder: (context,
+                  AsyncSnapshot<DocumentSnapshot<Meal>> mealSnapshot) {
                 if (mealSnapshot.connectionState == ConnectionState.waiting) {
                   return Container(
                     height: 0.2.hp,
@@ -168,32 +169,32 @@ class ListaHorizontal extends StatelessWidget {
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         Flexible(
-                          flex: 0,
-                          child: Hero(
-                            tag: meal.hashCode * tagM,
-                            child: Stack(alignment: Alignment.center, children: [
-                              if (meal.picture != null) ...{
-                                _renderWithImage(),
-                                CachedNetworkImage(
-                                  color: meal.quantity > 0
-                                      ? Colors.transparent
-                                      : Colors.grey,
-                                  colorBlendMode: BlendMode.saturation,
-                                  imageUrl: meal.picture,
-                                  height: 170.h,
-                                  width: 0.45.wp,
-                                  fit: BoxFit.cover,
-                                  placeholder: (ctx, url) => Image(
-                                      image: MemoryImage(kTransparentImage)),
-                                  errorWidget: (ctx, url, error) => Image(
-                                      image: MemoryImage(kTransparentImage)),
-                                ),
-                              } else ...{
-                                _renderWithoutImage(ctx)
-                              },
-                            ]),
-                          )
-                        ),
+                            flex: 0,
+                            child: Hero(
+                              tag: meal.hashCode * tagM,
+                              child:
+                                  Stack(alignment: Alignment.center, children: [
+                                if (meal.picture != null) ...{
+                                  _renderWithImage(),
+                                  CachedNetworkImage(
+                                    color: meal.quantity > 0
+                                        ? Colors.transparent
+                                        : Colors.grey,
+                                    colorBlendMode: BlendMode.saturation,
+                                    imageUrl: meal.picture,
+                                    height: 170.h,
+                                    width: 0.45.wp,
+                                    fit: BoxFit.cover,
+                                    placeholder: (ctx, url) => Image(
+                                        image: MemoryImage(kTransparentImage)),
+                                    errorWidget: (ctx, url, error) => Image(
+                                        image: MemoryImage(kTransparentImage)),
+                                  ),
+                                } else ...{
+                                  _renderWithoutImage(ctx, meal.quantity)
+                                },
+                              ]),
+                            )),
                         Flexible(
                           flex: 1,
                           child: Container(
@@ -245,12 +246,12 @@ class ListaHorizontal extends StatelessWidget {
     );
   }
 
-  Widget _renderWithoutImage(BuildContext context) {
+  Widget _renderWithoutImage(BuildContext context, int quantity) {
     return Stack(
       alignment: Alignment.center,
       children: [
         Container(
-          color: Theme.of(context).accentColor,
+          color: quantity > 0 ? Theme.of(context).accentColor : Colors.grey,
           child: SizedBox(
             height: 170.h,
             width: 0.45.wp,
