@@ -155,19 +155,33 @@ class _SetLocationScreen extends State<SetLocationScreen> {
     );
   }
 
-  Widget _buildLoadingSpinner() {
-    return Container(
-      height: 0.5.hp,
-      alignment: Alignment.center,
-      child: SizedBox(
-        height: 50,
-        width: 50,
-        child: CircularProgressIndicator(
-          color: Theme.of(context).accentColor,
-        ),
-      ),
-    );
-  }
+Widget _buildLoadingSpinner() { 
+    return Container( 
+      height: 1.hp - 56, 
+      alignment: Alignment.center, 
+      child: Column( 
+        mainAxisAlignment: MainAxisAlignment.center, 
+        children: [ 
+          Text( 
+            'Carregando o mapa', 
+            style: GoogleFonts.montserrat( 
+              color: Theme.of(context).accentColor, 
+              fontSize: 35.nsp, 
+            ), 
+          ), 
+          SizedBox(height: 10), 
+          SizedBox( 
+            height: 30, 
+            width: 30, 
+            child: CircularProgressIndicator( 
+              color: Theme.of(context).accentColor, 
+              strokeWidth: 3, 
+            ), 
+          ), 
+        ], 
+      ), 
+    ); 
+  } 
 
   _movimentarCamera() async {
     GoogleMapController googleMapController = await _controller.future;
