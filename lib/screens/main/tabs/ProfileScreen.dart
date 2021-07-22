@@ -44,17 +44,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: Theme.of(context).backgroundColor,
       body: SingleChildScrollView(
           child: Container(
-        height: 1.hp - 56,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Flexible(
               flex: 0,
               child: UserPicture(picture: widget.usuario.logo),
             ),
             Flexible(
-              flex: 1,
+              flex: 0,
               child: Container(
                 constraints: BoxConstraints(maxWidth: 0.6.wp),
                 margin: EdgeInsets.symmetric(vertical: 0.01.hp),
@@ -71,7 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             Expanded(
-              flex: 1,
+              flex: 0,
               child: Container(
                 margin: EdgeInsets.symmetric(vertical: 0.01.hp),
                 width: 0.48.wp,
@@ -216,7 +215,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Flexible(
               flex: 0,
               child: Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
+                margin: EdgeInsets.only(top: 10, bottom: 5),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
@@ -267,83 +266,71 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildReports(Seller seller) {
-    return Flexible(
-      flex: 5,
-      child: Container(
-          width: 0.8.wp,
-          child: StreamBuilder(
-            stream: Repository.instance.getLastWeekOrders(seller.id),
-            builder:
-                (context, AsyncSnapshot<QuerySnapshot<Order>> ordersSnapshot) {
-              if (!ordersSnapshot.hasData || ordersSnapshot.hasError) {
-                return SizedBox();
-              }
+    return Container(
+      margin: EdgeInsets.only(top: 10),
+      width: 0.8.wp,
+      child: StreamBuilder(
+        stream: Repository.instance.getLastWeekOrders(seller.id),
+        builder: (context, AsyncSnapshot<QuerySnapshot<Order>> ordersSnapshot) {
+          if (!ordersSnapshot.hasData || ordersSnapshot.hasError) {
+            return SizedBox();
+          }
 
-              var numberOfSales = ordersSnapshot.data.docs
-                  .map((e) => e.data().quantity)
-                  .fold(0, (p, c) => p + c);
-              var numberOfClients = ordersSnapshot.data.docs
-                  .map((e) => e.data().clientId)
-                  .toSet()
-                  .length;
-              var total = ordersSnapshot.data.docs
-                  .map((e) => e.data().quantity * e.data().price)
-                  .fold(0, (p, c) => p + c);
+          var numberOfSales = ordersSnapshot.data.docs
+              .map((e) => e.data().quantity)
+              .fold(0, (p, c) => p + c);
+          var numberOfClients = ordersSnapshot.data.docs
+              .map((e) => e.data().clientId)
+              .toSet()
+              .length;
+          var total = ordersSnapshot.data.docs
+              .map((e) => e.data().quantity * e.data().price)
+              .fold(0, (p, c) => p + c);
 
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Flexible(
-                    flex: 1,
+          return Column(
+            children: [
+              AutoSizeText(
+                "Nos últimos 7 dias:",
+                maxLines: 1,
+                style: GoogleFonts.montserrat(
+                  fontSize: 40.nsp,
+                  color: Theme.of(context).accentColor,
+                ),
+              ),
+              SizedBox(height: 5),
+              AutoSizeText(
+                numberOfSales > 0
+                    ? 'Você vendeu $numberOfSales quentinha${numberOfSales > 1 ? 's' : ''}'
+                        ' para $numberOfClients cliente${numberOfClients > 1 ? 's' : ''}'
+                        ' e recebeu um total de ${intToCurrency(total)}.'
+                    : 'Você ainda não vendeu sua primeira quentinha.',
+                style: GoogleFonts.montserrat(
+                  fontSize: 30.nsp,
+                  color: Theme.of(context).accentColor,
+                ),
+              ),
+              SizedBox(height: 10),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  width: 0.35.wp,
+                  child: ElevatedButton(
                     child: AutoSizeText(
-                      "Nos últimos 7 dias:",
-                      maxLines: 1,
-                      style: GoogleFonts.montserrat(
-                        fontSize: 40.nsp,
-                        color: Theme.of(context).accentColor,
-                      ),
+                      "Ver mais",
+                      style: TextStyle(fontSize: 36.nsp),
+                    ),
+                    onPressed: () => pushNewScreen(
+                      context,
+                      screen: ReportsScreen(widget.usuario),
+                      withNavBar: false,
                     ),
                   ),
-                  SizedBox(height: 5),
-                  Flexible(
-                    flex: 1,
-                    child: AutoSizeText(
-                      numberOfSales > 0
-                          ? 'Você vendeu $numberOfSales quentinha${numberOfSales > 1 ? 's' : ''}'
-                              ' para $numberOfClients cliente${numberOfClients > 1 ? 's' : ''}'
-                              ' e recebeu um total de ${intToCurrency(total)}.'
-                          : 'Você ainda não vendeu sua primeira quentinha.',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 30.nsp,
-                        color: Theme.of(context).accentColor,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Flexible(
-                    flex: 1,
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Container(
-                        width: 0.35.wp,
-                        child: ElevatedButton(
-                          child: AutoSizeText(
-                            "Ver mais",
-                            style: TextStyle(fontSize: 36.nsp),
-                          ),
-                          onPressed: () => pushNewScreen(
-                            context,
-                            screen: ReportsScreen(widget.usuario),
-                            withNavBar: false,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
-          )),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 

@@ -39,7 +39,7 @@ class _SetLocationScreen extends State<SetLocationScreen> {
     return Scaffold(
       appBar: AppBar(
           title: AutoSizeText(
-        'Localização',
+        'Localização da loja',
         style: GoogleFonts.montserrat(
           color: Theme.of(context).accentColor,
           fontSize: 35.nsp,
@@ -256,33 +256,33 @@ class _SetLocationScreen extends State<SetLocationScreen> {
     );
   }
 
-Widget _buildLoadingSpinner() { 
-    return Container( 
-      height: 1.hp - 56, 
-      alignment: Alignment.center, 
-      child: Column( 
-        mainAxisAlignment: MainAxisAlignment.center, 
-        children: [ 
-          Text( 
-            'Carregando o mapa', 
-            style: GoogleFonts.montserrat( 
-              color: Theme.of(context).accentColor, 
-              fontSize: 35.nsp, 
-            ), 
-          ), 
-          SizedBox(height: 10), 
-          SizedBox( 
-            height: 30, 
-            width: 30, 
-            child: CircularProgressIndicator( 
-              color: Theme.of(context).accentColor, 
-              strokeWidth: 3, 
-            ), 
-          ), 
-        ], 
-      ), 
-    ); 
-  } 
+  Widget _buildLoadingSpinner() {
+    return Container(
+      height: 1.hp - 56,
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'Carregando o mapa',
+            style: GoogleFonts.montserrat(
+              color: Theme.of(context).accentColor,
+              fontSize: 35.nsp,
+            ),
+          ),
+          SizedBox(height: 10),
+          SizedBox(
+            height: 30,
+            width: 30,
+            child: CircularProgressIndicator(
+              color: Theme.of(context).accentColor,
+              strokeWidth: 3,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Future<Position> _recuperarLocalizacaoAtual() async {
     var sellerRef =
