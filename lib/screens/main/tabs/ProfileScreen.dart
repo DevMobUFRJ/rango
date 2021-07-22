@@ -49,7 +49,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           mainAxisSize: MainAxisSize.max,
           children: [
             Flexible(
-              flex: 5,
+              flex: 0,
               child: UserPicture(picture: widget.usuario.logo),
             ),
             Flexible(
@@ -133,7 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             Flexible(
-              flex: 3,
+              flex: 0,
               child: Container(
                 margin: EdgeInsets.symmetric(vertical: 10),
                 child: Row(
@@ -210,7 +210,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             Flexible(
-              flex: 3,
+              flex: 0,
               child: Container(
                 margin: EdgeInsets.symmetric(vertical: 10),
                 child: Row(
@@ -263,7 +263,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildReports(Seller seller) {
-    return Expanded(
+    return Flexible(
       flex: 5,
       child: Container(
           width: 0.8.wp,
@@ -287,7 +287,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   .fold(0, (p, c) => p + c);
 
               return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Flexible(
@@ -301,7 +300,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 0.01.hp),
+                  SizedBox(height: 5),
                   Flexible(
                     flex: 1,
                     child: AutoSizeText(
@@ -316,6 +315,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ),
+                  SizedBox(height: 10),
                   Flexible(
                     flex: 1,
                     child: Align(
