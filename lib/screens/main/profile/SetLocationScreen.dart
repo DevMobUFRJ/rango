@@ -117,8 +117,6 @@ class _SetLocationScreen extends State<SetLocationScreen> {
                           },
                           draggable: true,
                           onDragEnd: ((newPosition) {
-                            print(newPosition.latitude);
-                            print(newPosition.longitude);
                             positionGlobal = new GeoPoint(
                                 newPosition.latitude, newPosition.longitude);
                           }),
@@ -295,7 +293,6 @@ class _SetLocationScreen extends State<SetLocationScreen> {
         latitude: seller.location.geopoint.latitude,
         longitude: seller.location.geopoint.longitude,
       );
-      print(position);
       return position;
     }
     Position position = await Geolocator.getCurrentPosition(
@@ -306,8 +303,6 @@ class _SetLocationScreen extends State<SetLocationScreen> {
           target: LatLng(position.latitude, position.longitude), zoom: 16);
     });
     _movimentarCamera();
-
-    print("localizaçao inicial: " + position.toString());
     return position;
   }
 
@@ -335,28 +330,41 @@ class _SetLocationScreen extends State<SetLocationScreen> {
   }
 
   _submit() async {
-    try {
-      Map<String, dynamic> dataToUpdate = {};
-      GeoFirePoint location = _geoFlutterFire.point(
-        latitude: positionGlobal.latitude,
-        longitude: positionGlobal.longitude,
-      );
-      dataToUpdate['location'] = location.data;
-      await Repository.instance.updateSeller(widget.user.id, dataToUpdate);
-      _recuperarLocalizacaoAtual();
-    } catch (e) {
-      print(e);
+    if (positionGlobal == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           duration: Duration(seconds: 3),
           backgroundColor: Theme.of(context).errorColor,
           content: Text(
-            'Ocorreu um erro ao definir a localização',
+            'Você precisa primeiro escolher uma nova localização!',
             textAlign: TextAlign.center,
           ),
         ),
       );
+    } else {
+      try {
+        Map<String, dynamic> dataToUpdate = {};
+        GeoFirePoint location = _geoFlutterFire.point(
+          latitude: positionGlobal.latitude,
+          longitude: positionGlobal.longitude,
+        );
+        dataToUpdate['location'] = location.data;
+        await Repository.instance.updateSeller(widget.user.id, dataToUpdate);
+        _recuperarLocalizacaoAtual();
+        openMenssage("Atualizado com sucesso");
+      } catch (e) {
+        print(e);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            duration: Duration(seconds: 3),
+            backgroundColor: Theme.of(context).errorColor,
+            content: Text(
+              'Ocorreu um erro ao definir a localização',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+      }
     }
-    openMenssage("Atualizado com sucesso");
   }
 }
