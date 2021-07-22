@@ -42,28 +42,25 @@ class _SearchScreenState extends State<SearchScreen> {
   Set<Seller> allSellers = {};
   Set<Marker> _marcadores;
   int raio;
-  BitmapDescriptor marMarkerCustom;
+  BitmapDescriptor customMarkerIcon;
   Position userLocation;
   CameraPosition _cameraPosition;
   String nameSeller = "";
   final geo = Geoflutterfire();
 
   void _setCustomMarkers() async {
-    marMarkerCustom = await BitmapDescriptor.fromAssetImage(
+    customMarkerIcon = await BitmapDescriptor.fromAssetImage(
         ImageConfiguration(), 'assets/imgs/pinMapa.png');
   }
 
-  _carregarMarcadores(
-      AsyncSnapshot<List<DocumentSnapshot>> snapshotSeller) async {
+  _carregarMarcadores(Set<Seller> sellers) async {
     Set<Marker> marcadoresLocal = {};
-    snapshotSeller.data.asMap().forEach(
-      (index, sellerTemp) {
-        Seller seller = Seller.fromJson(sellerTemp.data(), id: sellerTemp.id);
+    sellers.toList().asMap().forEach((index, seller) {
         Marker marcador = Marker(
           onTap: () async {
-            print(index);
             itemScrollController.scrollTo(
               index: index,
+              curve: Curves.easeOut,
               duration: Duration(milliseconds: 300),
             );
           },
@@ -73,34 +70,12 @@ class _SearchScreenState extends State<SearchScreen> {
               seller.location.geopoint.longitude),
           infoWindow:
               InfoWindow(title: seller.name, snippet: seller.description),
-          icon: marMarkerCustom,
+          icon: customMarkerIcon,
         );
         marcadoresLocal.add(marcador);
       },
     );
     _marcadores = marcadoresLocal;
-  }
-
-  Future<void> _gotoLocation(double lat, double long, {double zoom}) async {
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target: LatLng(lat, long),
-          zoom: zoom != null ? zoom : 15,
-        ),
-      ),
-    );
-  }
-
-  Future<Uint8List> getBytesFromAsset(String path, int width) async {
-    ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
-        targetWidth: width);
-    ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))
-        .buffer
-        .asUint8List();
   }
 
   _movimentarCamera() async {
@@ -109,11 +84,11 @@ class _SearchScreenState extends State<SearchScreen> {
         .animateCamera(CameraUpdate.newCameraPosition(_cameraPosition));
   }
 
-  Stream<List<DocumentSnapshot>> getNearbySellersStream(
-      Position userLocation, double radius) {
+  Stream<List<DocumentSnapshot>> getNearbySellersStream(Position userLocation, double radius) {
     return Repository.instance.getNearbySellersStream(
       userLocation,
       radius,
+      // TODO Mudar essas flags
       queryByActive: false,
       queryByTime: false,
     );
@@ -139,7 +114,6 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //_getSellersStream();
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: Stack(
@@ -178,107 +152,358 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
+  Widget _buildError(String error) {
+    return Container(
+      height: 0.6.hp - 56,
+      margin: EdgeInsets.symmetric(horizontal: 10),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AutoSizeText(
+            error,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.montserrat(
+              fontSize: 45.nsp,
+              color: Theme.of(context).accentColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _mapa(BuildContext contextGeral) {
     return Container(
       height: MediaQuery.of(contextGeral).size.height,
       width: MediaQuery.of(contextGeral).size.width,
       child: FutureBuilder(
         future: Repository.instance.getSellerRange(),
-        builder: (BuildContext context, AsyncSnapshot<double> range) {
-          if (range != null && range.data != null) raio = range.data.toInt();
-          //     print("RAIO eh " + raio.toString());
+        builder: (BuildContext context, AsyncSnapshot<double> rangeSnapshot) {
+          if (rangeSnapshot.connectionState == ConnectionState.waiting) {
+            return _buildLoadingSpinner();
+          }
+
+          if (rangeSnapshot.hasError) {
+            return _buildError(rangeSnapshot.error);
+          }
+
+          raio = rangeSnapshot.data.toInt();
+
           return Container(
             height: 1.hp - 56,
-            child: RefreshIndicator(
-              onRefresh: () {
-                setState(() {});
-                return Future.value();
-              },
-              child: FutureBuilder(
-                future: Repository.instance.getUserLocation(),
-                builder: (
-                  context,
-                  AsyncSnapshot<Position> locationSnapshot,
-                ) {
-                  if (locationSnapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return _buildLoadingSpinner();
-                  }
+            child: FutureBuilder(
+              future: Repository.instance.getUserLocation(),
+              builder: (context, AsyncSnapshot<Position> locationSnapshot) {
+                if (locationSnapshot.connectionState == ConnectionState.waiting) {
+                  return _buildLoadingSpinner();
+                }
 
-                  if (locationSnapshot.hasError) {
-                    return Container(
-                      height: 0.6.hp - 56,
-                      margin: EdgeInsets.symmetric(horizontal: 10),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                if (locationSnapshot.hasError) {
+                  return _buildError(locationSnapshot.error);
+                }
+
+                userLocation = locationSnapshot.data;
+
+                return StreamBuilder(
+                  stream: getNearbySellersStream(locationSnapshot.data, rangeSnapshot.data),
+                  builder: (context, AsyncSnapshot<List<DocumentSnapshot>> snapshotSeller) {
+                    if (snapshotSeller.connectionState == ConnectionState.waiting) {
+                      return _buildLoadingSpinner();
+                    }
+
+                    if (snapshotSeller.hasError) {
+                      _buildError(snapshotSeller.error);
+                    }
+
+                    Set<Seller> orderedSellers = _getSellersOrdered(snapshotSeller, nameSeller);
+                    _carregarMarcadores(orderedSellers);
+                    return Stack(
+                      children: [
+                        GoogleMap(
+                          mapType: MapType.normal,
+                          initialCameraPosition: _cameraPosition,
+                          onMapCreated: (GoogleMapController controller) {
+                            if (widget.seller != null) {
+                              _returnOfSellerProfile(widget.seller);
+                            }
+                            if (!_controller.isCompleted)
+                              _controller.complete(controller);
+                          },
+                          zoomControlsEnabled: false,
+                          myLocationButtonEnabled: false,
+                          myLocationEnabled: true,
+                          markers: _marcadores,
+                        ),
+                        _cardsSellers(allSellers, contextGeral),
+                        _menu(contextGeral)
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Set<Seller> _getSellersOrdered(AsyncSnapshot<List<DocumentSnapshot>> snapshotSeller, String nameSeller) {
+    Set<Seller> openSellers = {};
+    Set<Seller> closedSellers = {};
+
+    snapshotSeller.data.forEach((sel) {
+      Seller sellerTemp = Seller.fromJson(sel.data(), id: sel.id);
+      if (sellerTemp.name.toLowerCase().contains(nameSeller.toLowerCase())) { // Filtro
+        if (sellerTemp.isOpen()) {
+          openSellers.add(sellerTemp);
+        } else {
+          closedSellers.add(sellerTemp);
+        }
+      }
+    });
+    openSellers.addAll(closedSellers);
+    allSellers = openSellers;
+    if (allSellers.length == 0) {
+      _isFiltering = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Nenhum vendedor encontrado!',
+              textAlign: TextAlign.center,
+            ),
+            backgroundColor: Theme.of(context).accentColor,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      });
+    }
+    return openSellers;
+  }
+
+  Widget _cardsSellers(Set<Seller> sellers, BuildContext contextGeral) {
+    return Align(
+      alignment: Alignment.bottomLeft,
+      child: Container(
+        height: 150.0,
+        child: ScrollablePositionedList.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: sellers.length,
+          itemScrollController: itemScrollController,
+          itemPositionsListener: itemPositionsListener,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 8, right: 8, bottom: 8, left: 8),
+              child: _boxes(sellers.elementAt(index), contextGeral),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _boxes(Seller seller, BuildContext context) {
+    double lat = seller.location.geopoint.latitude;
+    double long = seller.location.geopoint.longitude;
+
+    return GestureDetector(
+      onTap: () {
+        _gotoLocation(lat, long);
+      },
+      child: _box(seller, context, seller.isOpen()),
+    );
+  }
+
+  Future<void> _gotoLocation(double lat, double long, {double zoom}) async {
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: LatLng(lat, long),
+          zoom: zoom != null ? zoom : 15,
+        ),
+      ),
+    );
+  }
+
+  Widget _box(Seller seller, BuildContext context, bool isOpen) {
+    String name = seller.name;
+    Color cor;
+    Color corTexto;
+    if (isOpen) {
+      cor = Colors.transparent;
+      corTexto = Theme.of(context).accentColor;
+    } else {
+      cor = Colors.grey;
+      corTexto = Colors.grey;
+    }
+    return Container(
+      child: new FittedBox(
+        child: Material(
+          color: Colors.white,
+          elevation: 2,
+          borderRadius: BorderRadius.circular(24.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Container(
+                width: 180,
+                height: 200,
+                child: ClipRRect(
+                  borderRadius: new BorderRadius.circular(24.0),
+                  child: ColorFiltered(
+                    colorFilter: ColorFilter.mode(cor, BlendMode.saturation),
+                    child: seller.logo == null
+                        ? Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          height: 200,
+                          color: Theme.of(context).accentColor,
+                        ),
+                        Center(
+                          child: Icon(
+                            Icons.store,
+                            size: 100,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    )
+                        : CachedNetworkImage(
+                      imageUrl: seller.logo,
+                      fit: BoxFit.cover,
+                      placeholder: (ctx, url) => Stack(
+                        alignment: Alignment.center,
                         children: [
-                          AutoSizeText(
-                            locationSnapshot.error,
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.montserrat(
-                              fontSize: 45.nsp,
-                              color: Theme.of(context).accentColor,
+                          Shimmer.fromColors(
+                            baseColor: Color.fromRGBO(255, 175, 153, 1),
+                            highlightColor: Colors.white,
+                            child: Container(
+                              height: 200,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Center(
+                            child: Icon(
+                              Icons.store,
+                              size: 100,
+                              color: Colors.white,
                             ),
                           ),
                         ],
                       ),
-                    );
-                  }
-                  userLocation = locationSnapshot.data;
-                  return StreamBuilder(
-                    stream: getNearbySellersStream(
-                        locationSnapshot.data, range.data),
-                    builder: (
-                      context,
-                      AsyncSnapshot<List<DocumentSnapshot>> snapshotSeller,
-                    ) {
-                      if (snapshotSeller.connectionState ==
-                          ConnectionState.waiting) {
-                        return _buildLoadingSpinner();
-                      }
-                      if (snapshotSeller.hasError) {
-                        print(snapshotSeller.error);
-                        return Container(
-                          height: 0.6.hp - 56,
-                          alignment: Alignment.center,
-                          child: AutoSizeText(
-                            snapshotSeller.error.toString(),
-                            style: GoogleFonts.montserrat(
-                                fontSize: 45.nsp,
-                                color: Theme.of(context).accentColor),
-                          ),
-                        );
-                      }
-                      _getSellersOrdered(snapshotSeller, nameSeller);
-                      _carregarMarcadores(snapshotSeller);
-                      return Stack(
+                      errorWidget: (ctx, url, error) => Stack(
+                        alignment: Alignment.center,
                         children: [
-                          GoogleMap(
-                            mapType: MapType.normal,
-                            initialCameraPosition: _cameraPosition,
-                            onMapCreated: (GoogleMapController controller) {
-                              if (widget.seller != null) {
-                                _returnOfSellerProfile(widget.seller);
-                              }
-                              if (!_controller.isCompleted)
-                                _controller.complete(controller);
-                            },
-                            zoomControlsEnabled: false,
-                            myLocationButtonEnabled: false,
-                            myLocationEnabled: true,
-                            markers: _marcadores,
+                          Container(
+                            height: 200,
+                            color: Theme.of(context).accentColor,
                           ),
-                          _cardsSellers(allSellers, contextGeral),
-                          _menu(contextGeral)
+                          Center(
+                            child: Icon(
+                              Icons.store,
+                              size: 75,
+                              color: Colors.white,
+                            ),
+                          ),
                         ],
-                      );
-                    },
-                  );
-                },
+                      ),
+                    ),
+                  ),
+                ),
               ),
-            ),
-          );
-        },
+              Container(
+                child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Container(
+                            child: AutoSizeText(
+                              name,
+                              maxLines: 1,
+                              style: GoogleFonts.montserrat(
+                                  fontSize: 26.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: corTexto),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 10.0),
+                        _isOpen(seller),
+                        _botaoVerVendedor(seller, context, isOpen)
+                      ],
+                    )),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _isOpen(Seller seller) {
+    if (seller.isOpen()) {
+      return Container(
+          child: Text(
+            "Aberto",
+            style: TextStyle(
+                color: Colors.black54, fontSize: 22.0, fontWeight: FontWeight.bold),
+          ));
+    }
+
+    String thisWeekday = weekdayMap[DateTime.now().weekday];
+    List<String> weekdays = [
+      'sunday',
+      'monday',
+      'tuesday',
+      'wednesday',
+      'thursday',
+      'friday',
+      'saturday'
+    ];
+    List<String> weekdaysFromNow =
+        weekdays.skip(weekdays.indexOf(thisWeekday) + 1).toList() + weekdays;
+    bool found = false;
+    String weekdayFound = '';
+    String horaFormatada = '';
+
+    for (String day in weekdaysFromNow) {
+      if (seller.shift[day] != null &&
+          seller.shift[day].open &&
+          seller.shift[day].openingTime != null) {
+        found = true;
+        horaFormatada = seller.shift[day].openingTime.toString();
+        horaFormatada = horaFormatada.padLeft(4, '0');
+        horaFormatada =
+        '${horaFormatada.substring(0, 2)}:${horaFormatada.substring(2, 4)}';
+        weekdayFound = weekdayTranslate[day];
+        break;
+      }
+    }
+
+    if (found == false && horaFormatada != '') {
+      return Container(
+          child: Text(
+            "Sem informação de horário",
+            style: TextStyle(
+                color: Colors.black54, fontSize: 22.0, fontWeight: FontWeight.bold),
+          ));
+    }
+
+    return Container(
+      child: Text(
+        "Fechado\nAbre $weekdayFound às $horaFormatada",
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: Colors.black54,
+          fontSize: 22.0,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
@@ -315,53 +540,6 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  void _returnOfSellerProfile(Seller seller) {
-    if (seller != null &&
-        seller.location != null &&
-        seller.location.geopoint != null &&
-        seller.location.geopoint.latitude != null &&
-        seller.location.geopoint.longitude != null) {
-      _gotoLocation(seller.location.geopoint.latitude,
-          seller.location.geopoint.longitude);
-    }
-  }
-
-  void _getSellersOrdered(
-    AsyncSnapshot<List<DocumentSnapshot>> snapshotSeller,
-    String nameSeller,
-  ) {
-    Set<Seller> openSellers = {};
-    Set<Seller> closedSellers = {};
-
-    snapshotSeller.data.forEach((sel) {
-      Seller sellerTemp = Seller.fromJson(sel.data(), id: sel.id);
-      if (sellerTemp.name.toLowerCase().contains(nameSeller.toLowerCase())) {
-        if (sellerTemp.isOpen()) {
-          openSellers.add(sellerTemp);
-        } else {
-          closedSellers.add(sellerTemp);
-        }
-      }
-    });
-    openSellers.addAll(closedSellers);
-    allSellers = openSellers;
-    if (allSellers.length == 0) {
-      _isFiltering = false;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Nenhum vendedor encontrado!',
-              textAlign: TextAlign.center,
-            ),
-            backgroundColor: Theme.of(context).accentColor,
-            duration: Duration(seconds: 2),
-          ),
-        );
-      });
-    }
-  }
-
   Widget _menu(BuildContext contextGeral) {
     return Positioned(
       bottom: 156,
@@ -383,7 +561,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   BoxShadow(
                     color: Colors.grey,
                     offset: Offset(0.0, 1.0), //(x,y)
-                    blurRadius: 6.0,
+                    blurRadius: 2,
                   ),
                 ],
               ),
@@ -408,7 +586,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   BoxShadow(
                     color: Colors.grey,
                     offset: Offset(0.0, 1.0), //(x,y)
-                    blurRadius: 6.0,
+                    blurRadius: 2,
                   ),
                 ],
               ),
@@ -454,230 +632,14 @@ class _SearchScreenState extends State<SearchScreen> {
         });
   }
 
-  Widget _box(Seller seller, BuildContext context, var isOpen) {
-    String name = seller.name;
-    Color cor;
-    Color corTexto;
-    if (isOpen) {
-      cor = Colors.transparent;
-      corTexto = Theme.of(context).accentColor;
-    } else {
-      cor = Colors.grey;
-      corTexto = Colors.grey;
-    }
-    return Container(
-      child: new FittedBox(
-        child: Material(
-          color: Colors.white,
-          elevation: 14.0,
-          borderRadius: BorderRadius.circular(24.0),
-          shadowColor: Color(0x802196F3),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Container(
-                width: 180,
-                height: 200,
-                child: ClipRRect(
-                  borderRadius: new BorderRadius.circular(24.0),
-                  child: ColorFiltered(
-                    colorFilter: ColorFilter.mode(cor, BlendMode.saturation),
-                    child: seller.logo == null
-                        ? Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Container(
-                                height: 200,
-                                color: Theme.of(context).accentColor,
-                              ),
-                              Center(
-                                child: Icon(
-                                  Icons.store,
-                                  size: 100,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          )
-                        : CachedNetworkImage(
-                            imageUrl: seller.logo,
-                            fit: BoxFit.cover,
-                            placeholder: (ctx, url) => Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Shimmer.fromColors(
-                                  baseColor: Color.fromRGBO(255, 175, 153, 1),
-                                  highlightColor: Colors.white,
-                                  child: Container(
-                                    height: 200,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                Center(
-                                  child: Icon(
-                                    Icons.store,
-                                    size: 100,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            errorWidget: (ctx, url, error) => Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Container(
-                                  height: 200,
-                                  color: Theme.of(context).accentColor,
-                                ),
-                                Center(
-                                  child: Icon(
-                                    Icons.store,
-                                    size: 75,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                  ),
-                ),
-              ),
-              Container(
-                child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Container(
-                            child: AutoSizeText(
-                              name,
-                              maxLines: 1,
-                              style: GoogleFonts.montserrat(
-                                  fontSize: 26.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: corTexto),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 10.0),
-                        _isOpen(seller),
-                        _botaoVerVendedor(seller, context, isOpen)
-                      ],
-                    )),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _boxes(Seller seller, BuildContext context) {
-    double lat = seller.location.geopoint.latitude;
-    double long = seller.location.geopoint.longitude;
-
-    var isOpen;
-    if (seller.isOpen()) {
-      isOpen = true;
-      return GestureDetector(
-        onTap: () {
-          _gotoLocation(lat, long);
-        },
-        child: _box(seller, context, isOpen),
-      );
-    }
-    isOpen = false;
-    return GestureDetector(
-      onTap: () {
-        _gotoLocation(lat, long);
-      },
-      child: _box(seller, context, isOpen),
-    );
-  }
-
-  Widget _cardsSellers(Set<Seller> sellers, BuildContext contextGeral) {
-    return Align(
-      alignment: Alignment.bottomLeft,
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 5.0),
-        height: 150.0,
-        child: ScrollablePositionedList.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: sellers.length,
-          itemScrollController: itemScrollController,
-          itemPositionsListener: itemPositionsListener,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: _boxes(sellers.elementAt(index), contextGeral),
-            );
-          },
-        ),
-      ),
-    );
-  }
-}
-
-Widget _isOpen(Seller seller) {
-  if (seller.isOpen()) {
-    return Container(
-        child: Text(
-      "Aberto",
-      style: TextStyle(
-          color: Colors.black54, fontSize: 22.0, fontWeight: FontWeight.bold),
-    ));
-  }
-
-  String thisWeekday = weekdayMap[DateTime.now().weekday];
-  List<String> weekdays = [
-    'sunday',
-    'monday',
-    'tuesday',
-    'wednesday',
-    'thursday',
-    'friday',
-    'saturday'
-  ];
-  List<String> weekdaysFromNow =
-      weekdays.skip(weekdays.indexOf(thisWeekday) + 1).toList() + weekdays;
-  bool found = false;
-  String weekdayFound = '';
-  String horaFormatada = '';
-
-  for (String day in weekdaysFromNow) {
-    if (seller.shift[day] != null &&
-        seller.shift[day].open &&
-        seller.shift[day].openingTime != null) {
-      found = true;
-      horaFormatada = seller.shift[day].openingTime.toString();
-      horaFormatada = horaFormatada.padLeft(4, '0');
-      horaFormatada =
-          '${horaFormatada.substring(0, 2)}:${horaFormatada.substring(2, 4)}';
-      weekdayFound = weekdayTranslate[day];
-      break;
+  void _returnOfSellerProfile(Seller seller) {
+    if (seller != null &&
+        seller.location != null &&
+        seller.location.geopoint != null &&
+        seller.location.geopoint.latitude != null &&
+        seller.location.geopoint.longitude != null) {
+      _gotoLocation(seller.location.geopoint.latitude,
+          seller.location.geopoint.longitude);
     }
   }
-
-  if (found == false && horaFormatada != '') {
-    return Container(
-        child: Text(
-      "Sem informação de horário",
-      style: TextStyle(
-          color: Colors.black54, fontSize: 22.0, fontWeight: FontWeight.bold),
-    ));
-  }
-
-  return Container(
-    child: Text(
-      "Fechado\nAbre $weekdayFound às $horaFormatada",
-      textAlign: TextAlign.center,
-      style: TextStyle(
-        color: Colors.black54,
-        fontSize: 22.0,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-  );
 }
