@@ -44,33 +44,14 @@ class _AuthScreenState extends State<AuthScreen> {
               .get();
           bool isClient = clients.docs.isNotEmpty;
           if (!isClient) {
-            authResult = await _auth.signInWithEmailAndPassword(
+            await _auth.signInWithEmailAndPassword(
               email: email,
               password: password,
             );
             Map<String, dynamic> dataToUpdate = {};
-            String actualDeviceToken =
-                await FirebaseMessaging.instance.getToken();
-            dataToUpdate['deviceToken'] = actualDeviceToken;
-            DocumentSnapshot<Seller> sellerDoc = await Repository.instance
-                .getSellerFuture(FirebaseAuth.instance.currentUser.uid);
-            var oldDeviceToken = sellerDoc.data().deviceToken;
-            if (oldDeviceToken != null && oldDeviceToken != actualDeviceToken) {
-              ScaffoldMessenger.of(ctx).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Você se conectou com um novo dispositivo! Novas notificações chegarão apenas à ele.',
-                    textAlign: TextAlign.center,
-                  ),
-                  backgroundColor: Theme.of(context).accentColor,
-                ),
-              );
-              Repository.instance.updateSeller(
-                  FirebaseAuth.instance.currentUser.uid, dataToUpdate);
-            } else if (oldDeviceToken == null) {
-              Repository.instance.updateSeller(
-                  FirebaseAuth.instance.currentUser.uid, dataToUpdate);
-            }
+            dataToUpdate['deviceToken'] = await FirebaseMessaging.instance.getToken();
+            Repository.instance.updateSeller(
+                FirebaseAuth.instance.currentUser.uid, dataToUpdate);
             Navigator.of(context).pop();
           } else {
             ScaffoldMessenger.of(ctx).showSnackBar(
