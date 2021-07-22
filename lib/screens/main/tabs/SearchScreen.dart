@@ -46,7 +46,7 @@ class _SearchScreenState extends State<SearchScreen> {
     // getBytesFromAsset('assets/imgs/map2.png', 64)
     //     .then((value) => {marMarkerCustom = BitmapDescriptor.fromBytes(value)});
     marMarkerCustom = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(), 'assets/imgs/iconeRoxo.png');
+        ImageConfiguration(), 'assets/imgs/pinMapa.png');
   }
 
   _carregarMarcadores(
@@ -56,26 +56,26 @@ class _SearchScreenState extends State<SearchScreen> {
     snapshotSeller.data.forEach((sellerTemp) {
       Seller seller = Seller.fromJson(sellerTemp.data(), id: sellerTemp.id);
       Marker marcador = Marker(
-          onTap: () {
-            // print("la");
-          },
-          markerId: MarkerId(seller.location.geopoint.latitude.toString() +
-              seller.location.geopoint.longitude.toString()),
-          position: LatLng(seller.location.geopoint.latitude,
-              seller.location.geopoint.longitude),
-          infoWindow:
-              InfoWindow(title: seller.name, snippet: seller.description),
-          icon: marMarkerCustom);
+        onTap: () {
+          // print("la");
+        },
+        markerId: MarkerId(seller.location.geopoint.latitude.toString() +
+            seller.location.geopoint.longitude.toString()),
+        position: LatLng(seller.location.geopoint.latitude,
+            seller.location.geopoint.longitude),
+        infoWindow: InfoWindow(title: seller.name, snippet: seller.description),
+        icon: marMarkerCustom,
+      );
       marcadoresLocal.add(marcador);
     });
     _marcadores = marcadoresLocal;
   }
 
-  Future<void> _gotoLocation(double lat, double long) async {
+  Future<void> _gotoLocation(double lat, double long, {double zoom}) async {
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
       target: LatLng(lat, long),
-      zoom: 15,
+      zoom: zoom != null ? zoom : 15,
       //    tilt: 50.0,
       // bearing: 45.0,
     )));
@@ -260,8 +260,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                       _controller.complete(controller);
                                   },
                                   zoomControlsEnabled: false,
+                                  myLocationButtonEnabled: false,
                                   myLocationEnabled: true,
-                                  myLocationButtonEnabled: true,
                                   markers: _marcadores,
                                 ),
                                 _cardsSellers(allSellers, contextGeral),
@@ -358,17 +358,66 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Widget _menu(BuildContext contextGeral) {
     return Positioned(
-      top: 30,
+      bottom: 156,
+      right: 5,
       width: 50,
-      child: GestureDetector(
-          onTap: () => _showModal(contextGeral),
-          child: Container(
-            child: Icon(
-              Icons.filter_alt_rounded,
-              color: Theme.of(context).accentColor,
-              size: ScreenUtil().setSp(80),
+      child: Column(
+        children: [
+          GestureDetector(
+            onTap: () => _gotoLocation(
+              userLocation.latitude,
+              userLocation.longitude,
+              zoom: 16,
             ),
-          )),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(50),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey,
+                    offset: Offset(0.0, 1.0), //(x,y)
+                    blurRadius: 6.0,
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(5),
+                child: Icon(
+                  Icons.my_location,
+                  color: Theme.of(context).accentColor,
+                  size: 35,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 10),
+          GestureDetector(
+            onTap: () => _showModal(contextGeral),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(50),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey,
+                    offset: Offset(0.0, 1.0), //(x,y)
+                    blurRadius: 6.0,
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(5),
+                child: Icon(
+                  Icons.filter_alt_rounded,
+                  color: Theme.of(context).accentColor,
+                  size: 35,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
