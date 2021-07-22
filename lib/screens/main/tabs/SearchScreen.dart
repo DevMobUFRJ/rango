@@ -19,7 +19,7 @@ import 'package:rango/utils/constants.dart';
 import 'dart:ui' as ui;
 import 'package:rango/widgets/others/ModalFilter.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:transparent_image/transparent_image.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class SearchScreen extends StatefulWidget {
   final PersistentTabController controller;
@@ -35,9 +35,12 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   Completer<GoogleMapController> _controller = Completer();
+  final ItemScrollController itemScrollController = ItemScrollController();
+  final ItemPositionsListener itemPositionsListener =
+      ItemPositionsListener.create();
   bool _isFiltering = false;
   Set<Seller> allSellers = {};
-  Set<Marker> _marcadores = {};
+  Set<Marker> _marcadores;
   int raio;
   BitmapDescriptor marMarkerCustom;
   Position userLocation;
@@ -53,22 +56,28 @@ class _SearchScreenState extends State<SearchScreen> {
   _carregarMarcadores(
       AsyncSnapshot<List<DocumentSnapshot>> snapshotSeller) async {
     Set<Marker> marcadoresLocal = {};
-
-    snapshotSeller.data.forEach((sellerTemp) {
-      Seller seller = Seller.fromJson(sellerTemp.data(), id: sellerTemp.id);
-      Marker marcador = Marker(
-        onTap: () {
-          // print("la");
-        },
-        markerId: MarkerId(seller.location.geopoint.latitude.toString() +
-            seller.location.geopoint.longitude.toString()),
-        position: LatLng(seller.location.geopoint.latitude,
-            seller.location.geopoint.longitude),
-        infoWindow: InfoWindow(title: seller.name, snippet: seller.description),
-        icon: marMarkerCustom,
-      );
-      marcadoresLocal.add(marcador);
-    });
+    snapshotSeller.data.asMap().forEach(
+      (index, sellerTemp) {
+        Seller seller = Seller.fromJson(sellerTemp.data(), id: sellerTemp.id);
+        Marker marcador = Marker(
+          onTap: () async {
+            print(index);
+            itemScrollController.scrollTo(
+              index: index,
+              duration: Duration(milliseconds: 300),
+            );
+          },
+          markerId: MarkerId(seller.location.geopoint.latitude.toString() +
+              seller.location.geopoint.longitude.toString()),
+          position: LatLng(seller.location.geopoint.latitude,
+              seller.location.geopoint.longitude),
+          infoWindow:
+              InfoWindow(title: seller.name, snippet: seller.description),
+          icon: marMarkerCustom,
+        );
+        marcadoresLocal.add(marcador);
+      },
+    );
     _marcadores = marcadoresLocal;
   }
 
@@ -174,102 +183,103 @@ class _SearchScreenState extends State<SearchScreen> {
       height: MediaQuery.of(contextGeral).size.height,
       width: MediaQuery.of(contextGeral).size.width,
       child: FutureBuilder(
-          future: Repository.instance.getSellerRange(),
-          builder: (BuildContext context, AsyncSnapshot<double> range) {
-            if (range != null && range.data != null) raio = range.data.toInt();
-            //     print("RAIO eh " + raio.toString());
-            return Container(
-              height: 1.hp - 56,
-              child: RefreshIndicator(
-                onRefresh: () {
-                  setState(() {});
-                  return Future.value();
-                },
-                child: FutureBuilder(
-                    future: Repository.instance.getUserLocation(),
+        future: Repository.instance.getSellerRange(),
+        builder: (BuildContext context, AsyncSnapshot<double> range) {
+          if (range != null && range.data != null) raio = range.data.toInt();
+          //     print("RAIO eh " + raio.toString());
+          return Container(
+            height: 1.hp - 56,
+            child: RefreshIndicator(
+              onRefresh: () {
+                setState(() {});
+                return Future.value();
+              },
+              child: FutureBuilder(
+                future: Repository.instance.getUserLocation(),
+                builder: (
+                  context,
+                  AsyncSnapshot<Position> locationSnapshot,
+                ) {
+                  if (locationSnapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return _buildLoadingSpinner();
+                  }
+
+                  if (locationSnapshot.hasError) {
+                    return Container(
+                      height: 0.6.hp - 56,
+                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AutoSizeText(
+                            locationSnapshot.error,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.montserrat(
+                              fontSize: 45.nsp,
+                              color: Theme.of(context).accentColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  userLocation = locationSnapshot.data;
+                  return StreamBuilder(
+                    stream: getNearbySellersStream(
+                        locationSnapshot.data, range.data),
                     builder: (
                       context,
-                      AsyncSnapshot<Position> locationSnapshot,
+                      AsyncSnapshot<List<DocumentSnapshot>> snapshotSeller,
                     ) {
-                      if (locationSnapshot.connectionState ==
+                      if (snapshotSeller.connectionState ==
                           ConnectionState.waiting) {
                         return _buildLoadingSpinner();
                       }
-
-                      if (locationSnapshot.hasError) {
+                      if (snapshotSeller.hasError) {
+                        print(snapshotSeller.error);
                         return Container(
                           height: 0.6.hp - 56,
-                          margin: EdgeInsets.symmetric(horizontal: 10),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              AutoSizeText(
-                                locationSnapshot.error,
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 45.nsp,
-                                  color: Theme.of(context).accentColor,
-                                ),
-                              ),
-                            ],
+                          alignment: Alignment.center,
+                          child: AutoSizeText(
+                            snapshotSeller.error.toString(),
+                            style: GoogleFonts.montserrat(
+                                fontSize: 45.nsp,
+                                color: Theme.of(context).accentColor),
                           ),
                         );
                       }
-                      userLocation = locationSnapshot.data;
-                      return StreamBuilder(
-                          stream: getNearbySellersStream(
-                              locationSnapshot.data, range.data),
-                          builder: (
-                            context,
-                            AsyncSnapshot<List<DocumentSnapshot>>
-                                snapshotSeller,
-                          ) {
-                            if (snapshotSeller.connectionState ==
-                                ConnectionState.waiting) {
-                              return _buildLoadingSpinner();
-                            }
-                            if (snapshotSeller.hasError) {
-                              print(snapshotSeller.error);
-                              return Container(
-                                height: 0.6.hp - 56,
-                                alignment: Alignment.center,
-                                child: AutoSizeText(
-                                  snapshotSeller.error.toString(),
-                                  style: GoogleFonts.montserrat(
-                                      fontSize: 45.nsp,
-                                      color: Theme.of(context).accentColor),
-                                ),
-                              );
-                            }
-                            _getSellersOrdered(snapshotSeller, nameSeller);
-                            _carregarMarcadores(snapshotSeller);
-                            return Stack(
-                              children: [
-                                GoogleMap(
-                                  mapType: MapType.normal,
-                                  initialCameraPosition: _cameraPosition,
-                                  onMapCreated:
-                                      (GoogleMapController controller) {
-                                    if (widget.seller != null) {
-                                      _returnOfSellerProfile(widget.seller);
-                                    }
-                                    if (!_controller.isCompleted)
-                                      _controller.complete(controller);
-                                  },
-                                  zoomControlsEnabled: false,
-                                  myLocationButtonEnabled: false,
-                                  myLocationEnabled: true,
-                                  markers: _marcadores,
-                                ),
-                                _cardsSellers(allSellers, contextGeral),
-                                _menu(contextGeral)
-                              ],
-                            );
-                          });
-                    }),
+                      _getSellersOrdered(snapshotSeller, nameSeller);
+                      _carregarMarcadores(snapshotSeller);
+                      return Stack(
+                        children: [
+                          GoogleMap(
+                            mapType: MapType.normal,
+                            initialCameraPosition: _cameraPosition,
+                            onMapCreated: (GoogleMapController controller) {
+                              if (widget.seller != null) {
+                                _returnOfSellerProfile(widget.seller);
+                              }
+                              if (!_controller.isCompleted)
+                                _controller.complete(controller);
+                            },
+                            zoomControlsEnabled: false,
+                            myLocationButtonEnabled: false,
+                            myLocationEnabled: true,
+                            markers: _marcadores,
+                          ),
+                          _cardsSellers(allSellers, contextGeral),
+                          _menu(contextGeral)
+                        ],
+                      );
+                    },
+                  );
+                },
               ),
-            );
-          }),
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -593,9 +603,11 @@ class _SearchScreenState extends State<SearchScreen> {
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 5.0),
         height: 150.0,
-        child: ListView.builder(
+        child: ScrollablePositionedList.builder(
           scrollDirection: Axis.horizontal,
           itemCount: sellers.length,
+          itemScrollController: itemScrollController,
+          itemPositionsListener: itemPositionsListener,
           itemBuilder: (context, index) {
             return Padding(
               padding: const EdgeInsets.all(8.0),
