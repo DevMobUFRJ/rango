@@ -208,6 +208,21 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
   }
 
   Widget _buildReservate(context) {
+    if (!widget.seller.isOpen()) {
+      return Flexible(
+        flex: 3,
+        child: Container(
+          width: 0.6.wp,
+          child: AutoSizeText(
+            'Esse vendedor está fechado no momento',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
+                .headline2
+                .copyWith(color: Theme.of(context).errorColor, fontSize: 36.nsp),
+          ),
+        ),
+      );
+    }
     if (widget.seller.canReservate) {
       if (widget.marmita.quantity > 0) {
         return Flexible(

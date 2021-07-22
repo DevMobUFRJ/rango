@@ -262,9 +262,8 @@ class _SearchScreenState extends State<SearchScreen> {
 
     snapshotSeller.data.forEach((sel) {
       Seller sellerTemp = Seller.fromJson(sel.data(), id: sel.id);
-      var openAtThisMoment = _getOpenAtThisMoment(sellerTemp);
 
-      if (sellerTemp.active && openAtThisMoment) {
+      if (sellerTemp.isOpen()) {
         openSellers.add(sellerTemp);
       } else {
         closedSellers.add(sellerTemp);
@@ -366,9 +365,8 @@ class _SearchScreenState extends State<SearchScreen> {
     double lat = seller.location.geopoint.latitude;
     double long = seller.location.geopoint.longitude;
 
-    var openAtThisMoment = _getOpenAtThisMoment(seller);
     var isOpen;
-    if (seller.active && openAtThisMoment) {
+    if (seller.isOpen()) {
       isOpen = true;
       return GestureDetector(
         onTap: () {
@@ -437,8 +435,7 @@ Widget _botaoVerVendedor(Seller seller, BuildContext context) {
 }
 
 Widget _isOpen(Seller seller) {
-  var openAtThisMoment = _getOpenAtThisMoment(seller);
-  if (seller.active && openAtThisMoment) {
+  if (seller.isOpen()) {
     return Container(
         child: Text(
       "Aberto",
@@ -482,25 +479,4 @@ Widget _isOpen(Seller seller) {
     style: TextStyle(
         color: Colors.black54, fontSize: 22.0, fontWeight: FontWeight.bold),
   ));
-}
-
-_getOpenAtThisMoment(Seller seller) {
-  DateTime now = DateTime.now();
-  String dayOfWeek = weekdayMap[now.weekday];
-
-  if (seller.shift[dayOfWeek] == null) return false;
-  if (seller.shift[dayOfWeek].open == false) return false;
-
-  TimeOfDay openingTime = intTimeToTimeOfDay(seller.shift[dayOfWeek].openingTime);
-  TimeOfDay closingTime = intTimeToTimeOfDay(seller.shift[dayOfWeek].closingTime);
-
-  if (openingTime == null || closingTime == null) return false;
-
-  DateTime openingDate = DateTime(now.year, now.month, now.day, openingTime.hour, openingTime.minute);
-  DateTime closingDate = DateTime(now.year, now.month, now.day, closingTime.hour, closingTime.minute);
-  print(seller.name);
-  print(openingDate);
-  print(closingDate);
-
-  return now.isAfter(openingDate) && now.isBefore(closingDate);
 }

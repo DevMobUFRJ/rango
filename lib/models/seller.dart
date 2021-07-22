@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:rango/models/address.dart';
 import 'package:rango/models/contact.dart';
 import 'package:rango/models/location.dart';
@@ -5,7 +6,8 @@ import 'package:rango/models/meals.dart';
 import 'package:rango/models/seller_notifications_settings.dart';
 import 'package:rango/models/shift.dart';
 import 'package:flutter/foundation.dart';
-import 'package:rango/models/user_notification_settings.dart';
+import 'package:rango/utils/constants.dart';
+import 'package:rango/utils/date_time.dart';
 
 class Seller {
   String id;
@@ -97,4 +99,26 @@ Map<String, CurrentMeal> currentMealsFromJson(Map<String, dynamic> json) {
   Map<String, CurrentMeal> newMap =
   json.map((key, value) => MapEntry(key, CurrentMeal.fromJson(value)));
   return newMap;
+}
+
+extension Open on Seller {
+  bool isOpen() {
+    var seller = this;
+    if (seller.active == false) return false;
+    DateTime now = DateTime.now();
+    String dayOfWeek = weekdayMap[now.weekday];
+
+    if (seller.shift[dayOfWeek] == null) return false;
+    if (seller.shift[dayOfWeek].open == false) return false;
+
+    TimeOfDay openingTime = intTimeToTimeOfDay(seller.shift[dayOfWeek].openingTime);
+    TimeOfDay closingTime = intTimeToTimeOfDay(seller.shift[dayOfWeek].closingTime);
+
+    if (openingTime == null || closingTime == null) return false;
+
+    DateTime openingDate = DateTime(now.year, now.month, now.day, openingTime.hour, openingTime.minute);
+    DateTime closingDate = DateTime(now.year, now.month, now.day, closingTime.hour, closingTime.minute, 59, 999);
+
+    return now.isAfter(openingDate) && now.isBefore(closingDate);
+  }
 }
