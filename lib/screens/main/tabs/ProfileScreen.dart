@@ -42,7 +42,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
       backgroundColor: Theme.of(context).backgroundColor,
-      body: Container(
+      body: SingleChildScrollView(
+          child: Container(
         height: 1.hp - 56,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -258,7 +259,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _buildReports(widget.usuario),
           ],
         ),
-      ),
+      )),
     );
   }
 
