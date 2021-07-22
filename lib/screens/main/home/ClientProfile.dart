@@ -89,10 +89,6 @@ class _ClientProfileState extends State<ClientProfile> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
-                            Icons.phone,
-                            size: 32.nsp,
-                          ),
                           GestureDetector(
                             onTap: () => {
                               Clipboard.setData(
@@ -120,6 +116,10 @@ class _ClientProfileState extends State<ClientProfile> {
                               ),
                             ),
                           ),
+                          Container(
+                            margin: EdgeInsets.only(left: 3),
+                            child: Icon(Icons.phone, size: 32.nsp),
+                          ),
                         ],
                       ),
                     GestureDetector(
@@ -144,25 +144,28 @@ class _ClientProfileState extends State<ClientProfile> {
                           );
                         }
                       },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          AutoSizeText(
-                            'Abrir no WhatsApp',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 30.nsp,
-                              decoration: TextDecoration.underline,
+                      child: Container(
+                        margin: EdgeInsets.only(top: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            AutoSizeText(
+                              'Abrir no WhatsApp',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 30.nsp,
+                                decoration: TextDecoration.underline,
+                              ),
                             ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.whatsapp,
-                              size: 36.nsp,
-                              color: Colors.green,
+                            Container(
+                              margin: EdgeInsets.only(left: 3),
+                              child: FaIcon(
+                                FontAwesomeIcons.whatsapp,
+                                size: 36.nsp,
+                                color: Colors.green,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                     SizedBox(height: 10),
