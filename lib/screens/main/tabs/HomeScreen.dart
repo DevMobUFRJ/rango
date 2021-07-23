@@ -113,135 +113,145 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     _buildHeader(assetName, closedOrdersSnapshot.data.docs),
                     if (_showFillPerfil) _buildFillPerfil(),
-                    if (!widget.usuario.active ||
-                        !widget.usuario.canReservate) ...{
-                      Container(
-                        height: 0.6.hp - 56,
-                        margin: EdgeInsets.symmetric(horizontal: 10),
-                        alignment: Alignment.center,
-                        child: GestureDetector(
-                          onTap: () => widget.controller.jumpToTab(2),
-                          child: Material(
-                            color: Theme.of(context).accentColor,
-                            elevation: 3,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.all(8),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  AutoSizeText(
-                                    !widget.usuario.active
-                                        ? 'Sua loja está fechada. Para receber pedidos, marque ela como aberta!'
-                                        : 'Você não está permitindo reservas. Para receber pedidos, ative a opção "Permitir reservas" nas configurações do perfil.',
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 35.nsp,
-                                      color: Colors.white,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.symmetric(vertical: 10),
-                                    child: AutoSizeText(
-                                      'Ir para o perfil',
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 35.nsp,
-                                        color: Colors.white,
-                                        decoration: TextDecoration.underline,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
-                    } else if (openOrdersSnapshot.data.docs.isEmpty &&
-                        closedOrdersSnapshot.data.docs.isEmpty) ...{
-                      SizedBox(height: 20),
-                      Flexible(
-                        flex: 1,
-                        child: Container(
-                          alignment: Alignment.center,
-                          margin: EdgeInsets.symmetric(
-                            horizontal: 0.05.wp,
-                          ),
-                          child: AutoSizeText(
-                            'Você ainda não recebeu pedidos hoje!\n\nAproveite para gerenciar suas quentinhas e o cardápio de hoje na aba de quentinhas ou configurar horário de funcionamento, localização e outras opções na aba de perfil!',
-                            style: GoogleFonts.montserrat(
-                              color: Theme.of(context).accentColor,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 36.nsp,
-                            ),
-                          ),
-                        ),
-                      )
-                    } else ...{
-                      if (closedOrdersSnapshot.data.docs.isNotEmpty &&
-                          openOrdersSnapshot.data.docs.isEmpty)
-                        Container(
-                          margin: EdgeInsets.only(
-                            left: 0.1.wp,
-                            right: 0.1.wp,
-                          ),
-                          alignment: Alignment.topLeft,
-                          child: AutoSizeText(
-                            "Pedidos do dia",
-                            style: GoogleFonts.montserrat(
-                              textStyle: TextStyle(
-                                color: Theme.of(context).accentColor,
-                                fontSize: 29.nsp,
-                              ),
-                            ),
-                          ),
-                        ),
-                      if (widget.usuario.active)
-                        Flexible(
-                          flex: 1,
-                          child: Container(
-                            child: closedOrdersSnapshot.data.docs.isNotEmpty &&
-                                    openOrdersSnapshot.data.docs.isEmpty
-                                ? Container(
-                                    alignment: Alignment.center,
-                                    margin: EdgeInsets.symmetric(
-                                      horizontal: 15,
-                                      vertical: 20,
-                                    ),
-                                    child: AutoSizeText(
-                                      'Você não tem mais pedidos em aberto hoje! Para verificar os pedidos já fechados, clique acima no ícone de histórico.',
-                                      style: GoogleFonts.montserrat(
-                                        color: Theme.of(context).accentColor,
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 36.nsp,
-                                      ),
-                                    ),
-                                  )
-                                : ListView.builder(
-                                    padding: EdgeInsets.only(top: 0),
-                                    physics: ClampingScrollPhysics(),
-                                    itemCount:
-                                        openOrdersSnapshot.data.docs.length,
-                                    itemBuilder: (ctx, index) {
-                                      return OrderContainer(
-                                          openOrdersSnapshot.data.docs[index]
-                                              .data(),
-                                          null);
-                                    },
-                                  ),
-                          ),
-                        ),
-                    }
+                    if (!widget.usuario.active || !widget.usuario.canReservate) _buildClosed()
+                    else if (openOrdersSnapshot.data.docs.isEmpty &&
+                             closedOrdersSnapshot.data.docs.isEmpty) ..._buildNoOrdersYet()
+                    else ..._buildHasHadOrders(openOrdersSnapshot, closedOrdersSnapshot),
                   ],
                 );
               },
             );
           },
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildHasHadOrders(
+      AsyncSnapshot<QuerySnapshot<Order>> openOrdersSnapshot,
+      AsyncSnapshot<QuerySnapshot<Order>>  closedOrdersSnapshot) {
+    return [
+      Container(
+        margin: EdgeInsets.only(
+          left: 0.1.wp,
+          right: 0.1.wp,
+        ),
+        alignment: Alignment.topLeft,
+        child: AutoSizeText(
+          "Pedidos do dia",
+          style: GoogleFonts.montserrat(
+            textStyle: TextStyle(
+              color: Theme.of(context).accentColor,
+              fontSize: 29.nsp,
+            ),
+          ),
+        ),
+      ),
+      if (widget.usuario.active) Flexible(
+        flex: 1,
+        child: Container(
+          child: closedOrdersSnapshot.data.docs.isNotEmpty &&
+              openOrdersSnapshot.data.docs.isEmpty
+              ? Container(
+            alignment: Alignment.center,
+            margin: EdgeInsets.symmetric(
+              horizontal: 15,
+              vertical: 20,
+            ),
+            child: AutoSizeText(
+              'Você não tem pedidos em aberto no momento! Para verificar os pedidos já fechados, clique acima no ícone de histórico.',
+              style: GoogleFonts.montserrat(
+                color: Theme.of(context).accentColor,
+                fontWeight: FontWeight.w400,
+                fontSize: 36.nsp,
+              ),
+            ),
+          )
+              : ListView.builder(
+            padding: EdgeInsets.only(top: 0),
+            physics: ClampingScrollPhysics(),
+            itemCount:
+            openOrdersSnapshot.data.docs.length,
+            itemBuilder: (ctx, index) {
+              return OrderContainer(
+                  openOrdersSnapshot.data.docs[index]
+                      .data(),
+                  null);
+            },
+          ),
+        ),
+      )
+    ];
+  }
+
+  List<Widget> _buildNoOrdersYet() {
+    return [
+      SizedBox(height: 20),
+      Flexible(
+        flex: 1,
+        child: Container(
+          alignment: Alignment.center,
+          margin: EdgeInsets.symmetric(
+            horizontal: 0.05.wp,
+          ),
+          child: AutoSizeText(
+            'Você ainda não recebeu pedidos hoje!\n\nAproveite para gerenciar suas quentinhas e o cardápio de hoje na aba de quentinhas ou configurar horário de funcionamento, localização e outras opções na aba de perfil!',
+            style: GoogleFonts.montserrat(
+              color: Theme.of(context).accentColor,
+              fontWeight: FontWeight.w400,
+              fontSize: 36.nsp,
+            ),
+          ),
+        ),
+      )
+    ];
+  }
+
+  Widget _buildClosed() {
+    return Container(
+      height: 0.6.hp - 56,
+      margin: EdgeInsets.symmetric(horizontal: 10),
+      alignment: Alignment.center,
+      child: GestureDetector(
+        onTap: () => widget.controller.jumpToTab(2),
+        child: Material(
+          color: Theme.of(context).accentColor,
+          elevation: 3,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(8),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AutoSizeText(
+                  !widget.usuario.active
+                      ? 'Sua loja está fechada. Para receber pedidos, marque ela como aberta!'
+                      : 'Você não está permitindo reservas. Para receber pedidos, ative a opção "Permitir reservas" nas configurações do perfil.',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 35.nsp,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  child: AutoSizeText(
+                    'Ir para o perfil',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 35.nsp,
+                      color: Colors.white,
+                      decoration: TextDecoration.underline,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );
