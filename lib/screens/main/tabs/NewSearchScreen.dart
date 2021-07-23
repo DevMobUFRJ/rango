@@ -33,6 +33,7 @@ class _NewSearchScreenState extends State<NewSearchScreen> {
   bool _isLoading = true;
   double _sellerRange;
   Position _userLocation;
+  bool _loadingMyLocation = false;
   CameraPosition _cameraPosition;
   CameraPosition _sellerPosition;
   List<Seller> _allSellers;
@@ -105,6 +106,32 @@ class _NewSearchScreenState extends State<NewSearchScreen> {
           _marcadores = marcadores,
           _isCardsLoading = false,
         });
+  }
+
+  _updateUserLocation() async {
+    try {
+      Position userLocation = await Repository.instance.getUserLocation();
+      setState(() {
+        _userLocation = userLocation;
+        _loadingMyLocation = false;
+      });
+      _gotoLocation(
+        userLocation.latitude,
+        userLocation.longitude,
+        zoom: 16,
+      );
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: Duration(seconds: 2),
+          content: Text(
+            'Erro ao pegar localização do usuário',
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
+      );
+    }
   }
 
   List<Seller> _mapSellers(List<Seller> sellersToMap) {
@@ -568,14 +595,13 @@ class _NewSearchScreenState extends State<NewSearchScreen> {
       child: Column(
         children: [
           GestureDetector(
-            onTap: () {
-              _gotoLocation(
-                _userLocation.latitude,
-                _userLocation.longitude,
-                zoom: 16,
-              );
-              _customInfoWindowController.hideInfoWindow();
-            },
+            onTap: _loadingMyLocation
+                ? () {}
+                : () async {
+                    setState(() => _loadingMyLocation = true);
+                    _customInfoWindowController.hideInfoWindow();
+                    await _updateUserLocation();
+                  },
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(50),
@@ -588,14 +614,31 @@ class _NewSearchScreenState extends State<NewSearchScreen> {
                   ),
                 ],
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(5),
-                child: Icon(
-                  Icons.my_location,
-                  color: Theme.of(context).accentColor,
-                  size: 35,
-                ),
-              ),
+              child: _loadingMyLocation
+                  ? Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: SizedBox(
+                        width: 35,
+                        height: 35,
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: CircularProgressIndicator(
+                              color: Theme.of(context).accentColor,
+                              strokeWidth: 3,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: Icon(
+                        Icons.my_location,
+                        color: Theme.of(context).accentColor,
+                        size: 35,
+                      ),
+                    ),
             ),
           ),
           SizedBox(height: 10),
