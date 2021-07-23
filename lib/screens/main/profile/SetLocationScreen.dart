@@ -75,6 +75,15 @@ class _SetLocationScreen extends State<SetLocationScreen> {
                         marker = marker.copyWith(positionParam: newPosition);
                       });
                     },
+                    onLongPress: (newPosition) {
+                      setState(() {
+                        positionGlobal = GeoPoint(
+                          newPosition.latitude,
+                          newPosition.longitude,
+                        );
+                        marker = marker.copyWith(positionParam: newPosition);
+                      });
+                    },
                     mapType: MapType.normal,
                     zoomControlsEnabled: false,
                     myLocationButtonEnabled: false,
@@ -238,6 +247,7 @@ class _SetLocationScreen extends State<SetLocationScreen> {
       ),
       consumeTapEvents: true,
       icon: marMarkerCustom,
+      infoWindow: InfoWindow(title: 'Sua loja está aqui')
     );
     setState(() {
       marker = marcador;
