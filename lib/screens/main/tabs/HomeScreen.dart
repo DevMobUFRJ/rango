@@ -5,10 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
-import 'package:provider/provider.dart';
 import 'package:rango/models/order.dart';
 import 'package:rango/models/seller.dart';
-import 'package:rango/resources/rangeChangeNotifier.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/main/home/OrdersHistory.dart';
 import 'package:rango/widgets/home/OrderContainer.dart';
@@ -113,10 +111,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     _buildHeader(assetName, closedOrdersSnapshot.data.docs),
                     if (_showFillPerfil) _buildFillPerfil(),
-                    if (!widget.usuario.active || !widget.usuario.canReservate) _buildClosed()
+                    if (!widget.usuario.active || !widget.usuario.canReservate)
+                      _buildClosed()
                     else if (openOrdersSnapshot.data.docs.isEmpty &&
-                             closedOrdersSnapshot.data.docs.isEmpty) ..._buildNoOrdersYet()
-                    else ..._buildHasHadOrders(openOrdersSnapshot, closedOrdersSnapshot),
+                        closedOrdersSnapshot.data.docs.isEmpty)
+                      ..._buildNoOrdersYet()
+                    else
+                      ..._buildHasHadOrders(
+                          openOrdersSnapshot, closedOrdersSnapshot),
                   ],
                 );
               },
@@ -129,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Widget> _buildHasHadOrders(
       AsyncSnapshot<QuerySnapshot<Order>> openOrdersSnapshot,
-      AsyncSnapshot<QuerySnapshot<Order>>  closedOrdersSnapshot) {
+      AsyncSnapshot<QuerySnapshot<Order>> closedOrdersSnapshot) {
     return [
       Container(
         margin: EdgeInsets.only(
@@ -147,40 +149,38 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      if (widget.usuario.active) Flexible(
-        flex: 1,
-        child: Container(
-          child: closedOrdersSnapshot.data.docs.isNotEmpty &&
-              openOrdersSnapshot.data.docs.isEmpty
-              ? Container(
-            alignment: Alignment.center,
-            margin: EdgeInsets.symmetric(
-              horizontal: 15,
-              vertical: 20,
-            ),
-            child: AutoSizeText(
-              'Você não tem pedidos em aberto no momento! Para verificar os pedidos já fechados, clique acima no ícone de histórico.',
-              style: GoogleFonts.montserrat(
-                color: Theme.of(context).accentColor,
-                fontWeight: FontWeight.w400,
-                fontSize: 36.nsp,
-              ),
-            ),
-          )
-              : ListView.builder(
-            padding: EdgeInsets.only(top: 0),
-            physics: ClampingScrollPhysics(),
-            itemCount:
-            openOrdersSnapshot.data.docs.length,
-            itemBuilder: (ctx, index) {
-              return OrderContainer(
-                  openOrdersSnapshot.data.docs[index]
-                      .data(),
-                  null);
-            },
+      if (widget.usuario.active)
+        Flexible(
+          flex: 1,
+          child: Container(
+            child: closedOrdersSnapshot.data.docs.isNotEmpty &&
+                    openOrdersSnapshot.data.docs.isEmpty
+                ? Container(
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 20,
+                    ),
+                    child: AutoSizeText(
+                      'Você não tem pedidos em aberto no momento! Para verificar os pedidos já fechados, clique acima no ícone de histórico.',
+                      style: GoogleFonts.montserrat(
+                        color: Theme.of(context).accentColor,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 36.nsp,
+                      ),
+                    ),
+                  )
+                : ListView.builder(
+                    padding: EdgeInsets.only(top: 0),
+                    physics: ClampingScrollPhysics(),
+                    itemCount: openOrdersSnapshot.data.docs.length,
+                    itemBuilder: (ctx, index) {
+                      return OrderContainer(
+                          openOrdersSnapshot.data.docs[index].data(), null);
+                    },
+                  ),
           ),
-        ),
-      )
+        )
     ];
   }
 
