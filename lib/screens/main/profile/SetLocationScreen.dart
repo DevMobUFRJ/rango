@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -25,16 +26,16 @@ class _SetLocationScreen extends State<SetLocationScreen> {
   GeoPoint positionGlobal;
   Position userLocation;
   final _geoFlutterFire = Geoflutterfire();
+  Marker marker = Marker(markerId: MarkerId('seller'));
+  bool _loading = true;
 
   @override
-  void initState() {
-    super.initState();
+  initState() {
     _setCustomMarkers();
     _recuperarLocalizacaoAtual();
+    _movimentarCamera();
+    super.initState();
   }
-
-  var lat = 0.0;
-  var long = 0.0;
 
   @override
   Widget build(BuildContext context) {
@@ -47,173 +48,86 @@ class _SetLocationScreen extends State<SetLocationScreen> {
           fontSize: 35.nsp,
         ),
       )),
-      body: Scaffold(
-        body: Stack(
-          children: [
-            Container(
+      body: _loading
+          ? _buildLoadingSpinner()
+          : Container(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
-              child: FutureBuilder(
-                future: _recuperarLocalizacaoAtual(),
-                builder: (context, AsyncSnapshot<Position> locationSnapshot) {
-                  print(locationSnapshot);
-                  if (!locationSnapshot.hasData) {
-                    return _buildLoadingSpinner();
-                  }
-                  if (locationSnapshot.hasError) {
-                    return Container(
-                      height: 0.6.hp - 56,
-                      margin: EdgeInsets.symmetric(horizontal: 10),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          AutoSizeText(
-                            locationSnapshot.error,
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.montserrat(
-                              fontSize: 45.nsp,
-                              color: Theme.of(context).accentColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-                  return FutureBuilder(
-                      future: Repository.instance.getUserLocation(),
-                      builder: (
-                        ctx,
-                        AsyncSnapshot<Position> userLocationSnapshot,
-                      ) {
-                        if (!userLocationSnapshot.hasData ||
-                            userLocationSnapshot.connectionState ==
-                                ConnectionState.waiting) {
-                          return _buildLoadingSpinner();
-                        }
-                        if (userLocationSnapshot.hasError) {
-                          return Container(
-                            height: 0.6.hp - 56,
-                            margin: EdgeInsets.symmetric(horizontal: 10),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                AutoSizeText(
-                                  locationSnapshot.error,
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 45.nsp,
-                                    color: Theme.of(context).accentColor,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-
-                        userLocation = userLocationSnapshot.data;
-                        Marker marcador = Marker(
-                          onTap: () {
-                            print("la");
-                          },
-                          draggable: true,
-                          onDragEnd: ((newPosition) {
-                            positionGlobal = new GeoPoint(
-                                newPosition.latitude, newPosition.longitude);
-                          }),
-                          markerId: MarkerId("Seller"),
-                          position: LatLng(locationSnapshot.data.latitude,
-                              locationSnapshot.data.longitude),
-                          infoWindow: InfoWindow(
-                            title: "Sua loja está aqui",
-                          ),
-                          icon: marMarkerCustom,
+              child: Stack(
+                children: [
+                  GoogleMap(
+                    markers: Set<Marker>.from([marker]),
+                    initialCameraPosition: _cameraPosition,
+                    onMapCreated: (GoogleMapController controller) {
+                      if (!_controller.isCompleted) {
+                        _controller.complete(controller);
+                        controller
+                            .showMarkerInfoWindow(MarkerId("seller"));
+                        openMessage(
+                            'Clique no mapa ou segure e arraste o marcador para selecionar a posição correta'
                         );
-                        marcador.onTap();
-                        Set<Marker> marcadores = {};
-                        marcadores.add(marcador);
-
-                        return Stack(
-                          children: [
-                            GoogleMap(
-                              mapType: MapType.normal,
-                              initialCameraPosition: _cameraPosition == null
-                                  ? CameraPosition(
-                                      target: LatLng(
-                                        locationSnapshot.data.latitude,
-                                        locationSnapshot.data.longitude,
-                                      ),
-                                      zoom: 16,
-                                    )
-                                  : _cameraPosition,
-                              onMapCreated: (GoogleMapController controller) {
-                                if (!_controller.isCompleted) {
-                                  _controller.complete(controller);
-                                  controller
-                                      .showMarkerInfoWindow(MarkerId("Seller"));
-                                  openMenssage(
-                                      'Segure o marcador e arraste para selecionar a posição correta');
-                                }
-                              },
-                              zoomControlsEnabled: false,
-                              myLocationEnabled: true,
-                              myLocationButtonEnabled: true,
-                              markers: marcadores,
-                            ),
-                            // Positioned(
-                            //   right: 5,
-                            //   top: 5,
-                            //   child: GestureDetector(
-                            //     onTap: () => _gotoLocation(
-                            //       userLocation.latitude,
-                            //       userLocation.longitude,
-                            //       zoom: 16,
-                            //     ),
-                            //     child: Container(
-                            //       decoration: BoxDecoration(
-                            //         borderRadius: BorderRadius.circular(50),
-                            //         color: Colors.white,
-                            //         boxShadow: [
-                            //           BoxShadow(
-                            //             color: Colors.grey,
-                            //             offset: Offset(0.0, 1.0), //(x,y)
-                            //             blurRadius: 6.0,
-                            //           ),
-                            //         ],
-                            //       ),
-                            //       child: Padding(
-                            //         padding: const EdgeInsets.all(5),
-                            //         child: Icon(
-                            //           Icons.my_location,
-                            //           color: Theme.of(context).accentColor,
-                            //           size: 35,
-                            //         ),
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
-                            Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Container(
-                                width: 0.65.wp,
-                                margin: EdgeInsets.only(bottom: 10),
-                                child: ElevatedButton(
-                                  child: AutoSizeText(
-                                    "Definir Localização",
-                                    style: TextStyle(fontSize: 36.nsp),
-                                  ),
-                                  onPressed: () => _submit(),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
+                      }
+                    },
+                    onTap: (newPosition) {
+                      setState(() {
+                        positionGlobal = GeoPoint(newPosition.latitude, newPosition.longitude);
+                        marker = marker.copyWith(positionParam: newPosition);
                       });
-                },
+                    },
+                    mapType: MapType.normal,
+                    zoomControlsEnabled: false,
+                    myLocationEnabled: true,
+                    myLocationButtonEnabled: true,
+                  ),
+                  // Positioned(
+                  //   right: 5,
+                  //   top: 5,
+                  //   child: GestureDetector(
+                  //     onTap: () => _gotoLocation(
+                  //       userLocation.latitude,
+                  //       userLocation.longitude,
+                  //       zoom: 16,
+                  //     ),
+                  //     child: Container(
+                  //       decoration: BoxDecoration(
+                  //         borderRadius: BorderRadius.circular(50),
+                  //         color: Colors.white,
+                  //         boxShadow: [
+                  //           BoxShadow(
+                  //             color: Colors.grey,
+                  //             offset: Offset(0.0, 1.0), //(x,y)
+                  //             blurRadius: 6.0,
+                  //           ),
+                  //         ],
+                  //       ),
+                  //       child: Padding(
+                  //         padding: const EdgeInsets.all(5),
+                  //         child: Icon(
+                  //           Icons.my_location,
+                  //           color: Theme.of(context).accentColor,
+                  //           size: 35,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      width: 0.65.wp,
+                      margin: EdgeInsets.only(bottom: 10),
+                      child: ElevatedButton(
+                        child: AutoSizeText(
+                          "Definir Localização",
+                          style: TextStyle(fontSize: 36.nsp),
+                        ),
+                        onPressed: () => _submit(),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -243,10 +157,10 @@ class _SetLocationScreen extends State<SetLocationScreen> {
         ImageConfiguration(), 'assets/imgs/pinMapa.png');
   }
 
-  void openMenssage(String text) {
+  void openMessage(String text) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        duration: Duration(seconds: 3),
+        duration: Duration(seconds: 5),
         backgroundColor: Theme.of(context).accentColor,
         content: Text(
           text,
@@ -284,26 +198,46 @@ class _SetLocationScreen extends State<SetLocationScreen> {
     );
   }
 
-  Future<Position> _recuperarLocalizacaoAtual() async {
+  Future<void> _recuperarLocalizacaoAtual() async {
+    Position position;
     var sellerRef =
         await Repository.instance.sellersRef.doc(widget.user.id).get();
     Seller seller = sellerRef.data();
     if (seller.location != null) {
-      Position position = Position(
+      position = Position(
         latitude: seller.location.geopoint.latitude,
         longitude: seller.location.geopoint.longitude,
       );
-      return position;
+    } else {
+      position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.best
+      );
     }
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best);
-    positionGlobal = new GeoPoint(position.latitude, position.longitude);
+
     setState(() {
       _cameraPosition = CameraPosition(
           target: LatLng(position.latitude, position.longitude), zoom: 16);
+      positionGlobal = GeoPoint(position.latitude, position.longitude);
     });
-    _movimentarCamera();
-    return position;
+
+    Marker marcador = Marker(
+      draggable: true,
+      onDragEnd: ((newPosition) {
+        setState(() {
+          positionGlobal = GeoPoint(newPosition.latitude, newPosition.longitude);
+        });
+      }),
+      markerId: MarkerId("seller"),
+      position: LatLng(seller.location.geopoint.latitude, seller.location.geopoint.longitude),
+      infoWindow: InfoWindow(
+        title: "Sua loja está aqui",
+      ),
+      icon: marMarkerCustom,
+    );
+    setState(() {
+      marker = marcador;
+      _loading = false;
+    });
   }
 
   // _getLocation() async {
@@ -321,13 +255,6 @@ class _SetLocationScreen extends State<SetLocationScreen> {
   //   print(
   //       ' ${first.locality} = ${first.adminArea} = ${first.subLocality} = ${first.subAdminArea} = ${first.addressLine} = ${first.featureName} = ${first.thoroughfare} =  ${first.subThoroughfare}');
   // }
-
-  bool isNumeric(String s) {
-    if (s == null) {
-      return false;
-    }
-    return double.tryParse(s) != null;
-  }
 
   _submit() async {
     if (positionGlobal == null) {
@@ -350,8 +277,8 @@ class _SetLocationScreen extends State<SetLocationScreen> {
         );
         dataToUpdate['location'] = location.data;
         await Repository.instance.updateSeller(widget.user.id, dataToUpdate);
-        _recuperarLocalizacaoAtual();
-        openMenssage("Atualizado com sucesso");
+        //_recuperarLocalizacaoAtual();
+        openMessage("Atualizado com sucesso");
       } catch (e) {
         print(e);
         ScaffoldMessenger.of(context).showSnackBar(
