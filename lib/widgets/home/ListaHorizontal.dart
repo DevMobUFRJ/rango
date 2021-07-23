@@ -206,7 +206,7 @@ class ListaHorizontal extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Flexible(
-                                  flex: 2,
+                                  flex: 1,
                                   child: AutoSizeText(
                                     meal.name,
                                     textAlign: TextAlign.center,

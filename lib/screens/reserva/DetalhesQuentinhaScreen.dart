@@ -567,10 +567,6 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                                   widget.seller.deviceToken, ctx);
                             }
 
-                            setState(() {
-                              _doingOrder = true;
-                              widget.controller.jumpToTab(2);
-                            });
                           } catch (e) {
                             Navigator.of(context).pop();
                             ScaffoldMessenger.of(context).showSnackBar(
