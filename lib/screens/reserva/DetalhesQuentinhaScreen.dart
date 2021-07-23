@@ -177,7 +177,6 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                             alignment: Alignment.topLeft,
                             child: AutoSizeText(
                               'Descrição:',
-                              maxLines: 4,
                               style: GoogleFonts.montserratTextTheme(
                                       Theme.of(context).textTheme)
                                   .headline2
@@ -195,7 +194,7 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                             child: AutoSizeText(
                               widget.marmita.description,
                               overflow: TextOverflow.ellipsis,
-                              maxLines: 7,
+                              maxLines: 6,
                               style: GoogleFonts.montserratTextTheme(
                                       Theme.of(context).textTheme)
                                   .headline2
@@ -252,7 +251,8 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
             textAlign: TextAlign.center,
             style: GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
                 .headline2
-                .copyWith(color: Theme.of(context).errorColor, fontSize: 36.nsp),
+                .copyWith(
+                    color: Theme.of(context).errorColor, fontSize: 36.nsp),
           ),
         ),
       );
@@ -521,22 +521,22 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                           ),
                         ),
                         onPressed: () async {
-                          setState(() => _doingOrder = true);
-                          final User user =
-                              Repository.instance.getCurrentUser();
-                          Order order = Order(
-                            clientId: user.uid,
-                            clientName: user.displayName,
-                            sellerId: widget.seller.id,
-                            sellerName: widget.seller.name,
-                            mealId: widget.marmita.id,
-                            mealName: widget.marmita.name,
-                            price: widget.marmita.price,
-                            quantity: _quantity,
-                            requestedAt: Timestamp.now(),
-                            status: "requested",
-                          );
                           try {
+                            setState(() => _doingOrder = true);
+                            final User user =
+                                Repository.instance.getCurrentUser();
+                            Order order = Order(
+                              clientId: user.uid,
+                              clientName: user.displayName,
+                              sellerId: widget.seller.id,
+                              sellerName: widget.seller.name,
+                              mealId: widget.marmita.id,
+                              mealName: widget.marmita.name,
+                              price: widget.marmita.price,
+                              quantity: _quantity,
+                              requestedAt: Timestamp.now(),
+                              status: "requested",
+                            );
                             await Repository.instance
                                 .addOrderTransaction(order);
                             Navigator.of(ctx).pop();
@@ -556,8 +556,11 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                                   ),
                                 )
                                 .closed
-                                .then((_) => Navigator.of(context)
-                                    .popUntil(ModalRoute.withName("/")));
+                                .then((_) => {
+                                      Navigator.of(context)
+                                          .popUntil(ModalRoute.withName("/")),
+                                      widget.controller.jumpToTab(2)
+                                    });
 
                             if (widget.seller.deviceToken != null &&
                                 widget.seller.notificationSettings != null &&
@@ -566,7 +569,6 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                               await _sendOrderNotification(
                                   widget.seller.deviceToken, ctx);
                             }
-
                           } catch (e) {
                             Navigator.of(context).pop();
                             ScaffoldMessenger.of(context).showSnackBar(
