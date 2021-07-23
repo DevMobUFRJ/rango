@@ -97,7 +97,7 @@ class _SetLocationScreen extends State<SetLocationScreen> {
                             BoxShadow(
                               color: Colors.grey,
                               offset: Offset(0.0, 1.0), //(x,y)
-                              blurRadius: 6.0,
+                              blurRadius: 2,
                             ),
                           ],
                         ),

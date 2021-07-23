@@ -1,4 +1,7 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/resources/repository.dart';
+import 'package:rango/screens/NoConnectionScreen.dart';
 import 'package:rango/screens/SplashScreen.dart';
 import 'package:rango/screens/auth/AuthScreen.dart';
 import 'package:rango/screens/auth/ForgotPasswordScreen.dart';
@@ -13,6 +17,7 @@ import 'package:rango/screens/auth/LoginScreen.dart';
 import 'package:rango/screens/main/home/ChatScreen.dart';
 import 'package:rango/screens/main/tabs/NewTabsScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rango/widgets/home/NoConnection.dart';
 import 'models/seller.dart';
 
 var currentKey = GlobalKey();
@@ -25,10 +30,13 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
   const AndroidInitializationSettings initializationAndroidSettings =
-      AndroidInitializationSettings('app_icon');
+  AndroidInitializationSettings('app_icon');
+
   final InitializationSettings initializationSettings =
-      InitializationSettings(android: initializationAndroidSettings);
+  InitializationSettings(android: initializationAndroidSettings);
+
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
     onSelectNotification: (String payload) async {
@@ -50,10 +58,10 @@ Future<void> main() async {
     },
   );
 
-  await FirebaseMessaging.instance.subscribeToTopic('all');
+  FirebaseMessaging.instance.subscribeToTopic('all');
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     if ((message.data['payload'].toString().contains('chat') &&
-            chatScreenKey.currentState == null) ||
+        chatScreenKey.currentState == null) ||
         !message.data['payload'].toString().contains('chat')) {
       _showNotification(message.data);
     }
@@ -166,7 +174,12 @@ class MyApp extends StatelessWidget {
                         .updateSeller(seller.id, dataToUpdate);
                   });
 
-                  return NewTabsScreen(sellerSnapshot.data.data(), _controller);
+                  return Stack(
+                    children: [
+                      NewTabsScreen(sellerSnapshot.data.data(), _controller),
+                      NoConnection()
+                    ],
+                  );
                 });
           }
           return LoginScreen();

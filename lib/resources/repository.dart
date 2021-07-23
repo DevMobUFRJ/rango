@@ -54,8 +54,12 @@ class Repository {
     return sellersRef.doc(uid).snapshots();
   }
 
-  Future<DocumentSnapshot<Seller>> getSellerFuture(String uid) {
-    return sellersRef.doc(uid).get();
+  Future<DocumentSnapshot<Seller>> getSellerFuture(String uid, {Source source = Source.serverAndCache}) async {
+    try {
+      return await sellersRef.doc(uid).get(GetOptions(source: source));
+    } catch (e) {
+      return Future.error(e);
+    }
   }
 
   Future<void> updateSeller(
