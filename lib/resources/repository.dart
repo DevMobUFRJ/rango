@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:rango/models/client.dart';
+import 'dart:math' show cos, sqrt, asin;
 import 'package:rango/models/meals.dart';
 import 'package:rango/models/order.dart';
 import 'package:geolocator/geolocator.dart';
@@ -176,8 +177,11 @@ class Repository {
   }
 
   Stream<List<DocumentSnapshot>> getNearbySellersStream(
-      Position userLocation, double radius,
-      {bool queryByActive = false, bool queryByTime = false}) {
+    Position userLocation,
+    double radius, {
+    bool queryByActive = false,
+    bool queryByTime = false,
+  }) {
     // Stream para pegar os vendedores próximos
     GeoFirePoint center = geo.point(
         latitude: userLocation.latitude, longitude: userLocation.longitude);
@@ -197,6 +201,56 @@ class Repository {
       return geo.collection(collectionRef: queryRef).within(
           center: center, radius: radius, field: "location", strictMode: true);
     }
+  }
+
+  double calculateDistance(lat1, lon1, lat2, lon2) {
+    var p = 0.017453292519943295;
+    var c = cos;
+    var a = 0.5 -
+        c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+    return 12742 * asin(sqrt(a));
+  }
+
+  Future<List<Seller>> getNearbySellers(
+    Position userLocation,
+    double radius, {
+    bool queryByActive = false,
+    bool queryByTime = false,
+  }) async {
+    DateTime currentTime = DateTime.now();
+    String weekday = weekdayMap[currentTime.weekday];
+    int formattedTime =
+        int.parse(currentTime.hour.toString() + currentTime.minute.toString());
+
+    var queryRef = cleanSellersRef.where("active");
+    if (queryByActive) queryRef = queryRef.where("active", isEqualTo: true);
+    if (queryByTime)
+      queryRef = queryRef.where("shift.$weekday.open", isEqualTo: true);
+
+    var sellerDocs = await queryRef.get();
+    List<Seller> sellers = [];
+    if (sellerDocs != null) {
+      sellerDocs.docs.forEach((sel) {
+        Seller seller = Seller.fromJson(sel.data());
+        if (seller.location != null) {
+          double range = calculateDistance(
+              userLocation.latitude,
+              userLocation.longitude,
+              seller.location.geopoint.latitude,
+              seller.location.geopoint.longitude);
+          if (range <= radius) {
+            if (queryByTime &&
+                seller.shift[weekday].openingTime <= formattedTime &&
+                seller.shift[weekday].closingTime >= formattedTime) {
+              sellers.add(seller);
+            } else
+              sellers.add(seller);
+          }
+        }
+      });
+    }
+    return sellers;
   }
 
   Future<double> getSellerRange() async {

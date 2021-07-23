@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
@@ -17,7 +15,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:custom_info_window/custom_info_window.dart';
 import 'package:rango/utils/constants.dart';
-import 'dart:ui' as ui;
 import 'package:rango/widgets/others/ModalFilter.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';

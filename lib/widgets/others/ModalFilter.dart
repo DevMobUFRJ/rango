@@ -81,31 +81,6 @@ class ModalFilterState extends State<ModalFilter> {
               ),
             ),
           ),
-          SizedBox(height: 5.0),
-          Flexible(
-            flex: 2,
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 15),
-              child: CustomTextFormField(
-                labelText: 'Buscar por quentinha',
-                controller: _buscaQuentinha,
-                key: ValueKey('buscaQuentinha'),
-                validator: (String value) {
-                  // if (value.trim() != '' && value.trim().length != 11) {
-                  //   setState(() => _telefoneErrorMessage =
-                  //       'Telefone precisa ter 11 números');
-                  // }
-                  return null;
-                },
-                errorText: _errorBuscaQuentinhaMessage,
-                focusNode: _focusNodeQuentinha,
-                keyboardType: TextInputType.text,
-                textInputAction: TextInputAction.next,
-                onSaved: (value) => _buscaQuentinha.text = value,
-                onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
-              ),
-            ),
-          ),
           SizedBox(height: 10.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -134,15 +109,31 @@ class ModalFilterState extends State<ModalFilter> {
                 onPressed: () async {
                   print("filtrar");
                   print(_buscaQuentinha == null);
+                  bool changedRange = false;
                   if (raio != widget.range) {
-                    await Repository.instance.setSellerRange(raio.toDouble());
-                    Provider.of<RangeChangeNotifier>(context, listen: false)
-                        .triggerRefresh();
+                    try {
+                      await Repository.instance.setSellerRange(raio.toDouble());
+                      Provider.of<RangeChangeNotifier>(context, listen: false)
+                          .triggerRefresh();
+                      changedRange = true;
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Erro ao mudar o raio de busca!',
+                            textAlign: TextAlign.center,
+                          ),
+                          backgroundColor: Theme.of(context).errorColor,
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    }
                   }
                   Navigator.pop(context, {
                     "vendedor": _buscaVendedor.text,
                     "quentinha": _buscaQuentinha.text,
                     "filtrando": true,
+                    "changedRange": changedRange,
                   });
                   print("buscando por" + _buscaVendedor.text);
                 },

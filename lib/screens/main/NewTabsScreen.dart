@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rango/main.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/screens/main/tabs/HomeScreen.dart';
+import 'package:rango/screens/main/tabs/NewSearchScreen.dart';
 import 'package:rango/screens/main/tabs/OrderHistory.dart';
 import 'package:rango/screens/main/tabs/ProfileScreen.dart';
 import 'package:rango/screens/main/tabs/SearchScreen.dart';
@@ -52,7 +53,7 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
           ),
           screens: <Widget>[
             HomeScreen(widget.client, widget.controller, key: currentKey),
-            SearchScreen(widget.controller),
+            NewSearchScreen(widget.controller),
             OrderHistoryScreen(widget.controller),
             ProfileScreen(widget.client, widget.controller),
           ],
