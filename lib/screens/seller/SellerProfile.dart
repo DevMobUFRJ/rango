@@ -11,10 +11,8 @@ import 'package:rango/models/client.dart';
 import 'package:rango/models/meal_request.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
-import 'package:rango/screens/main/tabs/SearchScreen.dart';
+import 'package:rango/screens/main/tabs/NewSearchScreen.dart';
 import 'package:rango/screens/seller/ChatScreen.dart';
-import 'package:rango/utils/constants.dart';
-import 'package:rango/utils/date_time.dart';
 import 'package:rango/widgets/home/ListaHorizontal.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rango/widgets/user/UserPicture.dart';
@@ -481,7 +479,7 @@ class _SellerProfileState extends State<SellerProfile> {
                           else {
                             pushNewScreen(
                               context,
-                              screen: SearchScreen(
+                              screen: NewSearchScreen(
                                 widget.controller,
                                 seller: seller,
                               ),

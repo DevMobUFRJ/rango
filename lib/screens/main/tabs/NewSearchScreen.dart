@@ -1,8 +1,6 @@
 import 'dart:async';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_info_window/custom_info_window.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -33,26 +31,22 @@ class NewSearchScreen extends StatefulWidget {
 
 class _NewSearchScreenState extends State<NewSearchScreen> {
   bool _isLoading = true;
-  bool _isCardsLoading = true;
   double _sellerRange;
   Position _userLocation;
   CameraPosition _cameraPosition;
-
+  CameraPosition _sellerPosition;
+  List<Seller> _allSellers;
+  bool _isCardsLoading = false;
   Set<Marker> _marcadores = {};
-
   CustomInfoWindowController _customInfoWindowController =
       CustomInfoWindowController();
   double _customInfoWindowHeight = 100;
   double _customInfoWindowWidth = 150;
-
   String _filter = '';
-  bool _filterMarker = false;
-
   Completer<GoogleMapController> _mapControllerCompleter = Completer();
   final ItemScrollController _itemScrollController = ItemScrollController();
   final ItemPositionsListener _itemPositionsListener =
       ItemPositionsListener.create();
-
   BitmapDescriptor customMarkerIcon;
 
   @override
@@ -65,7 +59,7 @@ class _NewSearchScreenState extends State<NewSearchScreen> {
   void initState() {
     _setCustomMarkers();
     _recuperarLocalizacaoAtual();
-    _getSellerRange();
+    _loadData();
     super.initState();
   }
 
@@ -74,83 +68,92 @@ class _NewSearchScreenState extends State<NewSearchScreen> {
         ImageConfiguration(), 'assets/imgs/pinMapa.png');
   }
 
-  _getSellerRange() async {
-    double sellerRange = await Repository.instance.getSellerRange();
-    setState(() => _sellerRange = sellerRange);
-    await _getUserLocation();
-  }
-
-  _getUserLocation() async {
-    Position userLocation = await Repository.instance.getUserLocation();
-    setState(() => {
-          _userLocation = userLocation,
-          _isLoading = false,
-          _filterMarker = true,
-        });
-    List<Seller> sellsers =
-        await Repository.instance.getNearbySellers(userLocation, _sellerRange);
-    print('alibaba');
-    print('alibaba: $sellsers');
-    sellsers.forEach((element) {
-      print('alibaba: ${element.name}');
-    });
-  }
-
   _recuperarLocalizacaoAtual() async {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best);
-    setState(() => _cameraPosition = CameraPosition(
-          target: LatLng(position.latitude, position.longitude),
-          zoom: 16,
-        ));
-    _movimentarCamera();
-  }
-
-  _movimentarCamera() async {
-    GoogleMapController googleMapController =
-        await _mapControllerCompleter.future;
-    googleMapController.animateCamera(
-      CameraUpdate.newCameraPosition(_cameraPosition),
-    );
-  }
-
-  List<Seller> _mapSellers(
-      AsyncSnapshot<List<DocumentSnapshot>> snapshotSeller) {
-    print('vtnc porra');
-    List<Seller> sellerList = [];
-    snapshotSeller.data.forEach(
-      (sel) {
-        Seller seller = Seller.fromJson(sel.data(), id: sel.id);
-
-        if (_filter.length == 0) {
-          sellerList.add(seller);
-        } else {
-          if (seller.name.toLowerCase().contains(_filter.toLowerCase())) {
-            sellerList.add(seller);
-          }
-        }
-      },
-    );
-    if (sellerList.isEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Nenhum vendedor encontrado!',
-              textAlign: TextAlign.center,
-            ),
-            backgroundColor: Theme.of(context).accentColor,
-            duration: Duration(seconds: 2),
+    setState(() {
+      _cameraPosition = CameraPosition(
+        target: LatLng(position.latitude, position.longitude),
+        zoom: 16,
+      );
+      if (widget.seller != null)
+        _sellerPosition = CameraPosition(
+          target: LatLng(
+            widget.seller.location.geopoint.latitude,
+            widget.seller.location.geopoint.longitude,
           ),
+          zoom: 16,
         );
+    });
+
+    _movimentarCamera(widget.seller != null);
+  }
+
+  _loadData() async {
+    double sellerRange = await Repository.instance.getSellerRange();
+    Position userLocation = await Repository.instance.getUserLocation();
+    List<Seller> allSellers =
+        await Repository.instance.getNearbySellers(userLocation, sellerRange);
+
+    List<Seller> sellers = _mapSellers(allSellers);
+    Set<Marker> marcadores = _carregarMarcadores(sellers);
+    setState(() => {
+          _userLocation = userLocation,
+          _isLoading = false,
+          _allSellers = sellers,
+          _sellerRange = sellerRange,
+          _marcadores = marcadores,
+          _isCardsLoading = false,
+        });
+  }
+
+  List<Seller> _mapSellers(List<Seller> sellersToMap) {
+    List<Seller> sellers = [];
+    if (_filter == '') {
+      sellers = sellersToMap;
+    } else {
+      sellersToMap.forEach((sel) {
+        if (sel.name.toLowerCase().contains(_filter.toLowerCase())) {
+          sellers.add(sel);
+        }
       });
     }
-    if ((_marcadores.length == 0 && sellerList.length > 0) ||
-        _filterMarker == true) {
-      print('vtnc');
-      _carregarMarcadores(sellerList);
+    sellers.sort((s1, s2) => s1.name.compareTo(s2.name));
+    if (sellers.length == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: Duration(seconds: 2),
+          content: Text(
+            'Não foram encontrados vendedores!',
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Theme.of(context).accentColor,
+        ),
+      );
+    } else {
+      sellers.sort(
+        (s1, s2) => s1.isOpen() && s2.isOpen()
+            ? 0
+            : s1.isOpen() && !s2.isOpen()
+                ? -1
+                : 1,
+      );
     }
-    return sellerList;
+    return sellers;
+  }
+
+  _movimentarCamera(bool hasSeller) async {
+    GoogleMapController googleMapController =
+        await _mapControllerCompleter.future;
+    if (hasSeller) {
+      googleMapController.animateCamera(
+        CameraUpdate.newCameraPosition(_sellerPosition),
+      );
+    } else {
+      googleMapController.animateCamera(
+        CameraUpdate.newCameraPosition(_cameraPosition),
+      );
+    }
   }
 
   Widget _buildLoadingSpinner() {
@@ -181,22 +184,24 @@ class _NewSearchScreenState extends State<NewSearchScreen> {
     );
   }
 
-  Widget _buildError(String error) {
-    return Container(
-      height: 0.6.hp - 56,
-      margin: EdgeInsets.symmetric(horizontal: 10),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          AutoSizeText(
-            error,
-            textAlign: TextAlign.center,
+  Widget _buildSellersLoading() {
+    return Center(
+      child: Material(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: AutoSizeText(
+            'Carregando vendedores...',
             style: GoogleFonts.montserrat(
-              fontSize: 45.nsp,
-              color: Theme.of(context).accentColor,
+              color: Colors.white,
+              fontSize: 32.nsp,
             ),
           ),
-        ],
+        ),
+        color: Theme.of(context).accentColor,
+        elevation: 3,
       ),
     );
   }
@@ -206,24 +211,30 @@ class _NewSearchScreenState extends State<NewSearchScreen> {
       alignment: Alignment.bottomLeft,
       child: Container(
         height: 150.0,
-        child: ScrollablePositionedList.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: sellers.length,
-          itemScrollController: _itemScrollController,
-          itemPositionsListener: _itemPositionsListener,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding:
-                  const EdgeInsets.only(top: 8, right: 8, bottom: 8, left: 8),
-              child: _boxes(sellers.elementAt(index), contextGeral, index),
-            );
-          },
-        ),
+        child: _isCardsLoading
+            ? _buildSellersLoading()
+            : ScrollablePositionedList.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: sellers.length,
+                itemScrollController: _itemScrollController,
+                itemPositionsListener: _itemPositionsListener,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                        top: 8, right: 8, bottom: 8, left: 8),
+                    child: _buildSellerCard(
+                      sellers[index],
+                      contextGeral,
+                      index,
+                    ),
+                  );
+                },
+              ),
       ),
     );
   }
 
-  Widget _boxes(Seller seller, BuildContext context, int index) {
+  Widget _buildSellerCard(Seller seller, BuildContext context, int index) {
     double lat = seller.location.geopoint.latitude;
     double long = seller.location.geopoint.longitude;
 
@@ -232,51 +243,11 @@ class _NewSearchScreenState extends State<NewSearchScreen> {
         _customInfoWindowController.hideInfoWindow();
         await _gotoLocation(lat, long);
         _customInfoWindowController.addInfoWindow(
-          Material(
-            elevation: 3,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            color: Theme.of(context).accentColor,
-            child: Container(
-              constraints: BoxConstraints(
-                maxHeight: _customInfoWindowHeight,
-                maxWidth: _customInfoWindowWidth,
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 3),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Flexible(
-                    flex: 3,
-                    child: AutoSizeText(
-                      seller.name,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.montserrat(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 32.nsp,
-                      ),
-                    ),
-                  ),
-                  if (seller.description != null) ...{
-                    SizedBox(height: 5),
-                    Flexible(
-                      flex: 2,
-                      child: AutoSizeText(
-                        seller.description,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.montserrat(
-                          color: Colors.white,
-                          fontSize: 28.nsp,
-                        ),
-                      ),
-                    ),
-                  }
-                ],
-              ),
-            ),
+          _buildInfoWindow(
+            _customInfoWindowHeight,
+            _customInfoWindowWidth,
+            seller,
+            context,
           ),
           LatLng(
             seller.location.geopoint.latitude,
@@ -289,13 +260,69 @@ class _NewSearchScreenState extends State<NewSearchScreen> {
           duration: Duration(milliseconds: 300),
         );
       },
-      child: _box(seller, context, seller.isOpen()),
+      child: _buildSellerCardComponents(
+        seller,
+        context,
+        seller.isOpen(),
+      ),
     );
   }
 
-  //
+  Widget _buildInfoWindow(double _customInfoWindowHeight,
+      double _customInfoWindowWidth, Seller _seller, BuildContext context) {
+    return Material(
+      elevation: 3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      color: Theme.of(context).accentColor,
+      child: Container(
+        constraints: BoxConstraints(
+          maxHeight: _customInfoWindowHeight,
+          maxWidth: _customInfoWindowWidth,
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 3),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Flexible(
+              flex: 3,
+              child: AutoSizeText(
+                _seller.name,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.montserrat(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 32.nsp,
+                ),
+              ),
+            ),
+            if (_seller.description != null) ...{
+              SizedBox(height: 5),
+              Flexible(
+                flex: 2,
+                child: AutoSizeText(
+                  _seller.description,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.montserrat(
+                    color: Colors.white,
+                    fontSize: 28.nsp,
+                  ),
+                ),
+              ),
+            }
+          ],
+        ),
+      ),
+    );
+  }
 
-  Widget _box(Seller seller, BuildContext context, bool isOpen) {
+  Widget _buildSellerCardComponents(
+    Seller seller,
+    BuildContext context,
+    bool isOpen,
+  ) {
     String name = seller.name;
     Color cor;
     Color corTexto;
@@ -306,106 +333,54 @@ class _NewSearchScreenState extends State<NewSearchScreen> {
       cor = Colors.grey;
       corTexto = Colors.grey;
     }
-    return Container(
-      child: new FittedBox(
-        child: Material(
-          color: Colors.white,
-          elevation: 2,
-          borderRadius: BorderRadius.circular(24.0),
+    return FittedBox(
+      child: Material(
+        color: Colors.white,
+        elevation: 2,
+        borderRadius: BorderRadius.circular(24.0),
+        child: Container(
+          height: 200,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Container(
-                width: 180,
+                width: 200,
                 height: 200,
                 child: ClipRRect(
                   borderRadius: new BorderRadius.circular(24.0),
                   child: ColorFiltered(
                     colorFilter: ColorFilter.mode(cor, BlendMode.saturation),
                     child: seller.logo == null
-                        ? Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Container(
-                                height: 200,
-                                color: Theme.of(context).accentColor,
-                              ),
-                              Center(
-                                child: Icon(
-                                  Icons.store,
-                                  size: 100,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          )
-                        : CachedNetworkImage(
-                            imageUrl: seller.logo,
-                            fit: BoxFit.cover,
-                            placeholder: (ctx, url) => Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Shimmer.fromColors(
-                                  baseColor: Color.fromRGBO(255, 175, 153, 1),
-                                  highlightColor: Colors.white,
-                                  child: Container(
-                                    height: 200,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                Center(
-                                  child: Icon(
-                                    Icons.store,
-                                    size: 100,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            errorWidget: (ctx, url, error) => Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Container(
-                                  height: 200,
-                                  color: Theme.of(context).accentColor,
-                                ),
-                                Center(
-                                  child: Icon(
-                                    Icons.store,
-                                    size: 75,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                        ? _buildSellerLogoPlaceholder()
+                        : _buildSellerLogo(seller),
                   ),
                 ),
               ),
               Container(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Container(
-                          child: AutoSizeText(
-                            name,
-                            maxLines: 1,
-                            style: GoogleFonts.montserrat(
-                                fontSize: 26.0,
-                                fontWeight: FontWeight.bold,
-                                color: corTexto),
+                margin: EdgeInsets.symmetric(horizontal: 15),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Flexible(
+                      flex: 1,
+                      child: Container(
+                        constraints: BoxConstraints(maxWidth: 0.5.wp),
+                        margin: EdgeInsets.symmetric(vertical: 5),
+                        child: AutoSizeText(
+                          name,
+                          maxLines: 2,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 48.nsp,
+                            fontWeight: FontWeight.bold,
+                            color: corTexto,
                           ),
                         ),
                       ),
-                      SizedBox(height: 10.0),
-                      _isOpen(seller),
-                      _botaoVerVendedor(seller, context, isOpen)
-                    ],
-                  ),
+                    ),
+                    Flexible(flex: 1, child: _isOpen(seller)),
+                    Flexible(child: _botaoVerVendedor(seller, context, isOpen))
+                  ],
                 ),
               ),
             ],
@@ -415,8 +390,69 @@ class _NewSearchScreenState extends State<NewSearchScreen> {
     );
   }
 
+  Widget _buildSellerLogo(Seller seller) {
+    return CachedNetworkImage(
+      imageUrl: seller.logo,
+      fit: BoxFit.cover,
+      placeholder: (ctx, url) => Stack(
+        alignment: Alignment.center,
+        children: [
+          Shimmer.fromColors(
+            baseColor: Color.fromRGBO(255, 175, 153, 1),
+            highlightColor: Colors.white,
+            child: Container(
+              height: 200,
+              color: Colors.white,
+            ),
+          ),
+          Center(
+            child: Icon(
+              Icons.store,
+              size: 100,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+      errorWidget: (ctx, url, error) => Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            height: 200,
+            color: Theme.of(context).accentColor,
+          ),
+          Center(
+            child: Icon(
+              Icons.store,
+              size: 100,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSellerLogoPlaceholder() {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+          height: 200,
+          color: Theme.of(context).accentColor,
+        ),
+        Center(
+          child: Icon(
+            Icons.store,
+            size: 100,
+            color: Colors.white,
+          ),
+        ),
+      ],
+    );
+  }
+
   Future<void> _gotoLocation(double lat, double long, {double zoom}) async {
-    print('cusao');
     final GoogleMapController controller = await _mapControllerCompleter.future;
     await controller.animateCamera(
       CameraUpdate.newCameraPosition(
@@ -478,12 +514,14 @@ class _NewSearchScreenState extends State<NewSearchScreen> {
     }
 
     return Container(
+      padding: EdgeInsets.symmetric(horizontal: 3),
       child: Text(
-        "Fechado\nAbre $weekdayFound às $horaFormatada",
+        "Fechado\nAbre $weekdayFound\nàs $horaFormatada",
         textAlign: TextAlign.center,
-        style: TextStyle(
+        maxLines: 3,
+        style: GoogleFonts.montserrat(
           color: Colors.black54,
-          fontSize: 22.0,
+          fontSize: 38.nsp,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -522,7 +560,7 @@ class _NewSearchScreenState extends State<NewSearchScreen> {
     );
   }
 
-  Widget _menu(BuildContext contextGeral) {
+  Widget _buildFloatingButtons(BuildContext contextGeral) {
     return Positioned(
       bottom: 156,
       right: 5,
@@ -597,31 +635,19 @@ class _NewSearchScreenState extends State<NewSearchScreen> {
 
   Future<void> _closeModal(dynamic value) async {
     if (value != null) {
-      if (value['vendedor'] != null &&
-          value['changedRange'] != null &&
-          value['changedRange'] == true) {
-        double sellerRange = await Repository.instance.getSellerRange();
+      if (value['vendedor'] != null) {
         setState(() {
           _filter = value['vendedor'];
-          _filterMarker = true;
-          _sellerRange = sellerRange;
+          _isCardsLoading = true;
         });
-      } else {
-        if (value['vendedor'] != null) {
-          setState(() => {
-                _filterMarker = true,
-                _filter = value['vendedor'],
-              });
-        }
-        if (value['changedRange'] != null && value['changedRange'] == true) {
-          _getSellerRange();
-        }
+        _loadData();
       }
     } else {
       setState(() {
         _filter = '';
-        _filterMarker = true;
+        _isCardsLoading = true;
       });
+      _loadData();
     }
   }
 
@@ -644,7 +670,7 @@ class _NewSearchScreenState extends State<NewSearchScreen> {
     }
   }
 
-  _carregarMarcadores(List<Seller> sellers) async {
+  _carregarMarcadores(List<Seller> sellers) {
     Set<Marker> marcadoresLocal = {};
     sellers.toList().asMap().forEach(
       (index, seller) {
@@ -732,25 +758,13 @@ class _NewSearchScreenState extends State<NewSearchScreen> {
               seller.location.geopoint.longitude.toString()),
           position: LatLng(seller.location.geopoint.latitude,
               seller.location.geopoint.longitude),
-          // infoWindow: InfoWindow(
-          //   title: seller.name,
-          //   snippet: seller.description,
-          //   onTap: () {
-          //     print('oi');
-          //   },
-          // ),
           icon: customMarkerIcon,
           consumeTapEvents: true,
         );
         marcadoresLocal.add(marcador);
       },
     );
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      setState(() {
-        _filterMarker = false;
-        _marcadores = marcadoresLocal;
-      });
-    });
+    return marcadoresLocal;
   }
 
   @override
@@ -788,26 +802,8 @@ class _NewSearchScreenState extends State<NewSearchScreen> {
                   width: _customInfoWindowWidth,
                   offset: 50,
                 ),
-                StreamBuilder(
-                  stream: Repository.instance.getNearbySellersStream(
-                    _userLocation,
-                    _sellerRange,
-                    queryByActive: false,
-                    queryByTime: false,
-                  ),
-                  builder: (BuildContext sellerSnapshotContext,
-                      AsyncSnapshot<List<DocumentSnapshot>> snapshotSeller) {
-                    if (snapshotSeller.connectionState ==
-                        ConnectionState.waiting) return SizedBox();
-                    //TODO carregamento dos cards
-
-                    if (snapshotSeller.hasError) return SizedBox();
-
-                    List<Seller> sellers = _mapSellers(snapshotSeller);
-                    return _cardsSellers(sellers, sellerSnapshotContext);
-                  },
-                ),
-                _menu(context),
+                _cardsSellers(_allSellers, context),
+                _buildFloatingButtons(context),
               ],
             ),
     );

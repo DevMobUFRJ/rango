@@ -20,11 +20,9 @@ class ModalFilterState extends State<ModalFilter> {
   final int sellerRang = 10;
   final _formKey = GlobalKey<FormState>();
   final _focusNodeVendedor = FocusNode();
-  final _focusNodeQuentinha = FocusNode();
   TextEditingController _buscaVendedor = TextEditingController();
   TextEditingController _buscaQuentinha = TextEditingController();
   String _errorBuscavendedorMessage;
-  String _errorBuscaQuentinhaMessage;
   int raio;
 
   @override

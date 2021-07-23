@@ -232,7 +232,7 @@ class Repository {
     List<Seller> sellers = [];
     if (sellerDocs != null) {
       sellerDocs.docs.forEach((sel) {
-        Seller seller = Seller.fromJson(sel.data());
+        Seller seller = Seller.fromJson(sel.data(), id: sel.id);
         if (seller.location != null) {
           double range = calculateDistance(
               userLocation.latitude,
