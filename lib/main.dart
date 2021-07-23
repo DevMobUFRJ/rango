@@ -1,7 +1,4 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/resources/repository.dart';
-import 'package:rango/screens/NoConnectionScreen.dart';
 import 'package:rango/screens/SplashScreen.dart';
 import 'package:rango/screens/auth/AuthScreen.dart';
 import 'package:rango/screens/auth/ForgotPasswordScreen.dart';

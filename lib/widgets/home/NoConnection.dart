@@ -17,17 +17,10 @@ class _NoConnectionState extends State<NoConnection> {
 
   initState() {
     super.initState();
-    subscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) async {
-      if (result != ConnectivityResult.none) {
-        bool connected = await DataConnectionChecker().hasConnection;
-        setState(() {
-          isDeviceConnected = connected;
-        });
-      } else {
-        setState(() {
-          isDeviceConnected = false;
-        });
-      }
+    subscription = DataConnectionChecker().onStatusChange.listen((DataConnectionStatus connectionStatus) async {
+      setState(() {
+        isDeviceConnected = connectionStatus == DataConnectionStatus.connected;
+      });
     });
   }
 
