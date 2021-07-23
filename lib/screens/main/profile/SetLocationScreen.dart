@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:io';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
@@ -24,9 +22,9 @@ class _SetLocationScreen extends State<SetLocationScreen> {
   CameraPosition _cameraPosition;
   BitmapDescriptor marMarkerCustom;
   GeoPoint positionGlobal;
-  Position userLocation;
+  Position _userLocation;
   final _geoFlutterFire = Geoflutterfire();
-  Marker marker = Marker(markerId: MarkerId('seller'));
+  Marker marker = Marker(markerId: MarkerId('seller'), consumeTapEvents: true);
   bool _loading = true;
 
   @override
@@ -61,56 +59,59 @@ class _SetLocationScreen extends State<SetLocationScreen> {
                     onMapCreated: (GoogleMapController controller) {
                       if (!_controller.isCompleted) {
                         _controller.complete(controller);
-                        controller
-                            .showMarkerInfoWindow(MarkerId("seller"));
+                        controller.showMarkerInfoWindow(MarkerId("seller"));
                         openMessage(
-                            'Clique no mapa ou segure e arraste o marcador para selecionar a posição correta'
+                          'Clique no mapa ou segure e arraste o marcador para selecionar a posição correta',
+                          seconds: 4,
                         );
                       }
                     },
                     onTap: (newPosition) {
                       setState(() {
-                        positionGlobal = GeoPoint(newPosition.latitude, newPosition.longitude);
+                        positionGlobal = GeoPoint(
+                          newPosition.latitude,
+                          newPosition.longitude,
+                        );
                         marker = marker.copyWith(positionParam: newPosition);
                       });
                     },
                     mapType: MapType.normal,
                     zoomControlsEnabled: false,
+                    myLocationButtonEnabled: false,
                     myLocationEnabled: true,
-                    myLocationButtonEnabled: true,
                   ),
-                  // Positioned(
-                  //   right: 5,
-                  //   top: 5,
-                  //   child: GestureDetector(
-                  //     onTap: () => _gotoLocation(
-                  //       userLocation.latitude,
-                  //       userLocation.longitude,
-                  //       zoom: 16,
-                  //     ),
-                  //     child: Container(
-                  //       decoration: BoxDecoration(
-                  //         borderRadius: BorderRadius.circular(50),
-                  //         color: Colors.white,
-                  //         boxShadow: [
-                  //           BoxShadow(
-                  //             color: Colors.grey,
-                  //             offset: Offset(0.0, 1.0), //(x,y)
-                  //             blurRadius: 6.0,
-                  //           ),
-                  //         ],
-                  //       ),
-                  //       child: Padding(
-                  //         padding: const EdgeInsets.all(5),
-                  //         child: Icon(
-                  //           Icons.my_location,
-                  //           color: Theme.of(context).accentColor,
-                  //           size: 35,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
+                  Positioned(
+                    right: 5,
+                    top: 5,
+                    child: GestureDetector(
+                      onTap: () => _gotoLocation(
+                        _userLocation.latitude,
+                        _userLocation.longitude,
+                        zoom: 16,
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey,
+                              offset: Offset(0.0, 1.0), //(x,y)
+                              blurRadius: 6.0,
+                            ),
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Icon(
+                            Icons.my_location,
+                            color: Theme.of(context).accentColor,
+                            size: 28,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: Container(
@@ -157,10 +158,10 @@ class _SetLocationScreen extends State<SetLocationScreen> {
         ImageConfiguration(), 'assets/imgs/pinMapa.png');
   }
 
-  void openMessage(String text) {
+  void openMessage(String text, {int seconds}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        duration: Duration(seconds: 5),
+        duration: Duration(seconds: seconds != null ? seconds : 2),
         backgroundColor: Theme.of(context).accentColor,
         content: Text(
           text,
@@ -210,28 +211,32 @@ class _SetLocationScreen extends State<SetLocationScreen> {
       );
     } else {
       position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.best
-      );
+          desiredAccuracy: LocationAccuracy.best);
     }
+
+    Position userPosition = await Repository.instance.getUserLocation();
 
     setState(() {
       _cameraPosition = CameraPosition(
           target: LatLng(position.latitude, position.longitude), zoom: 16);
       positionGlobal = GeoPoint(position.latitude, position.longitude);
+      _userLocation = userPosition;
     });
 
     Marker marcador = Marker(
       draggable: true,
       onDragEnd: ((newPosition) {
         setState(() {
-          positionGlobal = GeoPoint(newPosition.latitude, newPosition.longitude);
+          positionGlobal =
+              GeoPoint(newPosition.latitude, newPosition.longitude);
         });
       }),
       markerId: MarkerId("seller"),
-      position: LatLng(seller.location.geopoint.latitude, seller.location.geopoint.longitude),
-      infoWindow: InfoWindow(
-        title: "Sua loja está aqui",
+      position: LatLng(
+        seller.location.geopoint.latitude,
+        seller.location.geopoint.longitude,
       ),
+      consumeTapEvents: true,
       icon: marMarkerCustom,
     );
     setState(() {
@@ -239,22 +244,6 @@ class _SetLocationScreen extends State<SetLocationScreen> {
       _loading = false;
     });
   }
-
-  // _getLocation() async {
-  //   setState(() {
-  //     _loading = true;
-  //   });
-  //   //Position position = await Geolocator().getCurrentPosition();
-  //   Position position = await Repository.instance.getUserLocation();
-  //   debugPrint('location: ${position.latitude}');
-  //   final coordinates = new Coordinates(position.latitude, position.longitude);
-  //   var addresses =
-  //       await Geocoder.local.findAddressesFromCoordinates(coordinates);
-  //   var first = addresses.first;
-  //   print("${first.featureName} : ${first.addressLine}");
-  //   print(
-  //       ' ${first.locality} = ${first.adminArea} = ${first.subLocality} = ${first.subAdminArea} = ${first.addressLine} = ${first.featureName} = ${first.thoroughfare} =  ${first.subThoroughfare}');
-  // }
 
   _submit() async {
     if (positionGlobal == null) {
@@ -277,7 +266,6 @@ class _SetLocationScreen extends State<SetLocationScreen> {
         );
         dataToUpdate['location'] = location.data;
         await Repository.instance.updateSeller(widget.user.id, dataToUpdate);
-        //_recuperarLocalizacaoAtual();
         openMessage("Atualizado com sucesso");
       } catch (e) {
         print(e);
