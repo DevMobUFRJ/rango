@@ -116,7 +116,7 @@ class _GridHorizontalState extends State<GridHorizontal> {
                     ),
                   ),
                   Expanded(
-                    flex: 2,
+                    flex: 3,
                     child: Container(
                       alignment: Alignment.center,
                       padding: EdgeInsets.symmetric(vertical: 5),
