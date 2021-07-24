@@ -66,15 +66,17 @@ class _SetLocationScreen extends State<SetLocationScreen>
 
   @override
   Widget build(BuildContext context) {
+    print(marker);
     return Scaffold(
       appBar: AppBar(
-          title: AutoSizeText(
-        'Localização da loja',
-        style: GoogleFonts.montserrat(
-          color: Theme.of(context).accentColor,
-          fontSize: 35.nsp,
+        title: AutoSizeText(
+          'Localização da loja',
+          style: GoogleFonts.montserrat(
+            color: Theme.of(context).accentColor,
+            fontSize: 35.nsp,
+          ),
         ),
-      )),
+      ),
       body: _loading
           ? _buildLoadingSpinner()
           : Container(
@@ -102,7 +104,28 @@ class _SetLocationScreen extends State<SetLocationScreen>
                           newPosition.latitude,
                           newPosition.longitude,
                         );
-                        marker = marker.copyWith(positionParam: newPosition);
+                        if (marker.onTap == null) {
+                          marker = Marker(
+                            draggable: true,
+                            onDragEnd: ((newPosition) {
+                              setState(() {
+                                positionGlobal = GeoPoint(
+                                  newPosition.latitude,
+                                  newPosition.longitude,
+                                );
+                              });
+                            }),
+                            markerId: MarkerId("seller"),
+                            position: LatLng(
+                              newPosition.latitude,
+                              newPosition.longitude,
+                            ),
+                            consumeTapEvents: true,
+                            icon: marMarkerCustom,
+                            infoWindow: InfoWindow(title: 'Sua loja está aqui'),
+                          );
+                        } else
+                          marker = marker.copyWith(positionParam: newPosition);
                       });
                     },
                     onLongPress: (newPosition) {
@@ -264,21 +287,22 @@ class _SetLocationScreen extends State<SetLocationScreen>
 
     if (seller.location != null) {
       Marker marcador = Marker(
-          draggable: true,
-          onDragEnd: ((newPosition) {
-            setState(() {
-              positionGlobal =
-                  GeoPoint(newPosition.latitude, newPosition.longitude);
-            });
-          }),
-          markerId: MarkerId("seller"),
-          position: LatLng(
-            seller.location.geopoint.latitude,
-            seller.location.geopoint.longitude,
-          ),
-          consumeTapEvents: true,
-          icon: marMarkerCustom,
-          infoWindow: InfoWindow(title: 'Sua loja está aqui'));
+        draggable: true,
+        onDragEnd: ((newPosition) {
+          setState(() {
+            positionGlobal =
+                GeoPoint(newPosition.latitude, newPosition.longitude);
+          });
+        }),
+        markerId: MarkerId("seller"),
+        position: LatLng(
+          seller.location.geopoint.latitude,
+          seller.location.geopoint.longitude,
+        ),
+        consumeTapEvents: true,
+        icon: marMarkerCustom,
+        infoWindow: InfoWindow(title: 'Sua loja está aqui'),
+      );
       setState(() {
         marker = marcador;
         _loading = false;
@@ -309,6 +333,7 @@ class _SetLocationScreen extends State<SetLocationScreen>
         );
         dataToUpdate['location'] = location.data;
         await Repository.instance.updateSeller(widget.user.id, dataToUpdate);
+
         openMessage("Atualizado com sucesso");
       } catch (e) {
         print(e);
