@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -141,19 +143,15 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                                     Switch(
                                         activeColor:
                                             Theme.of(context).primaryColor,
-                                        value: seller.currentMeals[
-                                                    meals[index].id] !=
-                                                null &&
-                                            meals[index].quantity > 0,
+                                        value: seller.currentMeals[meals[index].id] != null &&
+                                              meals[index].quantity > 0,
                                         onChanged: (value) async {
                                           if (meals[index].quantity == 0) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
+                                            ScaffoldMessenger.of(context).showSnackBar(
                                               SnackBar(
                                                 duration: Duration(seconds: 2),
                                                 backgroundColor:
-                                                    Theme.of(context)
-                                                        .errorColor,
+                                                    Theme.of(context).errorColor,
                                                 content: Text(
                                                   'Você não possui mais unidades dessa quentinha! Adicione mais unidades para disponibilizar ela',
                                                   textAlign: TextAlign.center,
@@ -163,12 +161,18 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                                             return;
                                           }
                                           try {
-                                            setState(() => null);
                                             if (value) {
+                                              int countFeaturedMeals = seller
+                                                  .currentMeals
+                                                  .values
+                                                  .where((meal) => meal.featured == true)
+                                                  .length;
+                                              bool featured = countFeaturedMeals < maxFeaturedMeals;
                                               Repository.instance
                                                   .addMealToCurrent(
                                                       meals[index].id,
-                                                      seller.id);
+                                                      seller.id,
+                                                      featured);
                                             } else {
                                               Repository.instance
                                                   .removeMealFromCurrent(
@@ -185,28 +189,19 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                                           }
                                         }),
                                     IconButton(
-                                      onPressed: seller.currentMeals[
-                                                      meals[index].id] ==
-                                                  null ||
-                                              meals[index].quantity == 0
+                                      tooltip: 'Em destaque',
+                                      onPressed: seller.currentMeals[meals[index].id] == null ||
+                                                  meals[index].quantity == 0
                                           ? null
                                           : () async {
                                               try {
-                                                if (seller
-                                                        .currentMeals[
-                                                            meals[index].id]
-                                                        .featured ==
-                                                    false) {
+                                                if (seller.currentMeals[meals[index].id].featured == false) {
                                                   var featuredMeals = seller
                                                       .currentMeals.values
-                                                      .where((item) =>
-                                                          item.featured == true)
+                                                      .where((item) => item.featured == true)
                                                       .length;
-                                                  if (featuredMeals >=
-                                                      maxFeaturedMeals) {
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
+                                                  if (featuredMeals >= maxFeaturedMeals) {
+                                                    ScaffoldMessenger.of(context).showSnackBar(
                                                       SnackBar(
                                                         duration: Duration(
                                                             seconds: 2),
@@ -224,10 +219,7 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                                                   }
                                                 }
 
-                                                Repository.instance
-                                                    .toggleMealFeatured(
-                                                        meals[index].id,
-                                                        seller);
+                                                Repository.instance.toggleMealFeatured(meals[index].id, seller);
                                               } catch (e) {
                                                 showSnackbar(
                                                   context,
@@ -256,6 +248,7 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                                                   : Colors.white),
                                     ),
                                     IconButton(
+                                      tooltip: 'Editar',
                                       onPressed: () => pushNewScreen(context,
                                           screen: ManageMeal(
                                             seller,

@@ -8,6 +8,7 @@ import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
+import 'package:rango/utils/constants.dart';
 import 'package:rango/widgets/pickers/MealImagePicker.dart';
 import 'package:rango/utils/showSnackbar.dart';
 
@@ -402,6 +403,7 @@ class _ManageMealState extends State<ManageMeal> {
         await Repository.instance
             .updateMeal(widget.seller.id, widget.meal.id, dataToUpdate);
       } else {
+        //if (widget.seller.currentMeals.length < maxFeaturedMeals)
         String createdMealId = await Repository.instance
             .createMeal(widget.seller.id, dataToUpdate);
 
@@ -494,6 +496,7 @@ class _ManageMealState extends State<ManageMeal> {
                         showSnackbar(
                             ctx, false, 'Quentinha excluída com sucesso');
                         Navigator.of(ctx).pop();
+                        Navigator.of(context).pop();
                       } catch (e) {
                         setState(() => _loadingDelete = false);
                         showSnackbar(ctx, true, e.toString());

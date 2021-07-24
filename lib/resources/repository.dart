@@ -103,10 +103,10 @@ class Repository {
     }
   }
 
-  Future<void> addMealToCurrent(mealId, sellerId) async {
+  Future<void> addMealToCurrent(mealId, sellerId, bool featured) async {
     try {
       await sellersRef.doc(sellerId).update({
-        'currentMeals.$mealId': {'featured': false}
+        'currentMeals.$mealId': {'featured': featured}
       });
     } catch (e) {
       throw e;
