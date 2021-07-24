@@ -19,63 +19,49 @@ class NewTabsScreen extends StatefulWidget {
 
 class _NewTabsScreenState extends State<NewTabsScreen> {
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: Connectivity().onConnectivityChanged,
-      builder: (context, snap) {
-        // if (snap.connectionState == ConnectionState.waiting ||
-        //     !snap.hasData) {
-        //   return Container(
-        //     height: 1.hp - 56,
-        //     child: Scaffold(
-        //       body: NoConecctionWidget(),
-        //     ),
-        //   );
-        // }
-        return PersistentTabView(
-          controller: widget.controller,
-          navBarStyle: NavBarStyle.style6,
-          confineInSafeArea: true,
-          backgroundColor: Theme.of(context).backgroundColor,
-          handleAndroidBackButtonPress: true,
-          resizeToAvoidBottomInset: true,
-          stateManagement: true,
-          hideNavigationBarWhenKeyboardShows: true,
-          popAllScreensOnTapOfSelectedTab: true,
-          itemAnimationProperties: ItemAnimationProperties(
-            duration: Duration(milliseconds: 200),
-            curve: Curves.ease,
-          ),
-          screenTransitionAnimation: ScreenTransitionAnimation(
-            animateTabTransition: true,
-            curve: Curves.easeIn,
-            duration: Duration(milliseconds: 180),
-          ),
-          screens: <Widget>[
-            HomeScreen(widget.client, widget.controller, key: currentKey),
-            NewSearchScreen(widget.controller),
-            OrderHistoryScreen(widget.controller),
-            ProfileScreen(widget.client, widget.controller),
-          ],
-          items: [
-            PersistentBottomNavBarItem(
-                icon: Icon(Icons.home, size: 40),
-                activeColor: Color(0xFF609B90),
-                inactiveColor: Theme.of(context).primaryColor),
-            PersistentBottomNavBarItem(
-                icon: Icon(Icons.location_on, size: 40),
-                activeColor: Color(0xFF609B90),
-                inactiveColor: Theme.of(context).primaryColor),
-            PersistentBottomNavBarItem(
-                icon: Icon(Icons.history, size: 40),
-                activeColor: Color(0xFF609B90),
-                inactiveColor: Theme.of(context).primaryColor),
-            PersistentBottomNavBarItem(
-                icon: Icon(Icons.person, size: 40),
-                activeColor: Color(0xFF609B90),
-                inactiveColor: Theme.of(context).primaryColor),
-          ],
-        );
-      },
+    return PersistentTabView(
+      controller: widget.controller,
+      navBarStyle: NavBarStyle.style6,
+      confineInSafeArea: true,
+      backgroundColor: Theme.of(context).backgroundColor,
+      handleAndroidBackButtonPress: true,
+      resizeToAvoidBottomInset: true,
+      stateManagement: true,
+      hideNavigationBarWhenKeyboardShows: true,
+      popAllScreensOnTapOfSelectedTab: true,
+      itemAnimationProperties: ItemAnimationProperties(
+        duration: Duration(milliseconds: 200),
+        curve: Curves.ease,
+      ),
+      screenTransitionAnimation: ScreenTransitionAnimation(
+        animateTabTransition: true,
+        curve: Curves.easeIn,
+        duration: Duration(milliseconds: 180),
+      ),
+      screens: <Widget>[
+        HomeScreen(widget.client, widget.controller, key: currentKey),
+        NewSearchScreen(widget.controller),
+        OrderHistoryScreen(widget.controller),
+        ProfileScreen(widget.client, widget.controller),
+      ],
+      items: [
+        PersistentBottomNavBarItem(
+            icon: Icon(Icons.home, size: 40),
+            activeColor: Color(0xFF609B90),
+            inactiveColor: Theme.of(context).primaryColor),
+        PersistentBottomNavBarItem(
+            icon: Icon(Icons.location_on, size: 40),
+            activeColor: Color(0xFF609B90),
+            inactiveColor: Theme.of(context).primaryColor),
+        PersistentBottomNavBarItem(
+            icon: Icon(Icons.history, size: 40),
+            activeColor: Color(0xFF609B90),
+            inactiveColor: Theme.of(context).primaryColor),
+        PersistentBottomNavBarItem(
+            icon: Icon(Icons.person, size: 40),
+            activeColor: Color(0xFF609B90),
+            inactiveColor: Theme.of(context).primaryColor),
+      ],
     );
   }
 }

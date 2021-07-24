@@ -15,6 +15,7 @@ import 'package:rango/screens/main/NewTabsScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:rango/screens/seller/ChatScreen.dart';
+import 'package:rango/widgets/home/NoConnection.dart';
 
 import 'models/client.dart';
 
@@ -27,10 +28,13 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
   const AndroidInitializationSettings initializationAndroidSettings =
       AndroidInitializationSettings('app_icon');
+
   final InitializationSettings initializationSettings =
       InitializationSettings(android: initializationAndroidSettings);
+
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
     onSelectNotification: (String payload) async {
@@ -50,7 +54,7 @@ Future<void> main() async {
     },
   );
 
-  await FirebaseMessaging.instance.subscribeToTopic('all');
+  FirebaseMessaging.instance.subscribeToTopic('all');
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     if ((message.data['payload'].toString().contains('chat') &&
             chatScreenKey.currentState == null) ||
@@ -177,7 +181,12 @@ class MyApp extends StatelessWidget {
                     await Repository.instance.updateClient(client.id, dataToUpdate);
                   });
 
-                  return NewTabsScreen(clientSnapshot.data.data(), _controller);
+                  return Stack(
+                    children: [
+                      NewTabsScreen(clientSnapshot.data.data(), _controller),
+                      NoConnection()
+                    ],
+                  );
                 });
             }
             return LoginScreen();
