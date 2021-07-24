@@ -231,6 +231,10 @@ class ReportsScreen extends StatelessWidget {
 
       double minTotal = chartMap.values.reduce(min);
       double maxTotal = chartMap.values.reduce(max);
+      int maximumLabels;
+      if (orders.length == 1) maximumLabels = 2;
+      else if (orders.length < 7) maximumLabels = orders.length;
+      else maximumLabels = 7;
 
       return SfCartesianChart(
         title: ChartTitle(
@@ -243,14 +247,15 @@ class ReportsScreen extends StatelessWidget {
         ),
         zoomPanBehavior: ZoomPanBehavior(
             enablePanning: true,
-            enablePinching: true,
             zoomMode: ZoomMode.x
         ),
         margin: EdgeInsets.only(top: 20, right: 20, bottom: 10, left: 20),
         primaryXAxis: DateTimeAxis(
-            autoScrollingDelta: 7,
+            autoScrollingDelta: orders.length == 1 ? null : 7,
+            autoScrollingDeltaType: DateTimeIntervalType.days,
+            maximumLabels: maximumLabels,
+            labelIntersectAction: AxisLabelIntersectAction.rotate45,
             dateFormat: DateFormat('d MMMM', 'pt_BR'),
-            edgeLabelPlacement: EdgeLabelPlacement.hide,
             plotOffset: 10
         ),
         primaryYAxis: NumericAxis(
@@ -268,6 +273,7 @@ class ReportsScreen extends StatelessWidget {
         series: <SplineSeries<MapEntry<DateTime, double>, DateTime>>[
           SplineSeries<MapEntry<DateTime, double>, DateTime>(
               enableTooltip: true,
+              splineType: SplineType.monotonic,
               dataSource: <MapEntry<DateTime, double>>[
                 ...chartMap.entries
               ],
