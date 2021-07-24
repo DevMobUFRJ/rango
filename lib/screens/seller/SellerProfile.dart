@@ -401,19 +401,36 @@ class _SellerProfileState extends State<SellerProfile> {
                       ),
                     )
                   },
-                  Flexible(
-                    flex: 0,
-                    child: Container(
-                      margin: EdgeInsets.only(top: 20, bottom: 10),
-                      child: ListaHorizontal(
-                          title:
-                              'Quentinhas ${seller.isOpen() == true ? ' disponíveis' : ''}',
-                          tagM: Random().nextDouble(),
-                          meals: allCurrentMeals,
-                          isFromSellerScreen: true,
-                          controller: widget.controller),
+                  if (allCurrentMeals.length > 0) ...{
+                    Flexible(
+                      flex: 0,
+                      child: Container(
+                        margin: EdgeInsets.only(top: 20, bottom: 10),
+                        child: ListaHorizontal(
+                            title:
+                                'Quentinhas ${seller.isOpen() == true ? ' disponíveis' : ''}',
+                            tagM: Random().nextDouble(),
+                            meals: allCurrentMeals,
+                            isFromSellerScreen: true,
+                            controller: widget.controller),
+                      ),
                     ),
-                  ),
+                  } else ...{
+                    Flexible(
+                      flex: 0,
+                      child: Container(
+                        margin: EdgeInsets.symmetric(vertical: 10),
+                        child: AutoSizeText(
+                          'Este vendedor ainda não possui quentinhas cadastradas',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.montserrat(
+                            color: Theme.of(context).accentColor,
+                            fontSize: 35.nsp,
+                          ),
+                        ),
+                      ),
+                    ),
+                  },
                   Flexible(
                     flex: 2,
                     child: ToggleButtons(
