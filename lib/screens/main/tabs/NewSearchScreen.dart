@@ -42,15 +42,16 @@ class _NewSearchScreenState extends State<NewSearchScreen>
   Set<Marker> _marcadores = {};
   CustomInfoWindowController _customInfoWindowController =
       CustomInfoWindowController();
-  double _customInfoWindowHeight = 100;
-  double _customInfoWindowWidth = 150;
+  double _customInfoWindowHeight = 200.h;
+  double _customInfoWindowWidth = 250.h;
   String _filter = '';
   Completer<GoogleMapController> _mapControllerCompleter = Completer();
   final ItemScrollController _itemScrollController = ItemScrollController();
   final ItemPositionsListener _itemPositionsListener =
       ItemPositionsListener.create();
   BitmapDescriptor customMarkerIcon;
-  String _mapStyle = "[{\"featureType\": \"poi\",\"stylers\": [{ \"visibility\": \"off\" }]}]";
+  String _mapStyle =
+      "[{\"featureType\": \"poi\",\"stylers\": [{ \"visibility\": \"off\" }]}]";
 
   @override
   void dispose() {
@@ -86,6 +87,7 @@ class _NewSearchScreenState extends State<NewSearchScreen>
     WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
+
   _setCustomMarkers() async {
     customMarkerIcon = await BitmapDescriptor.fromAssetImage(
         ImageConfiguration(), 'assets/imgs/pinMapa.png');
@@ -330,13 +332,13 @@ class _NewSearchScreenState extends State<NewSearchScreen>
           maxHeight: _customInfoWindowHeight,
           maxWidth: _customInfoWindowWidth,
         ),
-        padding: EdgeInsets.symmetric(horizontal: 3),
+        padding: EdgeInsets.symmetric(horizontal: 8),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           children: [
             Flexible(
-              flex: 3,
+              flex: 2,
               child: AutoSizeText(
                 _seller.name,
                 textAlign: TextAlign.center,
@@ -773,10 +775,8 @@ class _NewSearchScreenState extends State<NewSearchScreen>
                   ),
                   color: Theme.of(context).accentColor,
                   child: Container(
-                    constraints: BoxConstraints(
-                      maxHeight: _customInfoWindowHeight,
-                      maxWidth: _customInfoWindowWidth,
-                    ),
+                    height: _customInfoWindowHeight,
+                    width: _customInfoWindowWidth,
                     padding: EdgeInsets.symmetric(horizontal: 3),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -847,8 +847,8 @@ class _NewSearchScreenState extends State<NewSearchScreen>
                     if (!_mapControllerCompleter.isCompleted) {
                       _mapControllerCompleter.complete(controller);
                     }
-                     
-                      controller.setMapStyle(_mapStyle);
+
+                    controller.setMapStyle(_mapStyle);
                     _customInfoWindowController.googleMapController =
                         controller;
                   },
