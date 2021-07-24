@@ -49,6 +49,7 @@ class _NewSearchScreenState extends State<NewSearchScreen> {
   final ItemPositionsListener _itemPositionsListener =
       ItemPositionsListener.create();
   BitmapDescriptor customMarkerIcon;
+  String _mapStyle = "[{\"featureType\": \"poi\",\"stylers\": [{ \"visibility\": \"off\" }]}]";
 
   @override
   void dispose() {
@@ -63,7 +64,6 @@ class _NewSearchScreenState extends State<NewSearchScreen> {
     _loadData();
     super.initState();
   }
-
   _setCustomMarkers() async {
     customMarkerIcon = await BitmapDescriptor.fromAssetImage(
         ImageConfiguration(), 'assets/imgs/pinMapa.png');
@@ -825,6 +825,8 @@ class _NewSearchScreenState extends State<NewSearchScreen> {
                     if (!_mapControllerCompleter.isCompleted) {
                       _mapControllerCompleter.complete(controller);
                     }
+                     
+                      controller.setMapStyle(_mapStyle);
                     _customInfoWindowController.googleMapController =
                         controller;
                   },
