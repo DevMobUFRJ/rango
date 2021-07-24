@@ -17,7 +17,8 @@ class SetLocationScreen extends StatefulWidget {
   _SetLocationScreen createState() => _SetLocationScreen();
 }
 
-class _SetLocationScreen extends State<SetLocationScreen> {
+class _SetLocationScreen extends State<SetLocationScreen>
+    with WidgetsBindingObserver {
   Completer<GoogleMapController> _controller = Completer();
   CameraPosition _cameraPosition;
   BitmapDescriptor marMarkerCustom;
@@ -26,14 +27,41 @@ class _SetLocationScreen extends State<SetLocationScreen> {
   final _geoFlutterFire = Geoflutterfire();
   Marker marker = Marker(markerId: MarkerId('seller'), consumeTapEvents: true);
   bool _loading = true;
-  String _mapStyle = "[{\"featureType\": \"poi\",\"stylers\": [{ \"visibility\": \"off\" }]}]";
+  String _mapStyle =
+      "[{\"featureType\": \"poi\",\"stylers\": [{ \"visibility\": \"off\" }]}]";
 
   @override
   initState() {
     _setCustomMarkers();
     _recuperarLocalizacaoAtual();
     _movimentarCamera();
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
+  }
+
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    switch (state) {
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.resumed:
+        var controller = await _controller.future;
+        controller.setMapStyle("[]");
+        break;
+      case AppLifecycleState.paused:
+        break;
+      case AppLifecycleState.detached:
+        break;
+      default:
+        break;
+    }
+    super.didChangeAppLifecycleState(state);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
@@ -67,7 +95,6 @@ class _SetLocationScreen extends State<SetLocationScreen> {
                         );
                       }
                       controller.setMapStyle(_mapStyle);
-
                     },
                     onTap: (newPosition) {
                       setState(() {
@@ -235,27 +262,30 @@ class _SetLocationScreen extends State<SetLocationScreen> {
       _userLocation = userPosition;
     });
 
-    Marker marcador = Marker(
-      draggable: true,
-      onDragEnd: ((newPosition) {
-        setState(() {
-          positionGlobal =
-              GeoPoint(newPosition.latitude, newPosition.longitude);
-        });
-      }),
-      markerId: MarkerId("seller"),
-      position: LatLng(
-        seller.location.geopoint.latitude,
-        seller.location.geopoint.longitude,
-      ),
-      consumeTapEvents: true,
-      icon: marMarkerCustom,
-      infoWindow: InfoWindow(title: 'Sua loja está aqui')
-    );
-    setState(() {
-      marker = marcador;
-      _loading = false;
-    });
+    if (seller.location != null) {
+      Marker marcador = Marker(
+          draggable: true,
+          onDragEnd: ((newPosition) {
+            setState(() {
+              positionGlobal =
+                  GeoPoint(newPosition.latitude, newPosition.longitude);
+            });
+          }),
+          markerId: MarkerId("seller"),
+          position: LatLng(
+            seller.location.geopoint.latitude,
+            seller.location.geopoint.longitude,
+          ),
+          consumeTapEvents: true,
+          icon: marMarkerCustom,
+          infoWindow: InfoWindow(title: 'Sua loja está aqui'));
+      setState(() {
+        marker = marcador;
+        _loading = false;
+      });
+    } else {
+      setState(() => _loading = false);
+    }
   }
 
   _submit() async {
