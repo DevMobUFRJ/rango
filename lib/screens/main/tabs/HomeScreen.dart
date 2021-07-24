@@ -598,7 +598,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         meals.removeWhere(
           (meal) => !mealIds.contains(meal.mealId),
         );
-        print(meals);
         if (meals.isNotEmpty) {
           return Column(
             children: [

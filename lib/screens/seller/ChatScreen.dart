@@ -40,7 +40,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<void> _getSeller(String sellerId) async {
-    DocumentSnapshot<Seller> sellerDoc = await Repository.instance.getSellerFuture(sellerId);
+    DocumentSnapshot<Seller> sellerDoc =
+        await Repository.instance.getSellerFuture(sellerId);
     setState(() => _seller = sellerDoc.data());
   }
 

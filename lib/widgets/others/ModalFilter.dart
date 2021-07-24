@@ -85,13 +85,10 @@ class ModalFilterState extends State<ModalFilter> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  print("filtrar");
-                  print(_buscaQuentinha == null);
                   Navigator.pop(context, {
                     "vendedor": '',
                     'quentinha': '',
                   });
-                  print("buscando por" + _buscaVendedor.text);
                 },
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 0.1.wp),
@@ -105,8 +102,6 @@ class ModalFilterState extends State<ModalFilter> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  print("filtrar");
-                  print(_buscaQuentinha == null);
                   bool changedRange = false;
                   if (raio != widget.range) {
                     try {
@@ -133,7 +128,6 @@ class ModalFilterState extends State<ModalFilter> {
                     "filtrando": true,
                     "changedRange": changedRange,
                   });
-                  print("buscando por" + _buscaVendedor.text);
                 },
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 0.1.wp),
@@ -170,7 +164,6 @@ class ModalFilterState extends State<ModalFilter> {
         });
       },
       onChangeEnd: (novo) {
-        print("ESCOLHI O NOVO VALOR =" + novo.toString());
         setState(() {
           raio = novo.round();
         });
