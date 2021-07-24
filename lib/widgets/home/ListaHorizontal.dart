@@ -187,8 +187,9 @@ class ListaHorizontal extends StatelessWidget {
                                     fit: BoxFit.cover,
                                     placeholder: (ctx, url) => Image(
                                         image: MemoryImage(kTransparentImage)),
-                                    errorWidget: (ctx, url, error) => Image(
-                                        image: MemoryImage(kTransparentImage)),
+                                    errorWidget: (ctx, url, error) =>
+                                        _renderWithoutImage(
+                                            context, meal.quantity),
                                   ),
                                 } else ...{
                                   _renderWithoutImage(ctx, meal.quantity)

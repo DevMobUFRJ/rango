@@ -85,8 +85,8 @@ class SellerGridVertical extends StatelessWidget {
                                 fit: BoxFit.cover,
                                 placeholder: (ctx, url) => Image(
                                     image: MemoryImage(kTransparentImage)),
-                                errorWidget: (ctx, url, error) => Image(
-                                    image: MemoryImage(kTransparentImage)),
+                                errorWidget: (ctx, url, error) =>
+                                    _renderWithoutImage(ctx),
                               ),
                             } else ...{
                               _renderWithoutImage(ctx)

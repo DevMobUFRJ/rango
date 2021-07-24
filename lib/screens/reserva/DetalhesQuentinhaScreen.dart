@@ -123,13 +123,53 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                       colorBlendMode: BlendMode.saturation,
                       fit: BoxFit.cover,
                       imageUrl: widget.marmita.picture,
-                      placeholder: (ctx, url) => Image(
-                        image:
-                            AssetImage('assets/imgs/quentinha_placeholder.png'),
+                      placeholder: (ctx, url) => Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: widget.marmita.quantity > 0
+                                  ? Theme.of(context).accentColor
+                                  : Colors.grey,
+                            ),
+                            child: SizedBox(
+                              height: 0.4.hp,
+                              width: 0.8.wp,
+                            ),
+                          ),
+                          Center(
+                            child: Icon(
+                              Icons.local_dining,
+                              size: 100,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
                       ),
-                      errorWidget: (ctx, url, error) => Image(
-                        image:
-                            AssetImage('assets/imgs/quentinha_placeholder.png'),
+                      errorWidget: (ctx, url, error) => Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: widget.marmita.quantity > 0
+                                  ? Theme.of(context).accentColor
+                                  : Colors.grey,
+                            ),
+                            child: SizedBox(
+                              height: 0.4.hp,
+                              width: 0.8.wp,
+                            ),
+                          ),
+                          Center(
+                            child: Icon(
+                              Icons.local_dining,
+                              size: 100,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
