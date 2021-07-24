@@ -29,7 +29,8 @@ class NewSearchScreen extends StatefulWidget {
   _NewSearchScreenState createState() => _NewSearchScreenState();
 }
 
-class _NewSearchScreenState extends State<NewSearchScreen> {
+class _NewSearchScreenState extends State<NewSearchScreen>
+    with WidgetsBindingObserver {
   bool _isLoading = true;
   double _sellerRange;
   Position _userLocation;
@@ -54,7 +55,27 @@ class _NewSearchScreenState extends State<NewSearchScreen> {
   @override
   void dispose() {
     _customInfoWindowController.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    switch (state) {
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.resumed:
+        var controller = await _mapControllerCompleter.future;
+        controller.setMapStyle("[]");
+        break;
+      case AppLifecycleState.paused:
+        break;
+      case AppLifecycleState.detached:
+        break;
+      default:
+        break;
+    }
+    super.didChangeAppLifecycleState(state);
   }
 
   @override
@@ -62,6 +83,7 @@ class _NewSearchScreenState extends State<NewSearchScreen> {
     _setCustomMarkers();
     _recuperarLocalizacaoAtual();
     _loadData();
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
   _setCustomMarkers() async {
