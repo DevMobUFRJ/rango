@@ -210,9 +210,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                             .getNearbySellersStream(
                                           locationSnapshot.data,
                                           rangeSnapshot.data,
-                                          //TODO Mudar para true quando acabar os testes
-                                          queryByActive: false,
-                                          queryByTime: false,
+                                          queryByActive: true,
+                                          queryByTime: true,
                                         ),
                                         builder: (
                                           ctxNearbySellers,
@@ -239,55 +238,37 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                             );
                                           }
 
-                                          List<MealRequest> allMealsRequests =
-                                              [];
-                                          List<MealRequest>
-                                              filteredMealsRequests = [];
+                                          List<MealRequest> allMealsRequests = [];
+                                          List<MealRequest> filteredMealsRequests = [];
 
                                           List<Seller> sellerList = [];
-                                          snapshot.data.forEach(
-                                            (sellerDoc) {
+                                          snapshot.data.forEach((sellerDoc) {
                                               Seller seller = Seller.fromJson(
                                                 sellerDoc.data(),
                                                 id: sellerDoc.id,
                                               );
                                               sellerList.add(seller);
                                               var filterByFeatured = true;
-                                              var mealsLimit = 0;
-                                              var currentMeals =
-                                                  seller.currentMeals;
+                                              var currentMeals = seller.currentMeals;
 
-                                              var sellerAll =
-                                                  currentMeals.entries.map(
-                                                (meal) {
-                                                  return MealRequest(
-                                                      mealId: meal.key,
-                                                      seller: seller);
-                                                },
-                                              ).toList();
-                                              allMealsRequests
-                                                  .addAll(sellerAll);
+                                              var sellerAll = currentMeals.entries.map((meal) {
+                                                return MealRequest(
+                                                  mealId: meal.key,
+                                                  seller: seller);
+                                              }).toList();
+                                              allMealsRequests.addAll(sellerAll);
 
                                               if (filterByFeatured) {
                                                 currentMeals.removeWhere(
-                                                    (mealId, details) =>
-                                                        !details.featured);
+                                                  (mealId, details) => !details.featured
+                                                );
                                               }
-                                              var sellerFiltered =
-                                                  currentMeals.entries.map(
-                                                (meal) {
-                                                  return MealRequest(
-                                                      mealId: meal.key,
-                                                      seller: seller);
-                                                },
-                                              ).toList();
-                                              if (mealsLimit > 0) {
-                                                sellerFiltered = sellerFiltered
-                                                    .take(mealsLimit)
-                                                    .toList();
-                                              }
-                                              filteredMealsRequests
-                                                  .addAll(sellerFiltered);
+                                              var sellerFiltered = currentMeals.entries.map((meal) {
+                                                return MealRequest(
+                                                  mealId: meal.key,
+                                                  seller: seller);
+                                              }).toList();
+                                              filteredMealsRequests.addAll(sellerFiltered);
                                             },
                                           );
 
@@ -302,7 +283,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                               height: 0.7.wp - 56,
                                               alignment: Alignment.center,
                                               child: AutoSizeText(
-                                                'Sem sugestões ou vendedores próximos abertos. Você pode aumentar o alcance ou fazer pedidos para receber sugestões!',
+                                                'Sem sugestões ou vendedores próximos abertos. Você pode aumentar o alcance ou procurar por vendedores no mapa!',
                                                 style: GoogleFonts.montserrat(
                                                   fontSize: 45.nsp,
                                                   color:
@@ -325,24 +306,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                                   .isNotEmpty)
                                                 _buildSuggestions(
                                                   filteredMealsRequests,
-                                                ),
-                                              if (allMealsRequests.isEmpty &&
-                                                  filteredMealsRequests.isEmpty)
-                                                Container(
-                                                  margin: EdgeInsets.symmetric(
-                                                    horizontal: 15,
-                                                    vertical: 10,
-                                                  ),
-                                                  child: AutoSizeText(
-                                                    'Use o aplicativo e faça reservas para receber sugestões de quentinhas!',
-                                                    style:
-                                                        GoogleFonts.montserrat(
-                                                      fontSize: 45.nsp,
-                                                      color: Theme.of(
-                                                              ctxNearbySellers)
-                                                          .accentColor,
-                                                    ),
-                                                  ),
                                                 ),
                                               SizedBox(height: 0.02.hp),
                                               if (sellerList.isNotEmpty)
