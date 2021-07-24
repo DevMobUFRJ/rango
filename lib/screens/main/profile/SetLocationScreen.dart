@@ -26,6 +26,7 @@ class _SetLocationScreen extends State<SetLocationScreen> {
   final _geoFlutterFire = Geoflutterfire();
   Marker marker = Marker(markerId: MarkerId('seller'), consumeTapEvents: true);
   bool _loading = true;
+  String _mapStyle = "[{\"featureType\": \"poi\",\"stylers\": [{ \"visibility\": \"off\" }]}]";
 
   @override
   initState() {
@@ -65,6 +66,8 @@ class _SetLocationScreen extends State<SetLocationScreen> {
                           seconds: 4,
                         );
                       }
+                      controller.setMapStyle(_mapStyle);
+
                     },
                     onTap: (newPosition) {
                       setState(() {
