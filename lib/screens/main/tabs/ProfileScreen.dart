@@ -240,11 +240,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     children: [
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(
-                                          120,
+                                          90,
                                         ),
                                         child: Container(
-                                          width: 100.h,
-                                          height: 100.h,
                                           child: Stack(
                                             alignment: Alignment.center,
                                             children: [
@@ -252,7 +250,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(
-                                                    60,
+                                                    90,
                                                   ),
                                                   color: Colors.white,
                                                 ),
