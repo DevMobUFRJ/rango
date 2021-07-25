@@ -16,6 +16,26 @@ class LoginScreen extends StatelessWidget {
       body: Center(
         child: Stack(
           children: <Widget>[
+            Align(
+              alignment: Alignment.topLeft,
+              child: Container(
+                child: SvgPicture.asset(
+                  assetName,
+                  semanticsLabel: 'curvaHome',
+                  width: 1.wp,
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Container(
+                child: SvgPicture.asset(
+                  asset2Name,
+                  semanticsLabel: 'curva2Home',
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+            ),
             Padding(
               padding: EdgeInsets.all(8),
               child: Column(
@@ -82,26 +102,6 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                 ],
-              ),
-            ),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Container(
-                child: SvgPicture.asset(
-                  assetName,
-                  semanticsLabel: 'curvaHome',
-                  width: 1.wp,
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Container(
-                child: SvgPicture.asset(
-                  asset2Name,
-                  semanticsLabel: 'curva2Home',
-                  width: MediaQuery.of(context).size.width,
-                ),
               ),
             ),
           ],
