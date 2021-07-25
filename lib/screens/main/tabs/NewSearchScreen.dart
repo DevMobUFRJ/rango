@@ -384,36 +384,36 @@ class _NewSearchScreenState extends State<NewSearchScreen>
       cor = Colors.grey;
       corTexto = Colors.grey;
     }
-    return FittedBox(
-      child: Material(
-        color: Colors.white,
-        elevation: 2,
-        borderRadius: BorderRadius.circular(24.0),
-        child: Container(
-          height: 200,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Container(
-                width: 200,
-                height: 200,
-                child: ClipRRect(
-                  borderRadius: new BorderRadius.circular(24.0),
-                  child: ColorFiltered(
-                    colorFilter: ColorFilter.mode(cor, BlendMode.saturation),
-                    child: seller.logo == null
-                        ? _buildSellerLogoPlaceholder()
-                        : _buildSellerLogo(seller),
-                  ),
+    return Material(
+      color: Colors.white,
+      elevation: 2,
+      borderRadius: BorderRadius.circular(24.0),
+      child: Container(
+        height: 200,
+        constraints: BoxConstraints(maxWidth: 0.8.wp),
+        child: Row(
+          children: <Widget>[
+            Container(
+              width: 135,
+              height: 200,
+              child: ClipRRect(
+                borderRadius: new BorderRadius.circular(24.0),
+                child: ColorFiltered(
+                  colorFilter: ColorFilter.mode(cor, BlendMode.saturation),
+                  child: seller.logo == null
+                      ? _buildSellerLogoPlaceholder()
+                      : _buildSellerLogo(seller),
                 ),
               ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 15),
+            ),
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 3),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Flexible(
-                      flex: 1,
+                      flex: 0,
                       child: Container(
                         constraints: BoxConstraints(maxWidth: 0.5.wp),
                         margin: EdgeInsets.symmetric(vertical: 5),
@@ -422,20 +422,22 @@ class _NewSearchScreenState extends State<NewSearchScreen>
                           maxLines: 2,
                           textAlign: TextAlign.center,
                           style: GoogleFonts.montserrat(
-                            fontSize: 48.nsp,
                             fontWeight: FontWeight.bold,
                             color: corTexto,
+                            fontSize: 32.nsp,
                           ),
                         ),
                       ),
                     ),
-                    Flexible(flex: 1, child: _isOpen(seller)),
-                    Flexible(child: _botaoVerVendedor(seller, context, isOpen))
+                    Flexible(flex: 0, child: _isOpen(seller)),
+                    Flexible(
+                        flex: 0,
+                        child: _botaoVerVendedor(seller, context, isOpen))
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -518,11 +520,14 @@ class _NewSearchScreenState extends State<NewSearchScreen>
   Widget _isOpen(Seller seller) {
     if (seller.isOpen()) {
       return Container(
-          child: Text(
-        "Aberto",
-        style: TextStyle(
-            color: Colors.black54, fontSize: 22.0, fontWeight: FontWeight.bold),
-      ));
+        child: Text(
+          "Aberto",
+          style: TextStyle(
+            color: Colors.black54,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
     }
 
     String thisWeekday = weekdayMap[DateTime.now().weekday];
@@ -565,14 +570,13 @@ class _NewSearchScreenState extends State<NewSearchScreen>
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 3),
+      constraints: BoxConstraints(maxWidth: 0.3.wp),
       child: Text(
-        "Fechado\nAbre $weekdayFound\nàs $horaFormatada",
+        "Fechado, abre $weekdayFound às $horaFormatada",
         textAlign: TextAlign.center,
         maxLines: 3,
         style: GoogleFonts.montserrat(
           color: Colors.black54,
-          fontSize: 38.nsp,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -581,8 +585,7 @@ class _NewSearchScreenState extends State<NewSearchScreen>
 
   Widget _botaoVerVendedor(Seller seller, BuildContext context, var isOpen) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 0.01.hp),
-      width: 0.4.wp,
+      width: 0.25.wp,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           primary: isOpen ? Theme.of(context).accentColor : Colors.grey,
@@ -603,7 +606,6 @@ class _NewSearchScreenState extends State<NewSearchScreen>
         child: AutoSizeText(
           'Ver Mais',
           style: GoogleFonts.montserrat(
-            fontSize: 38.nsp,
             color: isOpen ? null : Colors.white,
           ),
         ),
