@@ -50,7 +50,8 @@ class _GridHorizontalState extends State<GridHorizontal> {
               semanticContainer: true,
               clipBehavior: Clip.antiAliasWithSaveLayer,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
+                borderRadius: BorderRadius.circular(8),
+              ),
               child: Column(
                 children: <Widget>[
                   Expanded(
@@ -115,8 +116,8 @@ class _GridHorizontalState extends State<GridHorizontal> {
                       ],
                     ),
                   ),
-                  Expanded(
-                    flex: 3,
+                  Flexible(
+                    flex: 2,
                     child: Container(
                       alignment: Alignment.center,
                       padding: EdgeInsets.symmetric(vertical: 5),
@@ -132,10 +133,9 @@ class _GridHorizontalState extends State<GridHorizontal> {
                                 meal.name,
                                 textAlign: TextAlign.center,
                                 maxLines: 1,
-                                minFontSize: 16,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.montserrat(
-                                  fontSize: 18,
+                                  fontSize: 28.nsp,
                                 ),
                               ),
                             ),
@@ -147,7 +147,7 @@ class _GridHorizontalState extends State<GridHorizontal> {
                               child: Text(
                                 intToCurrency(meal.price),
                                 style: GoogleFonts.montserrat(
-                                  fontSize: 32.nsp,
+                                  fontSize: 28.nsp,
                                 ),
                               ),
                             ),
