@@ -8,7 +8,6 @@ import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
-import 'package:rango/utils/constants.dart';
 import 'package:rango/widgets/pickers/MealImagePicker.dart';
 import 'package:rango/utils/showSnackbar.dart';
 

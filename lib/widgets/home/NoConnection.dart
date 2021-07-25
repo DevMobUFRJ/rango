@@ -1,5 +1,4 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,7 +16,9 @@ class _NoConnectionState extends State<NoConnection> {
 
   initState() {
     super.initState();
-    subscription = DataConnectionChecker().onStatusChange.listen((DataConnectionStatus connectionStatus) async {
+    subscription = DataConnectionChecker()
+        .onStatusChange
+        .listen((DataConnectionStatus connectionStatus) async {
       setState(() {
         isDeviceConnected = connectionStatus == DataConnectionStatus.connected;
       });
@@ -32,10 +33,8 @@ class _NoConnectionState extends State<NoConnection> {
   Widget build(BuildContext context) {
     return !isDeviceConnected
         ? Padding(
-        padding: EdgeInsets.only(bottom: 56),
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
+            padding: EdgeInsets.only(bottom: 56),
+            child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
               Container(
                   padding: EdgeInsets.all(10),
                   color: Colors.red[400],
@@ -49,11 +48,8 @@ class _NoConnectionState extends State<NoConnection> {
                         fontSize: 28.nsp,
                       ),
                     ),
-                  )
-              )
-            ]
-        )
-    )
+                  ))
+            ]))
         : SizedBox();
   }
 }

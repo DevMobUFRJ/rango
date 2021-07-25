@@ -177,7 +177,6 @@ class _MealsHistoryState extends State<MealsHistory> {
                       margin: EdgeInsets.only(right: 5),
                       child: ElevatedButton(
                         child: AutoSizeText(
-                          //TODO Adicionar lógica do firebase, adicionando os mealIds selecionados aos currentMeals
                           "Adicionar",
                           style: GoogleFonts.montserrat(
                               color: Colors.white, fontSize: 36.nsp),

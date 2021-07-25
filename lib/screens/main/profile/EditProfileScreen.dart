@@ -59,9 +59,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       try {
         Map<String, dynamic> dataToUpdate = {};
         if (_tel.text != '' && _tel.text != widget.user.contact.phone) {
-          Contact contato = Contact(
-              name: widget.user.contact.name, // TODO De onde pega?
-              phone: _tel.text);
+          Contact contato =
+              Contact(name: widget.user.contact.name, phone: _tel.text);
           dataToUpdate['contact'] = contato.toJson();
         }
         if (_name.text != '' && _name.text != widget.user.name) {
