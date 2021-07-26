@@ -89,6 +89,49 @@ class _NewSearchScreenState extends State<NewSearchScreen>
     super.initState();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
+      body: _isLoading
+          ? _buildLoadingSpinner()
+          : Stack(children: [
+              GoogleMap(
+                mapType: MapType.normal,
+                initialCameraPosition: _cameraPosition,
+                onMapCreated: (GoogleMapController controller) {
+                  if (!_mapControllerCompleter.isCompleted) {
+                    _mapControllerCompleter.complete(controller);
+                  }
+
+                  controller.setMapStyle(_mapStyle);
+                  _customInfoWindowController.googleMapController = controller;
+                },
+                onTap: (_) {
+                  _customInfoWindowController.hideInfoWindow();
+                },
+                onCameraMove: (pos) {
+                  _customInfoWindowController.onCameraMove();
+                },
+                myLocationEnabled: true,
+                zoomControlsEnabled: false,
+                myLocationButtonEnabled: false,
+                markers: _marcadores,
+              ),
+              CustomInfoWindow(
+                controller: _customInfoWindowController,
+                height: _customInfoWindowHeight,
+                width: _customInfoWindowWidth,
+                offset: 50,
+              ),
+              _cardsSellers(_allSellers, context),
+              if (widget.seller != null) _buildBackButton(context),
+              _buildFloatingButtons(context),
+            ],
+      ),
+    );
+  }
+
   _setCustomMarkers() async {
     customMarkerIcon = await BitmapDescriptor.fromAssetImage(
         ImageConfiguration(), 'assets/imgs/pinMapa.png');
@@ -662,6 +705,42 @@ class _NewSearchScreenState extends State<NewSearchScreen>
     );
   }
 
+  Widget _buildBackButton(BuildContext contextGeral) {
+    return Positioned(
+      top: 40,
+      left: 5,
+      width: 50,
+      child: Column(
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.of(contextGeral).pop(),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(50),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey,
+                    offset: Offset(0.0, 1.0), //(x,y)
+                    blurRadius: 2,
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(5),
+                child: Icon(
+                  Icons.arrow_back,
+                  color: Theme.of(context).accentColor,
+                  size: 35,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildFloatingButtons(BuildContext contextGeral) {
     return Positioned(
       bottom: 156,
@@ -827,49 +906,5 @@ class _NewSearchScreenState extends State<NewSearchScreen>
       },
     );
     return marcadoresLocal;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
-      body: _isLoading
-          ? _buildLoadingSpinner()
-          : Stack(
-              children: [
-                GoogleMap(
-                  mapType: MapType.normal,
-                  initialCameraPosition: _cameraPosition,
-                  onMapCreated: (GoogleMapController controller) {
-                    if (!_mapControllerCompleter.isCompleted) {
-                      _mapControllerCompleter.complete(controller);
-                    }
-
-                    controller.setMapStyle(_mapStyle);
-                    _customInfoWindowController.googleMapController =
-                        controller;
-                  },
-                  onTap: (_) {
-                    _customInfoWindowController.hideInfoWindow();
-                  },
-                  onCameraMove: (pos) {
-                    _customInfoWindowController.onCameraMove();
-                  },
-                  myLocationEnabled: true,
-                  zoomControlsEnabled: false,
-                  myLocationButtonEnabled: false,
-                  markers: _marcadores,
-                ),
-                CustomInfoWindow(
-                  controller: _customInfoWindowController,
-                  height: _customInfoWindowHeight,
-                  width: _customInfoWindowWidth,
-                  offset: 50,
-                ),
-                _cardsSellers(_allSellers, context),
-                _buildFloatingButtons(context),
-              ],
-            ),
-    );
   }
 }

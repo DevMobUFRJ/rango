@@ -66,7 +66,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          elevation: 5,
+          elevation: 3,
           child: TextFormField(
             focusNode: widget.focusNode != null ? widget.focusNode : null,
             controller: widget.controller,

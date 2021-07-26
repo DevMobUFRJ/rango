@@ -45,7 +45,7 @@ class ModalFilterState extends State<ModalFilter> {
               child: Padding(
                 padding: EdgeInsets.only(left: 0.05.wp, bottom: 0.01.hp),
                 child: Text(
-                  "Raio de busca (por KM)",
+                  "Raio de busca (em km)",
                   style: TextStyle(
                     fontSize: 38.nsp,
                     color: Theme.of(context).accentColor,
@@ -64,10 +64,6 @@ class ModalFilterState extends State<ModalFilter> {
                 controller: _buscaVendedor,
                 key: ValueKey('buscaVendedor'),
                 validator: (String value) {
-                  // if (value.trim() != '' && value.trim().length != 11) {
-                  //   setState(() => _telefoneErrorMessage =
-                  //       'Telefone precisa ter 11 números');
-                  // }
                   return null;
                 },
                 errorText: _errorBuscavendedorMessage,
