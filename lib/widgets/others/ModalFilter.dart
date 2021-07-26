@@ -45,7 +45,7 @@ class ModalFilterState extends State<ModalFilter> {
               child: Padding(
                 padding: EdgeInsets.only(left: 0.05.wp, bottom: 0.01.hp),
                 child: Text(
-                  "Raio de vendedores (por KM)",
+                  "Raio de busca (por KM)",
                   style: TextStyle(
                     fontSize: 38.nsp,
                     color: Theme.of(context).accentColor,
