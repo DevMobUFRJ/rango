@@ -120,7 +120,7 @@ class _GridHorizontalState extends State<GridHorizontal> {
                     flex: 2,
                     child: Container(
                       alignment: Alignment.center,
-                      padding: EdgeInsets.symmetric(vertical: 5),
+                      padding: EdgeInsets.symmetric(vertical: 3),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -143,7 +143,7 @@ class _GridHorizontalState extends State<GridHorizontal> {
                           Flexible(
                             flex: 1,
                             child: Container(
-                              margin: EdgeInsets.symmetric(vertical: 2),
+                              margin: EdgeInsets.symmetric(vertical: 1),
                               child: Text(
                                 intToCurrency(meal.price),
                                 style: GoogleFonts.montserrat(
