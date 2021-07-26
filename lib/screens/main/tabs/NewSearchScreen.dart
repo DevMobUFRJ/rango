@@ -3,6 +3,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:custom_info_window/custom_info_window.dart';
 import 'package:flutter/material.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -97,6 +98,7 @@ class _NewSearchScreenState extends State<NewSearchScreen>
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best);
     setState(() {
+      _userLocation = position;
       _cameraPosition = CameraPosition(
         target: LatLng(position.latitude, position.longitude),
         zoom: 16,
@@ -123,13 +125,30 @@ class _NewSearchScreenState extends State<NewSearchScreen>
     List<Seller> sellers = _mapSellers(allSellers);
     Set<Marker> marcadores = _carregarMarcadores(sellers);
     setState(() => {
-          _userLocation = userLocation,
-          _isLoading = false,
-          _allSellers = sellers,
-          _sellerRange = sellerRange,
-          _marcadores = marcadores,
-          _isCardsLoading = false,
-        });
+      _userLocation = userLocation,
+      _isLoading = false,
+      _allSellers = sellers,
+      _sellerRange = sellerRange,
+      _marcadores = marcadores,
+      _isCardsLoading = false,
+    });
+
+    if (widget.seller != null) {
+      await _mapControllerCompleter.future;
+      _customInfoWindowController.hideInfoWindow();
+      _customInfoWindowController.addInfoWindow(
+        _buildInfoWindow(
+          _customInfoWindowHeight,
+          _customInfoWindowWidth,
+          widget.seller,
+          context,
+        ),
+        LatLng(
+          widget.seller.location.geopoint.latitude,
+          widget.seller.location.geopoint.longitude,
+        ),
+      );
+    }
   }
 
   _updateUserLocation() async {
@@ -139,7 +158,7 @@ class _NewSearchScreenState extends State<NewSearchScreen>
         _userLocation = userLocation;
         _loadingMyLocation = false;
       });
-      _gotoLocation(
+      _goToLocation(
         userLocation.latitude,
         userLocation.longitude,
         zoom: 16,
@@ -169,7 +188,7 @@ class _NewSearchScreenState extends State<NewSearchScreen>
         }
       });
     }
-    sellers.sort((s1, s2) => s1.name.compareTo(s2.name));
+
     if (sellers.length == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -182,8 +201,12 @@ class _NewSearchScreenState extends State<NewSearchScreen>
         ),
       );
     } else {
+      sellers.sort((s1, s2) =>
+          _getDistanceSellerToUser(s1)
+          .compareTo(_getDistanceSellerToUser(s2))
+      );
       sellers.sort(
-        (s1, s2) => s1.isOpen() && s2.isOpen()
+        (s1, s2) => s1.isOpen() == s2.isOpen()
             ? 0
             : s1.isOpen() && !s2.isOpen()
                 ? -1
@@ -191,6 +214,16 @@ class _NewSearchScreenState extends State<NewSearchScreen>
       );
     }
     return sellers;
+  }
+
+  double _getDistanceSellerToUser(Seller seller) {
+    if (_userLocation == null ||
+        _userLocation.latitude == null ||
+        _userLocation.longitude == null) return 1;
+    return GeoFirePoint(
+        seller.location.geopoint.latitude,
+        seller.location.geopoint.latitude)
+        .distance(lat: _userLocation.latitude, lng: _userLocation.longitude);
   }
 
   _movimentarCamera(bool hasSeller) async {
@@ -269,6 +302,7 @@ class _NewSearchScreenState extends State<NewSearchScreen>
                 itemCount: sellers.length,
                 itemScrollController: _itemScrollController,
                 itemPositionsListener: _itemPositionsListener,
+                initialScrollIndex: _getSellerIndex(),
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.only(
@@ -285,14 +319,20 @@ class _NewSearchScreenState extends State<NewSearchScreen>
     );
   }
 
+  int _getSellerIndex() {
+    if (widget.seller == null) return 0;
+    var index = _allSellers.indexWhere((seller) => seller.id == widget.seller.id);
+    if (index == -1) return 0;
+    else return index;
+  }
+
   Widget _buildSellerCard(Seller seller, BuildContext context, int index) {
     double lat = seller.location.geopoint.latitude;
     double long = seller.location.geopoint.longitude;
 
     return GestureDetector(
       onTap: () async {
-        _customInfoWindowController.hideInfoWindow();
-        await _gotoLocation(lat, long);
+        await _goToLocation(lat, long);
         _customInfoWindowController.addInfoWindow(
           _buildInfoWindow(
             _customInfoWindowHeight,
@@ -320,60 +360,69 @@ class _NewSearchScreenState extends State<NewSearchScreen>
   }
 
   Widget _buildInfoWindow(double _customInfoWindowHeight,
-      double _customInfoWindowWidth, Seller _seller, BuildContext context) {
-    return Material(
-      elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      color: Theme.of(context).accentColor,
-      child: Container(
-        constraints: BoxConstraints(
-          maxHeight: _customInfoWindowHeight,
-          maxWidth: _customInfoWindowWidth,
+      double _customInfoWindowWidth, Seller seller, BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        pushNewScreen(
+          context,
+          withNavBar: false,
+          screen: SellerProfile(
+            seller.id,
+            seller.name,
+            widget.tabController,
+            fromMap: true,
+          ),
+          pageTransitionAnimation: PageTransitionAnimation.cupertino,
+        ).then((value) => _returnOfSellerProfile(value));
+      },
+      child: Material(
+        elevation: 3,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
         ),
-        padding: EdgeInsets.symmetric(horizontal: 8),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Flexible(
-              flex: 2,
-              child: AutoSizeText(
-                _seller.name,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.montserrat(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 32.nsp,
-                ),
-              ),
-            ),
-            if (_seller.description != null) ...{
-              SizedBox(height: 5),
+        color: Theme.of(context).accentColor,
+        child: Container(
+          height: _customInfoWindowHeight,
+          width: _customInfoWindowWidth,
+          padding: EdgeInsets.symmetric(horizontal: 8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: [
               Flexible(
                 flex: 2,
                 child: AutoSizeText(
-                  _seller.description,
+                  seller.name,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.montserrat(
                     color: Colors.white,
-                    fontSize: 28.nsp,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 32.nsp,
                   ),
                 ),
               ),
-            }
-          ],
+              if (seller.description != null) ...{
+                SizedBox(height: 5),
+                Flexible(
+                  flex: 2,
+                  child: AutoSizeText(
+                    seller.description,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.montserrat(
+                      color: Colors.white,
+                      fontSize: 28.nsp,
+                    ),
+                  ),
+                ),
+              }
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildSellerCardComponents(
-    Seller seller,
-    BuildContext context,
-    bool isOpen,
-  ) {
+  Widget _buildSellerCardComponents(Seller seller, BuildContext context, bool isOpen) {
     String name = seller.name;
     Color cor;
     Color corTexto;
@@ -392,7 +441,7 @@ class _NewSearchScreenState extends State<NewSearchScreen>
         height: 200,
         constraints: BoxConstraints(maxWidth: 0.8.wp),
         child: Row(
-          children: <Widget>[
+          children: [
             Container(
               width: 135,
               height: 200,
@@ -505,7 +554,7 @@ class _NewSearchScreenState extends State<NewSearchScreen>
     );
   }
 
-  Future<void> _gotoLocation(double lat, double long, {double zoom}) async {
+  Future<void> _goToLocation(double lat, double long, {double zoom}) async {
     final GoogleMapController controller = await _mapControllerCompleter.future;
     await controller.animateCamera(
       CameraUpdate.newCameraPosition(
@@ -734,7 +783,7 @@ class _NewSearchScreenState extends State<NewSearchScreen>
         seller.location.geopoint != null &&
         seller.location.geopoint.latitude != null &&
         seller.location.geopoint.longitude != null) {
-      _gotoLocation(seller.location.geopoint.latitude,
+      _goToLocation(seller.location.geopoint.latitude,
           seller.location.geopoint.longitude);
     }
   }
@@ -750,70 +799,17 @@ class _NewSearchScreenState extends State<NewSearchScreen>
               curve: Curves.easeOut,
               duration: Duration(milliseconds: 300),
             );
-            await _gotoLocation(
+            await _goToLocation(
               seller.location.geopoint.latitude,
               seller.location.geopoint.longitude,
               zoom: 16,
             );
             _customInfoWindowController.addInfoWindow(
-              GestureDetector(
-                onTap: () {
-                  pushNewScreen(
-                    context,
-                    withNavBar: false,
-                    screen: SellerProfile(
-                      seller.id,
-                      seller.name,
-                      widget.tabController,
-                      fromMap: true,
-                    ),
-                    pageTransitionAnimation: PageTransitionAnimation.cupertino,
-                  ).then((value) => _returnOfSellerProfile(value));
-                },
-                child: Material(
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  color: Theme.of(context).accentColor,
-                  child: Container(
-                    height: _customInfoWindowHeight,
-                    width: _customInfoWindowWidth,
-                    padding: EdgeInsets.symmetric(horizontal: 3),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Flexible(
-                          flex: 3,
-                          child: AutoSizeText(
-                            seller.name,
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.montserrat(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 32.nsp,
-                            ),
-                          ),
-                        ),
-                        if (seller.description != null) ...{
-                          SizedBox(height: 5),
-                          Flexible(
-                            flex: 2,
-                            child: AutoSizeText(
-                              seller.description,
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.montserrat(
-                                color: Colors.white,
-                                fontSize: 28.nsp,
-                              ),
-                            ),
-                          ),
-                        }
-                      ],
-                    ),
-                  ),
-                ),
+              _buildInfoWindow(
+                _customInfoWindowHeight,
+                _customInfoWindowWidth,
+                seller,
+                context,
               ),
               LatLng(
                 seller.location.geopoint.latitude,
@@ -821,8 +817,7 @@ class _NewSearchScreenState extends State<NewSearchScreen>
               ),
             );
           },
-          markerId: MarkerId(seller.location.geopoint.latitude.toString() +
-              seller.location.geopoint.longitude.toString()),
+          markerId: MarkerId(seller.id),
           position: LatLng(seller.location.geopoint.latitude,
               seller.location.geopoint.longitude),
           icon: customMarkerIcon,
