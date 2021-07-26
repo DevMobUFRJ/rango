@@ -211,6 +211,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             }
 
                             Seller seller = sellerSnapshot.data.data();
+                            if (seller == null) {
+                              Repository.instance.removeSellerFromClientFavorites(
+                                  widget.usuario.id,
+                                  widget.usuario.favoriteSellers[index]
+                              );
+                              return SizedBox();
+                            }
 
                             return Material(
                               borderRadius: BorderRadius.circular(12),
