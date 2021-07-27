@@ -165,32 +165,35 @@ class MyApp extends StatelessWidget {
 
             if (userSnapshot.hasData) {
               return StreamBuilder(
-                stream: Repository.instance.getClientStream(userSnapshot.data.uid),
-                builder: (ctx, AsyncSnapshot<DocumentSnapshot<Client>> clientSnapshot) {
-                  if (!clientSnapshot.hasData ||
-                      clientSnapshot.connectionState ==
-                          ConnectionState.waiting) {
-                    return SplashScreen();
-                  }
+                  stream: Repository.instance
+                      .getClientStream(userSnapshot.data.uid),
+                  builder: (ctx,
+                      AsyncSnapshot<DocumentSnapshot<Client>> clientSnapshot) {
+                    if (!clientSnapshot.hasData ||
+                        clientSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                      return SplashScreen();
+                    }
 
-                  if (clientSnapshot.hasError) {
-                    return LoginScreen();
-                  }
-                  FirebaseMessaging.instance.onTokenRefresh
-                      .listen((newToken) async {
-                    Map<String, dynamic> dataToUpdate = {};
-                    Client client = clientSnapshot.data.data();
-                    dataToUpdate['deviceToken'] = newToken;
-                    await Repository.instance.updateClient(client.id, dataToUpdate);
+                    if (clientSnapshot.hasError) {
+                      return LoginScreen();
+                    }
+                    FirebaseMessaging.instance.onTokenRefresh
+                        .listen((newToken) async {
+                      Map<String, dynamic> dataToUpdate = {};
+                      Client client = clientSnapshot.data.data();
+                      dataToUpdate['deviceToken'] = newToken;
+                      await Repository.instance
+                          .updateClient(client.id, dataToUpdate);
+                    });
+
+                    return Stack(
+                      children: [
+                        NewTabsScreen(clientSnapshot.data.data(), _controller),
+                        NoConnection()
+                      ],
+                    );
                   });
-
-                  return Stack(
-                    children: [
-                      NewTabsScreen(clientSnapshot.data.data(), _controller),
-                      NoConnection()
-                    ],
-                  );
-                });
             }
             return LoginScreen();
           },

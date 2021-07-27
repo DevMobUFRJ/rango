@@ -73,38 +73,37 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
           ),
         ),
       ),
-      body: Column(
-        children: <Widget>[
-          if (widget.marmita.picture == null) ...{
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: widget.marmita.quantity > 0
-                        ? Theme.of(context).accentColor
-                        : Colors.grey,
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            if (widget.marmita.picture == null) ...{
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: widget.marmita.quantity > 0
+                          ? Theme.of(context).accentColor
+                          : Colors.grey,
+                    ),
+                    child: SizedBox(
+                      height: 0.2.hp,
+                      width: 0.6.wp,
+                    ),
                   ),
-                  child: SizedBox(
-                    height: 0.2.hp,
-                    width: 0.6.wp,
+                  Center(
+                    child: Icon(
+                      Icons.local_dining,
+                      size: 55,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-                Center(
-                  child: Icon(
-                    Icons.local_dining,
-                    size: 55,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            )
-          } else ...{
-            Expanded(
-              flex: 0,
-              child: Card(
-                margin: EdgeInsets.only(top: 10),
+                ],
+              )
+            } else ...{
+              Card(
+                margin: EdgeInsets.only(top: 0),
                 clipBehavior: Clip.antiAliasWithSaveLayer,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -175,203 +174,180 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                   ),
                 ),
               ),
-            ),
-          },
-          Flexible(
-            flex: 0,
-            child: Container(
-              margin: EdgeInsets.symmetric(vertical: 25, horizontal: 0.1.wp),
+            },
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 5, horizontal: 0.1.wp),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Flexible(
-                    flex: 0,
-                    child: Container(
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: AutoSizeText(
-                          widget.marmita.name,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.montserratTextTheme(
-                                  Theme.of(context).textTheme)
-                              .headline2
-                              .copyWith(
-                                color: widget.marmita.quantity > 0
-                                    ? null
-                                    : Colors.grey,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 38.nsp,
-                              ),
-                        ),
+                  Container(
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: AutoSizeText(
+                        widget.marmita.name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.montserratTextTheme(
+                                Theme.of(context).textTheme)
+                            .headline2
+                            .copyWith(
+                              color: widget.marmita.quantity > 0
+                                  ? null
+                                  : Colors.grey,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 38.nsp,
+                            ),
                       ),
                     ),
                   ),
-                  Flexible(
-                    flex: 0,
-                    child: Container(
-                      margin: EdgeInsets.symmetric(vertical: 10),
-                      child: Column(
-                        children: [
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: AutoSizeText(
-                              'Descrição:',
-                              style: GoogleFonts.montserratTextTheme(
-                                      Theme.of(context).textTheme)
-                                  .headline2
-                                  .copyWith(
-                                    color: widget.marmita.quantity > 0
-                                        ? null
-                                        : Colors.grey,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 35.nsp,
-                                  ),
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: AutoSizeText(
-                              widget.marmita.description,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 6,
-                              style: GoogleFonts.montserratTextTheme(
-                                      Theme.of(context).textTheme)
-                                  .headline2
-                                  .copyWith(
-                                    color: widget.marmita.quantity > 0
-                                        ? null
-                                        : Colors.grey,
-                                    fontSize: 35.nsp,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Flexible(
-                    flex: 1,
-                    child: Container(
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: AutoSizeText(
-                          price,
-                          style: GoogleFonts.montserratTextTheme(
-                                  Theme.of(context).textTheme)
-                              .headline2
-                              .copyWith(
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 10),
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: AutoSizeText(
+                            'Descrição:',
+                            style: GoogleFonts.montserratTextTheme(
+                                    Theme.of(context).textTheme)
+                                .headline2
+                                .copyWith(
                                   color: widget.marmita.quantity > 0
                                       ? null
                                       : Colors.grey,
-                                  fontWeight: FontWeight.bold),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 35.nsp,
+                                ),
+                          ),
                         ),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: AutoSizeText(
+                            widget.marmita.description,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 6,
+                            style: GoogleFonts.montserratTextTheme(
+                                    Theme.of(context).textTheme)
+                                .headline2
+                                .copyWith(
+                                  color: widget.marmita.quantity > 0
+                                      ? null
+                                      : Colors.grey,
+                                  fontSize: 35.nsp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: AutoSizeText(
+                        price,
+                        style: GoogleFonts.montserratTextTheme(
+                                Theme.of(context).textTheme)
+                            .headline2
+                            .copyWith(
+                                color: widget.marmita.quantity > 0
+                                    ? null
+                                    : Colors.grey,
+                                fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-          _buildReservate(context)
-        ],
+            Container(
+              margin: EdgeInsets.only(bottom: 10),
+              child: _buildReservate(context),
+            )
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildReservate(context) {
     if (!widget.seller.isOpen()) {
-      return Flexible(
-        flex: 3,
-        child: Container(
-          width: 0.6.wp,
-          child: AutoSizeText(
-            'Esse vendedor está fechado no momento',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
-                .headline2
-                .copyWith(
-                    color: Theme.of(context).errorColor, fontSize: 36.nsp),
-          ),
+      return Container(
+        width: 0.6.wp,
+        child: AutoSizeText(
+          'Esse vendedor está fechado no momento',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
+              .headline2
+              .copyWith(color: Theme.of(context).errorColor, fontSize: 36.nsp),
         ),
       );
     }
     if (widget.seller.canReservate) {
       if (widget.marmita.quantity > 0) {
-        return Flexible(
-          flex: 3,
-          child: Container(
-            width: 0.4.wp,
-            child: ElevatedButton(
-              onPressed: () =>
-                  _showOrderDialog(context, widget.marmita.quantity),
-              child: AutoSizeText(
-                'Reservar',
-                maxLines: 1,
-                style:
-                    GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
-                        .button,
-              ),
+        return Container(
+          width: 0.4.wp,
+          child: ElevatedButton(
+            onPressed: () => _showOrderDialog(context, widget.marmita.quantity),
+            child: AutoSizeText(
+              'Reservar',
+              maxLines: 1,
+              style:
+                  GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
+                      .button,
             ),
           ),
         );
       } else {
-        return Flexible(
-          flex: 3,
-          child: Column(
-            children: [
-              Container(
-                padding: EdgeInsets.only(bottom: 10),
-                width: 0.7.wp,
+        return Column(
+          children: [
+            Container(
+              padding: EdgeInsets.only(bottom: 10),
+              width: 0.7.wp,
+              child: AutoSizeText(
+                'Infelizmente essa quentinha acabou... Você pode enviar uma mensagem para o vendedor e pedir mais.',
+                textAlign: TextAlign.center,
+                style:
+                    GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
+                        .headline2
+                        .copyWith(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 32.nsp),
+              ),
+            ),
+            Container(
+              width: 0.4.wp,
+              child: ElevatedButton(
+                onPressed: () => pushNewScreen(
+                  context,
+                  screen: ChatScreen(
+                    widget.seller.id,
+                    widget.seller.name,
+                    key: chatScreenKey,
+                  ),
+                ),
                 child: AutoSizeText(
-                  'Infelizmente essa quentinha acabou... Você pode enviar uma mensagem para o vendedor e pedir mais.',
-                  textAlign: TextAlign.center,
+                  'Chat',
+                  maxLines: 1,
                   style: GoogleFonts.montserratTextTheme(
                           Theme.of(context).textTheme)
-                      .headline2
-                      .copyWith(
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 32.nsp),
+                      .button,
                 ),
               ),
-              Container(
-                width: 0.4.wp,
-                child: ElevatedButton(
-                  onPressed: () => pushNewScreen(
-                    context,
-                    screen: ChatScreen(
-                      widget.seller.id,
-                      widget.seller.name,
-                      key: chatScreenKey,
-                    ),
-                  ),
-                  child: AutoSizeText(
-                    'Chat',
-                    maxLines: 1,
-                    style: GoogleFonts.montserratTextTheme(
-                            Theme.of(context).textTheme)
-                        .button,
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         );
       }
     } else {
-      return Flexible(
-        flex: 3,
-        child: Container(
-          width: 0.6.wp,
-          child: AutoSizeText(
-            'Esse vendedor não está trabalhando com reservas, mas você ainda pode ver o cardápio atual.',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
-                .headline2
-                .copyWith(fontWeight: FontWeight.bold, fontSize: 32.nsp),
-          ),
+      return Container(
+        width: 0.6.wp,
+        child: AutoSizeText(
+          'Esse vendedor não está trabalhando com reservas, mas você ainda pode ver o cardápio atual.',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
+              .headline2
+              .copyWith(fontWeight: FontWeight.bold, fontSize: 32.nsp),
         ),
       );
     }
