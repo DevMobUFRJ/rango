@@ -98,40 +98,42 @@ class _NewSearchScreenState extends State<NewSearchScreen>
       backgroundColor: Theme.of(context).backgroundColor,
       body: _isLoading
           ? _buildLoadingSpinner()
-          : Stack(children: [
-              GoogleMap(
-                mapType: MapType.normal,
-                initialCameraPosition: _cameraPosition,
-                onMapCreated: (GoogleMapController controller) {
-                  if (!_mapControllerCompleter.isCompleted) {
-                    _mapControllerCompleter.complete(controller);
-                  }
+          : Stack(
+              children: [
+                GoogleMap(
+                  mapType: MapType.normal,
+                  initialCameraPosition: _cameraPosition,
+                  onMapCreated: (GoogleMapController controller) {
+                    if (!_mapControllerCompleter.isCompleted) {
+                      _mapControllerCompleter.complete(controller);
+                    }
 
-                  controller.setMapStyle(_mapStyle);
-                  _customInfoWindowController.googleMapController = controller;
-                },
-                onTap: (_) {
-                  _customInfoWindowController.hideInfoWindow();
-                },
-                onCameraMove: (pos) {
-                  _customInfoWindowController.onCameraMove();
-                },
-                myLocationEnabled: true,
-                zoomControlsEnabled: false,
-                myLocationButtonEnabled: false,
-                markers: _marcadores,
-              ),
-              CustomInfoWindow(
-                controller: _customInfoWindowController,
-                height: _customInfoWindowHeight,
-                width: _customInfoWindowWidth,
-                offset: 50,
-              ),
-              _cardsSellers(_allSellers, context),
-              if (widget.seller != null) _buildBackButton(context),
-              _buildFloatingButtons(context),
-            ],
-      ),
+                    controller.setMapStyle(_mapStyle);
+                    _customInfoWindowController.googleMapController =
+                        controller;
+                  },
+                  onTap: (_) {
+                    _customInfoWindowController.hideInfoWindow();
+                  },
+                  onCameraMove: (pos) {
+                    _customInfoWindowController.onCameraMove();
+                  },
+                  myLocationEnabled: true,
+                  zoomControlsEnabled: false,
+                  myLocationButtonEnabled: false,
+                  markers: _marcadores,
+                ),
+                CustomInfoWindow(
+                  controller: _customInfoWindowController,
+                  height: _customInfoWindowHeight,
+                  width: _customInfoWindowWidth,
+                  offset: 50,
+                ),
+                _cardsSellers(_allSellers, context),
+                if (widget.seller != null) _buildBackButton(context),
+                _buildFloatingButtons(context),
+              ],
+            ),
     );
   }
 
@@ -142,14 +144,11 @@ class _NewSearchScreenState extends State<NewSearchScreen>
         'assets/imgs/pinMapa.png'
     );*/
 
-    MarkerGenerator(
-        [CustomMarker()],
-        (bitmaps) {
-          if (bitmaps.isNotEmpty) {
-            customMarkerIcon = BitmapDescriptor.fromBytes(bitmaps.first);
-          }
-        }
-    ).generate(context);
+    MarkerGenerator([CustomMarker()], (bitmaps) {
+      if (bitmaps.isNotEmpty) {
+        customMarkerIcon = BitmapDescriptor.fromBytes(bitmaps.first);
+      }
+    }).generate(context);
   }
 
   _recuperarLocalizacaoAtual() async {
@@ -183,13 +182,13 @@ class _NewSearchScreenState extends State<NewSearchScreen>
     List<Seller> sellers = _mapSellers(allSellers);
     Set<Marker> marcadores = _carregarMarcadores(sellers);
     setState(() => {
-      _userLocation = userLocation,
-      _isLoading = false,
-      _allSellers = sellers,
-      _sellerRange = sellerRange,
-      _marcadores = marcadores,
-      _isCardsLoading = false,
-    });
+          _userLocation = userLocation,
+          _isLoading = false,
+          _allSellers = sellers,
+          _sellerRange = sellerRange,
+          _marcadores = marcadores,
+          _isCardsLoading = false,
+        });
 
     if (widget.seller != null) {
       await _mapControllerCompleter.future;
@@ -260,9 +259,7 @@ class _NewSearchScreenState extends State<NewSearchScreen>
       );
     } else {
       sellers.sort((s1, s2) =>
-          _getDistanceSellerToUser(s1)
-          .compareTo(_getDistanceSellerToUser(s2))
-      );
+          _getDistanceSellerToUser(s1).compareTo(_getDistanceSellerToUser(s2)));
       sellers.sort(
         (s1, s2) => s1.isOpen() == s2.isOpen()
             ? 0
@@ -278,9 +275,8 @@ class _NewSearchScreenState extends State<NewSearchScreen>
     if (_userLocation == null ||
         _userLocation.latitude == null ||
         _userLocation.longitude == null) return 1;
-    return GeoFirePoint(
-        seller.location.geopoint.latitude,
-        seller.location.geopoint.latitude)
+    return GeoFirePoint(seller.location.geopoint.latitude,
+            seller.location.geopoint.latitude)
         .distance(lat: _userLocation.latitude, lng: _userLocation.longitude);
   }
 
@@ -379,9 +375,12 @@ class _NewSearchScreenState extends State<NewSearchScreen>
 
   int _getSellerIndex() {
     if (widget.seller == null) return 0;
-    var index = _allSellers.indexWhere((seller) => seller.id == widget.seller.id);
-    if (index == -1) return 0;
-    else return index;
+    var index =
+        _allSellers.indexWhere((seller) => seller.id == widget.seller.id);
+    if (index == -1)
+      return 0;
+    else
+      return index;
   }
 
   Widget _buildSellerCard(Seller seller, BuildContext context, int index) {
@@ -480,7 +479,8 @@ class _NewSearchScreenState extends State<NewSearchScreen>
     );
   }
 
-  Widget _buildSellerCardComponents(Seller seller, BuildContext context, bool isOpen) {
+  Widget _buildSellerCardComponents(
+      Seller seller, BuildContext context, bool isOpen) {
     String name = seller.name;
     Color cor;
     Color corTexto;
@@ -722,7 +722,7 @@ class _NewSearchScreenState extends State<NewSearchScreen>
   Widget _buildBackButton(BuildContext contextGeral) {
     return Positioned(
       top: 40,
-      left: 5,
+      left: 1,
       width: 50,
       child: Column(
         children: [
@@ -745,7 +745,7 @@ class _NewSearchScreenState extends State<NewSearchScreen>
                 child: Icon(
                   Icons.arrow_back,
                   color: Theme.of(context).accentColor,
-                  size: 35,
+                  size: 30,
                 ),
               ),
             ),
@@ -758,7 +758,7 @@ class _NewSearchScreenState extends State<NewSearchScreen>
   Widget _buildFloatingButtons(BuildContext contextGeral) {
     return Positioned(
       bottom: 156,
-      right: 5,
+      right: 1,
       width: 50,
       child: Column(
         children: [
@@ -786,8 +786,8 @@ class _NewSearchScreenState extends State<NewSearchScreen>
                   ? Padding(
                       padding: const EdgeInsets.all(5),
                       child: SizedBox(
-                        width: 35,
-                        height: 35,
+                        width: 30,
+                        height: 30,
                         child: Center(
                           child: Padding(
                             padding: const EdgeInsets.all(5),
@@ -804,7 +804,7 @@ class _NewSearchScreenState extends State<NewSearchScreen>
                       child: Icon(
                         Icons.my_location,
                         color: Theme.of(context).accentColor,
-                        size: 35,
+                        size: 30,
                       ),
                     ),
             ),
@@ -829,7 +829,7 @@ class _NewSearchScreenState extends State<NewSearchScreen>
                 child: Icon(
                   Icons.filter_alt_rounded,
                   color: Theme.of(context).accentColor,
-                  size: 35,
+                  size: 30,
                 ),
               ),
             ),

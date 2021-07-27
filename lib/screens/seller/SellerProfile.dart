@@ -211,71 +211,32 @@ class _SellerProfileState extends State<SellerProfile> {
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Flexible(
-                    flex: 0,
-                    child: UserPicture(seller.logo),
-                  ),
+                  UserPicture(seller.logo),
                   if (seller.description != null)
-                    Flexible(
-                      flex: 0,
-                      child: Container(
-                        margin: EdgeInsets.only(top: 8),
-                        constraints: BoxConstraints(maxWidth: 0.7.wp),
-                        child: AutoSizeText(
-                          seller.description,
-                          textAlign: TextAlign.center,
-                          maxLines: 4,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.montserrat(fontSize: 30.nsp),
-                        ),
+                    Container(
+                      margin: EdgeInsets.only(top: 8),
+                      constraints: BoxConstraints(maxWidth: 0.7.wp),
+                      child: AutoSizeText(
+                        seller.description,
+                        textAlign: TextAlign.center,
+                        maxLines: 4,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.montserrat(fontSize: 30.nsp),
                       ),
                     ),
                   if (seller.paymentMethods != null)
-                    Flexible(
-                      flex: 0,
-                      child: GestureDetector(
-                        onTap: () => _showPaymentsDialog(
-                          seller,
-                          context,
-                        ),
-                        child: Container(
-                            margin: EdgeInsets.only(top: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Formas de pagamento',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 30.nsp,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(left: 3),
-                                  child: FaIcon(
-                                    FontAwesomeIcons.moneyBillAlt,
-                                    size: 30.nsp,
-                                  ),
-                                ),
-                              ],
-                            )),
+                    GestureDetector(
+                      onTap: () => _showPaymentsDialog(
+                        seller,
+                        context,
                       ),
-                    ),
-                  if (seller.shift != null)
-                    Flexible(
-                      flex: 0,
-                      child: GestureDetector(
-                        onTap: () => _showShiftDialog(
-                          seller,
-                          context,
-                        ),
-                        child: Container(
+                      child: Container(
                           margin: EdgeInsets.only(top: 8),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                'Horário de funcionamento',
+                                'Formas de pagamento',
                                 style: GoogleFonts.montserrat(
                                   fontSize: 30.nsp,
                                   decoration: TextDecoration.underline,
@@ -284,88 +245,73 @@ class _SellerProfileState extends State<SellerProfile> {
                               Container(
                                 margin: EdgeInsets.only(left: 3),
                                 child: FaIcon(
-                                  FontAwesomeIcons.clock,
+                                  FontAwesomeIcons.moneyBillAlt,
                                   size: 30.nsp,
                                 ),
                               ),
                             ],
-                          ),
+                          )),
+                    ),
+                  if (seller.shift != null)
+                    GestureDetector(
+                      onTap: () => _showShiftDialog(
+                        seller,
+                        context,
+                      ),
+                      child: Container(
+                        margin: EdgeInsets.only(top: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Horário de funcionamento',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 30.nsp,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(left: 3),
+                              child: FaIcon(
+                                FontAwesomeIcons.clock,
+                                size: 30.nsp,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   if (seller.contact != null && seller.contact.phone != null)
-                    Flexible(
-                      flex: 0,
-                      child: Container(
-                        margin: EdgeInsets.only(top: 8),
-                        child: Column(
-                          children: [
-                            Container(
-                              margin: EdgeInsets.only(bottom: 5),
-                              child: GestureDetector(
-                                onTap: () => {
-                                  Clipboard.setData(
-                                    ClipboardData(text: seller.contact.phone),
-                                  ),
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      backgroundColor:
-                                          Theme.of(context).accentColor,
-                                      content: AutoSizeText(
-                                        'Número copiado para área de transferência',
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.montserrat(),
-                                      ),
-                                      duration: Duration(seconds: 2),
-                                    ),
-                                  )
-                                },
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    AutoSizeText(
-                                      seller.contact.phone,
-                                      maxLines: 1,
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 30.nsp,
-                                        decoration: TextDecoration.underline,
-                                      ),
-                                    ),
-                                    Container(
-                                      margin: EdgeInsets.only(left: 3),
-                                      child: Icon(Icons.phone, size: 32.nsp),
-                                    ),
-                                  ],
+                    Container(
+                      margin: EdgeInsets.only(top: 8),
+                      child: Column(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(bottom: 5),
+                            child: GestureDetector(
+                              onTap: () => {
+                                Clipboard.setData(
+                                  ClipboardData(text: seller.contact.phone),
                                 ),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                try {
-                                  final Uri whatsAppUrl = Uri(
-                                    scheme: 'http',
-                                    path:
-                                        "wa.me/+55${seller.contact.phone.replaceAll('(', '').replaceAll(')', '')}",
-                                  );
-                                  launch(whatsAppUrl.toString());
-                                } catch (error) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      duration: Duration(seconds: 2),
-                                      content: Text(
-                                        'WhatsApp não instalado',
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.montserrat(),
-                                      ),
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    backgroundColor:
+                                        Theme.of(context).accentColor,
+                                    content: AutoSizeText(
+                                      'Número copiado para área de transferência',
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.montserrat(),
                                     ),
-                                  );
-                                }
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                )
                               },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   AutoSizeText(
-                                    'Abrir no WhatsApp',
+                                    seller.contact.phone,
+                                    maxLines: 1,
                                     style: GoogleFonts.montserrat(
                                       fontSize: 30.nsp,
                                       decoration: TextDecoration.underline,
@@ -373,17 +319,56 @@ class _SellerProfileState extends State<SellerProfile> {
                                   ),
                                   Container(
                                     margin: EdgeInsets.only(left: 3),
-                                    child: FaIcon(
-                                      FontAwesomeIcons.whatsapp,
-                                      size: 36.nsp,
-                                      color: Colors.green,
-                                    ),
+                                    child: Icon(Icons.phone, size: 32.nsp),
                                   ),
                                 ],
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              try {
+                                final Uri whatsAppUrl = Uri(
+                                  scheme: 'http',
+                                  path:
+                                      "wa.me/+55${seller.contact.phone.replaceAll('(', '').replaceAll(')', '')}",
+                                );
+                                launch(whatsAppUrl.toString());
+                              } catch (error) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    duration: Duration(seconds: 2),
+                                    content: Text(
+                                      'WhatsApp não instalado',
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.montserrat(),
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                AutoSizeText(
+                                  'Abrir no WhatsApp',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 30.nsp,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(left: 3),
+                                  child: FaIcon(
+                                    FontAwesomeIcons.whatsapp,
+                                    size: 36.nsp,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   if (!seller.isOpen()) ...{
@@ -402,113 +387,105 @@ class _SellerProfileState extends State<SellerProfile> {
                     )
                   },
                   if (allCurrentMeals.length > 0) ...{
-                    Flexible(
-                      flex: 0,
-                      child: Container(
-                        margin: EdgeInsets.only(top: 20, bottom: 10),
-                        child: ListaHorizontal(
-                            title:
-                                'Quentinhas ${seller.isOpen() == true ? ' disponíveis' : ''}',
-                            tagM: Random().nextDouble(),
-                            meals: allCurrentMeals,
-                            isFromSellerScreen: true,
-                            controller: widget.controller),
-                      ),
+                    Container(
+                      margin: EdgeInsets.only(top: 10, bottom: 10),
+                      child: ListaHorizontal(
+                          title:
+                              'Quentinhas ${seller.isOpen() == true ? ' disponíveis' : ''}',
+                          tagM: Random().nextDouble(),
+                          meals: allCurrentMeals,
+                          isFromSellerScreen: true,
+                          controller: widget.controller),
                     ),
                   } else ...{
-                    Flexible(
-                      flex: 0,
-                      child: Container(
-                        margin: EdgeInsets.symmetric(vertical: 10),
-                        child: AutoSizeText(
-                          'Este vendedor ainda não possui quentinhas cadastradas',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.montserrat(
-                            color: Theme.of(context).accentColor,
-                            fontSize: 35.nsp,
-                          ),
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 10),
+                      child: AutoSizeText(
+                        'Este vendedor ainda não possui quentinhas cadastradas',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.montserrat(
+                          color: Theme.of(context).accentColor,
+                          fontSize: 35.nsp,
                         ),
                       ),
                     ),
                   },
-                  Flexible(
-                    flex: 2,
-                    child: ToggleButtons(
-                      isSelected: [true, true],
-                      borderRadius: BorderRadius.circular(10),
-                      children: [
-                        Container(
-                          padding:
-                              EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.chat,
+                  ToggleButtons(
+                    isSelected: [true, true],
+                    borderRadius: BorderRadius.circular(10),
+                    children: [
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.chat,
+                              color: Colors.white,
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              'Chat',
+                              style: GoogleFonts.montserrat(
                                 color: Colors.white,
+                                fontSize: 30.nsp,
                               ),
-                              SizedBox(width: 10),
-                              Text(
-                                'Chat',
-                                style: GoogleFonts.montserrat(
-                                  color: Colors.white,
-                                  fontSize: 30.nsp,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        Container(
-                          padding: EdgeInsets.all(8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Icon(
-                                Icons.map,
+                      ),
+                      Container(
+                        padding: EdgeInsets.all(8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Icon(
+                              Icons.map,
+                              color: Colors.white,
+                            ),
+                            SizedBox(width: 5),
+                            Text(
+                              'Localização',
+                              style: GoogleFonts.montserrat(
                                 color: Colors.white,
+                                fontSize: 30.nsp,
                               ),
-                              SizedBox(width: 5),
-                              Text(
-                                'Localização',
-                                style: GoogleFonts.montserrat(
-                                  color: Colors.white,
-                                  fontSize: 30.nsp,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                      onPressed: (index) {
-                        if (index == 0) {
+                      ),
+                    ],
+                    onPressed: (index) {
+                      if (index == 0) {
+                        pushNewScreen(
+                          context,
+                          screen: ChatScreen(
+                            seller.id,
+                            seller.name,
+                            key: chatScreenKey,
+                          ),
+                        ); //a
+                      }
+                      if (index == 1) {
+                        if (widget.fromMap)
+                          Navigator.pop(context, seller);
+                        else {
                           pushNewScreen(
                             context,
-                            screen: ChatScreen(
-                              seller.id,
-                              seller.name,
-                              key: chatScreenKey,
+                            screen: NewSearchScreen(
+                              widget.controller,
+                              seller: seller,
                             ),
-                          ); //a
+                            withNavBar: true,
+                          );
                         }
-                        if (index == 1) {
-                          if (widget.fromMap)
-                            Navigator.pop(context, seller);
-                          else {
-                            pushNewScreen(
-                              context,
-                              screen: NewSearchScreen(
-                                widget.controller,
-                                seller: seller,
-                              ),
-                              withNavBar: true,
-                            );
-                          }
-                        }
-                      },
-                      color: Theme.of(context).accentColor,
-                      fillColor: Theme.of(context).accentColor,
-                    ),
+                      }
+                    },
+                    color: Theme.of(context).accentColor,
+                    fillColor: Theme.of(context).accentColor,
                   ),
+                  SizedBox(height: 10)
                 ],
               );
             },
