@@ -56,11 +56,13 @@ class _NewSearchScreenState extends State<NewSearchScreen>
   BitmapDescriptor customMarkerIcon;
   String _mapStyle =
       "[{\"featureType\": \"poi\",\"stylers\": [{ \"visibility\": \"off\" }]}]";
+  var sellersSubscription;
 
   @override
   void dispose() {
     _customInfoWindowController.dispose();
     WidgetsBinding.instance.removeObserver(this);
+    sellersSubscription.cancel();
     super.dispose();
   }
 
@@ -87,14 +89,13 @@ class _NewSearchScreenState extends State<NewSearchScreen>
   void initState() {
     _setCustomMarkers();
     _recuperarLocalizacaoAtual();
+    _loadData();
     WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    _loadData();
-
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: _isLoading
@@ -177,21 +178,23 @@ class _NewSearchScreenState extends State<NewSearchScreen>
   _loadData() async {
     double sellerRange = await Repository.instance.getSellerRange();
     Position userLocation = await Repository.instance.getUserLocation();
-    List<Seller> allSellers =
-        await Repository.instance.getNearbySellers(userLocation, sellerRange);
 
-    List<Seller> sellers = _mapSellers(allSellers);
-    Set<Marker> marcadores = _carregarMarcadores(sellers);
-    if (mounted) {
-      setState(() => {
-        _userLocation = userLocation,
-        _isLoading = false,
-        _allSellers = sellers,
-        _sellerRange = sellerRange,
-        _marcadores = marcadores,
-        _isCardsLoading = false,
-      });
-    }
+    sellersSubscription = Repository.instance
+        .getNearbySellersStream(userLocation, sellerRange)
+        .listen((docsList) {
+          List<Seller> allSellers = docsList.map((doc) => Seller.fromJson(doc.data(), id: doc.id)).toList();
+
+          List<Seller> sellers = _mapSellers(allSellers);
+          Set<Marker> marcadores = _carregarMarcadores(sellers);
+          setState(() => {
+            _userLocation = userLocation,
+            _isLoading = false,
+            _allSellers = sellers,
+            _sellerRange = sellerRange,
+            _marcadores = marcadores,
+            _isCardsLoading = false,
+          });
+        });
 
     if (widget.seller != null) {
       await _mapControllerCompleter.future;
@@ -278,9 +281,11 @@ class _NewSearchScreenState extends State<NewSearchScreen>
     if (_userLocation == null ||
         _userLocation.latitude == null ||
         _userLocation.longitude == null) return 1;
-    return GeoFirePoint(seller.location.geopoint.latitude,
-            seller.location.geopoint.latitude)
-        .distance(lat: _userLocation.latitude, lng: _userLocation.longitude);
+    return Geolocator.distanceBetween(
+        seller.location.geopoint.latitude,
+        seller.location.geopoint.longitude,
+        _userLocation.latitude,
+        _userLocation.longitude);
   }
 
   _movimentarCamera(bool hasSeller) async {
