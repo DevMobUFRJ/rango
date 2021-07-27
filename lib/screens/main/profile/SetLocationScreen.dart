@@ -9,6 +9,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
+import 'package:rango/widgets/map/CustomMarker.dart';
+import 'package:rango/widgets/map/marker_generator.dart';
 
 class SetLocationScreen extends StatefulWidget {
   final Seller user;
@@ -21,7 +23,7 @@ class _SetLocationScreen extends State<SetLocationScreen>
     with WidgetsBindingObserver {
   Completer<GoogleMapController> _controller = Completer();
   CameraPosition _cameraPosition;
-  BitmapDescriptor marMarkerCustom;
+  BitmapDescriptor customMarkerIcon;
   GeoPoint positionGlobal;
   Position _userLocation;
   final _geoFlutterFire = Geoflutterfire();
@@ -121,7 +123,7 @@ class _SetLocationScreen extends State<SetLocationScreen>
                               newPosition.longitude,
                             ),
                             consumeTapEvents: true,
-                            icon: marMarkerCustom,
+                            icon: customMarkerIcon,
                             infoWindow: InfoWindow(title: 'Sua loja está aqui'),
                           );
                         } else
@@ -216,8 +218,11 @@ class _SetLocationScreen extends State<SetLocationScreen>
   }
 
   void _setCustomMarkers() async {
-    marMarkerCustom = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(), 'assets/imgs/pinMapa.png');
+    MarkerGenerator([CustomMarker()], (bitmaps) {
+      if (bitmaps.isNotEmpty) {
+        customMarkerIcon = BitmapDescriptor.fromBytes(bitmaps.first);
+      }
+    }).generate(context);
   }
 
   void openMessage(String text, {int seconds}) {
@@ -300,7 +305,7 @@ class _SetLocationScreen extends State<SetLocationScreen>
           seller.location.geopoint.longitude,
         ),
         consumeTapEvents: true,
-        icon: marMarkerCustom,
+        icon: customMarkerIcon,
         infoWindow: InfoWindow(title: 'Sua loja está aqui'),
       );
       setState(() {
