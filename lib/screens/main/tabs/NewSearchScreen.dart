@@ -13,9 +13,12 @@ import 'package:rango/resources/repository.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
 import 'package:rango/utils/constants.dart';
+import 'package:rango/widgets/others/CustomMarker.dart';
 import 'package:rango/widgets/others/ModalFilter.dart';
+import 'package:rango/widgets/others/marker_generator.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:shimmer/shimmer.dart';
+import 'dart:ui';
 
 class NewSearchScreen extends StatefulWidget {
   final PersistentTabController tabController;
@@ -133,8 +136,20 @@ class _NewSearchScreenState extends State<NewSearchScreen>
   }
 
   _setCustomMarkers() async {
+    /*
     customMarkerIcon = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(), 'assets/imgs/pinMapa.png');
+        ImageConfiguration(),
+        'assets/imgs/pinMapa.png'
+    );*/
+
+    MarkerGenerator(
+        [CustomMarker()],
+        (bitmaps) {
+          if (bitmaps.isNotEmpty) {
+            customMarkerIcon = BitmapDescriptor.fromBytes(bitmaps.first);
+          }
+        }
+    ).generate(context);
   }
 
   _recuperarLocalizacaoAtual() async {
@@ -337,7 +352,7 @@ class _NewSearchScreenState extends State<NewSearchScreen>
     return Align(
       alignment: Alignment.bottomLeft,
       child: Container(
-        height: 150.0,
+        height: 285.nsp,
         child: _isCardsLoading
             ? _buildSellersLoading()
             : ScrollablePositionedList.builder(
@@ -481,13 +496,12 @@ class _NewSearchScreenState extends State<NewSearchScreen>
       elevation: 2,
       borderRadius: BorderRadius.circular(24.0),
       child: Container(
-        height: 200,
         constraints: BoxConstraints(maxWidth: 0.8.wp),
         child: Row(
           children: [
             Container(
               width: 135,
-              height: 200,
+              height: double.infinity,
               child: ClipRRect(
                 borderRadius: new BorderRadius.circular(24.0),
                 child: ColorFiltered(
@@ -662,11 +676,11 @@ class _NewSearchScreenState extends State<NewSearchScreen>
     }
 
     return Container(
-      constraints: BoxConstraints(maxWidth: 0.3.wp),
-      child: Text(
+      constraints: BoxConstraints(maxWidth: 0.35.wp),
+      child: AutoSizeText(
         "Fechado, abre $weekdayFound às $horaFormatada",
         textAlign: TextAlign.center,
-        maxLines: 3,
+        maxLines: 2,
         style: GoogleFonts.montserrat(
           color: Colors.black54,
           fontWeight: FontWeight.bold,

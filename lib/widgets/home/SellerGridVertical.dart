@@ -63,7 +63,7 @@ class SellerGridVertical extends StatelessWidget {
                 ),
               ),
               child: Container(
-                constraints: BoxConstraints(maxHeight: 450.h),
+                constraints: BoxConstraints.expand(height: 430.h),
                 child: Card(
                   semanticContainer: true,
                   clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -71,7 +71,7 @@ class SellerGridVertical extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8)),
                   child: Column(
                     children: <Widget>[
-                      Expanded(
+                      Flexible(
                         flex: 0,
                         child: Stack(
                           alignment: Alignment.center,
@@ -97,27 +97,31 @@ class SellerGridVertical extends StatelessWidget {
                       Flexible(
                         flex: 1,
                         child: Container(
-                            constraints: BoxConstraints(maxHeight: 100.h),
                             padding: EdgeInsets.symmetric(vertical: 1),
                             child: Column(
-                              mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                AutoSizeText(
-                                  sellers[index].name,
-                                  textAlign: TextAlign.center,
-                                  maxLines: 1,
-                                  minFontSize: 15,
-                                  maxFontSize: 15,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.montserrat(),
+                                Flexible(
+                                  flex: 1,
+                                  child: AutoSizeText(
+                                    sellers[index].name,
+                                    textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    minFontSize: 15,
+                                    maxFontSize: 15,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.montserrat(),
+                                  ),
                                 ),
-                                SizedBox(height: 4),
-                                AutoSizeText(
-                                  distanceInKM(sellers[index], userLocation),
-                                  minFontSize: 15,
-                                  maxFontSize: 15,
-                                  style: GoogleFonts.montserrat(),
+                                SizedBox(height: 3),
+                                Flexible(
+                                  flex: 1,
+                                  child: AutoSizeText(
+                                    distanceInKM(sellers[index], userLocation),
+                                    minFontSize: 15,
+                                    maxFontSize: 15,
+                                    style: GoogleFonts.montserrat(),
+                                  ),
                                 ),
                               ],
                             )),
