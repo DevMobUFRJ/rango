@@ -87,13 +87,14 @@ class _NewSearchScreenState extends State<NewSearchScreen>
   void initState() {
     _setCustomMarkers();
     _recuperarLocalizacaoAtual();
-    _loadData();
     WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    _loadData();
+
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: _isLoading
@@ -181,14 +182,16 @@ class _NewSearchScreenState extends State<NewSearchScreen>
 
     List<Seller> sellers = _mapSellers(allSellers);
     Set<Marker> marcadores = _carregarMarcadores(sellers);
-    setState(() => {
-          _userLocation = userLocation,
-          _isLoading = false,
-          _allSellers = sellers,
-          _sellerRange = sellerRange,
-          _marcadores = marcadores,
-          _isCardsLoading = false,
-        });
+    if (mounted) {
+      setState(() => {
+        _userLocation = userLocation,
+        _isLoading = false,
+        _allSellers = sellers,
+        _sellerRange = sellerRange,
+        _marcadores = marcadores,
+        _isCardsLoading = false,
+      });
+    }
 
     if (widget.seller != null) {
       await _mapControllerCompleter.future;

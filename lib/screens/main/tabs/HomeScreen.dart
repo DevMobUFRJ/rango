@@ -526,7 +526,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return StreamBuilder(
       stream: Repository.instance.getOrdersFromClient(clientId, limit: 10),
       builder: (context, AsyncSnapshot<QuerySnapshot> orderSnapshot) {
-        if (orderSnapshot.connectionState == ConnectionState.waiting) {
+        if (!orderSnapshot.hasData) {
           return Container(
             height: 0.5.hp,
             alignment: Alignment.center,
