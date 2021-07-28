@@ -73,11 +73,23 @@ class _ManageMealsScreenState extends State<ManageMealsScreen> {
                   .where((doc) => currentMealsIds.contains(doc.id))
                   .where((doc) => doc.quantity > 0)
                   .toList();
-
               return Column(
                 children: [
                   _buildHeader(),
-                  if (currentMeals.isEmpty) ...{
+                  if (meals.isEmpty) ...{
+                    Container(
+                      margin: EdgeInsets.only(left: 15, right: 15, top: 8),
+                      child: AutoSizeText(
+                        "Crie quentinhas no botão abaixo e deixe marcadas as que deseja no cardápio do dia.",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.montserrat(
+                          color: Theme.of(context).accentColor,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 36.nsp,
+                        ),
+                      ),
+                    ),
+                  } else if (currentMeals.isEmpty) ...{
                     Container(
                       margin: EdgeInsets.only(left: 15, right: 15, top: 8),
                       child: AutoSizeText(
