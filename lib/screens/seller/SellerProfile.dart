@@ -343,18 +343,17 @@ class _SellerProfileState extends State<SellerProfile> {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () {
+                            onTap: () async {
                               try {
-                                final Uri whatsAppUrl = Uri(
-                                  scheme: 'http',
-                                  path:
-                                      "wa.me/+55${seller.contact.phone.replaceAll('(', '').replaceAll(')', '')}",
-                                );
-                                launch(whatsAppUrl.toString());
+                                var whatsappUrl =
+                                    "whatsapp://send?phone=+55${seller.contact.phone.replaceAll('(', '').replaceAll(')', '')}";
+                                await launch(whatsappUrl);
                               } catch (error) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     duration: Duration(seconds: 2),
+                                    backgroundColor:
+                                        Theme.of(context).errorColor,
                                     content: Text(
                                       'WhatsApp não instalado',
                                       textAlign: TextAlign.center,
