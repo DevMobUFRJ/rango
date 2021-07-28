@@ -15,7 +15,6 @@ import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/seller/ChatScreen.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
-import 'package:rango/utils/constants.dart';
 import 'package:rango/utils/string_formatters.dart';
 
 class DetalhesQuentinhaScreen extends StatefulWidget {
@@ -374,7 +373,7 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
       await http.post(
         Uri.parse('https://fcm.googleapis.com/fcm/send'),
         headers: <String, String>{
-          'Authorization': 'key=$firabaseMessagingAuthorizationKey',
+          'Authorization': 'key=${const String.fromEnvironment('MESSAGING_KEY')}',
           'content-type': 'application/json; charset=UTF-8'
         },
         body: jsonEncode(<String, dynamic>{

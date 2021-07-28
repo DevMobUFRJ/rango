@@ -8,7 +8,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:rango/models/message.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
-import 'package:rango/utils/constants.dart';
 import 'package:rango/widgets/chat/Messages.dart';
 import 'package:rango/widgets/chat/NewMessage.dart';
 import 'package:http/http.dart' as http;
@@ -88,7 +87,7 @@ class _ChatScreenState extends State<ChatScreen> {
       await http.post(
         Uri.parse('https://fcm.googleapis.com/fcm/send'),
         headers: <String, String>{
-          'Authorization': 'key=$firabaseMessagingAuthorizationKey',
+          'Authorization': 'key=${const String.fromEnvironment('MESSAGING_KEY')}',
           'content-type': 'application/json; charset=UTF-8'
         },
         body: jsonEncode(<String, dynamic>{

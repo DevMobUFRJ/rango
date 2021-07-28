@@ -11,7 +11,6 @@ import 'package:rango/models/order.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
-import 'package:rango/utils/constants.dart';
 import 'package:rango/utils/string_formatters.dart';
 import 'package:http/http.dart' as http;
 import 'package:paginate_firestore/paginate_firestore.dart';
@@ -51,7 +50,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
       await http.post(
         Uri.parse('https://fcm.googleapis.com/fcm/send'),
         headers: <String, String>{
-          'Authorization': 'key=$firabaseMessagingAuthorizationKey',
+          'Authorization': 'key=${const String.fromEnvironment('MESSAGING_KEY')}',
           'content-type': 'application/json; charset=UTF-8'
         },
         body: jsonEncode(<String, dynamic>{
