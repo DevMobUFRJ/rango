@@ -536,7 +536,9 @@ class _NewSearchScreenState extends State<NewSearchScreen>
                         child: AutoSizeText(
                           name,
                           maxLines: 2,
+                          wrapWords: false,
                           textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.montserrat(
                             fontWeight: FontWeight.bold,
                             color: corTexto,
@@ -641,6 +643,7 @@ class _NewSearchScreenState extends State<NewSearchScreen>
           style: TextStyle(
             color: Colors.black54,
             fontWeight: FontWeight.bold,
+            fontSize: 25.nsp,
           ),
         ),
       );
@@ -694,6 +697,7 @@ class _NewSearchScreenState extends State<NewSearchScreen>
         style: GoogleFonts.montserrat(
           color: Colors.black54,
           fontWeight: FontWeight.bold,
+          fontSize: 25.nsp,
         ),
       ),
     );
@@ -726,10 +730,11 @@ class _NewSearchScreenState extends State<NewSearchScreen>
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 4),
             child: AutoSizeText(
-              'Ver Mais',
+              'Ver mais',
               textAlign: TextAlign.center,
               style: GoogleFonts.montserrat(
                 color: Colors.white,
+                fontSize: 0.28.nsp
               ),
             ),
           ),
