@@ -77,29 +77,32 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
         child: Column(
           children: <Widget>[
             if (widget.marmita.picture == null) ...{
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: widget.marmita.quantity > 0
-                          ? Theme.of(context).accentColor
-                          : Colors.grey,
+              Hero(
+                tag: widget.marmita.hashCode * widget.tagM,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: widget.marmita.quantity > 0
+                            ? Theme.of(context).accentColor
+                            : Colors.grey,
+                      ),
+                      child: SizedBox(
+                        height: 0.2.hp,
+                        width: 0.6.wp,
+                      ),
                     ),
-                    child: SizedBox(
-                      height: 0.2.hp,
-                      width: 0.6.wp,
+                    Center(
+                      child: Icon(
+                        Icons.local_dining,
+                        size: 55,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                  Center(
-                    child: Icon(
-                      Icons.local_dining,
-                      size: 55,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               )
             } else ...{
               Card(
