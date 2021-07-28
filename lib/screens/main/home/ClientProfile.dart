@@ -67,6 +67,26 @@ class _ClientProfileState extends State<ClientProfile> {
             );
           }
 
+          if (snapshot.data.data() == null) {
+            return Scaffold(
+                appBar: AppBar(),
+                body: Container(
+                  height: MediaQuery.of(context).size.height - 80,
+                  child: Center(
+                    child: AutoSizeText(
+                      'Esse cliente não existe mais',
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      style: GoogleFonts.montserrat(
+                        color: Colors.black54,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25.nsp,
+                      ),
+                    ),
+                  ),
+                )
+            );
+          }
           Client client = snapshot.data.data();
 
           return Scaffold(
