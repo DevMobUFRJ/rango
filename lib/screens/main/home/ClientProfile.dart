@@ -143,18 +143,16 @@ class _ClientProfileState extends State<ClientProfile> {
                         ],
                       ),
                     GestureDetector(
-                      onTap: () {
+                      onTap: () async {
                         try {
-                          final Uri whatsAppUrl = Uri(
-                            scheme: 'http',
-                            path:
-                                "wa.me/+55${client.phone.replaceAll('(', '').replaceAll(')', '')}",
-                          );
-                          launch(whatsAppUrl.toString());
-                        } catch (error) {
+                          var whatsappUrl =
+                              "whatsapp://send?phone=+55${client.phone.replaceAll('(', '').replaceAll(')', '')}";
+                          await launch(whatsappUrl);
+                        } on PlatformException catch (_) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               duration: Duration(seconds: 2),
+                              backgroundColor: Theme.of(context).errorColor,
                               content: Text(
                                 'WhatsApp não instalado',
                                 textAlign: TextAlign.center,
