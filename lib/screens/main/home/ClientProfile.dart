@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:rango/main.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/models/order.dart';
 import 'package:rango/resources/repository.dart';
@@ -84,8 +85,7 @@ class _ClientProfileState extends State<ClientProfile> {
                       ),
                     ),
                   ),
-                )
-            );
+                ));
           }
           Client client = snapshot.data.data();
 
@@ -205,6 +205,7 @@ class _ClientProfileState extends State<ClientProfile> {
                           screen: ChatScreen(
                             client.id,
                             client.name,
+                            key: chatScreenKey,
                           ),
                           withNavBar: false,
                           pageTransitionAnimation:
@@ -228,63 +229,63 @@ class _ClientProfileState extends State<ClientProfile> {
 
   Widget _buildReports(Client client) {
     return StreamBuilder(
-      stream: Repository.instance.getSoldOrdersFromClient(Repository.instance.getCurrentUser().uid, widget.clientId),
-      builder: (context, AsyncSnapshot<QuerySnapshot<Order>> ordersSnapshot) {
-        int mealsSold = 0;
-        int totalReceived = 0;
+        stream: Repository.instance.getSoldOrdersFromClient(
+            Repository.instance.getCurrentUser().uid, widget.clientId),
+        builder: (context, AsyncSnapshot<QuerySnapshot<Order>> ordersSnapshot) {
+          int mealsSold = 0;
+          int totalReceived = 0;
 
-        if (!ordersSnapshot.hasData ||
-            ordersSnapshot.connectionState == ConnectionState.waiting) {
+          if (!ordersSnapshot.hasData ||
+              ordersSnapshot.connectionState == ConnectionState.waiting) {
+            return Container(
+              height: 0.13.hp,
+              alignment: Alignment.center,
+              child: SizedBox(
+                height: 50,
+                width: 50,
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).accentColor,
+                ),
+              ),
+            );
+          }
+
+          if (ordersSnapshot.hasError) {
+            return Container(
+              height: 0.3.hp,
+              alignment: Alignment.center,
+              child: AutoSizeText(
+                ordersSnapshot.error.toString(),
+                style: GoogleFonts.montserrat(
+                    fontSize: 45.nsp, color: Theme.of(context).accentColor),
+              ),
+            );
+          }
+
+          mealsSold = ordersSnapshot.data.docs
+              .map((e) => e.data().quantity)
+              .fold(0, (p, c) => p + c);
+
+          totalReceived = ordersSnapshot.data.docs
+              .map((e) => e.data().quantity * e.data().price)
+              .fold(0, (p, c) => p + c);
+
           return Container(
-            height: 0.13.hp,
-            alignment: Alignment.center,
-            child: SizedBox(
-              height: 50,
-              width: 50,
-              child: CircularProgressIndicator(
-                color: Theme.of(context).accentColor,
+            margin: EdgeInsets.symmetric(
+              horizontal: 0.2.wp,
+              vertical: 0.01.hp,
+            ),
+            child: AutoSizeText(
+              mealsSold > 0
+                  ? '${client.name} comprou $mealsSold quentinha${mealsSold > 1 ? 's' : ''} com você, '
+                      'gastando um total de ${intToCurrency(totalReceived)}.'
+                  : '${client.name} ainda não comprou com você.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.montserrat(
+                fontSize: 35.nsp,
               ),
             ),
           );
-        }
-
-        if (ordersSnapshot.hasError) {
-          return Container(
-            height: 0.3.hp,
-            alignment: Alignment.center,
-            child: AutoSizeText(
-              ordersSnapshot.error.toString(),
-              style: GoogleFonts.montserrat(
-                  fontSize: 45.nsp, color: Theme.of(context).accentColor),
-            ),
-          );
-        }
-
-        mealsSold = ordersSnapshot.data.docs
-            .map((e) => e.data().quantity)
-            .fold(0, (p, c) => p + c);
-
-        totalReceived = ordersSnapshot.data.docs
-            .map((e) => e.data().quantity * e.data().price)
-            .fold(0, (p, c) => p + c);
-
-        return Container(
-          margin: EdgeInsets.symmetric(
-            horizontal: 0.2.wp,
-            vertical: 0.01.hp,
-          ),
-          child: AutoSizeText(
-            mealsSold > 0
-                ? '${client.name} comprou $mealsSold quentinha${mealsSold > 1? 's': ''} com você, '
-                'gastando um total de ${intToCurrency(totalReceived)}.'
-                : '${client.name} ainda não comprou com você.',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
-              fontSize: 35.nsp,
-            ),
-          ),
-        );
-      }
-    );
+        });
   }
 }

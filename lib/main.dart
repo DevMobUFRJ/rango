@@ -29,10 +29,10 @@ Future<void> main() async {
   await Firebase.initializeApp();
 
   const AndroidInitializationSettings initializationAndroidSettings =
-  AndroidInitializationSettings('app_icon');
+      AndroidInitializationSettings('app_icon');
 
   final InitializationSettings initializationSettings =
-  InitializationSettings(android: initializationAndroidSettings);
+      InitializationSettings(android: initializationAndroidSettings);
 
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
@@ -58,7 +58,7 @@ Future<void> main() async {
   FirebaseMessaging.instance.subscribeToTopic('all');
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     if ((message.data['payload'].toString().contains('chat') &&
-        chatScreenKey.currentState == null) ||
+            chatScreenKey.currentState == null) ||
         !message.data['payload'].toString().contains('chat')) {
       _showNotification(message.data);
     }

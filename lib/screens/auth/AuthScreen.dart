@@ -49,9 +49,12 @@ class _AuthScreenState extends State<AuthScreen> {
               password: password,
             );
             Map<String, dynamic> dataToUpdate = {};
-            dataToUpdate['deviceToken'] = await FirebaseMessaging.instance.getToken();
-            Repository.instance.updateSeller(
-                FirebaseAuth.instance.currentUser.uid, dataToUpdate);
+            dataToUpdate['deviceToken'] =
+                await FirebaseMessaging.instance.getToken();
+            await Repository.instance.updateSeller(
+              FirebaseAuth.instance.currentUser.uid,
+              dataToUpdate,
+            );
             Navigator.of(context).pop();
           } else {
             ScaffoldMessenger.of(ctx).showSnackBar(
