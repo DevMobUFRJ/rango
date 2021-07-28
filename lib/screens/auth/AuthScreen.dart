@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:rango/models/contact.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/models/user_notification_settings.dart';
 import 'package:rango/resources/repository.dart';
@@ -135,12 +134,8 @@ class _AuthScreenState extends State<AuthScreen> {
           paymentMethods: null,
           location: null,
           deviceToken: deviceToken,
-          contact: Contact(
-            name: null,
-            phone: null,
-          ),
+          phone: null,
           shift: null,
-          address: null,
           currentMeals: {},
           notificationSettings: UserNotificationSettings(
             messages: true,

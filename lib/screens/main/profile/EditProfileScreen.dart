@@ -5,7 +5,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:rango/models/contact.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/widgets/auth/CustomTextFormField.dart';
@@ -44,7 +43,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     setState(() {
       _name = TextEditingController(text: widget.user.name);
       _description = TextEditingController(text: widget.user.description);
-      _tel = TextEditingController(text: widget.user.contact.phone);
+      _tel = TextEditingController(text: widget.user.phone);
       _payments = TextEditingController(text: widget.user.paymentMethods);
     });
     super.initState();
@@ -58,10 +57,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       setState(() => _loading = true);
       try {
         Map<String, dynamic> dataToUpdate = {};
-        if (_tel.text != '' && _tel.text != widget.user.contact.phone) {
-          Contact contato =
-              Contact(name: widget.user.contact.name, phone: _tel.text);
-          dataToUpdate['contact'] = contato.toJson();
+        if (_tel.text != '' && _tel.text != widget.user.phone) {
+          dataToUpdate['phone'] = _tel.text;
         }
         if (_name.text != '' && _name.text != widget.user.name) {
           dataToUpdate['name'] = _name.text;
@@ -170,7 +167,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         labelText: 'Descrição*',
                         textCapitalization: TextCapitalization.sentences,
                         hintText:
-                            "Use para detalhar sua localização, biografia da empresa, o estilo da sua culinária ...",
+                            "Use para detalhar sua localização, biografia da empresa, o estilo da sua culinária...",
                         key: ValueKey('description'),
                         controller: _description,
                         numberOfLines: _description.text.length == 0 ? 3 : null,
@@ -202,7 +199,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       CustomTextFormField(
                         labelText: 'Pagamentos aceitos*',
                         hintText:
-                            "Dinheiro, cartão de crédito, cartão de débito ...",
+                            "Dinheiro, cartão de crédito, cartão de débito...",
                         focusNode: _paymentsFocusNode,
                         controller: _payments,
                         textCapitalization: TextCapitalization.sentences,

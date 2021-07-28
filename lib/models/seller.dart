@@ -1,5 +1,4 @@
 import 'package:rango/models/address.dart';
-import 'package:rango/models/contact.dart';
 import 'package:rango/models/location.dart';
 import 'package:rango/models/meals.dart';
 import 'package:rango/models/shift.dart';
@@ -9,7 +8,7 @@ import 'package:rango/models/user_notification_settings.dart';
 class Seller {
   String id;
   final String email;
-  final Contact contact;
+  final String phone;
   final Shift shift;
   final String name;
   final bool active;
@@ -26,7 +25,7 @@ class Seller {
   Seller({
     this.id,
     this.email,
-    this.contact,
+    this.phone,
     this.shift,
     this.deviceToken,
     @required this.name,
@@ -48,8 +47,7 @@ class Seller {
         description = json['description'],
         paymentMethods = json['paymentMethods'],
         name = json['name'],
-        contact =
-            json['contact'] == null ? null : Contact.fromJson(json['contact']),
+        phone = json['phone'],
         canReservate = json['canReservate'],
         shift = json['shift'] == null ? null : Shift.fromJson(json['shift']),
         active = json['active'],
@@ -75,7 +73,7 @@ class Seller {
         'description': description,
         'paymentMethods': paymentMethods,
         'location': location != null ? location.toJson() : null,
-        'contact': contact != null ? contact.toJson() : null,
+        'phone': phone,
         'shift': shift != null ? shift.toJson() : null,
         'address': address != null ? address.toJson() : null,
         'currentMeals':
