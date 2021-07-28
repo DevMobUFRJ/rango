@@ -3,7 +3,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:custom_info_window/custom_info_window.dart';
 import 'package:flutter/material.dart';
-import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -460,6 +459,8 @@ class _NewSearchScreenState extends State<NewSearchScreen>
                 flex: 2,
                 child: AutoSizeText(
                   seller.name,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.montserrat(
                     color: Colors.white,
@@ -474,6 +475,8 @@ class _NewSearchScreenState extends State<NewSearchScreen>
                   flex: 2,
                   child: AutoSizeText(
                     seller.description,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.montserrat(
                       color: Colors.white,
@@ -733,9 +736,7 @@ class _NewSearchScreenState extends State<NewSearchScreen>
               'Ver mais',
               textAlign: TextAlign.center,
               style: GoogleFonts.montserrat(
-                color: Colors.white,
-                fontSize: 0.28.nsp
-              ),
+                  color: Colors.white, fontSize: 0.28.nsp),
             ),
           ),
         ),
