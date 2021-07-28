@@ -201,6 +201,23 @@ class _SellerProfileState extends State<SellerProfile> {
                 );
               }
 
+              if (snapshot.data.data() == null) {
+                return Container(
+                  height: MediaQuery.of(context).size.height - 80,
+                  child: Center(
+                    child: AutoSizeText(
+                      'Esse vendedor não existe mais',
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      style: GoogleFonts.montserrat(
+                        color: Colors.black54,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25.nsp,
+                      ),
+                    ),
+                  ),
+                );
+              }
               Seller seller = snapshot.data.data();
               var currentMeals = seller.currentMeals;
               List<MealRequest> allCurrentMeals =
