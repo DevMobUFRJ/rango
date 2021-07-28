@@ -89,7 +89,7 @@ class _ChatScreenState extends State<ChatScreen> {
       await http.post(
         Uri.parse('https://fcm.googleapis.com/fcm/send'),
         headers: <String, String>{
-          'Authorization': 'key=$firabaseMessagingAuthorizationKey',
+          'Authorization': 'key=${const String.fromEnvironment('MESSAGING_KEY')}',
           'content-type': 'application/json; charset=UTF-8'
         },
         body: jsonEncode(<String, dynamic>{
