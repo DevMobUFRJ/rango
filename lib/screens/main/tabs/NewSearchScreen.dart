@@ -182,11 +182,13 @@ class _NewSearchScreenState extends State<NewSearchScreen>
     sellersSubscription = Repository.instance
         .getNearbySellersStream(userLocation, sellerRange)
         .listen((docsList) {
-          List<Seller> allSellers = docsList.map((doc) => Seller.fromJson(doc.data(), id: doc.id)).toList();
+      List<Seller> allSellers = docsList
+          .map((doc) => Seller.fromJson(doc.data(), id: doc.id))
+          .toList();
 
-          List<Seller> sellers = _mapSellers(allSellers);
-          Set<Marker> marcadores = _carregarMarcadores(sellers);
-          setState(() => {
+      List<Seller> sellers = _mapSellers(allSellers);
+      Set<Marker> marcadores = _carregarMarcadores(sellers);
+      setState(() => {
             _userLocation = userLocation,
             _isLoading = false,
             _allSellers = sellers,
@@ -194,7 +196,7 @@ class _NewSearchScreenState extends State<NewSearchScreen>
             _marcadores = marcadores,
             _isCardsLoading = false,
           });
-        });
+    });
 
     if (widget.seller != null) {
       await _mapControllerCompleter.future;
@@ -699,28 +701,37 @@ class _NewSearchScreenState extends State<NewSearchScreen>
 
   Widget _botaoVerVendedor(Seller seller, BuildContext context, var isOpen) {
     return Container(
-      width: 0.25.wp,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          primary: isOpen ? Theme.of(context).accentColor : Colors.grey,
+      width: 0.22.wp,
+      margin: EdgeInsets.only(top: 5),
+      child: Material(
+        elevation: 3,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
         ),
-        onPressed: () {
-          pushNewScreen(
-            context,
-            withNavBar: false,
-            screen: SellerProfile(
-              seller.id,
-              seller.name,
-              widget.tabController,
-              fromMap: true,
+        color: isOpen ? Theme.of(context).accentColor : Colors.grey,
+        child: GestureDetector(
+          onTap: () {
+            pushNewScreen(
+              context,
+              withNavBar: false,
+              screen: SellerProfile(
+                seller.id,
+                seller.name,
+                widget.tabController,
+                fromMap: true,
+              ),
+              pageTransitionAnimation: PageTransitionAnimation.cupertino,
+            ).then((value) => _returnOfSellerProfile(value));
+          },
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 4),
+            child: AutoSizeText(
+              'Ver Mais',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.montserrat(
+                color: Colors.white,
+              ),
             ),
-            pageTransitionAnimation: PageTransitionAnimation.cupertino,
-          ).then((value) => _returnOfSellerProfile(value));
-        },
-        child: AutoSizeText(
-          'Ver Mais',
-          style: GoogleFonts.montserrat(
-            color: isOpen ? null : Colors.white,
           ),
         ),
       ),
