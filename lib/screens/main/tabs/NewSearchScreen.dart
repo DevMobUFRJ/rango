@@ -700,29 +700,29 @@ class _NewSearchScreenState extends State<NewSearchScreen>
   }
 
   Widget _botaoVerVendedor(Seller seller, BuildContext context, var isOpen) {
-    return Container(
-      width: 0.22.wp,
-      margin: EdgeInsets.only(top: 5),
-      child: Material(
-        elevation: 3,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        color: isOpen ? Theme.of(context).accentColor : Colors.grey,
-        child: GestureDetector(
-          onTap: () {
-            pushNewScreen(
-              context,
-              withNavBar: false,
-              screen: SellerProfile(
-                seller.id,
-                seller.name,
-                widget.tabController,
-                fromMap: true,
-              ),
-              pageTransitionAnimation: PageTransitionAnimation.cupertino,
-            ).then((value) => _returnOfSellerProfile(value));
-          },
+    return GestureDetector(
+      onTap: () {
+        pushNewScreen(
+          context,
+          withNavBar: false,
+          screen: SellerProfile(
+            seller.id,
+            seller.name,
+            widget.tabController,
+            fromMap: true,
+          ),
+          pageTransitionAnimation: PageTransitionAnimation.cupertino,
+        ).then((value) => _returnOfSellerProfile(value));
+      },
+      child: Container(
+        width: 0.22.wp,
+        margin: EdgeInsets.only(top: 5),
+        child: Material(
+          elevation: 3,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          color: isOpen ? Theme.of(context).accentColor : Colors.grey,
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 4),
             child: AutoSizeText(
