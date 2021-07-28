@@ -298,7 +298,7 @@ class _SellerProfileState extends State<SellerProfile> {
                         ),
                       ),
                     ),
-                  if (seller.contact != null && seller.contact.phone != null)
+                  if (seller.phone != null)
                     Container(
                       margin: EdgeInsets.only(top: 8),
                       child: Column(
@@ -308,7 +308,7 @@ class _SellerProfileState extends State<SellerProfile> {
                             child: GestureDetector(
                               onTap: () => {
                                 Clipboard.setData(
-                                  ClipboardData(text: seller.contact.phone),
+                                  ClipboardData(text: seller.phone),
                                 ),
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
@@ -327,7 +327,7 @@ class _SellerProfileState extends State<SellerProfile> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   AutoSizeText(
-                                    seller.contact.phone,
+                                    seller.phone,
                                     maxLines: 1,
                                     style: GoogleFonts.montserrat(
                                       fontSize: 30.nsp,
@@ -346,7 +346,7 @@ class _SellerProfileState extends State<SellerProfile> {
                             onTap: () async {
                               try {
                                 var whatsappUrl =
-                                    "whatsapp://send?phone=+55${seller.contact.phone.replaceAll('(', '').replaceAll(')', '')}";
+                                    "whatsapp://send?phone=+55${seller.phone.replaceAll('(', '').replaceAll(')', '')}";
                                 await launch(whatsappUrl);
                               } catch (error) {
                                 ScaffoldMessenger.of(context).showSnackBar(
