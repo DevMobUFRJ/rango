@@ -138,7 +138,7 @@ class _AuthFormState extends State<AuthForm> {
                         ),
                         if (!widget._isLogin)
                           CustomTextFormField(
-                            labelText: 'Nome',
+                            labelText: 'Nome da loja',
                             textCapitalization: TextCapitalization.sentences,
                             errorText: _nameErrorMessage,
                             focusNode: _focusNodeName,
@@ -149,7 +149,7 @@ class _AuthFormState extends State<AuthForm> {
                             validator: (value) {
                               if (value.isEmpty) {
                                 setState(() {
-                                  _nameErrorMessage = 'Digite seu nome';
+                                  _nameErrorMessage = 'Digite o nome da loja';
                                 });
                               } else {
                                 setState(() {

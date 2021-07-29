@@ -147,7 +147,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                       ),
                       CustomTextFormField(
-                        labelText: 'Nome*',
+                        labelText: 'Nome da loja*',
                         textCapitalization: TextCapitalization.sentences,
                         key: ValueKey('name'),
                         controller: _name,
