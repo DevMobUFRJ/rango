@@ -185,6 +185,11 @@ class _NewSearchScreenState extends State<NewSearchScreen>
           .map((doc) => Seller.fromJson(doc.data(), id: doc.id))
           .toList();
 
+      if (widget.seller != null &&
+          allSellers.indexWhere((s) => s.id == widget.seller.id) == -1) {
+        allSellers.add(widget.seller);
+      }
+
       List<Seller> sellers = _mapSellers(allSellers);
       Set<Marker> marcadores = _carregarMarcadores(sellers);
       setState(() => {
@@ -354,32 +359,36 @@ class _NewSearchScreenState extends State<NewSearchScreen>
   }
 
   Widget _cardsSellers(List<Seller> sellers, BuildContext contextGeral) {
-    return Align(
-      alignment: Alignment.bottomLeft,
-      child: Container(
-        height: 285.nsp,
-        child: _isCardsLoading
-            ? _buildSellersLoading()
-            : ScrollablePositionedList.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: sellers.length,
-                itemScrollController: _itemScrollController,
-                itemPositionsListener: _itemPositionsListener,
-                initialScrollIndex: _getSellerIndex(),
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(
-                        top: 8, right: 8, bottom: 8, left: 8),
-                    child: _buildSellerCard(
-                      sellers[index],
-                      contextGeral,
-                      index,
-                    ),
-                  );
-                },
-              ),
-      ),
-    );
+    if (sellers.isEmpty) {
+      return SizedBox();
+    } else {
+      return Align(
+        alignment: Alignment.bottomLeft,
+        child: Container(
+          height: 285.nsp,
+          child: _isCardsLoading
+              ? _buildSellersLoading()
+              : ScrollablePositionedList.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: sellers.length,
+            itemScrollController: _itemScrollController,
+            itemPositionsListener: _itemPositionsListener,
+            initialScrollIndex: _getSellerIndex(),
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.only(
+                    top: 8, right: 8, bottom: 8, left: 8),
+                child: _buildSellerCard(
+                  sellers[index],
+                  contextGeral,
+                  index,
+                ),
+              );
+            },
+          ),
+        ),
+      );
+    }
   }
 
   int _getSellerIndex() {
@@ -669,7 +678,8 @@ class _NewSearchScreenState extends State<NewSearchScreen>
     String horaFormatada = '';
 
     for (String day in weekdaysFromNow) {
-      if (seller.shift[day] != null &&
+      if (seller.shift != null &&
+          seller.shift[day] != null &&
           seller.shift[day].open &&
           seller.shift[day].openingTime != null) {
         found = true;
@@ -681,20 +691,24 @@ class _NewSearchScreenState extends State<NewSearchScreen>
         break;
       }
     }
-
-    if (found == false && horaFormatada != '') {
+    if (found == false || horaFormatada.isEmpty) {
       return Container(
-          child: Text(
-        "Sem informação de horário",
-        style: TextStyle(
-            color: Colors.black54, fontSize: 22.0, fontWeight: FontWeight.bold),
-      ));
+        child: AutoSizeText(
+          'Sem informação de horário',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.montserrat(
+            color: Colors.black54,
+            fontWeight: FontWeight.bold,
+            fontSize: 25.nsp,
+          ),
+        )
+      );
     }
 
     return Container(
       constraints: BoxConstraints(maxWidth: 0.35.wp),
       child: AutoSizeText(
-        "Fechado, abre $weekdayFound às $horaFormatada",
+        'Fechado, abre $weekdayFound às $horaFormatada',
         textAlign: TextAlign.center,
         maxLines: 2,
         style: GoogleFonts.montserrat(

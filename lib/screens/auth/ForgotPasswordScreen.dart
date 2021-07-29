@@ -164,6 +164,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       : AutoSizeText(
                           'Confirmar',
                           style: GoogleFonts.montserrat(
+                            color: Colors.white,
                             fontSize: 38.nsp,
                           ),
                         ),

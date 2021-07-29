@@ -244,6 +244,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                         : AutoSizeText(
                             'Confirmar',
                             style: GoogleFonts.montserrat(
+                              color: Colors.white,
                               fontSize: 36.nsp,
                             ),
                           ),

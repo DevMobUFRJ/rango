@@ -106,6 +106,7 @@ extension Open on Seller {
     DateTime now = DateTime.now();
     String dayOfWeek = weekdayMap[now.weekday];
 
+    if (seller.shift == null) return false;
     if (seller.shift[dayOfWeek] == null) return false;
     if (seller.shift[dayOfWeek].open == false) return false;
 

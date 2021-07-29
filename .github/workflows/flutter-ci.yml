@@ -35,10 +35,7 @@ jobs:
         
     # Build dev apk.
     - name: Build dev apk
-      run: flutter build apk --flavor dev --release --dart-define=MAPS_KEY=$dev_maps_key --dart-define=MESSAGING_KEY=$dev_messaging_key
-      env:
-        dev_maps_key: ${{ secrets.DEV_MAPS_KEY }}
-        dev_messaging_key: ${{ secrets.DEV_MESSAGING_KEY }}
+      run: flutter build apk --flavor dev --release --dart-define=MAPS_KEY=${{ secrets.DEV_MAPS_KEY }} --dart-define=MESSAGING_KEY=${{ secrets.DEV_MESSAGING_KEY }}
     
     # Upload generated apk to the artifacts.
     - uses: actions/upload-artifact@v1
@@ -47,11 +44,11 @@ jobs:
         path: build/app/outputs/flutter-apk/app-dev-release.apk
         
     # Build prod apk.
-    - name: Build prod apk
-      run: flutter build apk --flavor prod --release --dart-define=MAPS_KEY=${{ secrets.PROD_MAPS_KEY }} --dart-define=MESSAGING_KEY=${{ secrets.PROD_MESSAGING_KEY }}
+    #- name: Build prod apk
+    #  run: flutter build apk --flavor prod --release --dart-define=MAPS_KEY=${{ secrets.PROD_MAPS_KEY }} --dart-define=MESSAGING_KEY=${{ secrets.PROD_MESSAGING_KEY }}
     
     # Upload generated apk to the artifacts.
-    - uses: actions/upload-artifact@v1
-      with:
-        name: rango_cliente
-        path: build/app/outputs/flutter-apk/app-prod-release.apk
+    #- uses: actions/upload-artifact@v1
+    #  with:
+    #    name: rango_cliente
+    #    path: build/app/outputs/flutter-apk/app-prod-release.apk
