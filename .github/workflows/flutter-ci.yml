@@ -45,7 +45,7 @@ jobs:
     - uses: actions/upload-artifact@v1
       with:
         name: rango_cliente_dev
-        path: build/app/outputs/apk/release/app-dev-release.apk
+        path: build/app/outputs/flutter-apk/app-dev-release.apk
         
     # Build prod apk.
     - run: flutter build apk --flavor prod --release --dart-define=MAPS_KEY=$prod_maps_key --dart-define=MESSAGING_KEY=$prod_messaging_key
@@ -54,4 +54,4 @@ jobs:
     - uses: actions/upload-artifact@v1
       with:
         name: rango_cliente
-        path: build/app/outputs/apk/release/app-prod-release.apk
+        path: build/app/outputs/flutter-apk/app-prod-release.apk
