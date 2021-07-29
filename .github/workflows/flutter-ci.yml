@@ -23,14 +23,18 @@ jobs:
     - uses: actions/setup-java@v1
       with:
         java-version: '12.x'
+
+    - name: Teste com aspas
+      run: echo $dev_maps_key
       env:
         dev_maps_key: '${{ secrets.DEV_MAPS_KEY }}'
+
+    - name: Teste sem aspas
+      run: echo $dev_messaging_key
+      env:
         dev_messaging_key: ${{ secrets.DEV_MESSAGING_KEY }}
-        prod_maps_key: ${{ secrets.PROD_MAPS_KEY }}
-        prod_messaging_key: ${{ secrets.PROD_MESSAGING_KEY }}
-    - run: echo $dev_maps_key
-    - run: echo $dev_messaging_key
-    - run: echo ${{ secrets.DEV_MAPS_KEY }}
+
+    #- run: echo ${{ secrets.DEV_MAPS_KEY }}
     # Setup the flutter environment.
     #- uses: subosito/flutter-action@v1
     #  with:
