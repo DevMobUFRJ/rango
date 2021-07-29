@@ -37,9 +37,6 @@ jobs:
     
     # Get flutter dependencies.
     - run: flutter pub get
-    
-    # Statically analyze the Dart code for any errors.
-    - run: flutter analyze .
         
     # Build dev apk.
     - run: flutter build apk --flavor dev --release --dart-define=MAPS_KEY=$dev_maps_key --dart-define=MESSAGING_KEY=$dev_messaging_key
