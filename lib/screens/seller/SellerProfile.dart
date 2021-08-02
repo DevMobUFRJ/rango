@@ -126,13 +126,13 @@ String _formatOpeningAndClosingTime(String openingTime, String closingTime) {
 
 String _retrieveSellerShift(Seller seller) {
   String shift = '';
-  if (seller.shift.monday.open) {
-    shift =
-        'Domingo: ${_formatOpeningAndClosingTime(seller.shift.monday.openingTime.toString(), seller.shift.monday.closingTime.toString())}';
-  }
   if (seller.shift.sunday.open) {
+    shift =
+        'Domingo: ${_formatOpeningAndClosingTime(seller.shift.sunday.openingTime.toString(), seller.shift.sunday.closingTime.toString())}';
+  }
+  if (seller.shift.monday.open) {
     shift +=
-        '\nSegunda: ${_formatOpeningAndClosingTime(seller.shift.sunday.openingTime.toString(), seller.shift.sunday.closingTime.toString())}';
+        '\nSegunda: ${_formatOpeningAndClosingTime(seller.shift.monday.openingTime.toString(), seller.shift.monday.closingTime.toString())}';
   }
   if (seller.shift.tuesday.open) {
     shift +=
