@@ -121,7 +121,8 @@ class _AuthScreenState extends State<AuthScreen> {
           await ref.putFile(image).whenComplete(() => null);
           url = await ref.getDownloadURL();
         }
-        authResult.user.updateDisplayName(name);
+        await authResult.user.updateDisplayName(name);
+        _auth.currentUser.reload();
         String deviceToken = await FirebaseMessaging.instance.getToken();
         var seller = Seller(
           id: authResult.user.uid,
