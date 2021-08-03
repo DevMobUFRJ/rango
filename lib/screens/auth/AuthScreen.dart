@@ -109,6 +109,7 @@ class _AuthScreenState extends State<AuthScreen> {
         authResult = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
         authResult.user.updateDisplayName(name);
+        _auth.currentUser.reload();
 
         String url;
         if (image != null) {
