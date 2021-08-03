@@ -108,7 +108,7 @@ class _AuthScreenState extends State<AuthScreen> {
         setState(() => _isLoading = true);
         authResult = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
-        authResult.user.updateDisplayName(name);
+        await authResult.user.updateDisplayName(name);
         _auth.currentUser.reload();
 
         String url;
