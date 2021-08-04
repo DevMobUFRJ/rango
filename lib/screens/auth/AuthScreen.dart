@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:rango/models/user_notification_settings.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/utils/constants.dart';
 import 'package:rango/widgets/auth/AuthForm.dart';
@@ -130,6 +131,10 @@ class _AuthScreenState extends State<AuthScreen> {
             'picture': url != null ? url : null,
             'deviceToken': deviceToken,
             'phone': phone,
+            'notifications': UserNotificationSettings(
+                messages: true,
+                reservations: true
+            )
           },
         );
         Navigator.of(context).pop();
