@@ -35,6 +35,11 @@ class _AuthScreenState extends State<AuthScreen> {
       setState(() => _isLoading = true);
       if (_isLogin) {
         try {
+          await _auth.signInWithEmailAndPassword(
+            email: email,
+            password: password,
+          );
+
           var sellers = await FirebaseFirestore.instance
               .collection('sellers')
               .where('email', isEqualTo: email)
@@ -42,16 +47,13 @@ class _AuthScreenState extends State<AuthScreen> {
               .get();
           bool isSeller = sellers.docs.isNotEmpty;
           if (!isSeller) {
-            await _auth.signInWithEmailAndPassword(
-              email: email,
-              password: password,
-            );
             Map<String, dynamic> dataToUpdate = {};
             dataToUpdate['deviceToken'] = await FirebaseMessaging.instance.getToken();
             Repository.instance.updateClient(
                 FirebaseAuth.instance.currentUser.uid, dataToUpdate);
             Navigator.of(context).pop();
           } else {
+            _auth.signOut();
             ScaffoldMessenger.of(ctx).showSnackBar(
               SnackBar(
                 duration: Duration(seconds: 2),
