@@ -190,12 +190,15 @@ class MyApp extends StatelessWidget {
                           .updateClient(client.id, dataToUpdate);
                     });
 
-                    return Stack(
-                      children: [
-                        NewTabsScreen(clientSnapshot.data.data(), _controller),
-                        NoConnection()
-                      ],
-                    );
+                    return clientSnapshot.data.data() == null
+                        ? SplashScreen()
+                        : Stack(
+                            children: [
+                              NewTabsScreen(
+                                  clientSnapshot.data.data(), _controller),
+                              NoConnection()
+                            ],
+                          );
                   });
             }
             return LoginScreen();
