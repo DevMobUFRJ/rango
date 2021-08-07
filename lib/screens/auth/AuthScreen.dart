@@ -48,7 +48,8 @@ class _AuthScreenState extends State<AuthScreen> {
           bool isSeller = sellers.docs.isNotEmpty;
           if (!isSeller) {
             Map<String, dynamic> dataToUpdate = {};
-            dataToUpdate['deviceToken'] = await FirebaseMessaging.instance.getToken();
+            dataToUpdate['deviceToken'] =
+                await FirebaseMessaging.instance.getToken();
             Repository.instance.updateClient(
                 FirebaseAuth.instance.currentUser.uid, dataToUpdate);
             Navigator.of(context).pop();
@@ -133,10 +134,9 @@ class _AuthScreenState extends State<AuthScreen> {
             'picture': url != null ? url : null,
             'deviceToken': deviceToken,
             'phone': phone,
-            'notifications': UserNotificationSettings(
-                messages: true,
-                reservations: true
-            )
+            'notifications':
+                UserNotificationSettings(messages: true, reservations: true)
+                    .toJson()
           },
         );
         Navigator.of(context).pop();
