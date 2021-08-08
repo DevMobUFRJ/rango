@@ -168,6 +168,8 @@ class _AuthScreenState extends State<AuthScreen> {
         );
       }
     } catch (error) {
+      authResult.user.delete();
+      setState(() => _isLoading = false);
       ScaffoldMessenger.of(ctx).showSnackBar(
         SnackBar(
           duration: Duration(seconds: 2),
