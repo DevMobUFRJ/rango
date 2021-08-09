@@ -25,7 +25,8 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   FirebaseFirestore db = FirebaseFirestore.instance;
   Seller _seller;
-  CollectionReference chatReference;
+  DocumentReference chatReference;
+  CollectionReference messagesReference;
   String userId;
   String docId;
 
@@ -35,7 +36,8 @@ class _ChatScreenState extends State<ChatScreen> {
     userId = FirebaseAuth.instance.currentUser.uid;
     docId = '${userId}_${widget.sellerId}';
     _getSeller(widget.sellerId);
-    chatReference = db.collection('chat').doc(docId).collection('messages');
+    chatReference = db.collection('chat').doc(docId);
+    messagesReference = chatReference.collection('messages');
   }
 
   Future<void> _getSeller(String sellerId) async {
@@ -46,7 +48,11 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<void> _addNewMessage(Message newMessage) async {
     try {
-      chatReference.add(newMessage.toJson());
+      await messagesReference.add(newMessage.toJson());
+      Map<String, dynamic> dataToUpdate = {};
+      dataToUpdate['lastMessageSentAt'] = newMessage.sentAt;
+      dataToUpdate['lastMessageSent'] = newMessage.text;
+      await chatReference.update(dataToUpdate);
       if (_seller.deviceToken != null &&
           _seller.notificationSettings != null &&
           _seller.notificationSettings.messages == true) {
@@ -87,7 +93,8 @@ class _ChatScreenState extends State<ChatScreen> {
       await http.post(
         Uri.parse('https://fcm.googleapis.com/fcm/send'),
         headers: <String, String>{
-          'Authorization': 'key=${const String.fromEnvironment('MESSAGING_KEY')}',
+          'Authorization':
+              'key=${const String.fromEnvironment('MESSAGING_KEY')}',
           'content-type': 'application/json; charset=UTF-8'
         },
         body: jsonEncode(<String, dynamic>{
@@ -119,7 +126,7 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Expanded(
-              child: Messages(chatReference),
+              child: Messages(messagesReference),
             ),
             NewMessage(_addNewMessage),
           ],

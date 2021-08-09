@@ -10,6 +10,7 @@ import 'package:rango/main.dart';
 import 'package:rango/models/meals.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rango/models/message.dart';
 import 'package:rango/models/order.dart';
 import 'package:rango/models/seller.dart';
 import 'package:rango/resources/repository.dart';
@@ -373,7 +374,8 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
       await http.post(
         Uri.parse('https://fcm.googleapis.com/fcm/send'),
         headers: <String, String>{
-          'Authorization': 'key=${const String.fromEnvironment('MESSAGING_KEY')}',
+          'Authorization':
+              'key=${const String.fromEnvironment('MESSAGING_KEY')}',
           'content-type': 'application/json; charset=UTF-8'
         },
         body: jsonEncode(<String, dynamic>{
@@ -587,6 +589,35 @@ class _DetalhesQuentinhaScreenState extends State<DetalhesQuentinhaScreen> {
                               await _sendOrderNotification(
                                   widget.seller.deviceToken, ctx);
                             }
+                            final chatReference = FirebaseFirestore.instance
+                                .collection('chat')
+                                .doc('${user.uid}_${widget.seller.id}');
+                            final doc = await chatReference.get();
+                            final String newMessage =
+                                'Fiz uma reserva com você:\n${_quantity}x ${widget.marmita.name}';
+                            final sentAt =
+                                new Timestamp.fromDate(new DateTime.now());
+                            Map<String, dynamic> dataToUpdate = {};
+                            dataToUpdate['lastMessageSentAt'] = sentAt;
+                            dataToUpdate['lastMessageSent'] = newMessage;
+                            dataToUpdate['sellerName'] = widget.seller.name;
+                            if (doc.exists) {
+                              await chatReference.update(dataToUpdate);
+                            } else {
+                              dataToUpdate['sellerId'] = widget.seller.id;
+                              dataToUpdate['sellerName'] = widget.seller.name;
+                              dataToUpdate['clientId'] = user.uid;
+                              dataToUpdate['clientName'] = user.displayName;
+                              await chatReference.set(dataToUpdate);
+                            }
+
+                            chatReference
+                                .collection('messages')
+                                .add(new Message(
+                                  sender: 'client',
+                                  sentAt: sentAt,
+                                  text: newMessage,
+                                ).toJson());
                           } catch (e) {
                             Navigator.of(context).pop();
                             ScaffoldMessenger.of(context).showSnackBar(
