@@ -33,6 +33,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
         height: 1.hp - 56,
+        margin: EdgeInsets.symmetric(horizontal: 7),
         child: PaginateFirestore(
           query: Repository.instance.chatsRef
               .where('sellerId', isEqualTo: widget.usuario.id)
@@ -85,8 +86,10 @@ class _ChatsScreenState extends State<ChatsScreen> {
                           children: [
                             Text(
                               chat.clientName,
-                              style:
-                                  GoogleFonts.montserrat(color: Colors.white),
+                              style: GoogleFonts.montserrat(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             SizedBox(height: 3),
                             Text(
