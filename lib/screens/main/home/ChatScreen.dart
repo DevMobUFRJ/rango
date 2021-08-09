@@ -49,13 +49,9 @@ class _ChatScreenState extends State<ChatScreen> {
     try {
       await messagesReference.add(newMessage.toJson());
       Map<String, dynamic> dataToUpdate = {};
-      dataToUpdate['clientName'] = _client.name;
-      dataToUpdate['clientId'] = _client.id;
-      dataToUpdate['sellerName'] = userId;
-      dataToUpdate['sellerId'] = FirebaseAuth.instance.currentUser.uid;
       dataToUpdate['lastMessageSentAt'] = newMessage.sentAt;
       dataToUpdate['lastMessageSent'] = newMessage.text;
-      await chatReference.set(dataToUpdate);
+      await chatReference.update(dataToUpdate);
       if (_client.deviceToken != null &&
           _client.clientNotificationSettings != null &&
           _client.clientNotificationSettings.messages == true) {
