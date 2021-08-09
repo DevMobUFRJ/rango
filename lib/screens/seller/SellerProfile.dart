@@ -281,7 +281,7 @@ class _SellerProfileState extends State<SellerProfile> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Horário de funcionamento',
+                              'Horários de funcionamento',
                               style: GoogleFonts.montserrat(
                                 fontSize: 30.nsp,
                                 decoration: TextDecoration.underline,

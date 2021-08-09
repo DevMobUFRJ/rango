@@ -168,7 +168,7 @@ class Repository {
       Stream<List<DocumentSnapshot>> stream) {
     DateTime currentTime = DateTime.now();
     int formattedTime =
-        int.parse(currentTime.hour.toString() + currentTime.minute.toString());
+        int.parse(currentTime.hour.toString() + currentTime.minute.toString().padLeft(2, '0'));
     String weekday = weekdayMap[currentTime.weekday];
     return stream.map((documents) => documents
         .where((seller) => isInTimeRange(seller, weekday, formattedTime))
