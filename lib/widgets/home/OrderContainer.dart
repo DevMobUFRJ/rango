@@ -12,7 +12,6 @@ import 'package:rango/models/client.dart';
 import 'package:rango/models/order.dart';
 import 'package:rango/resources/repository.dart';
 import 'package:rango/screens/main/home/ClientProfile.dart';
-import 'package:rango/utils/constants.dart';
 import 'package:rango/utils/string_formatters.dart';
 import 'package:http/http.dart' as http;
 
@@ -98,32 +97,26 @@ class _OrderContainerState extends State<OrderContainer>
                                 widget.pedido.clientName,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.montserrat(
-                                  textStyle: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 29.nsp,
-                                    fontWeight: FontWeight.bold,
-                                    decoration: TextDecoration.underline,
-                                  ),
+                                  color: Colors.white,
+                                  fontSize: 29.nsp,
+                                  fontWeight: FontWeight.bold,
+                                  decoration: TextDecoration.underline,
                                 ),
                               ),
                             ),
                             AutoSizeText(
                               '${widget.pedido.quantity}x ${widget.pedido.mealName}',
                               style: GoogleFonts.montserrat(
-                                textStyle: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 26.nsp,
-                                ),
+                                color: Colors.white,
+                                fontSize: 26.nsp,
                               ),
                             ),
                             SizedBox(height: 2),
                             AutoSizeText(
                               'Valor total: ${intToCurrency(widget.pedido.quantity * widget.pedido.price)}',
                               style: GoogleFonts.montserrat(
-                                textStyle: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 26.nsp,
-                                ),
+                                color: Colors.white,
+                                fontSize: 26.nsp,
                               ),
                             ),
                           ],
@@ -194,7 +187,8 @@ class _OrderContainerState extends State<OrderContainer>
                                 ),
                                 Text(
                                   "Reservado",
-                                  style: TextStyle(color: Colors.white),
+                                  style: GoogleFonts.montserrat(
+                                      color: Colors.white),
                                 ),
                               ],
                             ),
@@ -278,7 +272,8 @@ class _OrderContainerState extends State<OrderContainer>
                                 ),
                                 Text(
                                   "Vendido",
-                                  style: TextStyle(color: Colors.white),
+                                  style: GoogleFonts.montserrat(
+                                      color: Colors.white),
                                 ),
                               ],
                             ),
@@ -378,7 +373,8 @@ class _OrderContainerState extends State<OrderContainer>
       await http.post(
         Uri.parse('https://fcm.googleapis.com/fcm/send'),
         headers: <String, String>{
-          'Authorization': 'key=${const String.fromEnvironment('MESSAGING_KEY')}',
+          'Authorization':
+              'key=${const String.fromEnvironment('MESSAGING_KEY')}',
           'content-type': 'application/json; charset=UTF-8'
         },
         body: jsonEncode(<String, dynamic>{

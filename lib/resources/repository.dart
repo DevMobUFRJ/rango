@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rango/models/chat.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/models/meals.dart';
 import 'package:rango/models/order.dart';
@@ -34,6 +35,15 @@ class Repository {
                 Meal.fromJson(snapshot.data(), id: snapshot.id),
             toFirestore: (meal, _) => meal.toJson(),
           );
+  final chatsRef =
+      FirebaseFirestore.instance.collection('chat').withConverter<Chat>(
+            fromFirestore: (snapshot, _) => Chat.fromJson(
+              snapshot.data(),
+              id: snapshot.id,
+            ),
+            toFirestore: (chat, _) => chat.toJson(),
+          );
+
   final geo = Geoflutterfire();
   final auth = FirebaseAuth.instance;
 
@@ -54,7 +64,8 @@ class Repository {
     return sellersRef.doc(uid).snapshots();
   }
 
-  Future<DocumentSnapshot<Seller>> getSellerFuture(String uid, {Source source = Source.serverAndCache}) async {
+  Future<DocumentSnapshot<Seller>> getSellerFuture(String uid,
+      {Source source = Source.serverAndCache}) async {
     try {
       return await sellersRef.doc(uid).get(GetOptions(source: source));
     } catch (e) {
@@ -144,6 +155,13 @@ class Repository {
         .where('requestedAt', isLessThanOrEqualTo: endOfDay())
         .where('status', whereIn: ['requested', 'reserved'])
         .orderBy('requestedAt')
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot<Chat>> getAllChats(String sellerId) {
+    return chatsRef
+        .where('sellerId', isEqualTo: sellerId)
+        .orderBy('lastMessageSentAt')
         .snapshots();
   }
 

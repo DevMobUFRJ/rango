@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rango/main.dart';
 import 'package:rango/models/seller.dart';
+import 'package:rango/screens/main/tabs/ChatsScreen.dart';
 import 'package:rango/screens/main/tabs/ManageMealsScreen.dart';
 import 'package:rango/screens/main/tabs/HomeScreen.dart';
 import 'package:rango/screens/main/tabs/ProfileScreen.dart';
@@ -50,6 +52,7 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
         screens: <Widget>[
           HomeScreen(widget.seller, widget.controller, key: currentKey),
           ManageMealsScreen(widget.seller),
+          ChatsScreen(widget.seller),
           ProfileScreen(widget.seller, widget.controller),
         ],
         items: [
@@ -61,6 +64,11 @@ class _NewTabsScreenState extends State<NewTabsScreen> {
               icon: Icon(Icons.local_dining, size: 40),
               activeColor: Color(0xFF609B90),
               inactiveColor: Theme.of(context).primaryColor),
+          PersistentBottomNavBarItem(
+            icon: FaIcon(FontAwesomeIcons.solidComments, size: 40),
+            activeColor: Color(0xFF609B90),
+            inactiveColor: Theme.of(context).primaryColor,
+          ),
           PersistentBottomNavBarItem(
               icon: Icon(Icons.person, size: 40),
               activeColor: Color(0xFF609B90),
