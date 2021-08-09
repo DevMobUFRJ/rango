@@ -117,7 +117,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                               ),
                             ),
                             AutoSizeText(
-                              '${chat.lastMessageSentAt.toDate().hour}:${chat.lastMessageSentAt.toDate().minute}',
+                              '${DateFormat("HH:mm").format(chat.lastMessageSentAt.toDate())}',
                               style: GoogleFonts.montserrat(
                                 color: Colors.white,
                               ),
