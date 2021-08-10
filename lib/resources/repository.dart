@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rango/models/client.dart';
 import 'dart:math' show cos, sqrt, asin;
@@ -167,8 +168,7 @@ class Repository {
   Stream<List<DocumentSnapshot>> filterTimeRange(
       Stream<List<DocumentSnapshot>> stream) {
     DateTime currentTime = DateTime.now();
-    int formattedTime =
-        int.parse(currentTime.hour.toString() + currentTime.minute.toString().padLeft(2, '0'));
+    int formattedTime = int.parse(DateFormat("HHmm").format(currentTime));
     String weekday = weekdayMap[currentTime.weekday];
     return stream.map((documents) => documents
         .where((seller) => isInTimeRange(seller, weekday, formattedTime))
