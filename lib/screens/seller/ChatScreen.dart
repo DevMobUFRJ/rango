@@ -27,14 +27,14 @@ class _ChatScreenState extends State<ChatScreen> {
   Seller _seller;
   DocumentReference chatReference;
   CollectionReference messagesReference;
-  String userId;
+  User user;
   String docId;
 
   @override
   initState() {
     super.initState();
-    userId = FirebaseAuth.instance.currentUser.uid;
-    docId = '${userId}_${widget.sellerId}';
+    user = FirebaseAuth.instance.currentUser;
+    docId = '${user.uid}_${widget.sellerId}';
     _getSeller(widget.sellerId);
     chatReference = db.collection('chat').doc(docId);
     messagesReference = chatReference.collection('messages');
@@ -48,11 +48,23 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<void> _addNewMessage(Message newMessage) async {
     try {
-      await messagesReference.add(newMessage.toJson());
+      final doc = await chatReference.get();
+
       Map<String, dynamic> dataToUpdate = {};
       dataToUpdate['lastMessageSentAt'] = newMessage.sentAt;
       dataToUpdate['lastMessageSent'] = newMessage.text;
-      await chatReference.update(dataToUpdate);
+
+      if (doc.exists) {
+        await chatReference.update(dataToUpdate);
+      } else {
+        dataToUpdate['sellerId'] = _seller.id;
+        dataToUpdate['sellerName'] = _seller.name;
+        dataToUpdate['clientId'] = user.uid;
+        dataToUpdate['clientName'] = user.displayName;
+        await chatReference.set(dataToUpdate);
+      }
+
+      await messagesReference.add(newMessage.toJson());
       if (_seller.deviceToken != null &&
           _seller.notificationSettings != null &&
           _seller.notificationSettings.messages == true) {
@@ -87,7 +99,7 @@ class _ChatScreenState extends State<ChatScreen> {
         'description':
             '${FirebaseAuth.instance.currentUser.displayName} te enviou uma mensagem no chat!',
         'payload':
-            'chat/$userId/${FirebaseAuth.instance.currentUser.displayName}',
+            'chat/${user.uid}/${FirebaseAuth.instance.currentUser.displayName}',
         'title': 'Você recebeu uma nova mensagem!',
       });
       await http.post(
