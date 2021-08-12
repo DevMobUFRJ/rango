@@ -213,7 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
       margin: EdgeInsets.symmetric(horizontal: 10),
       alignment: Alignment.center,
       child: GestureDetector(
-        onTap: () => widget.controller.jumpToTab(2),
+        onTap: () => widget.controller.jumpToTab(3),
         child: Material(
           color: Theme.of(context).accentColor,
           elevation: 3,
@@ -287,7 +287,7 @@ class _HomeScreenState extends State<HomeScreen> {
               alignment: Alignment.topRight,
               children: [
                 GestureDetector(
-                  onTap: () => widget.controller.jumpToTab(2),
+                  onTap: () => widget.controller.jumpToTab(3),
                   child: Container(
                     margin:
                         EdgeInsets.symmetric(horizontal: 0.01.hp, vertical: 10),
