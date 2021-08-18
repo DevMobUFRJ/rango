@@ -110,7 +110,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                               order.clientId,
                             ),
                             pageTransitionAnimation:
-                            PageTransitionAnimation.cupertino,
+                                PageTransitionAnimation.cupertino,
                           ),
                           child: AutoSizeText(
                             order.clientName,
@@ -124,7 +124,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                         SizedBox(height: 10),
                         buildOrderStatus(order),
                         SizedBox(height: 10),
-                        Text('${order.quantity} x ${order.mealName}'),
+                        Text('${order.quantity}x ${order.mealName}'),
                         SizedBox(height: 10),
                         Text(
                             'Total: ${intToCurrency(order.price * order.quantity)}'),
@@ -133,8 +133,8 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                     ),
                     subtitle: order.requestedAt != null
                         ? Text(
-                      '${order.requestedAt?.toDate()?.day}/${order.requestedAt?.toDate()?.month}/${order.requestedAt?.toDate()?.year}',
-                    )
+                            '${order.requestedAt?.toDate()?.day}/${order.requestedAt?.toDate()?.month}/${order.requestedAt?.toDate()?.year}',
+                          )
                         : null,
                   ),
                 );

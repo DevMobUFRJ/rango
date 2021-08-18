@@ -68,7 +68,9 @@ class _OrderContainerState extends State<OrderContainer>
                 ),
                 color: widget.pedido.status == 'sold'
                     ? Colors.grey
-                    : Color(0xFFF9B152),
+                    : widget.pedido.status == 'canceled'
+                        ? Colors.red[400]
+                        : Color(0xFFF9B152),
                 child: ConstrainedBox(
                   constraints: new BoxConstraints(
                     minWidth: 0.85.wp,
@@ -124,167 +126,191 @@ class _OrderContainerState extends State<OrderContainer>
                       ),
                       Container(
                         margin: EdgeInsets.symmetric(horizontal: 0.06.wp),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Theme(
-                                  data: ThemeData(
-                                      unselectedWidgetColor: Colors.white),
-                                  child: SizedBox(
-                                    height: 24,
-                                    width: 24,
-                                    child: Checkbox(
-                                      checkColor: widget.pedido.status == 'sold'
-                                          ? Colors.grey
-                                          : Color(0xFFF9B152),
-                                      activeColor: Colors.white,
-                                      value:
-                                          widget.pedido.status == 'reserved' ||
-                                              widget.pedido.status == 'sold',
-                                      onChanged: (reserved) async {
-                                        try {
-                                          if (reserved &&
-                                              widget.pedido.status ==
-                                                  'requested') {
-                                            await Repository.instance
-                                                .reserveOrderTransaction(
-                                                    widget.pedido);
-                                            _showOrderUpdateNotification(
-                                                'reservated');
-                                          } else if (!reserved &&
-                                              widget.pedido.status ==
-                                                  'reserved') {
-                                            await Repository.instance
-                                                .undoReserveOrderTransaction(
-                                                    widget.pedido);
-                                            _showOrderUpdateNotification(
-                                                'undoReservate');
-                                          }
-                                        } catch (e) {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                e.toString().contains('possui')
-                                                    ? e.toString()
-                                                    : "Ocorreu um erro",
-                                                textAlign: TextAlign.center,
-                                              ),
-                                              backgroundColor:
-                                                  Theme.of(context).errorColor,
-                                            ),
-                                          );
-                                        }
-                                      },
-                                    ),
+                        child: widget.pedido.status == 'canceled'
+                            ? Text(
+                                "Pedido\nCancelado",
+                                textAlign: TextAlign.center,
+                                style:
+                                    GoogleFonts.montserrat(color: Colors.white),
+                              )
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Theme(
+                                        data: ThemeData(
+                                            unselectedWidgetColor:
+                                                Colors.white),
+                                        child: SizedBox(
+                                          height: 24,
+                                          width: 24,
+                                          child: Checkbox(
+                                            checkColor:
+                                                widget.pedido.status == 'sold'
+                                                    ? Colors.grey
+                                                    : Color(0xFFF9B152),
+                                            activeColor: Colors.white,
+                                            value: widget.pedido.status ==
+                                                    'reserved' ||
+                                                widget.pedido.status == 'sold',
+                                            onChanged: (reserved) async {
+                                              try {
+                                                if (reserved &&
+                                                    widget.pedido.status ==
+                                                        'requested') {
+                                                  await Repository.instance
+                                                      .reserveOrderTransaction(
+                                                          widget.pedido);
+                                                  _showOrderUpdateNotification(
+                                                      'reservated');
+                                                } else if (!reserved &&
+                                                    widget.pedido.status ==
+                                                        'reserved') {
+                                                  await Repository.instance
+                                                      .undoReserveOrderTransaction(
+                                                          widget.pedido);
+                                                  _showOrderUpdateNotification(
+                                                      'undoReservate');
+                                                }
+                                              } catch (e) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                      e.toString().contains(
+                                                              'possui')
+                                                          ? e.toString()
+                                                          : "Ocorreu um erro",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                    backgroundColor:
+                                                        Theme.of(context)
+                                                            .errorColor,
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                      Text(
+                                        "Reservado",
+                                        style: GoogleFonts.montserrat(
+                                            color: Colors.white),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                Text(
-                                  "Reservado",
-                                  style: GoogleFonts.montserrat(
-                                      color: Colors.white),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 0.018.hp),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Theme(
-                                  data: ThemeData(
-                                      unselectedWidgetColor: Colors.white),
-                                  child: SizedBox(
-                                    height: 24,
-                                    width: 24,
-                                    child: Checkbox(
-                                      checkColor: widget.pedido.status == 'sold'
-                                          ? Colors.grey
-                                          : Color(0xFFF9B152),
-                                      activeColor: Colors.white,
-                                      value: widget.pedido.status == 'sold',
-                                      onChanged: (sold) async {
-                                        if (sold &&
-                                            widget.pedido.status ==
-                                                'requested') {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                "Confirme a reserva antes de marca-lá como vendida",
-                                                textAlign: TextAlign.center,
-                                              ),
-                                              backgroundColor:
-                                                  Theme.of(context).errorColor,
-                                            ),
-                                          );
-                                          return;
-                                        }
-                                        try {
-                                          if (sold &&
-                                              widget.pedido.status ==
-                                                  'reserved') {
-                                            swipeRightController
-                                                .forward()
-                                                .then((_) async {
-                                              await Repository.instance
-                                                  .sellOrder(widget.pedido.id);
+                                  SizedBox(height: 0.018.hp),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Theme(
+                                        data: ThemeData(
+                                            unselectedWidgetColor:
+                                                Colors.white),
+                                        child: SizedBox(
+                                          height: 24,
+                                          width: 24,
+                                          child: Checkbox(
+                                            checkColor:
+                                                widget.pedido.status == 'sold'
+                                                    ? Colors.grey
+                                                    : Color(0xFFF9B152),
+                                            activeColor: Colors.white,
+                                            value:
+                                                widget.pedido.status == 'sold',
+                                            onChanged: (sold) async {
+                                              if (sold &&
+                                                  widget.pedido.status ==
+                                                      'requested') {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                      "Confirme a reserva antes de marca-lá como vendida",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                    backgroundColor:
+                                                        Theme.of(context)
+                                                            .errorColor,
+                                                  ),
+                                                );
+                                                return;
+                                              }
+                                              try {
+                                                if (sold &&
+                                                    widget.pedido.status ==
+                                                        'reserved') {
+                                                  swipeRightController
+                                                      .forward()
+                                                      .then((_) async {
+                                                    await Repository.instance
+                                                        .sellOrder(
+                                                            widget.pedido.id);
 
-                                              _showOrderUpdateNotification(
-                                                  'sold');
-                                            });
-                                          } else if (!sold &&
-                                              widget.pedido.status == 'sold') {
-                                            swipeLeftController
-                                                .forward()
-                                                .then((_) async {
-                                              await Repository.instance
-                                                  .undoSellOrder(
-                                                      widget.pedido.id);
-                                              widget.undoSellOrderCallback();
+                                                    _showOrderUpdateNotification(
+                                                        'sold');
+                                                  });
+                                                } else if (!sold &&
+                                                    widget.pedido.status ==
+                                                        'sold') {
+                                                  swipeLeftController
+                                                      .forward()
+                                                      .then((_) async {
+                                                    await Repository.instance
+                                                        .undoSellOrder(
+                                                            widget.pedido.id);
+                                                    widget
+                                                        .undoSellOrderCallback();
 
-                                              _showOrderUpdateNotification(
-                                                  'undoSold');
-                                            });
-                                          }
-                                        } catch (e) {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                'Ocorreu um erro',
-                                                textAlign: TextAlign.center,
-                                              ),
-                                              backgroundColor:
-                                                  Theme.of(context).errorColor,
-                                            ),
-                                          );
-                                        }
-                                      },
-                                    ),
+                                                    _showOrderUpdateNotification(
+                                                        'undoSold');
+                                                  });
+                                                }
+                                              } catch (e) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                      'Ocorreu um erro',
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                    backgroundColor:
+                                                        Theme.of(context)
+                                                            .errorColor,
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                      Text(
+                                        "Vendido",
+                                        style: GoogleFonts.montserrat(
+                                            color: Colors.white),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                Text(
-                                  "Vendido",
-                                  style: GoogleFonts.montserrat(
-                                      color: Colors.white),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                                ],
+                              ),
                       ),
                     ],
                   ),
                 ),
               ),
-              if (widget.pedido.status != 'sold') ...{
+              if (widget.pedido.status != 'sold' &&
+                  widget.pedido.status != 'canceled') ...{
                 GestureDetector(
                   onTap: () => _cancelOrder(),
                   child: Container(

@@ -173,7 +173,7 @@ class Repository {
         .where('requestedAt',
             isGreaterThanOrEqualTo: startOfDay().subtract(Duration(hours: 2)))
         .where('requestedAt', isLessThanOrEqualTo: endOfDay())
-        .where('status', isEqualTo: 'sold')
+        .where('status', whereIn: ['sold', 'canceled'])
         .orderBy('requestedAt', descending: true)
         .snapshots();
   }
