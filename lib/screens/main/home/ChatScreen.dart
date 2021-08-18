@@ -5,9 +5,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:rango/models/client.dart';
 import 'package:rango/models/message.dart';
 import 'package:rango/resources/repository.dart';
+import 'package:rango/screens/main/home/ClientProfile.dart';
 import 'package:rango/widgets/chat/Messages.dart';
 import 'package:http/http.dart' as http;
 import 'package:rango/widgets/chat/NewMessage.dart';
@@ -111,12 +113,20 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: AutoSizeText(
-          widget.clientName,
-          maxLines: 1,
-          style: GoogleFonts.montserrat(
-            color: Theme.of(context).accentColor,
-            fontSize: 42.nsp,
+        title: GestureDetector(
+          onTap: () => pushNewScreen(
+            context,
+            screen: ClientProfile(_client.id),
+            withNavBar: false,
+          ),
+          child: AutoSizeText(
+            widget.clientName,
+            maxLines: 1,
+            style: GoogleFonts.montserrat(
+              color: Theme.of(context).accentColor,
+              fontSize: 42.nsp,
+              decoration: TextDecoration.underline,
+            ),
           ),
         ),
       ),
