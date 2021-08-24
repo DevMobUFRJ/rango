@@ -17,3 +17,16 @@ String distanceInKM(Seller seller, Position userLocation) {
 
   return distance.toStringAsFixed(1).replaceAll('.', ',') + ' km';
 }
+
+String removeDiacritics(String str) {
+  var withDia =
+      'ÀÁÂÃÄÅàáâãäåÒÓÔÕÕÖØòóôõöøÈÉÊËèéêëðÇçÐÌÍÎÏìíîïÙÚÛÜùúûüÑñŠšŸÿýŽž';
+  var withoutDia =
+      'AAAAAAaaaaaaOOOOOOOooooooEEEEeeeeeCcDIIIIiiiiUUUUuuuuNnSsYyyZz';
+
+  for (int i = 0; i < withDia.length; i++) {
+    str = str.replaceAll(withDia[i], withoutDia[i]);
+  }
+
+  return str;
+}
