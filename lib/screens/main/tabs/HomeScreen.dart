@@ -12,6 +12,7 @@ import 'package:rango/models/seller.dart';
 import 'dart:io';
 import 'package:rango/resources/rangeChangeNotifier.dart';
 import 'package:rango/resources/repository.dart';
+import 'package:rango/utils/string_formatters.dart';
 import 'package:rango/widgets/home/HomeHeader.dart';
 import 'package:rango/widgets/home/ListaHorizontal.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -30,9 +31,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
+  TextEditingController _sellerSearchController = TextEditingController();
   bool _locationPermissionStatus;
   bool _locationPermissionLoading = false;
   bool _showFillPerfil = true;
+  bool _isSearching = false;
 
   void requestForPermission() async {
     try {
@@ -238,37 +241,57 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                             );
                                           }
 
-                                          List<MealRequest> allMealsRequests = [];
-                                          List<MealRequest> filteredMealsRequests = [];
+                                          List<MealRequest> allMealsRequests =
+                                              [];
+                                          List<MealRequest>
+                                              filteredMealsRequests = [];
 
                                           List<Seller> sellerList = [];
-                                          snapshot.data.forEach((sellerDoc) {
+                                          snapshot.data.forEach(
+                                            (sellerDoc) {
                                               Seller seller = Seller.fromJson(
                                                 sellerDoc.data(),
                                                 id: sellerDoc.id,
                                               );
-                                              sellerList.add(seller);
+                                              if (_isSearching &&
+                                                  removeDiacritics(seller.name
+                                                          .toLowerCase())
+                                                      .contains(removeDiacritics(
+                                                          _sellerSearchController
+                                                              .text
+                                                              .toLowerCase()))) {
+                                                sellerList.add(seller);
+                                              } else if (!_isSearching) {
+                                                sellerList.add(seller);
+                                              }
                                               var filterByFeatured = true;
-                                              var currentMeals = seller.currentMeals;
+                                              var currentMeals =
+                                                  seller.currentMeals;
 
-                                              var sellerAll = currentMeals.entries.map((meal) {
+                                              var sellerAll = currentMeals
+                                                  .entries
+                                                  .map((meal) {
                                                 return MealRequest(
-                                                  mealId: meal.key,
-                                                  seller: seller);
+                                                    mealId: meal.key,
+                                                    seller: seller);
                                               }).toList();
-                                              allMealsRequests.addAll(sellerAll);
+                                              allMealsRequests
+                                                  .addAll(sellerAll);
 
                                               if (filterByFeatured) {
                                                 currentMeals.removeWhere(
-                                                  (mealId, details) => !details.featured
-                                                );
+                                                    (mealId, details) =>
+                                                        !details.featured);
                                               }
-                                              var sellerFiltered = currentMeals.entries.map((meal) {
+                                              var sellerFiltered = currentMeals
+                                                  .entries
+                                                  .map((meal) {
                                                 return MealRequest(
-                                                  mealId: meal.key,
-                                                  seller: seller);
+                                                    mealId: meal.key,
+                                                    seller: seller);
                                               }).toList();
-                                              filteredMealsRequests.addAll(sellerFiltered);
+                                              filteredMealsRequests
+                                                  .addAll(sellerFiltered);
                                             },
                                           );
 
@@ -295,15 +318,95 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
                                           return Column(
                                             children: [
+                                              Container(
+                                                margin: EdgeInsets.symmetric(
+                                                    vertical: 10),
+                                                child: Row(
+                                                  children: [
+                                                    Flexible(
+                                                      flex: 4,
+                                                      child: Container(
+                                                        margin: EdgeInsets
+                                                            .symmetric(
+                                                          horizontal: 5,
+                                                        ),
+                                                        child: Material(
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                              20,
+                                                            ),
+                                                          ),
+                                                          elevation: 3,
+                                                          child: TextFormField(
+                                                            controller:
+                                                                _sellerSearchController,
+                                                            decoration:
+                                                                InputDecoration(
+                                                              contentPadding:
+                                                                  EdgeInsets
+                                                                      .symmetric(
+                                                                horizontal: 15,
+                                                              ),
+                                                              border:
+                                                                  InputBorder
+                                                                      .none,
+                                                              hintText:
+                                                                  'Buscar por vendedores',
+                                                              hintStyle:
+                                                                  GoogleFonts
+                                                                      .montserrat(
+                                                                color:
+                                                                    Colors.grey,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Flexible(
+                                                      flex: 1,
+                                                      child: ElevatedButton(
+                                                        onPressed: () => {
+                                                          setState(() {
+                                                            if (_isSearching ==
+                                                                true) {
+                                                              _sellerSearchController
+                                                                  .clear();
+                                                            }
+                                                            _isSearching =
+                                                                !_isSearching;
+                                                          })
+                                                        },
+                                                        child: Padding(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                            horizontal: 15,
+                                                          ),
+                                                          child: Text(
+                                                            _isSearching == true
+                                                                ? 'Limpar'
+                                                                : 'Buscar',
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
                                               if (_showFillPerfil)
                                                 _buildFillProfileSuggestions(),
-                                              if (allMealsRequests.isNotEmpty)
+                                              if (allMealsRequests.isNotEmpty &&
+                                                  !_isSearching)
                                                 _buildOrderAgain(
                                                   allMealsRequests,
                                                   widget.usuario.id,
                                                 ),
                                               if (filteredMealsRequests
-                                                  .isNotEmpty)
+                                                      .isNotEmpty &&
+                                                  !_isSearching)
                                                 _buildSuggestions(
                                                   filteredMealsRequests,
                                                 ),
@@ -322,7 +425,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                                     vertical: 10,
                                                   ),
                                                   child: AutoSizeText(
-                                                    'Aumente o alcance para visualizar vendedores!',
+                                                    _isSearching
+                                                        ? 'Não foram encontrados vendedores'
+                                                        : 'Aumente o alcance para visualizar vendedores!',
+                                                    textAlign: TextAlign.center,
                                                     style:
                                                         GoogleFonts.montserrat(
                                                       fontSize: 45.nsp,
