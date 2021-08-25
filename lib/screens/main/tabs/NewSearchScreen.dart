@@ -12,6 +12,7 @@ import 'package:rango/resources/repository.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rango/screens/seller/SellerProfile.dart';
 import 'package:rango/utils/constants.dart';
+import 'package:rango/utils/string_formatters.dart';
 import 'package:rango/widgets/others/CustomMarker.dart';
 import 'package:rango/widgets/others/ModalFilter.dart';
 import 'package:rango/widgets/others/marker_generator.dart';
@@ -252,7 +253,8 @@ class _NewSearchScreenState extends State<NewSearchScreen>
       sellers = sellersToMap;
     } else {
       sellersToMap.forEach((sel) {
-        if (sel.name.toLowerCase().contains(_filter.toLowerCase())) {
+        if (removeDiacritics(sel.name.toLowerCase())
+            .contains(removeDiacritics(_filter.toLowerCase()))) {
           sellers.add(sel);
         }
       });
@@ -369,23 +371,23 @@ class _NewSearchScreenState extends State<NewSearchScreen>
           child: _isCardsLoading
               ? _buildSellersLoading()
               : ScrollablePositionedList.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: sellers.length,
-            itemScrollController: _itemScrollController,
-            itemPositionsListener: _itemPositionsListener,
-            initialScrollIndex: _getSellerIndex(),
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(
-                    top: 8, right: 8, bottom: 8, left: 8),
-                child: _buildSellerCard(
-                  sellers[index],
-                  contextGeral,
-                  index,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: sellers.length,
+                  itemScrollController: _itemScrollController,
+                  itemPositionsListener: _itemPositionsListener,
+                  initialScrollIndex: _getSellerIndex(),
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                          top: 8, right: 8, bottom: 8, left: 8),
+                      child: _buildSellerCard(
+                        sellers[index],
+                        contextGeral,
+                        index,
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
         ),
       );
     }
@@ -693,16 +695,15 @@ class _NewSearchScreenState extends State<NewSearchScreen>
     }
     if (found == false || horaFormatada.isEmpty) {
       return Container(
-        child: AutoSizeText(
-          'Sem informação de horário',
-          textAlign: TextAlign.center,
-          style: GoogleFonts.montserrat(
-            color: Colors.black54,
-            fontWeight: FontWeight.bold,
-            fontSize: 25.nsp,
-          ),
-        )
-      );
+          child: AutoSizeText(
+        'Sem informação de horário',
+        textAlign: TextAlign.center,
+        style: GoogleFonts.montserrat(
+          color: Colors.black54,
+          fontWeight: FontWeight.bold,
+          fontSize: 25.nsp,
+        ),
+      ));
     }
 
     return Container(
