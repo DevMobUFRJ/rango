@@ -209,6 +209,7 @@ class _OrderContainerState extends State<OrderContainer>
                                   ),
                                   SizedBox(height: 0.018.hp),
                                   Row(
+                                    key: Key('reservado'),
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.min,
                                     children: [

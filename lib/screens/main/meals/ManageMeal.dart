@@ -89,6 +89,7 @@ class _ManageMealState extends State<ManageMeal> {
                     ),
                     constraints: BoxConstraints(maxWidth: 0.8.wp),
                     child: TextFormField(
+                      key: Key('nomeprato'),
                       focusNode: _nameFocusNode,
                       textCapitalization: TextCapitalization.sentences,
                       maxLines: 5,
@@ -143,6 +144,7 @@ class _ManageMealState extends State<ManageMeal> {
                       ),
                       elevation: 5,
                       child: TextFormField(
+                        key: Key("descricao"),
                         textCapitalization: TextCapitalization.sentences,
                         focusNode: _descriptionFocusNode,
                         controller: _mealDescription,
@@ -195,6 +197,7 @@ class _ManageMealState extends State<ManageMeal> {
                               ),
                               elevation: 5,
                               child: TextFormField(
+                                key: Key('preco'),
                                 focusNode: _valueFocusNode,
                                 textAlign: TextAlign.center,
                                 controller: _mealValue,
@@ -236,6 +239,7 @@ class _ManageMealState extends State<ManageMeal> {
                                 ),
                                 elevation: 5,
                                 child: TextFormField(
+                                  key: Key('quantidade'),
                                   focusNode: _quantityFocusNode,
                                   controller: _mealQuantity,
                                   keyboardType: TextInputType.number,

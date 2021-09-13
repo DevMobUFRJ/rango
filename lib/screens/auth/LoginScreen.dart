@@ -71,6 +71,7 @@ class LoginScreen extends StatelessWidget {
                           bottom: 20, right: 0.2.wp, left: 0.2.wp),
                       width: double.infinity,
                       child: ElevatedButton(
+                        key: ValueKey('login'),
                         onPressed: () => Navigator.of(context)
                             .pushNamed(AuthScreen.routeName, arguments: true),
                         child: AutoSizeText(

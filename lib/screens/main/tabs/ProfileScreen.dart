@@ -121,6 +121,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     GestureDetector(
+                      key: Key('fechaabre'),
                       onTap: () => _showCloseStoreDialog(widget.usuario),
                       child: Icon(
                         widget.usuario.active ? Icons.lock_open : Icons.lock,

@@ -106,35 +106,38 @@ class _AuthFormState extends State<AuthForm> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
                         if (!widget._isLogin) UserImagePicker(_pickedImage),
-                        CustomTextFormField(
-                          labelText: 'Email',
+                        Container(
                           key: ValueKey('email'),
-                          controller: _emailController,
-                          onChanged: (value) => {
-                            setState(
-                              () => _email = value,
-                            )
-                          },
-                          validator: (value) {
-                            if (value.isEmpty || !value.contains('@')) {
-                              setState(() {
-                                _emailErrorMessage = 'Insira um email válido';
-                              });
-                            } else {
-                              setState(() {
-                                _emailErrorMessage = null;
-                              });
-                            }
-                            return null;
-                          },
-                          onSaved: (value) => setState(() => _email = value),
-                          keyboardType: TextInputType.emailAddress,
-                          onFieldSubmitted: (_) => FocusScope.of(context)
-                              .requestFocus(!widget._isLogin
-                                  ? _focusNodeName
-                                  : _focusNodePass),
-                          textInputAction: TextInputAction.next,
-                          errorText: _emailErrorMessage,
+                          child: CustomTextFormField(
+                            labelText: 'Email',
+                            key: ValueKey('email'),
+                            controller: _emailController,
+                            onChanged: (value) => {
+                              setState(
+                                () => _email = value,
+                              )
+                            },
+                            validator: (value) {
+                              if (value.isEmpty || !value.contains('@')) {
+                                setState(() {
+                                  _emailErrorMessage = 'Insira um email válido';
+                                });
+                              } else {
+                                setState(() {
+                                  _emailErrorMessage = null;
+                                });
+                              }
+                              return null;
+                            },
+                            onSaved: (value) => setState(() => _email = value),
+                            keyboardType: TextInputType.emailAddress,
+                            onFieldSubmitted: (_) => FocusScope.of(context)
+                                .requestFocus(!widget._isLogin
+                                    ? _focusNodeName
+                                    : _focusNodePass),
+                            textInputAction: TextInputAction.next,
+                            errorText: _emailErrorMessage,
+                          ),
                         ),
                         if (!widget._isLogin)
                           CustomTextFormField(
@@ -162,36 +165,39 @@ class _AuthFormState extends State<AuthForm> {
                                 .requestFocus(_focusNodePass),
                             textInputAction: TextInputAction.next,
                           ),
-                        CustomTextFormField(
-                          labelText: 'Senha',
+                        Container(
                           key: ValueKey('password'),
-                          controller: _pass,
-                          focusNode: _focusNodePass,
-                          onChanged: (value) => {
-                            setState(
-                              () => _password = value,
-                            )
-                          },
-                          validator: (value) {
-                            if (value.isEmpty || value.length < 7) {
-                              setState(() => _passwordErrorMessage =
-                                  'Senha precisa ter no mínimo 7 caracteres');
-                            } else {
-                              setState(() => _passwordErrorMessage = null);
-                            }
-                            return null;
-                          },
-                          onSaved: (value) =>
-                              {setState(() => _password = value)},
-                          errorText: _passwordErrorMessage,
-                          isPassword: true,
-                          textInputAction: !widget._isLogin
-                              ? TextInputAction.next
-                              : TextInputAction.done,
-                          onFieldSubmitted: !widget._isLogin
-                              ? (_) => FocusScope.of(context)
-                                  .requestFocus(_focusNodeConfirmPass)
-                              : (_) => _submit(),
+                          child: CustomTextFormField(
+                            labelText: 'Senha',
+                            key: ValueKey('password'),
+                            controller: _pass,
+                            focusNode: _focusNodePass,
+                            onChanged: (value) => {
+                              setState(
+                                () => _password = value,
+                              )
+                            },
+                            validator: (value) {
+                              if (value.isEmpty || value.length < 7) {
+                                setState(() => _passwordErrorMessage =
+                                    'Senha precisa ter no mínimo 7 caracteres');
+                              } else {
+                                setState(() => _passwordErrorMessage = null);
+                              }
+                              return null;
+                            },
+                            onSaved: (value) =>
+                                {setState(() => _password = value)},
+                            errorText: _passwordErrorMessage,
+                            isPassword: true,
+                            textInputAction: !widget._isLogin
+                                ? TextInputAction.next
+                                : TextInputAction.done,
+                            onFieldSubmitted: !widget._isLogin
+                                ? (_) => FocusScope.of(context)
+                                    .requestFocus(_focusNodeConfirmPass)
+                                : (_) => _submit(),
+                          ),
                         ),
                         if (!widget._isLogin)
                           CustomTextFormField(
@@ -232,6 +238,7 @@ class _AuthFormState extends State<AuthForm> {
                         SizedBox(
                           width: 0.5.wp,
                           child: ElevatedButton(
+                            key: Key('continuar'),
                             onPressed: widget._isLoading
                                 ? null
                                 : (widget._isLogin &&
